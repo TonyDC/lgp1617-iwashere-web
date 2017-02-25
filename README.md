@@ -1,6 +1,7 @@
 # #iwashere Project
 
-Repository for the project #iwashere 
+**Purpose**: Repository for the project #iwashere 
 
-LGP2-C
+**Team**: LGP2-C
+
 2016/2017
