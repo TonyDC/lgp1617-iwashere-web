@@ -1,2 +1,6 @@
-# lgp1617-iwashere
-Repository for the project #iwashere || LGP2-C
+# #iwashere Project
+
+Repository for the project #iwashere 
+
+LGP2-C
+2016/2017
