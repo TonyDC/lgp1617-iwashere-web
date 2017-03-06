@@ -7,7 +7,7 @@ export default class App extends Component {
         return (
             <div className="App">
                 <div className="App-header">
-                    <img src={logo} className="App-logo" alt="logo" />
+                    <img alt="logo" className="App-logo" src={logo} />
                     <h2>React Test Page</h2>
                     <h5>This is a page</h5>
                 </div>
