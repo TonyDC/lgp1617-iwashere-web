@@ -1,10 +1,19 @@
-/* Mockup 
-const mysql = require('mysql');
-const pool  = mysql.createPool({
+const Sequelize = require('sequelize');
+const sequelize = new Sequelize('postgres://postgres@localhost:5432/lgp');
+
+let User = sequelize.define('user', {
+  firstName: {
+    type: Sequelize.STRING
+  },
+  lastName: {
+    type: Sequelize.STRING
+  }
 });
 
-pool.query('SELECT 1 + 1 AS solution', function (error, results, fields) {
-    if (error) throw error;
-    console.log('The solution is: ', rows[0].solution);
+sequelize.sync().then(() => {
+  // Table created
+  return User.create({
+    firstName: 'John',
+    lastName: 'Hancock'
+  });
 });
-*/
