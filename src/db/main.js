@@ -17,3 +17,5 @@ sequelize.sync().then(() => {
     lastName: 'Hancock'
   });
 });
+
+module.exports = sequelize;
