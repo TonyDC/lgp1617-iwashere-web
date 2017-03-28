@@ -65,3 +65,7 @@ jspm_packages
 
 # IDE configurations
 .idea
+
+# Ignore Configurations Folder
+config/
+
