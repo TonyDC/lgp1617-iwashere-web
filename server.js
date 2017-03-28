@@ -1,6 +1,7 @@
 const PORT = (process.env.PORT || 8080);
 
 const path = require('path');
+const bodyParser = require('body-parser');
 const express = require('express');
 
 const apiMiddleware = require('./src/api/main');
@@ -27,6 +28,9 @@ if (process.env.NODE_ENV !== 'production') {
 } 
 
 app.use(require('compression')());
+app.use(require('helmet')());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/public', publicPath);
 app.use('/api', apiMiddleware);
