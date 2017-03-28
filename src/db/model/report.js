@@ -1,11 +1,17 @@
-const Sequelize = require('Sequelize');
+'use strict';
 
-let Report = sequelize.define('report', {
+const Sequelize = require('Sequelize');
+const sequelize = require('../main');
+
+const post = require('./post'),
+    user = require('./user');
+
+const report = sequelize.define('report', {
     isResolved: Sequelize.STRING,
     reportDate: Sequelize.DATE
 });
 
-Report.hasOne(Post, {as: 'post'});
-Report.hasOne(User, {as: 'reporter'});
+report.hasOne(post, {as: 'post'});
+report.hasOne(user, {as: 'reporter'});
 
-module.exports = Report;
+module.exports = report;

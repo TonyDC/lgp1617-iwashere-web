@@ -1,10 +1,13 @@
-const Sequelize = require('Sequelize');
+'use strict';
 
-let User = sequelize.define('user', {
+const Sequelize = require('Sequelize');
+const sequelize = require('../main');
+
+const user = sequelize.define('user', {
+    email: Sequelize.STRING,
     firstName: Sequelize.STRING,
     lastName: Sequelize.STRING,
-    email: Sequelize.STRING,
     password: Sequelize.STRING
 });
 
-module.exports = User;
+module.exports = user;

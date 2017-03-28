@@ -3,18 +3,20 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../main');
 
-let Route = sequelize.define('route', {
-    name: Sequelize.STRING,
+const tag = require('./tag'),
+    user = require('./user');
+
+const route = sequelize.define('route', {
     description: Sequelize.TEXT,
+    name: Sequelize.STRING,
     rating: Sequelize.FLOAT
 });
 
-Route.hasMany(Tag, {as: 'tags'});
+route.hasMany(tag, { as: 'tags' });
 
-let RouteRating = sequelize.define('route_rating', {
-    rating: Sequelize.INTEGER
-});
-User.belongsToMany(Route, { through: RouteRating});
-Route.belongsToMany(User, { through: RouteRating});
+const routeRating = sequelize.define('route_rating', { rating: Sequelize.INTEGER });
+user.belongsToMany(route, { through: routeRating });
+route.belongsToMany(user, { through: routeRating });
 
-module.exports = Route;
+module.exports.route = route;
+module.exports.routeRating = routeRating;

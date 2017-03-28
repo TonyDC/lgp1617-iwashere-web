@@ -3,16 +3,20 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../main');
 
-let POI = sequelize.define('POI', {
-    name: Sequelize.STRING,
+const route = require('./route'),
+    tag = require('./tag'),
+    user = require('./user');
+
+const poi = sequelize.define('POI', {
     description: Sequelize.TEXT,
-    rating: Sequelize.FLOAT,
     latitude: Sequelize.FLOAT,
-    longitude: Sequelize.FLOAT
+    longitude: Sequelize.FLOAT,
+    name: Sequelize.STRING,
+    rating: Sequelize.FLOAT
 });
 
-POI.belongsToMany(Route, {as: 'POIs'});
-POI.hasMany(Tag, {as: 'tags'});
-POI.belongsToMany(User, {as: 'likes'});
+poi.belongsToMany(route, { as: 'POIs' });
+poi.hasMany(tag, { as: 'tags' });
+poi.belongsToMany(user, { as: 'likes' });
 
-module.exports = POI;
+module.exports = poi;

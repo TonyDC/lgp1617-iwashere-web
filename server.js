@@ -10,6 +10,10 @@ const app = express();
 const indexPath = path.join(__dirname, 'public/index.html');
 const publicPath = express.static(path.join(__dirname, 'public'));
 
+global.root_require = (path) => {
+    return require(path.join(__dirname, path));
+}
+
 if (process.env.NODE_ENV !== 'production') {
     const webpack = require('webpack');
     const webpackDevMiddleware = require('webpack-dev-middleware');

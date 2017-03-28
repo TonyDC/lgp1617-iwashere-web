@@ -3,22 +3,20 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../main');
 
-let session = sequelize.define('session', {
-    sid: {
-        type: Sequelize.STRING,
-        primaryKey: true,
-        allowNull: false
+const session = sequelize.define('session', {
+    expire: {
+        allowNull: false,
+        type: Sequelize.DATE
     },
     sess: {
-        type: Sequelize.JSON,
-        allowNull: false
+        allowNull: false,
+        type: Sequelize.JSON
     },
-    expire: {
-        type: Sequelize.DATE,
-        allowNull: false
+    sid: {
+        allowNull: false,
+        primaryKey: true,
+        type: Sequelize.STRING
     }
-}, {
-    freezeTableName: true
 });
 
 module.exports = session;

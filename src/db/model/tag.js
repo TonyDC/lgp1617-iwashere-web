@@ -3,8 +3,6 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../main');
 
-let Tag = sequelize.define('tag', {
-    name: Sequelize.STRING
-});
+const tag = sequelize.define('tag', { name: Sequelize.STRING });
 
-module.exports = Tag;
+module.exports = tag;

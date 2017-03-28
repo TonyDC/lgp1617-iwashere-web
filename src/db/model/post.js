@@ -3,14 +3,17 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../main');
 
-let Post = sequelize.define('post', {
-    publicationDate: Sequelize.DATE,
+const tag = require('./tag'),
+    user = require('./user');
+
+const post = sequelize.define('post', {
     description: Sequelize.TEXT,
-    likes: Sequelize.INTEGER
+    likes: Sequelize.INTEGER,
+    publicationDate: Sequelize.DATE
 });
 
-Post.belongsTo(User, {as: 'creator'});
-Post.hasMany(User, {as: 'likes'});
-Post.hasMany(Tag, {as: 'tags'});
+post.belongsTo(user, {as: 'creator'});
+post.hasMany(user, {as: 'likes'});
+post.hasMany(tag, {as: 'tags'});
 
-module.exports = Route;
+module.exports = post;

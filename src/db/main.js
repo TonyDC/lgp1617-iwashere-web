@@ -1,21 +1,12 @@
+'use strict';
+
+const sequelizeOptions = {
+    define: {
+        // Prevent sequelize from pluralizing table names
+        freezeTableName: true
+    }
+};
+
+/* global root_require */
 const Sequelize = require('sequelize');
-const sequelize = new Sequelize('postgres://postgres@localhost:5432/lgp');
-
-let User = sequelize.define('user', {
-  firstName: {
-    type: Sequelize.STRING
-  },
-  lastName: {
-    type: Sequelize.STRING
-  }
-});
-
-sequelize.sync().then(() => {
-  // Table created
-  return User.create({
-    firstName: 'John',
-    lastName: 'Hancock'
-  });
-});
-
-module.exports = sequelize;
+module.exports = new Sequelize(root_require('config/my-config').POSTGRESQL_CONN_STRING, sequelizeOptions);
