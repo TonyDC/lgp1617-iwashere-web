@@ -17,7 +17,7 @@ module.exports = {
 
     plugins: [
         new webpack.HotModuleReplacementPlugin(),
-        new webpack.NoErrorsPlugin(),
+        new webpack.NoEmitOnErrorsPlugin(),
         new webpack.ProvidePlugin({
             'Promise': 'es6-promise',                                           // Thanks Aaron (https://gist.github.com/Couto/b29676dd1ab8714a818f#gistcomment-1584602)
             'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'
@@ -25,21 +25,24 @@ module.exports = {
     ],
 
     resolve: {
-        root: path.resolve('./src')
+        modules: [
+            path.join(__dirname, "src"),
+            "node_modules"
+        ]
     },
 
     module: {
         loaders: [
             { test: /\.js?$/,
-                loader: 'babel',
+                loader: 'babel-loader',
                 exclude: path.join(__dirname, 'node_modules') },
             { test: /\.scss?$/,
-                loader: 'style!css!sass',
+                loader: 'style-loader!css-loader!sass-loader',
                 include: path.join(__dirname, 'src', 'styles') },
-            { test: /\.png$/,
-                loader: 'file' },
+            { test: /\.(png|jp(e)?g)$/,
+                loader: 'file-loader' },
             { test: /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
-                loader: 'file'}
+                loader: 'file-loader'}
         ]
     }
 };

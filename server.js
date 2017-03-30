@@ -1,6 +1,7 @@
 const PORT = (process.env.PORT || 8080);
 
 const path = require('path');
+const bodyParser = require('body-parser');
 const express = require('express');
 const firebase = require('firebase');
 
@@ -10,6 +11,10 @@ const app = express();
 
 const indexPath = path.join(__dirname, 'public/index.html');
 const publicPath = express.static(path.join(__dirname, 'public'));
+
+global.root_require = (path) => {
+    return require(path.join(__dirname, path));
+}
 
 if (process.env.NODE_ENV !== 'production') {
     const webpack = require('webpack');
@@ -28,6 +33,9 @@ if (process.env.NODE_ENV !== 'production') {
 } 
 
 app.use(require('compression')());
+app.use(require('helmet')());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Initialize Firebase
 var firebaseConfig = require("./config/firebase-config.json");
