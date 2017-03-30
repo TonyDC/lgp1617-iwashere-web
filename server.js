@@ -2,6 +2,7 @@ const PORT = (process.env.PORT || 8080);
 
 const path = require('path');
 const express = require('express');
+const firebase = require('firebase');
 
 const apiMiddleware = require('./src/api/main');
 
@@ -27,6 +28,11 @@ if (process.env.NODE_ENV !== 'production') {
 } 
 
 app.use(require('compression')());
+
+// Initialize Firebase
+var firebaseConfig = require("./config/firebase-config.json");
+firebase.initializeApp(firebaseConfig);
+console.log(firebaseConfig);
 
 app.use('/public', publicPath);
 app.use('/api', apiMiddleware);
