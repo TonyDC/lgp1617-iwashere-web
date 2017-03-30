@@ -32,7 +32,6 @@ app.use(require('compression')());
 // Initialize Firebase
 var firebaseConfig = require("./config/firebase-config.json");
 firebase.initializeApp(firebaseConfig);
-console.log(firebaseConfig);
 
 app.use('/public', publicPath);
 app.use('/api', apiMiddleware);
