@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
-import App from './js/App';
+import Register from './js/Register';
 import './styles/index.scss';
 
-render(<App/>, document.getElementById('main'));
+render(<Register/>, document.getElementById('main'));
