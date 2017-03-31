@@ -1,4 +1,4 @@
-const PORT = (process.env.PORT || 8080);
+const PORT = process.env.PORT || 8080;
 
 const path = require('path');
 const bodyParser = require('body-parser');
@@ -12,9 +12,7 @@ const app = express();
 const indexPath = path.join(__dirname, 'public/index.html');
 const publicPath = express.static(path.join(__dirname, 'public'));
 
-global.root_require = (path) => {
-    return require(path.join(__dirname, path));
-}
+global.root_require = (path) => require(path.join(__dirname, path));
 
 if (process.env.NODE_ENV !== 'production') {
     const webpack = require('webpack');
@@ -30,7 +28,7 @@ if (process.env.NODE_ENV !== 'production') {
     }));
 
     console.log('development mode activated');
-} 
+}
 
 app.use(require('compression')());
 app.use(require('helmet')());
@@ -38,14 +36,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Initialize Firebase
-var firebaseConfig = require("./config/firebase-config.json");
+const firebaseConfig = require("./config/firebase-config.json");
 firebase.initializeApp(firebaseConfig);
 
 app.use('/public', publicPath);
 app.use('/api', apiMiddleware);
-app.get('/', (_, res) => { res.sendFile(indexPath) });
+app.get('/', (_, res) => {
+    res.sendFile(indexPath); 
+});
 
-app.use((_, res) => { res.sendFile(indexPath)} );
+app.use((_, res) => {
+    res.sendFile(indexPath);
+});
 
 app.listen(PORT);
 console.log(`Listening at port ${PORT}`);
