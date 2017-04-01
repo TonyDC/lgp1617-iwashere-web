@@ -8,7 +8,16 @@ const router = express.Router();
 const httpStatus = require('http-status-codes');
 
 router.post('/register', (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, confirmPassword } = req.body;
+
+    if (password !== confirmPassword) {
+        res.status(httpStatus.BAD_REQUEST).json(
+            {
+                code: "passwords-not-equal",
+                message: "The passwords don't match"
+
+            });
+    }
 
     firebase.auth().createUserWithEmailAndPassword(email, password).
         catch((error) => {
@@ -25,11 +34,8 @@ router.post('/register', (req, res) => {
             );
         });
 
-    const { nickname } = req.body;
 
     // TODO Add remaing form fields to the database
-
-
 });
 
 module.exports = router;
