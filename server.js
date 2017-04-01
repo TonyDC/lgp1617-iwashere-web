@@ -13,6 +13,7 @@ db.sync();
 const path = require('path');
 const bodyParser = require('body-parser');
 const express = require('express');
+const firebase = require('firebase');
 
 const apiMiddleware = require('./src/api/index');
 
@@ -42,6 +43,10 @@ app.use(require('compression')());
 app.use(require('helmet')());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Initialize Firebase
+const firebaseConfig = require("./config/firebase-config.json");
+firebase.initializeApp(firebaseConfig);
 
 app.use('/public', publicPath);
 app.use('/api', apiMiddleware);
