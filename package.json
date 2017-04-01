@@ -17,6 +17,7 @@
     "express": "^4.13.4",
     "file-loader": "^0.10.1",
     "firebase": "^3.7.4",
+    "firebase-admin": "^4.1.4",
     "font-awesome": "^4.7.0",
     "font-awesome-webpack": "0.0.5-beta.2",
     "helmet": "^3.5.0",
