@@ -1,7 +1,7 @@
 'use strict';
 
 const Sequelize = require('sequelize');
-const sequelize = require('../main');
+const sequelize = require('../index');
 
 const tag = require('./tag'),
     user = require('./user');

@@ -33,16 +33,22 @@ module.exports = {
 
     module: {
         loaders: [
-            { test: /\.js?$/,
+            { test: /\.jsx?$/,
                 loader: 'babel-loader',
                 exclude: path.join(__dirname, 'node_modules') },
             { test: /\.scss?$/,
                 loader: 'style-loader!css-loader!sass-loader',
                 include: path.join(__dirname, 'src', 'styles') },
+            { test: /\.css$/,
+                loader: 'style-loader!css-loader' },
+            { test: /\.less$/,
+                loader: 'style-loader!css-loader!less-loader' },
             { test: /\.(png|jp(e)?g)$/,
                 loader: 'file-loader' },
-            { test: /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
-                loader: 'file-loader'}
+            // The url-loader uses DataUrls.
+            // The file-loader emits files.
+            { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader?limit=10000&mimetype=application/font-woff" },
+            { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "file-loader" }
         ]
     }
 };

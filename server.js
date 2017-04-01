@@ -1,19 +1,25 @@
-const PORT = (process.env.PORT || 8080);
+/* eslint no-process-env: "off" */
+/* eslint camelcase: "off" */
+/* eslint global-require: "off" */
+/* eslint no-console: "off" */
 
+// Synchronize database
+const db = require('./src/db/model');
+db.sync();
+
+/* *********************************** */
+
+// Prepare web and REST API server
 const path = require('path');
 const bodyParser = require('body-parser');
 const express = require('express');
 
-const apiMiddleware = require('./src/api/main');
+const apiMiddleware = require('./src/api/index');
 
 const app = express();
 
 const indexPath = path.join(__dirname, 'public/index.html');
 const publicPath = express.static(path.join(__dirname, 'public'));
-
-global.root_require = (path) => {
-    return require(path.join(__dirname, path));
-}
 
 if (process.env.NODE_ENV !== 'production') {
     const webpack = require('webpack');
@@ -28,8 +34,9 @@ if (process.env.NODE_ENV !== 'production') {
         publicPath: config.output.publicPath
     }));
 
+    /* eslint no-console: "off" */
     console.log('development mode activated');
-} 
+}
 
 app.use(require('compression')());
 app.use(require('helmet')());
@@ -38,9 +45,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/public', publicPath);
 app.use('/api', apiMiddleware);
-app.get('/', (_, res) => { res.sendFile(indexPath) });
+app.use((_, res) => {
+    res.sendFile(indexPath);
+});
 
-app.use((_, res) => { res.sendFile(indexPath)} );
+/* *********************************** */
 
-app.listen(PORT);
-console.log(`Listening at port ${PORT}`);
+module.exports = app;

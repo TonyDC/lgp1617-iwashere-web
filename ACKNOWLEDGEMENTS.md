@@ -14,4 +14,8 @@
 - https://www.npmjs.com/package/sails
 - https://github.com/sindresorhus/awesome
 - https://github.com/boennemann/badges
-- 
+- https://github.com/gowravshekar/font-awesome-webpack
+- https://gist.github.com/Turbo87/e8e941e68308d3b40ef6
+- http://stackoverflow.com/questions/30371000/react-bootstrap-using-webpack
+- https://certbot.eff.org/#ubuntuxenial-nginx
+

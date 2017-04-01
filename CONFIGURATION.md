@@ -1,12 +1,12 @@
-#Configuration
+# Configuration
 This file helps with the configuration in a Ubuntu machine.
 
-##Steps
+## Steps
 
-###Credentials used by the application 
+### Credentials used by the application 
 It is necessary to create a folder ```config``` in the project root. Add a file ```config.js``` inside with the credentials.
 
-###NGINX configuration
+### NGINX configuration
 **Commands to execute:**
 
 ```
@@ -30,14 +30,14 @@ server {
 }
 ```
 
-###Git Deploy Keys
+### Git Deploy Keys
 **Generate Keys:**
 ```
 ssh-keygen -t rsa -C "up201305244@gcloud.fe.up.pt"
 ```
 **GiHub:** Add public key to GitHub ```(Settings -> Deploy Keys)```
 
-###Script file
+### Script file
 **Name:** run.sh  
 **Location:** _project location_
 
@@ -50,7 +50,7 @@ webpack --config ./webpack.prod.config.js --progress --colors &&
 node ./server.js
 ```
 
-###Service configuration file
+### Service configuration file
 **Name:** iwashere.service  
 **Location:** ```/etc/systemd/system```
 
