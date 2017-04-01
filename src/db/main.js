@@ -1,10 +1,12 @@
-/* Mockup 
-const mysql = require('mysql');
-const pool  = mysql.createPool({
-});
+'use strict';
 
-pool.query('SELECT 1 + 1 AS solution', function (error, results, fields) {
-    if (error) throw error;
-    console.log('The solution is: ', rows[0].solution);
-});
-*/
+const sequelizeOptions = {
+    define: {
+        // Prevent sequelize from pluralizing table names
+        freezeTableName: true
+    }
+};
+
+/* global root_require */
+const Sequelize = require('sequelize');
+module.exports = new Sequelize(root_require('config/my-config').POSTGRESQL_CONN_STRING, sequelizeOptions);

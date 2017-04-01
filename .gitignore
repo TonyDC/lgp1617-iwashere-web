@@ -62,9 +62,11 @@ jspm_packages
 
 # Optional REPL history
 .node_repl_history
+/lgp1617-iwashere-web.iml
+
+# IDE configurations
+.idea
 
 # Ignore Configurations Folder
 config/
 
-# Ignore IDE configurations
-.idea
