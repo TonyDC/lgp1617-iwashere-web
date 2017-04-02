@@ -1,5 +1,7 @@
 "use strict";
 
+const httpCode = require('http-status-codes');
+
 const express = require('express');
 const router = express.Router();
 
@@ -11,7 +13,7 @@ router.use('/user', require('./user'));
 
 // No API endpoint found
 router.use((req, res) => {
-    res.sendStatus(400).end();
+    res.sendStatus(httpCode.METHOD_NOT_ALLOWED).end();
 });
 
 module.exports = router;

@@ -3,6 +3,7 @@
 const express = require('express');
 const router = express.Router();
 
+const firebase = require('firebase');
 const firebaseAdmin = require('firebase-admin');
 const httpStatus = require('http-status-codes');
 
@@ -16,6 +17,7 @@ const httpStatus = require('http-status-codes');
  *
  * See: https://firebase.google.com/docs/auth/admin/manage-users
  */
+/*
 router.post('/register', (req, res) => {
     const { email, password, confirmPassword, name } = req.body;
 
@@ -52,7 +54,7 @@ router.post('/register', (req, res) => {
 });
 
 router.post('/login', (req, res) => {
-    const { email, password, nickname } = req.body;
+    const { email, password } = req.body;
 
     firebase.auth().signInWithEmailAndPassword(email, password).
     then(() => {
@@ -73,5 +75,5 @@ router.post('/login', (req, res) => {
         end();
     });
 });
-
+*/
 module.exports = router;
