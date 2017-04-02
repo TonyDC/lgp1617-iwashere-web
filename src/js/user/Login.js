@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Helmet } from 'react-helmet';
 import * as firebase from 'firebase';
 import { BAD_REQUEST } from 'http-status-codes';
 
@@ -6,7 +7,10 @@ export default class Login extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { loggedIn: false };
+        this.state = {
+            loggedIn: false,
+            text: null
+        };
     }
 
     loginUser(event) {
@@ -68,6 +72,10 @@ export default class Login extends Component {
 
         return (
             <div>
+                <Helmet>
+                    <title>#iwashere - Login</title>
+                </Helmet>
+
                 <h2>Login</h2>
                 <form onSubmit={this.loginUser.bind(this)}>
                     <input name="email" placeholder="email" type="email" onChange={this.handleEmail.bind(this)}/>
