@@ -19,7 +19,8 @@ export default class Login extends Component {
         const { email, password } = this.state;
         firebase.auth().signInWithEmailAndPassword(email, password).
         then(() => {
-            return firebase.auth().currentUser.getToken(/* forceRefresh */ true);
+            // 'getToken(/* forceRefresh */ true)'
+            return firebase.auth().currentUser.getToken(true);
         }).
         then((token) => {
             return fetch('/api/user/auth/login', {

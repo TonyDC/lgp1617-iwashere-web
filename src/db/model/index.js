@@ -1,6 +1,6 @@
 const sequelize = require('../index');
 
-/*
+/* Other exports
 module.exports.poi = require('./poi');
 module.exports.post = require('./post');
 module.exports.report = require('./report');

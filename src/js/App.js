@@ -1,7 +1,7 @@
 /* eslint react/jsx-sort-props: "off" */
 
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import NoMatch from './utils/NoMatch';
 

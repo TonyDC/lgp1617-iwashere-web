@@ -3,9 +3,11 @@
 const express = require('express');
 const router = express.Router();
 
+/* Required imports
 const firebase = require('firebase');
 const firebaseAdmin = require('firebase-admin');
 const httpStatus = require('http-status-codes');
+*/
 
 /**
  * Register endpoint
@@ -17,7 +19,8 @@ const httpStatus = require('http-status-codes');
  *
  * See: https://firebase.google.com/docs/auth/admin/manage-users
  */
-/*
+/* Example with Firebase Admin SDK
+
 router.post('/register', (req, res) => {
     const { email, password, confirmPassword, name } = req.body;
 

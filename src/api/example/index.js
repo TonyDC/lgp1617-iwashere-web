@@ -24,12 +24,6 @@ router.post('/register', (req, res) => {
                 }
             );
         });
-
-    const { nickname } = req.body;
-
-    // TODO Add remaing form fields to the database
-
-
 });
 
 module.exports = router;

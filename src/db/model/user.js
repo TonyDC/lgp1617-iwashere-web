@@ -85,7 +85,6 @@ module.exports.mainUser = sequelize.define('Main_User', {
         type: Sequelize.STRING,
         unique: true
     },
-    // TODO Android UUID?
     email: {
         allowNull: false,
         type: Sequelize.STRING
