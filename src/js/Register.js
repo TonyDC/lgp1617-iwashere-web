@@ -5,6 +5,16 @@ export default class Register extends Component {
     render() {
         return (
             <div className="Register">
+                <div className="container">
+                    <label><b>Email</b></label>
+                    <input type="text" placeholder="Email" name="email" required/>
+                    <label><b>Password</b></label>
+                    <input type="text" placeholder="Password" name="psw" required/>
+                    <label><b>Repeat Password</b></label>
+                    <input type="text" placeholder="Confirm Password" name="repeat-pwd" required/>
+                    <p>By creating an account you agree to our <a href="#">Terms & Privacy</a>.</p>
+                    <button type="button">Register</button>
+               </div>
                 <div className="row">
                     <div className="col left">
                         <h1>Sign up #iwashere</h1>
