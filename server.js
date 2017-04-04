@@ -1,3 +1,5 @@
+"use strict";
+
 /* eslint no-process-env: "off" */
 /* eslint camelcase: "off" */
 /* eslint global-require: "off" */
@@ -8,7 +10,9 @@ const mainConfig = require('./config');
 
 // Synchronize database
 const db = require('./src/db/model');
-db.sync();
+db.sync().catch((error) => {
+    throw error;
+});
 
 /* *********************************** */
 

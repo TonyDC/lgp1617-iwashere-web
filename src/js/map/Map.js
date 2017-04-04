@@ -11,7 +11,7 @@ export default class Map extends Component {
         return (
             <div>
                 { customMessage }
-                <div>This is a map</div>
+                <div>This is a map!!!!!!</div>
             </div>
         );
     }
