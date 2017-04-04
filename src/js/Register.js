@@ -12,7 +12,6 @@ export default class Register extends Component {
                     <input type="text" placeholder="Password" name="psw" required/>
                     <label><b>Repeat Password</b></label>
                     <input type="text" placeholder="Confirm Password" name="repeat-pwd" required/>
-                    <p>By creating an account you agree to our <a href="#">Terms & Privacy</a>.</p>
                     <button type="button">Register</button>
                </div>
                 <div className="row">

@@ -1,9 +1,10 @@
 import React from 'react';
 import { render } from 'react-dom';
 import Register from './js/Register';
-import './styles/index.scss';
+//import Login from './js/Login';
 
-render(<Register/>, document.getElementById('main'));
+
+// render(<Login/>, document.getElementById('main'));
 import * as firebase from 'firebase';
 
 import App from './js/App';
@@ -27,4 +28,4 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 
-render(<App/>, document.getElementById('main'));
+render(<Register/>, document.getElementById('main'));
