@@ -23,15 +23,21 @@ const httpStatus = require('http-status-codes');
 router.post('/register', (req, res) => {
     const { email, password, confirmPassword, username} = req.body;
 
-    if (typeof password !== 'string' || typeof confirmPassword !== 'string' || password !== confirmPassword ) {
-        res.status(httpStatus.BAD_REQUEST).send({code: "passwords-not-equal",message: 'Bad password confirmation'}).
+    if (typeof password !== 'string' || typeof confirmPassword !== 'string' || password !== confirmPassword) {
+        res.status(httpStatus.BAD_REQUEST).send({
+            code: "passwords-not-equal",
+            message: 'Bad password confirmation'
+        }).
             end();
 
         return;
     }
 
-    if(typeof username !== 'string' || username.length === 0){
-        res.status(httpStatus.BAD_REQUEST).send({code: "username-invalid",message: 'Invalid username'}).
+    if (typeof username !== 'string' || username.length === 0) {
+        res.status(httpStatus.BAD_REQUEST).send({
+            code: "username-invalid",
+            message: 'Invalid username'
+        }).
             end();
     }
 
@@ -48,6 +54,7 @@ router.post('/register', (req, res) => {
         // See the UserRecord reference doc for the contents of userRecord.
         console.log("Successfully created new user:", userRecord);
         // TODO register into database
+
         return firebaseAdmin.auth().createCustomToken(userRecord.uid);
     }).
     then((customToken) => {
@@ -64,8 +71,11 @@ router.post('/register', (req, res) => {
 router.post('/register/third-party', (req, res) => {
     const { username} = req.body;
 
-    if(typeof username !== 'string' || username.length === 0){
-        res.status(httpStatus.BAD_REQUEST).send({code: "username-invalid",message: 'Invalid username'}).
+    if (typeof username !== 'string' || username.length === 0) {
+        res.status(httpStatus.BAD_REQUEST).send({
+            code: "username-invalid",
+            message: 'Invalid username'
+        }).
         end();
     }
 
