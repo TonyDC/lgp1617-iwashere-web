@@ -1,20 +1,30 @@
-const PORT = (process.env.PORT || 8080);
+/* eslint no-process-env: "off" */
+/* eslint camelcase: "off" */
+/* eslint global-require: "off" */
+/* eslint no-console: "off" */
+/* eslint no-unused-vars: "off" */
 
+const mainConfig = require('./config');
+
+// Synchronize database
+const db = require('./src/db/model');
+db.sync();
+
+/* *********************************** */
+
+// Prepare web and REST API server
 const path = require('path');
 const bodyParser = require('body-parser');
 const express = require('express');
-const firebase = require('firebase');
+const httpCodes = require('http-status-codes');
+const firebaseAdmin = require("firebase-admin");
 
-const apiMiddleware = require('./src/api/main');
+const APIMiddleware = require('./src/api/index');
 
 const app = express();
 
 const indexPath = path.join(__dirname, 'public/index.html');
 const publicPath = express.static(path.join(__dirname, 'public'));
-
-global.root_require = (path) => {
-    return require(path.join(__dirname, path));
-}
 
 if (process.env.NODE_ENV !== 'production') {
     const webpack = require('webpack');
@@ -29,23 +39,48 @@ if (process.env.NODE_ENV !== 'production') {
         publicPath: config.output.publicPath
     }));
 
+    /* eslint no-console: "off" */
     console.log('development mode activated');
-} 
+}
 
+// GZip compression
 app.use(require('compression')());
+
+// HTTP security headers
 app.use(require('helmet')());
+
+// JSON body parser
 app.use(bodyParser.json());
+
+// URL-encoded body parser
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Initialize Firebase
-var firebaseConfig = require("./config/firebase-config.json");
-firebase.initializeApp(firebaseConfig);
+// Firebase Admin SDK Initialization
+const serviceAccountKey = require(mainConfig.FIREBASE_ADMIN_SDK_PATH);
+firebaseAdmin.initializeApp({
+    credential: firebaseAdmin.credential.cert(serviceAccountKey),
+    databaseURL: mainConfig.FIREBASE_CONFIG.databaseURL
+});
 
+/* *********************************** */
+
+// Public files entrypoint
 app.use('/public', publicPath);
-app.use('/api', apiMiddleware);
-app.get('/', (_, res) => { res.sendFile(indexPath) });
 
-app.use((_, res) => { res.sendFile(indexPath)} );
+// API entrypoins
+app.use('/api', APIMiddleware);
 
-app.listen(PORT);
-console.log(`Listening at port ${PORT}`);
+// URL not found: server index.html
+app.use((_, res) => {
+    res.sendFile(indexPath);
+});
+
+// Error middleware handler
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(httpCodes.INTERNAL_SERVER_ERROR).send({message: 'Something went wrong!'});
+});
+
+/* *********************************** */
+
+module.exports = app;

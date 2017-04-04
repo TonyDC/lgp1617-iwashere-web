@@ -1,9 +1,9 @@
 'use strict';
 
 const Sequelize = require('sequelize');
-const sequelize = require('../main');
+const sequelize = require('../index');
 
-const route = require('./route'),
+const { route } = require('./route'),
     tag = require('./tag'),
     user = require('./user');
 
@@ -15,8 +15,8 @@ const poi = sequelize.define('POI', {
     rating: Sequelize.FLOAT
 });
 
-poi.belongsToMany(route, { as: 'POIs' });
-poi.hasMany(tag, { as: 'tags' });
-poi.belongsToMany(user, { as: 'likes' });
+poi.belongsToMany(route, { through: 'POIs' });
+poi.hasMany(tag);
+poi.belongsToMany(user, { through: 'likes' });
 
 module.exports = poi;

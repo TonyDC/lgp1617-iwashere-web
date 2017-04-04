@@ -1,20 +1,29 @@
+/* eslint react/jsx-sort-props: "off" */
+
 import React, { Component } from 'react';
-import logo from 'img/logo.svg';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+
+import NoMatch from './utils/NoMatch';
+
+import Map from './map/Map';
+
+import UserLogin from './user/Login';
+import UserRegister from './user/Register';
+
 import 'styles/app.scss';
 
 export default class App extends Component {
+
     render() {
         return (
-            <div className="App">
-                <div className="App-header">
-                    <img alt="logo" className="App-logo" src={logo} />
-                    <h2>React Test Page</h2>
-                    <h5>This is a page</h5>
-                </div>
-                <p className="App-intro">
-                    To get started, edit <code>src/App.js</code> and save to reload.
-                </p>
-            </div>
+            <Router>
+                <Switch>
+                    <Route exact path="/" component={ Map }/>
+                    <Route path="/login" component={ UserLogin } />
+                    <Route path="/register" component={ UserRegister } />
+                    <Route component={ NoMatch }/>
+                </Switch>
+            </Router>
         );
     }
 }
