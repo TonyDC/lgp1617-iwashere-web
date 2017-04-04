@@ -14,7 +14,9 @@
     },
     "sourceType": "module"
   },
-
+  "globals": {
+    "root_require": false
+  },
   "plugins": [
     "react", "import"
   ],

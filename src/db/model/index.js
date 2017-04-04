@@ -8,8 +8,8 @@ module.exports.route = require('./route');
 module.exports.session = require('./session');
 module.exports.tag = require('./tag');
 */
-module.exports.user = require('./user');
+module.exports.User = require('./user');
 
 module.exports.sync = () => {
-    sequelize.sync();
+    return sequelize.sync();
 };
