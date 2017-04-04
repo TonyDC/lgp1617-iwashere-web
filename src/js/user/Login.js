@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Helmet } from 'react-helmet';
 import * as firebase from 'firebase';
 import { BAD_REQUEST } from 'http-status-codes';
+import 'styles/login.scss';
 
 export default class Login extends Component {
 
@@ -72,20 +72,55 @@ export default class Login extends Component {
         }
 
         return (
-            <div>
-                <Helmet>
-                    <title>#iwashere - Login</title>
-                </Helmet>
+            <div className="container">
+                <div className="row main">
+                    <div className="panel-heading">
+                        <div className="panel-title text-center">
+                            <h1 className="title">#iwashere</h1>
+                            <hr />
+                        </div>
+                    </div>
 
-                <h2>Login</h2>
-                <form onSubmit={this.loginUser.bind(this)}>
-                    <input name="email" placeholder="email" type="email" onChange={this.handleEmail.bind(this)}/>
-                    <input name="password" placeholder="password" type="password" onChange={this.handlePassword.bind(this)}/>
+                    <div className="main-login main-center">
+                        <form className="form-horizontal">
+                            <div className="form-group">
+                                <label htmlFor="name" className="cols-sm-2 control-label">Username</label>
+                                <div className="cols-sm-10">
+                                    <div className="input-group" onSubmit={this.loginUser.bind(this)}>
+                                        <span className="input-group-addon"><i className="fa fa-user fa" aria-hidden="true"></i></span>
+                                        <input type="text" className="form-control" name="name" id="name" placeholder="Enter your Name" />
+                                    </div>
+                                </div>
+                            </div>
 
-                    <button type="submit" onClick={this.loginUser.bind(this)}>Log in</button>
-                </form>
-                { userStatus }
-                <div>Response: { this.state.text }</div>
+                            <div className="form-group">
+                                <label htmlFor="email" className="cols-sm-2 control-label">Your Email</label>
+                                <div className="cols-sm-10">
+                                    <div className="input-group">
+                                        <span className="input-group-addon"><i className="fa fa-envelope fa" aria-hidden="true"></i></span>
+                                        <input type="text" className="form-control" name="email" id="email" placeholder="Enter your Email" onChange={this.handleEmail.bind(this)}/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="password" className="cols-sm-2 control-label">Password</label>
+                                <div className="cols-sm-10">
+                                    <div className="input-group">
+                                        <span className="input-group-addon"><i className="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                                        <input type="password" className="form-control" name="password" id="password" placeholder="Enter your Password" onSubmit={this.handlePassword.bind(this)}/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="form-group ">
+                                <button type="button" className="btn btn-primary btn-lg btn-block login-button" onClick={this.loginUser.bind(this)}>Log In</button>
+                            </div>
+                            { userStatus }
+                            Response: { this.state.text }
+                        </form>
+                    </div>
+                </div>
             </div>
         );
     }
