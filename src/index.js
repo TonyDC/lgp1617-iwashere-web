@@ -1,10 +1,8 @@
 import React from 'react';
 import { render } from 'react-dom';
-import Register from './js/Register';
-//import Login from './js/Login';
+import Register from './js/user/Register';
+import Login from './js/user/Login';
 
-
-// render(<Login/>, document.getElementById('main'));
 import * as firebase from 'firebase';
 
 import App from './js/App';
@@ -12,7 +10,8 @@ import App from './js/App';
 // Font Awesome
 import 'font-awesome-webpack';
 
-// React Bootstrap CSS -> import 'bootstrap/dist/css/bootstrap.css';
+// React Bootstrap CSS ->
+import 'bootstrap/dist/css/bootstrap.css';
 
 // Custom SASS
 import './styles/index.scss';
