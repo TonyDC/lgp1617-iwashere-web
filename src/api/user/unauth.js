@@ -14,7 +14,7 @@ const httpStatus = require('http-status-codes');
  *  - email
  *  - password
  *  - confirmPassword
- *  - name
+ *  - username
  *
  * See: https://firebase.google.com/docs/auth/admin/manage-users
  */
@@ -62,13 +62,17 @@ router.post('/register', (req, res) => {
     }).
     catch((error) => {
         console.log("Error creating new user:", error);
-
-        res.status(httpStatus.BAD_REQUEST).end();
+        res.status(httpStatus.CONFLICT).end();
     });
 });
 
-
-router.post('/register/third-party', (req, res) => {
+/**
+ * After registration through 3rd party services (Facebook, Google, ...) we need to add custom data to our service (username, etc...)
+ * This request is for that.
+ * Body properties:
+ *  - username
+ */
+router.put('/register/third-party', (req, res) => {
     const { username} = req.body;
 
     if (typeof username !== 'string' || username.length === 0) {
@@ -79,9 +83,17 @@ router.post('/register/third-party', (req, res) => {
         end();
     }
 
-    // TODO extract user uid from request
-
-    // TODO extract insert username in database
+    // Not sure if this is the correct way of extracting the accessToken
+    const token = req.getAccessToken();
+    firebaseAdmin.auth().verifyIdToken(token).
+        then((decodedToken) => {
+            const uid = decodedToken.uid;
+            // TODO Verify is username already exists and if not add it to the database associated to the userid
+        }).
+        catch((error) => {
+            console.log("Error in third-party registration api call", error);
+            res.status(httpStatus.CONFLICT).end();
+        });
 });
 
 router.post('/login', (req, res) => {
