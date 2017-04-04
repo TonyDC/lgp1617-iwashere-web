@@ -7,7 +7,7 @@ const firebaseAdmin = require('firebase-admin');
 const httpStatus = require('http-status-codes');
 const validator = require('validator');
 
-const { User } = root_require('./src/db/model');
+const { User } = root_require('models');
 
 /**
  * Register endpoint
@@ -44,27 +44,41 @@ router.post('/register', (req, res) => {
         return;
     }
 
-    firebaseAdmin.auth().createUser({
-        disabled: false,
-        displayName: name,
-        email,
-        emailVerified: false,
-        password
+    // ************************
+
+    User.findOne({ where: { email } }).then((user) => {
+        // User will be the first entry of the MainUser table || null
+        if (user) {
+            return new Error('User with the given email already exists');
+        }
+
+        return null;
+    }).
+    then(() => {
+        return firebaseAdmin.auth().createUser({
+            disabled: false,
+            displayName: name,
+            email,
+            emailVerified: false,
+            password
+        });
     }).
     then((userRecord) => {
         // See the UserRecord reference doc for the contents of userRecord.
         console.log("Successfully created new user:", userRecord);
 
-        return User.MainUser.create({UID: userRecord.uid});
+        return User.create({
+            email,
+            uid: userRecord.uid
+        });
     }).
     then((user) => {
         console.log(`Successfully inserted new user into database: ${user}`);
         res.end();
     }).
     catch((error) => {
-        console.log("Error creating new user:", error);
-
-        res.status(httpStatus.INTERNAL_SERVER_ERROR).end();
+        console.error("Error creating new user:", error);
+        res.status(httpStatus.BAD_REQUEST).end();
     });
 });
 

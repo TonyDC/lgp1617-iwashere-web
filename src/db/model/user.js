@@ -80,5 +80,10 @@ module.exports.MainUser = sequelize.define('Main_User', {
         allowNull: false,
         type: Sequelize.STRING,
         unique: true
+    },
+    email: {
+        allowNull: false,
+        type: Sequelize.STRING,
+        unique: true
     }
 });

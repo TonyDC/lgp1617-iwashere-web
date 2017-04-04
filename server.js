@@ -8,12 +8,6 @@
 
 const mainConfig = require('./config');
 
-// Synchronize database
-const db = require('./src/db/model');
-db.sync().catch((error) => {
-    throw error;
-});
-
 /* *********************************** */
 
 // Prepare web and REST API server
@@ -22,6 +16,8 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const httpCodes = require('http-status-codes');
 const firebaseAdmin = require("firebase-admin");
+const winston = require('winston');
+const expressWinston = require('express-winston');
 
 const APIMiddleware = require('./src/api/index');
 
@@ -46,6 +42,16 @@ if (process.env.NODE_ENV !== 'production') {
     /* eslint no-console: "off" */
     console.log('development mode activated');
 }
+
+// Logger
+app.use(expressWinston.logger({
+    transports: [
+        new winston.transports.Console({
+            colorize: true,
+            json: true
+        })
+    ]
+}));
 
 // GZip compression
 app.use(require('compression')());
@@ -78,6 +84,15 @@ app.use('/api', APIMiddleware);
 app.use((_, res) => {
     res.sendFile(indexPath);
 });
+
+app.use(expressWinston.errorLogger({
+    transports: [
+        new winston.transports.Console({
+            colorize: true,
+            json: true
+        })
+    ]
+}));
 
 // Error middleware handler
 app.use((err, req, res, next) => {
