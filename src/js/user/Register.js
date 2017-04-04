@@ -99,7 +99,7 @@ export default class Login extends Component {
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div className="form-group">
                                 <label htmlFor="password" className="cols-sm-2 control-label">Password</label>
                                 <div className="cols-sm-10">
@@ -121,7 +121,7 @@ export default class Login extends Component {
                             </div>
 
                             <div className="form-group ">
-                                <button type="button" className="btn btn-primary btn-lg btn-block login-button">Register</button>
+                                <button type="button" className="btn btn-primary btn-lg btn-block login-button" onClick={this.registerUser.bind(this)}>Register</button>
                             </div>
 
                             { registerInProgress }
