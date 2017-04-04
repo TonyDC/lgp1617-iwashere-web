@@ -3,11 +3,10 @@
 const express = require('express');
 const router = express.Router();
 
-/* Required imports
+ // Required imports
 const firebase = require('firebase');
 const firebaseAdmin = require('firebase-admin');
 const httpStatus = require('http-status-codes');
-*/
 
 /**
  * Register endpoint
@@ -19,16 +18,21 @@ const httpStatus = require('http-status-codes');
  *
  * See: https://firebase.google.com/docs/auth/admin/manage-users
  */
-/* Example with Firebase Admin SDK
+ // Example with Firebase Admin SDK
 
 router.post('/register', (req, res) => {
-    const { email, password, confirmPassword, name } = req.body;
+    const { email, password, confirmPassword, username} = req.body;
 
-    if (typeof password !== 'string' || typeof confirmPassword !== 'string' || password !== confirmPassword) {
-        res.status(httpStatus.BAD_REQUEST).send({message: 'Bad password confirmation'}).
-        end();
+    if (typeof password !== 'string' || typeof confirmPassword !== 'string' || password !== confirmPassword ) {
+        res.status(httpStatus.BAD_REQUEST).send({code: "passwords-not-equal",message: 'Bad password confirmation'}).
+            end();
 
         return;
+    }
+
+    if(typeof username !== 'string' || username.length === 0){
+        res.status(httpStatus.BAD_REQUEST).send({code: "username-invalid",message: 'Invalid username'}).
+            end();
     }
 
     // TODO check input
@@ -56,6 +60,20 @@ router.post('/register', (req, res) => {
     });
 });
 
+
+router.post('/register/third-party', (req, res) => {
+    const { username} = req.body;
+
+    if(typeof username !== 'string' || username.length === 0){
+        res.status(httpStatus.BAD_REQUEST).send({code: "username-invalid",message: 'Invalid username'}).
+        end();
+    }
+
+    // TODO extract user uid from request
+
+    // TODO extract insert username in database
+});
+
 router.post('/login', (req, res) => {
     const { email, password } = req.body;
 
@@ -78,5 +96,5 @@ router.post('/login', (req, res) => {
         end();
     });
 });
-*/
+
 module.exports = router;
