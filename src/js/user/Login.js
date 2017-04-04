@@ -13,6 +13,62 @@ export default class Login extends Component {
         };
     }
 
+    loginPopup(provider) {
+        firebase.auth().signInWithPopup(provider).
+        then((result) => {
+            // Facebook Access Token; can be used to access the Facebook API.
+            // const token = result.credential.accessToken;
+
+            // 'getToken(/* forceRefresh */ true)'
+            return firebase.auth().currentUser.getToken(true);
+        }).
+        then((token) => {
+            return fetch('/api/user/auth/login', {
+                body: JSON.stringify({token}),
+                headers: {'Authorization': `Bearer ${token}`},
+                method: 'POST'
+            });
+        }).
+        then((response) => {
+            const { status, statusText } = response;
+            if (status >= BAD_REQUEST) {
+                return Promise.reject({
+                    code: status,
+                    message: statusText
+                });
+            }
+
+            return response.json();
+        }).
+        then((body) => {
+            this.setState({
+                loggedIn: true,
+                text: body.text
+            });
+        }).
+        catch((error) => {
+            // Handle Errors here.
+            const { code, message } = error;
+            console.error(code, message);
+
+            this.setState({loggedIn: false});
+        });
+    }
+
+    loginFacebook(event) {
+        event.preventDefault();
+        const provider = new firebase.auth.FacebookAuthProvider();
+
+        this.loginPopup(provider);
+    }
+
+    loginGoogle(event) {
+        event.preventDefault();
+        const provider = new firebase.auth.GoogleAuthProvider();
+
+        this.loginPopup(provider);
+    }
+
     loginUser(event) {
         event.preventDefault();
 
@@ -83,6 +139,8 @@ export default class Login extends Component {
                     <input name="password" placeholder="password" type="password" onChange={this.handlePassword.bind(this)}/>
 
                     <button type="submit" onClick={this.loginUser.bind(this)}>Log in</button>
+                    <button type="submit" onClick={this.loginFacebook.bind(this)}>Facebook Log In</button>
+                    <button type="submit" onClick={this.loginGoogle.bind(this)}>Google Log In</button>
                 </form>
                 { userStatus }
                 <div>Response: { this.state.text }</div>

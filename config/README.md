@@ -30,7 +30,7 @@ module.exports = {
 
 This is a file representing the required configurations for database migration.
 
-__Example of my-config.js__
+__Example of db-config.js__
 ```
 {
   "development": {
