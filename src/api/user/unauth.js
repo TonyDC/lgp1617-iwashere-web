@@ -28,16 +28,14 @@ router.post('/register', (req, res) => {
         end();
 
         return;
-    }
 
-    if (!validator.isEmail(email)) {
+    } else if (!validator.isEmail(email)) {
         res.status(httpStatus.BAD_REQUEST).send({message: 'Bad email'}).
         end();
 
         return;
-    }
 
-    if (typeof name !== 'string' || validator.isEmpty(name.trim())) {
+    } else if (typeof name !== 'string' || validator.isEmpty(name.trim())) {
         res.status(httpStatus.BAD_REQUEST).send({message: 'Bad user name'}).
         end();
 
@@ -48,11 +46,10 @@ router.post('/register', (req, res) => {
 
     User.findOne({ where: { email } }).then((user) => {
         // User will be the first entry of the MainUser table || null
-        if (user) {
-            return new Error('User with the given email already exists');
-        }
+        return user
+            ? new Error('User with the given email already exists')
+            : null;
 
-        return null;
     }).
     then(() => {
         return firebaseAdmin.auth().createUser({
