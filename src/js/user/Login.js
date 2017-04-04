@@ -88,10 +88,11 @@ export default class Login extends Component {
         then((response) => {
             const { status, statusText } = response;
             if (status >= BAD_REQUEST) {
-                return Promise.reject({
-                    code: status,
-                    message: statusText
-                });
+                const error = new Error('Bad request');
+                error.code = status;
+                error.message = statusText;
+
+                return Promise.reject(error);
             }
 
             return response.json();
