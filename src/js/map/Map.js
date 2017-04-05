@@ -47,7 +47,7 @@ export default class Map extends Component {
                 <Marker
                     lat={coords.lat}
                     lng={coords.lng}
-                    draggable={true}
+                    draggable
                     onDragEnd={this.onDragEnd} />
 
                 <InfoWindow

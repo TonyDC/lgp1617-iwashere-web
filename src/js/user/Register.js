@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Helmet } from 'react-helmet';
 import * as firebase from 'firebase';
 import { Redirect } from 'react-router-dom';
 import { BAD_REQUEST } from 'http-status-codes';
@@ -135,78 +136,84 @@ export default class Login extends Component {
         }
 
         return (
-            <div className="container">
-                <div className="row main">
-                    <div className="panel-heading">
-                        <div className="panel-title text-center">
-                            <h1 className="title">#iwashere</h1>
-                            <hr />
+            <div>
+                <Helmet>
+                    <title>#iwashere - Register</title>
+                </Helmet>
+                <div className="container">
+                    <div className="row main">
+                        <div className="panel-heading">
+                            <div className="panel-title text-center">
+                                <h1 className="title">#iwashere</h1>
+                                <hr />
+                            </div>
                         </div>
-                    </div>
-                    <div className="main-login main-center">
-                        <form className="form-horizontal">
-                            <div className="form-group">
-                                <label htmlFor="name" className="cols-sm-2 control-label">Username</label>
-                                <div className="cols-sm-10">
-                                    <div className="input-group" onSubmit={this.registerUser.bind(this)}>
-                                        <span className="input-group-addon"><i className="fa fa-user fa" aria-hidden="true"/></span>
-                                        <input type="text" className="form-control" name="name" id="name" placeholder="Enter your Name" />
+                        <div className="main-login main-center">
+                            <form className="form-horizontal" onSubmit={this.registerUser.bind(this)}>
+                                <div className="form-group">
+                                    <label htmlFor="name" className="cols-sm-2 control-label">Username</label>
+                                    <div className="cols-sm-10">
+                                        <div className="input-group" onChange={this.registerUser.bind(this)}>
+                                            <span className="input-group-addon"><i className="fa fa-user fa" aria-hidden="true"/></span>
+                                            <input type="text" className="form-control" name="name" id="name" placeholder="Enter your Name" />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div className="form-group">
-                                <label htmlFor="email" className="cols-sm-2 control-label">Your Email</label>
-                                <div className="cols-sm-10">
-                                    <div className="input-group">
-                                        <span className="input-group-addon"><i className="fa fa-envelope fa" aria-hidden="true"/></span>
-                                        <input type="text" className="form-control" name="email" id="email" placeholder="Enter your Email" onChange={this.handleEmail.bind(this)}/>
+                                <div className="form-group">
+                                    <label htmlFor="email" className="cols-sm-2 control-label">Your Email</label>
+                                    <div className="cols-sm-10">
+                                        <div className="input-group">
+                                            <span className="input-group-addon"><i className="fa fa-envelope fa" aria-hidden="true"/></span>
+                                            <input type="text" className="form-control" name="email" id="email" placeholder="Enter your Email" onChange={this.handleEmail.bind(this)}/>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div className="form-group">
-                                <label htmlFor="password" className="cols-sm-2 control-label">Password</label>
-                                <div className="cols-sm-10">
-                                    <div className="input-group">
-                                        <span className="input-group-addon"><i className="fa fa-lock fa-lg" aria-hidden="true"/></span>
-                                        <input type="password" className="form-control" name="password" id="password" placeholder="Enter your Password" onSubmit={this.handlePassword.bind(this)}/>
+                                <div className="form-group">
+                                    <label htmlFor="password" className="cols-sm-2 control-label">Password</label>
+                                    <div className="cols-sm-10">
+                                        <div className="input-group">
+                                            <span className="input-group-addon"><i className="fa fa-lock fa-lg" aria-hidden="true"/></span>
+                                            <input type="password" className="form-control" name="password" id="password" placeholder="Enter your Password" onChange={this.handlePassword.bind(this)}/>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div className="form-group">
-                                <label htmlFor="confirm" className="cols-sm-2 control-label">Confirm Password</label>
-                                <div className="cols-sm-10">
-                                    <div className="input-group">
-                                        <span className="input-group-addon"><i className="fa fa-lock fa-lg" aria-hidden="true"/></span>
-                                        <input type="password" className="form-control" name="confirm" id="confirm" placeholder="Confirm your Password"/>
+                                <div className="form-group">
+                                    <label htmlFor="confirm" className="cols-sm-2 control-label">Confirm Password</label>
+                                    <div className="cols-sm-10">
+                                        <div className="input-group">
+                                            <span className="input-group-addon"><i className="fa fa-lock fa-lg" aria-hidden="true"/></span>
+                                            <input type="password" className="form-control" name="confirm" id="confirm" placeholder="Confirm your Password"/>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div className="form-group ">
-                                <button type="button" className="btn btn-primary btn-lg btn-block login-button" onClick={this.registerUser.bind(this)}>Sign up</button>
-                            </div>
-                            <div className="form-group">
-                                <p> or </p>
-                            </div>
+                                <div className="form-group">
+                                    <button type="submit" className="btn btn-primary btn-lg btn-block login-button" onClick={this.registerUser.bind(this)}>Sign up</button>
+                                </div>
+                            </form>
+                            { /* ----- Logging in with providers automatically creates a new record in Firebase Auth module -----
+                             <div className="form-group">
+                             <p> or </p>
+                             </div>
 
-                            <div className="form-group" >
-                                <a className="btn btn-block btn-social btn-lg btn-facebook" onClick={this.registerWithFacebook.bind(this)}>
-                                    <span className="fa fa-facebook"/> Sign up with Facebook
-                                </a>
-                            </div>
+                             <div className="form-group" >
+                             <a className="btn btn-block btn-social btn-lg btn-facebook" onClick={this.registerWithFacebook.bind(this)}>
+                             <span className="fa fa-facebook"/> Sign up with Facebook
+                             </a>
+                             </div>
 
-                            <div className="form-group" >
-                                <a className="btn btn-block btn-social btn-lg btn-google" onClick={this.registerWithGoogle.bind(this)}>
-                                    <span className="fa fa-google"/> Sign up with Google
-                                </a>
-                            </div>
-
+                             <div className="form-group" >
+                             <a className="btn btn-block btn-social btn-lg btn-google" onClick={this.registerWithGoogle.bind(this)}>
+                             <span className="fa fa-google"/> Sign up with Google
+                             </a>
+                             </div>
+                             */ }
                             { registerInProgress }
                             { errorMessage }
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
