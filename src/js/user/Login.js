@@ -98,7 +98,7 @@ export default class Login extends Component {
                                 <label htmlFor="password" className="cols-sm-2 control-label">Password</label>
                                 <div className="cols-sm-10">
                                     <div className="input-group">
-                                        <span className="input-group-addon"><i className="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                                        <span className="input-group-addon"><i className="fa fa-lock fa-lg" aria-hidden="true"/></span>
                                         <input type="password" className="form-control" name="password" id="password" placeholder="Enter your Password" onSubmit={this.handlePassword.bind(this)}/>
                                     </div>
                                 </div>
