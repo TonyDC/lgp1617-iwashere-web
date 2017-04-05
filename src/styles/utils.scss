@@ -3,8 +3,29 @@
     flex-direction: row;
     align-items: center;
 }
+
 .hor-align {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
+}
+
+@media(min-width: 768px) {
+    .navbar {
+        border-radius: 0px;
+    }
+}
+
+.navbar-default .navbar-nav > li > a {
+    color: white;
+}
+
+.navbar {
+    border: 0;
+    background-color: #012935;
+    color: #012935;
+}
+
+.app-logo {
+    height: 100px;
 }

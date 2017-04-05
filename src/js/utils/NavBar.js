@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
 import { Navbar, Nav, NavItem, MenuItem, NavDropdown, Button } from 'react-bootstrap';
+import logo from 'img/logo.png';
 import * as firebase from 'firebase';
-
-import 'styles/utils.scss';
 
 export default class NavBar extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            user: firebase.auth().currentUser
-        };
+
+        this.state = { user: firebase.auth().currentUser };
 
         firebase.auth().onAuthStateChanged((user) => {
             this.setState({user});
@@ -28,20 +26,20 @@ export default class NavBar extends Component {
     }
 
     render() {
-        let userStatus = null;
+        let userAction = null;
         if (this.state.user) {
-            userStatus = <div>Sign out</div>;
+            userAction = <div>Sign out</div>;
         } else {
-            userStatus = <div>Sign in</div>;
+            userAction = <div>Sign in</div>;
         }
 
         return (
-            <Navbar inverse collapseOnSelect>
+            <Navbar collapseOnSelect>
                 <Navbar.Header>
                     <Navbar.Brand>
-                        <a href="#">#iwashere</a>
+                        <img src={logo} alt="#iwashere" className="app-logo"/>
                     </Navbar.Brand>
-                    <Navbar.Toggle />
+                    <Navbar.Toggle/>
                 </Navbar.Header>
                 <Navbar.Collapse>
                     <Nav>
@@ -58,7 +56,7 @@ export default class NavBar extends Component {
                     <Nav pullRight>
                         <NavItem eventKey={1} href="#">Link Right</NavItem>
                         <NavItem eventKey={2} href="#">Link Right</NavItem>
-                        <NavItem><Button onClick={ this.toggleUserStatus.bind(this) }>{ userStatus }</Button></NavItem>
+                        <NavItem><Button onClick={ this.toggleUserStatus.bind(this) }>{ userAction }</Button></NavItem>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>

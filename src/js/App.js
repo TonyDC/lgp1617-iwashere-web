@@ -20,12 +20,15 @@ export default class App extends Component {
             <Router>
                 <div>
                     <Route path="/" component={ NavBar }/>
-                    <Switch>
-                        <Route exact path="/" component={ Map }/>
-                        <Route path="/login" component={ UserLogin } />
-                        <Route path="/register" component={ UserRegister } />
-                        <Route component={ NoMatch }/>
-                    </Switch>
+
+                    <div>
+                        <Switch>
+                            <Route exact path="/" component={ Map }/>
+                            <Route path="/login" component={ UserLogin } />
+                            <Route path="/register" component={ UserRegister } />
+                            <Route component={ NoMatch }/>
+                        </Switch>
+                    </div>
                 </div>
             </Router>
         );
