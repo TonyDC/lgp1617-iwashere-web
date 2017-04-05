@@ -27,4 +27,4 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 
-render(<Login/>, document.getElementById('main'));
+render(<App/>, document.getElementById('main'));
