@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as firebase from 'firebase';
 import { Redirect } from 'react-router-dom';
+import { BAD_REQUEST } from 'http-status-codes';
 
 export default class Login extends Component {
 
@@ -11,6 +12,63 @@ export default class Login extends Component {
             inProgress: false,
             register: false
         };
+    }
+
+    loginPopup(provider) {
+        firebase.auth().signInWithPopup(provider).
+        then(() => {
+            const newUser = firebase.auth().currentUser;
+
+            // TODO save user info on db
+
+            return newUser.getToken(true);
+        }).
+        then((token) => {
+            return fetch('/api/user/auth/login', {
+                body: JSON.stringify({token}),
+                headers: {'Authorization': `Bearer ${token}`},
+                method: 'POST'
+            });
+        }).
+        then((response) => {
+            const { status, statusText } = response;
+            if (status >= BAD_REQUEST) {
+                const error = new Error('Bad request');
+                error.code = status;
+                error.message = statusText;
+
+                return Promise.reject(error);
+            }
+
+            return response.json();
+        }).
+        then((body) => {
+            this.setState({
+                loggedIn: true,
+                text: body.text
+            });
+        }).
+        catch((error) => {
+            // Handle Errors here.
+            const { code, message } = error;
+            console.error(code, message);
+
+            this.setState({loggedIn: false});
+        });
+    }
+
+    registerWithFacebook(event) {
+        event.preventDefault();
+        const provider = new firebase.auth.FacebookAuthProvider();
+
+        this.loginPopup(provider);
+    }
+
+    registerWithGoogle(event) {
+        event.preventDefault();
+        const provider = new firebase.auth.GoogleAuthProvider();
+
+        this.loginPopup(provider);
     }
 
     registerUser(event) {
@@ -77,6 +135,8 @@ export default class Login extends Component {
                     <input name="password" placeholder="password" type="password" onChange={this.handlePassword.bind(this)}/>
 
                     <button type="submit" onClick={this.registerUser.bind(this)}>Register</button>
+                    <button type="submit" onClick={this.registerWithFacebook.bind(this)}>Register with Facebook</button>
+                    <button type="submit" onClick={this.registerWithGoogle.bind(this)}>Register with Google</button>
                 </form>
                 { registerInProgress }
                 { errorMessage }

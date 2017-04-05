@@ -16,7 +16,7 @@ export default class Login extends Component {
     loginPopup(provider) {
         firebase.auth().signInWithPopup(provider).
         then((result) => {
-            // Facebook Access Token; can be used to access the Facebook API.
+            // Facebook/google Access Token; can be used to access APIs.
             // const token = result.credential.accessToken;
 
             // 'getToken(/* forceRefresh */ true)'
