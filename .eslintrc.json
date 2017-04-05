@@ -270,7 +270,7 @@
     "react/prop-types": 1,
     "react/react-in-jsx-scope": 1,
     "import/extensions": [2, "never", { "svg": "always", "scss": "always" }],
-    "react/self-closing-comp": 1,
+    "react/self-closing-comp": 2,
     "react/sort-comp": 1,
     "react/jsx-wrap-multilines": 1
   }

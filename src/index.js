@@ -1,8 +1,5 @@
 import React from 'react';
 import { render } from 'react-dom';
-import Register from './js/user/Register';
-import Login from './js/user/Login';
-
 import * as firebase from 'firebase';
 
 import App from './js/App';

@@ -21,12 +21,14 @@ export default class Login extends Component {
         const {email, password} = this.state;
         this.setState({inProgress: true});
 
-        firebase.auth().createUserWithEmailAndPassword(email, password).then(() => {
+        firebase.auth().createUserWithEmailAndPassword(email, password).
+        then(() => {
             this.setState({
                 inProgress: false,
                 register: true
             });
-        }).catch((error) => {
+        }).
+        catch((error) => {
             // Handle Errors here.
             const {code, message} = error;
             console.error(code, message);
@@ -84,7 +86,7 @@ export default class Login extends Component {
                                 <label htmlFor="name" className="cols-sm-2 control-label">Username</label>
                                 <div className="cols-sm-10">
                                     <div className="input-group" onSubmit={this.registerUser.bind(this)}>
-                                        <span className="input-group-addon"><i className="fa fa-user fa" aria-hidden="true"></i></span>
+                                        <span className="input-group-addon"><i className="fa fa-user fa" aria-hidden="true"/></span>
                                         <input type="text" className="form-control" name="name" id="name" placeholder="Enter your Name" />
                                     </div>
                                 </div>
@@ -94,7 +96,7 @@ export default class Login extends Component {
                                 <label htmlFor="email" className="cols-sm-2 control-label">Your Email</label>
                                 <div className="cols-sm-10">
                                     <div className="input-group">
-                                        <span className="input-group-addon"><i className="fa fa-envelope fa" aria-hidden="true"></i></span>
+                                        <span className="input-group-addon"><i className="fa fa-envelope fa" aria-hidden="true"/></span>
                                         <input type="text" className="form-control" name="email" id="email" placeholder="Enter your Email" onChange={this.handleEmail.bind(this)}/>
                                     </div>
                                 </div>
@@ -104,7 +106,7 @@ export default class Login extends Component {
                                 <label htmlFor="password" className="cols-sm-2 control-label">Password</label>
                                 <div className="cols-sm-10">
                                     <div className="input-group">
-                                        <span className="input-group-addon"><i className="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                                        <span className="input-group-addon"><i className="fa fa-lock fa-lg" aria-hidden="true"/></span>
                                         <input type="password" className="form-control" name="password" id="password" placeholder="Enter your Password" onSubmit={this.handlePassword.bind(this)}/>
                                     </div>
                                 </div>
@@ -114,7 +116,7 @@ export default class Login extends Component {
                                 <label htmlFor="confirm" className="cols-sm-2 control-label">Confirm Password</label>
                                 <div className="cols-sm-10">
                                     <div className="input-group">
-                                        <span className="input-group-addon"><i className="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                                        <span className="input-group-addon"><i className="fa fa-lock fa-lg" aria-hidden="true"/></span>
                                         <input type="password" className="form-control" name="confirm" id="confirm" placeholder="Confirm your Password"/>
                                     </div>
                                 </div>
