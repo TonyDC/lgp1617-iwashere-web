@@ -1,0 +1,10 @@
+.vert-align {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.hor-align {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}

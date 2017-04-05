@@ -7,7 +7,8 @@ import App from './js/App';
 // Font Awesome
 import 'font-awesome-webpack';
 
-// React Bootstrap CSS -> import 'bootstrap/dist/css/bootstrap.css';
+// React Bootstrap CSS ->
+import 'bootstrap/dist/css/bootstrap.css';
 
 // Custom SASS
 import './styles/index.scss';

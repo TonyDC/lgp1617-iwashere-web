@@ -19,9 +19,14 @@ export default class Login extends Component {
         then(() => {
             const newUser = firebase.auth().currentUser;
 
-            // TODO save user info on db
-
             return newUser.getToken(true);
+        }).
+        then(() => {
+            // TODO save user info on db
+            return fetch('/api/user/auth/register', {
+                body: JSON.stringify({token}),
+                method: 'POST'
+            });
         }).
         then((token) => {
             return fetch('/api/user/auth/login', {
