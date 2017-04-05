@@ -8,3 +8,9 @@
     flex-direction: row;
     justify-content: space-around;
 }
+
+.no-corners {
+    -webkit-border-radius: 0 !important;
+    -moz-border-radius: 0 !important;
+    border-radius: 0 !important;
+}
