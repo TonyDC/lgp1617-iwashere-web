@@ -8,7 +8,10 @@ const coords = {
     lng: -8.61129427
 };
 
-const params = {key: GOOGLE_MAPS_API_KEY, version: '3.exp'};
+const params = {
+    key: GOOGLE_MAPS_API_KEY,
+    version: '3.exp'
+};
 
 export default class Map extends Component {
 
