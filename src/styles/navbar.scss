@@ -1,0 +1,19 @@
+.logButton {
+    font-weight: bold;
+}
+
+@media(min-width: 768px) {
+    .navbar {
+        border-radius: 0px;
+        background-color: #012935;
+        color: #012935;
+    }
+}
+
+.navbar-default .navbar-nav > li > a {
+    color: white;
+}
+
+.app-logo {
+    height: 100px;
+}

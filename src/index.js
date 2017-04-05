@@ -10,11 +10,13 @@ import 'font-awesome-webpack';
 // React Bootstrap CSS
 import 'bootstrap/dist/css/bootstrap.css';
 
-// Custmom CSS
-import 'styles/utils.scss';
+// Bootstrap Social
+import 'bootstrap-social';
 
-// Custom SASS
+// Custmom CSS
+import './styles/utils.scss';
 import './styles/index.scss';
+import 'styles/navbar.scss';
 
 // Initialize Firebase
 const firebaseConfig = {

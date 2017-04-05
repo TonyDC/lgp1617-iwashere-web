@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 import { Helmet } from 'react-helmet';
+import { Link } from 'react-router-dom';
 import * as firebase from 'firebase';
 import { BAD_REQUEST } from 'http-status-codes';
+
+import 'styles/login.scss';
+import 'styles/utils.scss';
 
 export default class Login extends Component {
 
@@ -15,9 +19,10 @@ export default class Login extends Component {
 
     loginPopup(provider) {
         firebase.auth().signInWithPopup(provider).
-        then((result) => {
+        then(() => {
             // Facebook/google Access Token; can be used to access APIs.
-            // const token = result.credential.accessToken;
+            // Parameter: result
+            // Code: const token = result.credential.accessToken;
 
             // 'getToken(/* forceRefresh */ true)'
             return firebase.auth().currentUser.getToken(true);
@@ -103,6 +108,7 @@ export default class Login extends Component {
                 loggedIn: true,
                 text: body.text
             });
+            this.props.history.push('/');
         }).
         catch((error) => {
             // Handle Errors here.
@@ -134,18 +140,66 @@ export default class Login extends Component {
                 <Helmet>
                     <title>#iwashere - Login</title>
                 </Helmet>
+                <div className="container">
+                    <div className="row main">
+                        <div className="panel-heading">
+                            <div className="panel-title text-center">
+                                <h1 className="title">#iwashere</h1>
+                                <hr/>
+                            </div>
+                        </div>
 
-                <h2>Login</h2>
-                <form onSubmit={this.loginUser.bind(this)}>
-                    <input name="email" placeholder="email" type="email" onChange={this.handleEmail.bind(this)}/>
-                    <input name="password" placeholder="password" type="password" onChange={this.handlePassword.bind(this)}/>
+                        <div className="main-login main-center">
+                            <form className="form-horizontal" onSubmit={ this.loginUser.bind(this) }>
+                                <div className="form-group">
+                                    <label htmlFor="email" className="cols-sm-2 control-label">Your Email</label>
+                                    <div className="cols-sm-10">
+                                        <div className="input-group">
+                                            <span className="input-group-addon"><i className="fa fa-envelope fa" aria-hidden="true"/></span>
+                                            <input type="text" className="form-control" name="email" id="email" placeholder="Enter your Email" onChange={ this.handleEmail.bind(this) }/>
+                                        </div>
+                                    </div>
+                                </div>
 
-                    <button type="submit" onClick={this.loginUser.bind(this)}>Log in</button>
-                    <button type="submit" onClick={this.loginFacebook.bind(this)}>Facebook Log In</button>
-                    <button type="submit" onClick={this.loginGoogle.bind(this)}>Google Log In</button>
-                </form>
-                { userStatus }
-                <div>Response: { this.state.text }</div>
+                                <div className="form-group">
+                                    <label htmlFor="password" className="cols-sm-2 control-label">Password</label>
+                                    <div className="cols-sm-10">
+                                        <div className="input-group">
+                                            <span className="input-group-addon"><i className="fa fa-lock fa-lg" aria-hidden="true"/></span>
+                                            <input type="password" className="form-control" name="password" id="password" placeholder="Enter your Password" onChange={ this.handlePassword.bind(this) }/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="form-group ">
+                                    <button type="submit" className="btn btn-primary btn-lg btn-block login-button" onClick={ this.loginUser.bind(this) }>Sign In</button>
+                                </div>
+                            </form>
+
+                            <div className="form-group hor-align">
+                                <p> or </p>
+                            </div>
+
+                            <div className="form-group" >
+                                <button className="btn btn-block btn-social btn-lg btn-facebook" onClick={ this.loginFacebook.bind(this) }>
+                                    <span className="fa fa-facebook"/> Sign in with Facebook
+                                </button>
+                            </div>
+
+                            <div className="form-group" >
+                                <button className="btn btn-block btn-social btn-lg btn-google" onClick={ this.loginGoogle.bind(this) }>
+                                    <span className="fa fa-google"/> Sign in with Google
+                                </button>
+                            </div>
+
+                            <div className="form-group">
+                                <Link to="/forgot">Forgot Password</Link>
+                            </div>
+                            { userStatus }
+                            Response: { this.state.text }
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }

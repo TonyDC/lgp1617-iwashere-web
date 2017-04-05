@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Navbar, Nav, NavItem, MenuItem, NavDropdown, Button } from 'react-bootstrap';
-import logo from 'img/logo.png';
+import { Navbar, Nav, NavItem, MenuItem, NavDropdown } from 'react-bootstrap';
 import * as firebase from 'firebase';
+
+import logo from 'img/logo.png';
 
 export default class NavBar extends Component {
     constructor(props) {
@@ -21,16 +22,16 @@ export default class NavBar extends Component {
             firebase.auth().signOut();
             this.props.history.push('/');
         } else {
-            this.props.history.push('/login/');
+            this.props.history.push('/login');
         }
     }
 
     render() {
         let userAction = null;
         if (this.state.user) {
-            userAction = <div>Sign out</div>;
+            userAction = <div className="logButton">Sign out</div>;
         } else {
-            userAction = <div>Sign in</div>;
+            userAction = <div className="logButton">Sign in</div>;
         }
 
         return (
@@ -56,7 +57,7 @@ export default class NavBar extends Component {
                     <Nav pullRight>
                         <NavItem eventKey={1} href="#">Link Right</NavItem>
                         <NavItem eventKey={2} href="#">Link Right</NavItem>
-                        <NavItem><Button onClick={ this.toggleUserStatus.bind(this) }>{ userAction }</Button></NavItem>
+                        <NavItem onClick={ this.toggleUserStatus.bind(this) }>{ userAction }</NavItem>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
