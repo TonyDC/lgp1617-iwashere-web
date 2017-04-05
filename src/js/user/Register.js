@@ -121,7 +121,22 @@ export default class Login extends Component {
                             </div>
 
                             <div className="form-group ">
-                                <button type="button" className="btn btn-primary btn-lg btn-block login-button" onClick={this.registerUser.bind(this)}>Register</button>
+                                <button type="button" className="btn btn-primary btn-lg btn-block login-button" onClick={this.registerUser.bind(this)}>Sign up</button>
+                            </div>
+                            <div className="form-group">
+                                <p> or </p>
+                            </div>
+
+                            <div className="form-group" >
+                                <a className="btn btn-block btn-social btn-lg btn-facebook">
+                                    <span className="fa fa-facebook"/> Sign up with Facebook
+                                </a>
+                            </div>
+
+                            <div className="form-group" >
+                                <a className="btn btn-block btn-social btn-lg btn-google">
+                                    <span className="fa fa-google"/> Sign up with Google
+                                </a>
                             </div>
 
                             { registerInProgress }

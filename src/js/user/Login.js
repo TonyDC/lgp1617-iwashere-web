@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import * as firebase from 'firebase';
 import { BAD_REQUEST } from 'http-status-codes';
 import 'styles/login.scss';
@@ -104,9 +105,25 @@ export default class Login extends Component {
                             </div>
 
                             <div className="form-group ">
-                                <button type="button" className="btn btn-primary btn-lg btn-block login-button" onClick={this.loginUser.bind(this)}>Log In</button>
+                                <a className="btn btn-primary btn-lg btn-block login-button" onClick={this.loginUser.bind(this)}>Sign In</a>
                             </div>
-                            { userStatus }
+
+                            <div className="form-group" >
+                                <a className="btn btn-block btn-social btn-lg btn-facebook">
+                                    <span className="fa fa-facebook"/> Sign in with Facebook
+                                </a>
+                            </div>
+
+                            <div className="form-group" >
+                                <a className="btn btn-block btn-social btn-lg btn-google">
+                                    <span className="fa fa-google"/> Sign in with Google
+                                </a>
+                            </div>
+
+                            <div className="form-group">
+                                <Link to="/forgot">Forgot Password</Link>
+                            </div>
+                                            { userStatus }
                             Response: { this.state.text }
                         </form>
                     </div>
