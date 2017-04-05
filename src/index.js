@@ -1,7 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
 import * as firebase from 'firebase';
-import Map from './js/map/Map';
 import App from './js/App';
 
 // Font Awesome

@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import ReactDOM from 'react-dom';
 import {Gmaps, Marker, InfoWindow, Circle} from 'react-gmaps';
 
 import {GOOGLE_MAPS_API_KEY} from '../../../config/my-config';
@@ -9,14 +8,14 @@ const coords = {
     lng: -8.61129427
 };
 
-const params = {key: GOOGLE_MAPS_API_KEY, v: '3.exp'};
+const params = {key: GOOGLE_MAPS_API_KEY, version: '3.exp'};
 
 export default class Map extends Component {
 
 
     onMapCreated(map) {
-        map.setOptions({
-            disableDefaultUI: true});
+        map.setOptions(
+            {disableDefaultUI: true});
     }
 
     onDragEnd(event) {
