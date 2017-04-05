@@ -18,7 +18,7 @@ export default class App extends Component {
         return (
             <Router>
                 <Switch>
-                    <Route exact path="/" component={ Map }/>
+                    <Route exact path="/map" component={ Map }/>
                     <Route path="/login" component={ UserLogin } />
                     <Route path="/register" component={ UserRegister } />
                     <Route component={ NoMatch }/>
