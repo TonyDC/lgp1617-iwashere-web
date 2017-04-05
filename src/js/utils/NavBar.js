@@ -35,7 +35,7 @@ export default class NavBar extends Component {
         }
 
         return (
-            <Navbar collapseOnSelect>
+            <Navbar inverse collapseOnSelect className="no-corners">
                 <Navbar.Header>
                     <Navbar.Brand>
                         <img src={logo} alt="#iwashere" className="app-logo"/>
@@ -65,3 +65,4 @@ export default class NavBar extends Component {
     }
 }
 
+NavBar.propTypes = { history: React.PropTypes.object };
