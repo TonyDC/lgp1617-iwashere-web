@@ -1,69 +1,30 @@
 import React, { Component } from 'react';
-import { Gmaps, Marker, InfoWindow, Circle } from 'react-gmaps';
+import GoogleMapReact from 'google-map-react';
 
-import { GOOGLE_MAPS_API_KEY } from '../../../config/my-config';
+import Pin from './Pin';
 
-const coords = {
-    lat: 41.14792237,
-    lng: -8.61129427
-};
-
-const params = {
-    key: GOOGLE_MAPS_API_KEY,
-    version: '3.exp'
-};
+import 'styles/utils.scss';
 
 export default class Map extends Component {
 
-    onMapCreated(map) {
-        map.setOptions(
-            {disableDefaultUI: true});
-    }
-
-    onDragEnd(event) {
-        console.log('onDragEnd', event);
-    }
-
-    onCloseClick() {
-        console.log('onCloseClick');
-    }
-
-    onClick(event) {
-        console.log('onClick', event);
-    }
-
     render() {
         return (
-            <Gmaps
-                width={'800px'}
-                height={'600px'}
-                lat={coords.lat}
-                lng={coords.lng}
-                zoom={12}
-                loadingMessage={'Be happy'}
-                params={params}
-                onMapCreated={this.onMapCreated}>
-
-                <Marker
-                    lat={coords.lat}
-                    lng={coords.lng}
-                    draggable
-                    onDragEnd={this.onDragEnd} />
-
-                <InfoWindow
-                    lat={coords.lat}
-                    lng={coords.lng}
-                    content={'Hello, React :)'}
-                    onCloseClick={this.onCloseClick} />
-
-                <Circle
-                    lat={coords.lat}
-                    lng={coords.lng}
-                    radius={500}
-                    onClick={this.onClick} />
-            </Gmaps>
+            // apiKey prop
+            <div className="fullscreen">
+                <GoogleMapReact defaultCenter={this.props.center} defaultZoom={this.props.zoom}>
+                    <Pin lat={41.14792237} lng={-8.61129427} text="Hello!">
+                        <button>asfasfds</button>
+                    </Pin>
+                </GoogleMapReact>
+            </div>
         );
     }
 }
 
-Map.propTypes = { location: React.PropTypes.object };
+Map.defaultProps = {
+    center: {
+        lat: 41.14792237,
+        lng: -8.61129427
+    },
+    zoom: 8
+};

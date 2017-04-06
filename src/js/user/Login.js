@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import * as firebase from 'firebase';
-import { BAD_REQUEST } from 'http-status-codes';
 
 import 'styles/login.scss';
 import 'styles/utils.scss';
@@ -12,7 +11,9 @@ export default class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            email: null,
             loggedIn: false,
+            password: null,
             text: null
         };
     }
@@ -25,32 +26,8 @@ export default class Login extends Component {
             // Code: const token = result.credential.accessToken;
 
             // 'getToken(/* forceRefresh */ true)'
-            return firebase.auth().currentUser.getToken(true);
-        }).
-        then((token) => {
-            return fetch('/api/user/auth/login', {
-                body: JSON.stringify({token}),
-                headers: {'Authorization': `Bearer ${token}`},
-                method: 'POST'
-            });
-        }).
-        then((response) => {
-            const { status, statusText } = response;
-            if (status >= BAD_REQUEST) {
-                const error = new Error('Bad request');
-                error.code = status;
-                error.message = statusText;
-
-                return Promise.reject(error);
-            }
-
-            return response.json();
-        }).
-        then((body) => {
-            this.setState({
-                loggedIn: true,
-                text: body.text
-            });
+            // 'return firebase.auth().currentUser.getToken(true);'
+            this.setState({loggedIn: true});
         }).
         catch((error) => {
             // Handle Errors here.
@@ -82,32 +59,8 @@ export default class Login extends Component {
         firebase.auth().signInWithEmailAndPassword(email, password).
         then(() => {
             // 'getToken(/* forceRefresh */ true)'
-            return firebase.auth().currentUser.getToken(true);
-        }).
-        then((token) => {
-            return fetch('/api/user/auth/login', {
-                body: JSON.stringify({token}),
-                headers: {'Authorization': `Bearer ${token}`},
-                method: 'POST'
-            });
-        }).
-        then((response) => {
-            const { status, statusText } = response;
-            if (status >= BAD_REQUEST) {
-                const error = new Error('Bad request');
-                error.code = status;
-                error.message = statusText;
-
-                return Promise.reject(error);
-            }
-
-            return response.json();
-        }).
-        then((body) => {
-            this.setState({
-                loggedIn: true,
-                text: body.text
-            });
+            // 'return firebase.auth().currentUser.getToken(true);'
+            this.setState({loggedIn: true});
             this.props.history.push('/');
         }).
         catch((error) => {
@@ -130,16 +83,12 @@ export default class Login extends Component {
     }
 
     render() {
-        let userStatus = null;
-        if (this.state.loggedIn) {
-            userStatus = <div>Logged in</div>;
-        }
-
         return (
             <div>
                 <Helmet>
                     <title>#iwashere - Login</title>
                 </Helmet>
+
                 <div className="container">
                     <div className="row main">
                         <div className="panel-heading">
@@ -195,8 +144,7 @@ export default class Login extends Component {
                             <div className="form-group">
                                 <Link to="/forgot">Forgot Password</Link>
                             </div>
-                            { userStatus }
-                            Response: { this.state.text }
+
                         </div>
                     </div>
                 </div>
@@ -204,3 +152,5 @@ export default class Login extends Component {
         );
     }
 }
+
+Login.propTypes = { history: React.PropTypes.object };

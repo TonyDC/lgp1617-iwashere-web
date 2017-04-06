@@ -35,7 +35,7 @@ export default class NavBar extends Component {
         }
 
         return (
-            <Navbar inverse collapseOnSelect className="no-corners">
+            <Navbar inverse collapseOnSelect className="no-corners" style={{position: 'absolute', zIndex: 1, width: '100%'}}>
                 <Navbar.Header>
                     <Navbar.Brand>
                         <img src={logo} alt="#iwashere" className="app-logo"/>

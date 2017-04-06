@@ -3,10 +3,11 @@ import { Helmet } from 'react-helmet';
 import * as firebase from 'firebase';
 import { Redirect } from 'react-router-dom';
 import { BAD_REQUEST } from 'http-status-codes';
+import { browserHistory as history } from 'react-router';
 
 import 'styles/register.scss';
 
-export default class Login extends Component {
+export default class Register extends Component {
 
     constructor(props) {
         super(props);
@@ -18,7 +19,6 @@ export default class Login extends Component {
     }
 
     sendEmailVerification(user) {
-
         const newUser = user
             ? user
             : firebase.auth().currentUser;
@@ -70,7 +70,7 @@ export default class Login extends Component {
                 text: body.text
             });
 
-            this.props.history.push('/');
+            history.push('/');
         }).
         catch((error) => {
             // Handle Errors here.
@@ -159,6 +159,7 @@ export default class Login extends Component {
                 <Helmet>
                     <title>#iwashere - Register</title>
                 </Helmet>
+
                 <div className="container">
                     <div className="row main">
                         <div className="panel-heading">
@@ -239,3 +240,5 @@ export default class Login extends Component {
         );
     }
 }
+
+Register.propTypes = { history: React.PropTypes.object };
