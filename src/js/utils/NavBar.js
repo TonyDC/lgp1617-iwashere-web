@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
+import Alert from 'react-s-alert';
+
 import { Navbar, Nav, NavItem, MenuItem, NavDropdown } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import * as firebase from 'firebase';
 
 import logo from 'img/logo.png';
@@ -12,6 +15,24 @@ export default class NavBar extends Component {
 
         firebase.auth().onAuthStateChanged((user) => {
             this.setState({user});
+
+            console.log('run');
+
+            if (firebase.auth().currentUser) {
+                Alert.closeAll();
+                Alert.info(`You are signed in as ${user.displayName}`, {
+                    effect: 'slide',
+                    position: 'bottom-right',
+                    timeout: 5000
+                });
+            } else {
+                Alert.closeAll();
+                Alert.info('You are signed out.', {
+                    effect: 'slide',
+                    position: 'bottom-right',
+                    timeout: 5000
+                });
+            }
         });
     }
 

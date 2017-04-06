@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Alert from 'react-s-alert';
+
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import * as firebase from 'firebase';
@@ -12,9 +14,13 @@ export default class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            loggedIn: false,
-            text: null
+            errors: [],
+            loggedIn: firebase.auth().currentUser !== null
         };
+    }
+
+    componentWillUnmount() {
+        Alert.closeAll();
     }
 
     loginPopup(provider) {
@@ -46,11 +52,10 @@ export default class Login extends Component {
 
             return response.json();
         }).
-        then((body) => {
-            this.setState({
-                loggedIn: true,
-                text: body.text
-            });
+        then(() => {
+            this.setState({ loggedIn: true });
+
+            this.props.history.push('/');
         }).
         catch((error) => {
             // Handle Errors here.
@@ -58,6 +63,13 @@ export default class Login extends Component {
             console.error(code, message);
 
             this.setState({loggedIn: false});
+
+            Alert.closeAll();
+            Alert.error(message, {
+                effect: 'slide',
+                position: 'bottom-right',
+                timeout: 'none'
+            });
         });
     }
 
@@ -105,8 +117,7 @@ export default class Login extends Component {
         }).
         then((body) => {
             this.setState({
-                loggedIn: true,
-                text: body.text
+                loggedIn: true
             });
             this.props.history.push('/');
         }).
@@ -116,6 +127,13 @@ export default class Login extends Component {
             console.error(code, message);
 
             this.setState({loggedIn: false});
+
+            Alert.closeAll();
+            Alert.error(message, {
+                effect: 'slide',
+                position: 'bottom-right',
+                timeout: 'none'
+            });
         });
     }
 
@@ -130,11 +148,6 @@ export default class Login extends Component {
     }
 
     render() {
-        let userStatus = null;
-        if (this.state.loggedIn) {
-            userStatus = <div>Logged in</div>;
-        }
-
         return (
             <div>
                 <Helmet>
@@ -193,10 +206,8 @@ export default class Login extends Component {
                             </div>
 
                             <div className="form-group">
-                                <Link to="/forgot">Forgot Password</Link>
+                                <Link to="/password-reset">Forgot your password?</Link>
                             </div>
-                            { userStatus }
-                            Response: { this.state.text }
                         </div>
                     </div>
                 </div>

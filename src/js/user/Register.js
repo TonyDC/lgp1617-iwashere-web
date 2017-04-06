@@ -4,6 +4,8 @@ import * as firebase from 'firebase';
 import { Redirect } from 'react-router-dom';
 import { BAD_REQUEST } from 'http-status-codes';
 
+import Alert from 'react-s-alert';
+
 import 'styles/register.scss';
 
 export default class Login extends Component {
@@ -24,8 +26,13 @@ export default class Login extends Component {
             : firebase.auth().currentUser;
 
         if (!newUser.emailVerified) {
-            // TODO notify user
+            Alert.info('A verification email has been sent to your email address.', {
+                position: 'top-left',
+                timeout: 'none'
+            });
+
             newUser.sendEmailVerification();
+            console.log("Email verification sent.");
         }
     }
 
