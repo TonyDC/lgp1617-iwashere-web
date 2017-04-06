@@ -5,6 +5,7 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import * as firebase from 'firebase';
 import { BAD_REQUEST } from 'http-status-codes';
+const validator = require('validator');
 
 import 'styles/login.scss';
 import 'styles/utils.scss';
@@ -19,8 +20,42 @@ export default class Login extends Component {
         };
     }
 
+    closePreviousErrors() {
+        this.state.errors.forEach((error) => {
+            Alert.close(error);
+        });
+
+        this.setState({ errors: [] });
+    }
+
+    newError(errorMessage) {
+        return Alert.error(errorMessage, {
+            effect: 'slide',
+            position: 'bottom-right',
+            timeout: 'none'
+        });
+    }
+
     componentWillUnmount() {
-        Alert.closeAll();
+        this.closePreviousErrors();
+    }
+
+    handleError(error) {
+        const { code, message } = error;
+        console.error(code, message);
+
+        this.closePreviousErrors();
+
+        const currentError = Alert.error(message, {
+            effect: 'slide',
+            position: 'bottom-right',
+            timeout: 'none'
+        });
+
+        this.setState({
+            errors: [currentError],
+            loggedIn: false
+        });
     }
 
     loginPopup(provider) {
@@ -53,23 +88,10 @@ export default class Login extends Component {
             return response.json();
         }).
         then(() => {
-            this.setState({ loggedIn: true });
-
             this.props.history.push('/');
         }).
         catch((error) => {
-            // Handle Errors here.
-            const { code, message } = error;
-            console.error(code, message);
-
-            this.setState({loggedIn: false});
-
-            Alert.closeAll();
-            Alert.error(message, {
-                effect: 'slide',
-                position: 'bottom-right',
-                timeout: 'none'
-            });
+            this.handleError(error);
         });
     }
 
@@ -87,8 +109,30 @@ export default class Login extends Component {
         this.loginPopup(provider);
     }
 
+    checkForm() {
+
+        const { email, password } = this.state;
+        const errorList = [];
+
+        if (typeof name !== 'string' || !email || validator.isEmpty(email.trim()) || !validator.isEmail(email)) {
+            errorList.push(this.newError("The email entered is not valid."));
+        }
+
+        if (!password || validator.isEmpty(password)) {
+            errorList.push(this.newError("The password is required."));
+        }
+
+        this.setState({ errors: errorList });
+
+        return errorList.length === 0;
+    }
+
     loginUser(event) {
         event.preventDefault();
+
+        if (!this.checkForm()) {
+            return;
+        }
 
         const { email, password } = this.state;
         firebase.auth().signInWithEmailAndPassword(email, password).
@@ -115,25 +159,11 @@ export default class Login extends Component {
 
             return response.json();
         }).
-        then((body) => {
-            this.setState({
-                loggedIn: true
-            });
+        then(() => {
             this.props.history.push('/');
         }).
         catch((error) => {
-            // Handle Errors here.
-            const { code, message } = error;
-            console.error(code, message);
-
-            this.setState({loggedIn: false});
-
-            Alert.closeAll();
-            Alert.error(message, {
-                effect: 'slide',
-                position: 'bottom-right',
-                timeout: 'none'
-            });
+            this.handleError(error);
         });
     }
 
@@ -151,7 +181,7 @@ export default class Login extends Component {
         return (
             <div>
                 <Helmet>
-                    <title>#iwashere - Login</title>
+                    <title>#iwashere - Sign in</title>
                 </Helmet>
                 <div className="container">
                     <div className="row main">
@@ -194,13 +224,13 @@ export default class Login extends Component {
                             </div>
 
                             <div className="form-group" >
-                                <button className="btn btn-block btn-social btn-lg btn-facebook" onClick={ this.loginFacebook.bind(this) }>
+                                <button className="btn btn-block btn-social btn-facebook" onClick={ this.loginFacebook.bind(this) }>
                                     <span className="fa fa-facebook"/> Sign in with Facebook
                                 </button>
                             </div>
 
                             <div className="form-group" >
-                                <button className="btn btn-block btn-social btn-lg btn-google" onClick={ this.loginGoogle.bind(this) }>
+                                <button className="btn btn-block btn-social btn-google" onClick={ this.loginGoogle.bind(this) }>
                                     <span className="fa fa-google"/> Sign in with Google
                                 </button>
                             </div>
@@ -208,6 +238,11 @@ export default class Login extends Component {
                             <div className="form-group">
                                 <Link to="/password-reset">Forgot your password?</Link>
                             </div>
+
+                            <div className="form-group">
+                                <Link to="/register">Don't have an account?</Link>
+                            </div>
+
                         </div>
                     </div>
                 </div>

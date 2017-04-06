@@ -16,9 +16,7 @@ export default class NavBar extends Component {
         firebase.auth().onAuthStateChanged((user) => {
             this.setState({user});
 
-            console.log('run');
-
-            if (firebase.auth().currentUser) {
+            if (user) {
                 Alert.closeAll();
                 Alert.info(`You are signed in as ${user.displayName}`, {
                     effect: 'slide',
@@ -56,7 +54,7 @@ export default class NavBar extends Component {
         }
 
         return (
-            <Navbar inverse collapseOnSelect className="no-corners">
+            <Navbar inverse collapseOnSelect className="navbar">
                 <Navbar.Header>
                     <Navbar.Brand>
                         <img src={logo} alt="#iwashere" className="app-logo"/>

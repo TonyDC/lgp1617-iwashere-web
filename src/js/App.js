@@ -26,14 +26,13 @@ export default class App extends Component {
                 <div>
                     <Route path="/" component={ NavBar }/>
 
-                    <div>
                         <Switch>
                             <Route exact path="/" component={ Map }/>
                             <Route path="/login" component={ UserLogin } />
                             <Route path="/register" component={ UserRegister } />
                             <Route component={ NoMatch }/>
                         </Switch>
-                    </div>
+
                     <Alert stack={{limit: 30}} />
                 </div>
             </Router>
