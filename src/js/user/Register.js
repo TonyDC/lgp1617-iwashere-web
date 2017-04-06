@@ -17,10 +17,24 @@ export default class Login extends Component {
         };
     }
 
+    sendEmailVerification(user) {
+
+        const newUser = user
+            ? user
+            : firebase.auth().currentUser;
+
+        if (!newUser.emailVerified) {
+            // TODO notify user
+            newUser.sendEmailVerification();
+        }
+    }
+
     loginPopup(provider) {
         firebase.auth().signInWithPopup(provider).
         then(() => {
             const newUser = firebase.auth().currentUser;
+
+            this.sendEmailVerification(newUser);
 
             return newUser.getToken(true);
         }).
@@ -55,6 +69,8 @@ export default class Login extends Component {
                 loggedIn: true,
                 text: body.text
             });
+
+            this.props.history.push('/');
         }).
         catch((error) => {
             // Handle Errors here.
@@ -87,6 +103,9 @@ export default class Login extends Component {
 
         firebase.auth().createUserWithEmailAndPassword(email, password).
         then(() => {
+
+            this.sendEmailVerification();
+
             this.setState({
                 inProgress: false,
                 register: true
