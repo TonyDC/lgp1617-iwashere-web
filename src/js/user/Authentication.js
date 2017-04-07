@@ -224,38 +224,37 @@ export default class Login extends Component {
                                         Sign In
                                     </Button>
                                 </FormGroup>
+                            </Form>
+                            <FormGroup className="hor-align">
+                                or
+                            </FormGroup>
 
-                                <FormGroup hor-align>
-                                    or
+
+                            <Col sm={10}>
+
+                                <FormGroup>
+                                    <Button bsStyle="btn btn-block btn-social btn-md btn-facebook"
+                                            onClick={ this.loginFacebook.bind(this) }>
+                                        <span className="fa fa-facebook"/> Sign in with Facebook
+                                    </Button>
+                                </FormGroup>
+
+                                <FormGroup>
+                                    <Button bsStyle="btn btn-block btn-social btn-md btn-google"
+                                            onClick={ this.loginGoogle.bind(this) }>
+                                        <span className="fa fa-google"/> Sign in with Google
+                                    </Button>
                                 </FormGroup>
 
 
-                                <Col sm={10}>
+                                <FormGroup>
+                                    <Link to="/password-reset">Forgot your password?</Link>
+                                </FormGroup>
 
-                                    <FormGroup>
-                                        <Button bsStyle="btn btn-block btn-social btn-md btn-facebook"
-                                                onClick={ this.loginFacebook.bind(this) }>
-                                            <span className="fa fa-facebook"/> Sign in with Facebook
-                                        </Button>
-                                    </FormGroup>
-
-                                    <FormGroup>
-                                        <Button bsStyle="btn btn-block btn-social btn-md btn-google"
-                                                onClick={ this.loginGoogle.bind(this) }>
-                                            <span className="fa fa-google"/> Sign in with Google
-                                        </Button>
-                                    </FormGroup>
-
-
-                                    <FormGroup>
-                                        <Link to="/password-reset">Forgot your password?</Link>
-                                    </FormGroup>
-
-                                    <FormGroup>
-                                        <Link to="/register">Don't have an account?</Link>
-                                    </FormGroup>
-                                </Col>
-                            </Form>
+                                <FormGroup>
+                                    <Link to="/register">Don't have an account?</Link>
+                                </FormGroup>
+                            </Col>
 
                         </div>
                     </div>
