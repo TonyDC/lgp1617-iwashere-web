@@ -2,12 +2,11 @@
     font-weight: bold;
 }
 
-@media(min-width: 768px) {
-    .navbar {
-        border-radius: 0px;
-        background-color: #012935;
-        color: #012935;
-    }
+.navbar {
+    border-radius: 0;
+    background-color: #012935;
+    color: #012935;
+    margin-bottom: 0;
 }
 
 .navbar-default .navbar-nav > li > a {

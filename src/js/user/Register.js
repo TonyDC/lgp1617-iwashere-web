@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
+import Alert from 'react-s-alert';
+
+import { Link, Redirect } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import * as firebase from 'firebase';
-import { Redirect } from 'react-router-dom';
-import { BAD_REQUEST } from 'http-status-codes';
+const validator = require('validator');
 
-import Alert from 'react-s-alert';
+import { BAD_REQUEST } from 'http-status-codes';
 
 import 'styles/register.scss';
 
@@ -13,10 +15,75 @@ export default class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            error: false,
+            errors: [],
             inProgress: false,
             register: false
         };
+    }
+
+    closePreviousErrors() {
+        this.state.errors.forEach((error) => {
+            Alert.close(error);
+        });
+
+        this.setState({ errors: [] });
+    }
+
+    newError(errorMessage) {
+        return Alert.error(errorMessage, {
+            effect: 'slide',
+            position: 'bottom-right',
+            timeout: 'none'
+        });
+    }
+
+    componentWillUnmount() {
+        this.closePreviousErrors();
+    }
+
+    checkForm() {
+
+        const { username, email, password, confirmPassword } = this.state;
+        const errorList = [];
+
+        if (typeof username !== 'string' || !username || validator.isEmpty(username.trim())) {
+            errorList.push(this.newError("The username entered is not valid."));
+        }
+
+        if (typeof email !== 'string' || !email || validator.isEmpty(email.trim()) || !validator.isEmail(email)) {
+            errorList.push(this.newError("The email entered is not valid."));
+        }
+
+        if (!password || validator.isEmpty(password)) {
+            errorList.push(this.newError("The password is required."));
+        }
+
+        if (password !== confirmPassword) {
+            errorList.push(this.newError("The passwords entered don't match."));
+        }
+
+        this.setState({ errors: errorList });
+
+        return errorList.length === 0;
+    }
+
+    handleError(error) {
+        const { code, message } = error;
+        console.error(code, message);
+
+        this.closePreviousErrors();
+
+        const currentError = Alert.error(message, {
+            effect: 'slide',
+            position: 'bottom-right',
+            timeout: 'none'
+        });
+
+        this.setState({
+            errors: [currentError],
+            inProgress: false,
+            register: false
+        });
     }
 
     sendEmailVerification(user) {
@@ -26,31 +93,22 @@ export default class Login extends Component {
             : firebase.auth().currentUser;
 
         if (!newUser.emailVerified) {
-            Alert.info('A verification email has been sent to your email address.', {
-                position: 'top-left',
-                timeout: 'none'
+            Alert.info(`A verification email has been sent to ${newUser.email}.`, {
+                effect: 'slide',
+                position: 'bottom-right',
+                timeout: 5000
             });
 
             newUser.sendEmailVerification();
-            console.log("Email verification sent.");
         }
     }
 
-    loginPopup(provider) {
-        firebase.auth().signInWithPopup(provider).
-        then(() => {
-            const newUser = firebase.auth().currentUser;
+    loginUser() {
 
-            this.sendEmailVerification(newUser);
-
-            return newUser.getToken(true);
-        }).
+        const { email, password } = this.state;
+        firebase.auth().signInWithEmailAndPassword(email, password).
         then(() => {
-            // TODO save user info on db
-            return fetch('/api/user/auth/register', {
-                body: JSON.stringify({token}),
-                method: 'POST'
-            });
+            return firebase.auth().currentUser.getToken(true);
         }).
         then((token) => {
             return fetch('/api/user/auth/login', {
@@ -71,64 +129,65 @@ export default class Login extends Component {
 
             return response.json();
         }).
-        then((body) => {
-            this.setState({
-                loggedIn: true,
-                text: body.text
-            });
-
-            this.props.history.push('/');
-        }).
-        catch((error) => {
-            // Handle Errors here.
-            const { code, message } = error;
-            console.error(code, message);
-
-            this.setState({loggedIn: false});
-        });
-    }
-
-    registerWithFacebook(event) {
-        event.preventDefault();
-        const provider = new firebase.auth.FacebookAuthProvider();
-
-        this.loginPopup(provider);
-    }
-
-    registerWithGoogle(event) {
-        event.preventDefault();
-        const provider = new firebase.auth.GoogleAuthProvider();
-
-        this.loginPopup(provider);
-    }
-
-    registerUser(event) {
-        event.preventDefault();
-
-        const { email, password } = this.state;
-        this.setState({inProgress: true});
-
-        firebase.auth().createUserWithEmailAndPassword(email, password).
         then(() => {
-
             this.sendEmailVerification();
 
             this.setState({
                 inProgress: false,
                 register: true
             });
+
+            this.props.history.push('/');
         }).
         catch((error) => {
-            // Handle Errors here.
-            const { code, message } = error;
-            console.error(code, message);
-
-            this.setState({
-                error: true,
-                inProgress: false,
-                register: false
-            });
+            this.handleError(error);
         });
+    }
+
+    registerUser(event) {
+        event.preventDefault();
+
+        this.closePreviousErrors();
+
+        if (!this.checkForm()) {
+            return;
+        }
+
+        const { username, email, password, confirmPassword } = this.state;
+        this.setState({inProgress: true});
+
+        fetch('/api/user/unauth/register', {
+            body: JSON.stringify({
+                confirmPassword,
+                email,
+                password,
+                username
+            }),
+            headers: { 'Content-Type': 'application/json' },
+            method: 'POST'
+        }).
+        then((response) => {
+            return response.json();
+        }).
+        then((response) => {
+            if (!response.ok) {
+                const error = new Error('Bad request');
+                error.code = response.error.status;
+                error.message = response.error.message;
+
+                throw error;
+            }
+
+            this.loginUser();
+        }).
+        catch((error) => {
+            this.handleError(error);
+        });
+    }
+
+    handleUsername(event) {
+        event.preventDefault();
+        this.setState({username: event.target.value});
     }
 
     handleEmail(event) {
@@ -141,12 +200,12 @@ export default class Login extends Component {
         this.setState({password: event.target.value});
     }
 
-    render() {
-        let errorMessage = null;
-        if (this.state.error) {
-            errorMessage = <div>Error in registering the user</div>;
-        }
+    handleConfirmPassword(event) {
+        event.preventDefault();
+        this.setState({confirmPassword: event.target.value});
+    }
 
+    render() {
         if (this.state.register) {
             return (
                 <Redirect to={{
@@ -164,13 +223,13 @@ export default class Login extends Component {
         return (
             <div>
                 <Helmet>
-                    <title>#iwashere - Register</title>
+                    <title>#iwashere - Sign up</title>
                 </Helmet>
                 <div className="container">
                     <div className="row main">
                         <div className="panel-heading">
                             <div className="panel-title text-center">
-                                <h1 className="title">#iwashere</h1>
+                                <h1>Sign up</h1>
                                 <hr />
                             </div>
                         </div>
@@ -179,9 +238,9 @@ export default class Login extends Component {
                                 <div className="form-group">
                                     <label htmlFor="name" className="cols-sm-2 control-label">Username</label>
                                     <div className="cols-sm-10">
-                                        <div className="input-group" onChange={this.registerUser.bind(this)}>
+                                        <div className="input-group">
                                             <span className="input-group-addon"><i className="fa fa-user fa" aria-hidden="true"/></span>
-                                            <input type="text" className="form-control" name="name" id="name" placeholder="Enter your Name" />
+                                            <input type="text" className="form-control" name="name" id="name" placeholder="Enter your username"  onChange={this.handleUsername.bind(this)}/>
                                         </div>
                                     </div>
                                 </div>
@@ -191,7 +250,7 @@ export default class Login extends Component {
                                     <div className="cols-sm-10">
                                         <div className="input-group">
                                             <span className="input-group-addon"><i className="fa fa-envelope fa" aria-hidden="true"/></span>
-                                            <input type="text" className="form-control" name="email" id="email" placeholder="Enter your Email" onChange={this.handleEmail.bind(this)}/>
+                                            <input type="text" className="form-control" name="email" id="email" placeholder="Enter your email" onChange={this.handleEmail.bind(this)}/>
                                         </div>
                                     </div>
                                 </div>
@@ -201,7 +260,7 @@ export default class Login extends Component {
                                     <div className="cols-sm-10">
                                         <div className="input-group">
                                             <span className="input-group-addon"><i className="fa fa-lock fa-lg" aria-hidden="true"/></span>
-                                            <input type="password" className="form-control" name="password" id="password" placeholder="Enter your Password" onChange={this.handlePassword.bind(this)}/>
+                                            <input type="password" className="form-control" name="password" id="password" placeholder="Enter your password" onChange={this.handlePassword.bind(this)}/>
                                         </div>
                                     </div>
                                 </div>
@@ -211,7 +270,7 @@ export default class Login extends Component {
                                     <div className="cols-sm-10">
                                         <div className="input-group">
                                             <span className="input-group-addon"><i className="fa fa-lock fa-lg" aria-hidden="true"/></span>
-                                            <input type="password" className="form-control" name="confirm" id="confirm" placeholder="Confirm your Password"/>
+                                            <input type="password" className="form-control" name="confirm" id="confirm" placeholder="Confirm your password" onChange={this.handleConfirmPassword.bind(this)}/>
                                         </div>
                                     </div>
                                 </div>
@@ -219,26 +278,13 @@ export default class Login extends Component {
                                 <div className="form-group">
                                     <button type="submit" className="btn btn-primary btn-lg btn-block login-button" onClick={this.registerUser.bind(this)}>Sign up</button>
                                 </div>
+
+                                <div className="form-group">
+                                    <Link to="/login">Already have an account?</Link>
+                                </div>
+
                             </form>
-                            { /* ----- Logging in with providers automatically creates a new record in Firebase Auth module -----
-                             <div className="form-group">
-                             <p> or </p>
-                             </div>
-
-                             <div className="form-group" >
-                             <a className="btn btn-block btn-social btn-lg btn-facebook" onClick={this.registerWithFacebook.bind(this)}>
-                             <span className="fa fa-facebook"/> Sign up with Facebook
-                             </a>
-                             </div>
-
-                             <div className="form-group" >
-                             <a className="btn btn-block btn-social btn-lg btn-google" onClick={this.registerWithGoogle.bind(this)}>
-                             <span className="fa fa-google"/> Sign up with Google
-                             </a>
-                             </div>
-                             */ }
                             { registerInProgress }
-                            { errorMessage }
                         </div>
                     </div>
                 </div>
