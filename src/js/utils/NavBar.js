@@ -47,39 +47,50 @@ export default class NavBar extends Component {
 
     render() {
         let userAction = null;
+        let userPicture = null;
+        let userProfile = null;
+        let user = "Sign in";
+
         if (this.state.user) {
+            user = this.state.user.displayName;
             userAction = <div className="logButton">Sign out</div>;
+
+            if (this.state.user.photoURL) {
+                userPicture = <NavItem><img src={this.state.user.photoURL} alt="user-profile-picture"
+                                            className="img-circle"/></NavItem>;
+            }
+
+            userProfile = <MenuItem eventKey={3.1}>Profile</MenuItem>;
         } else {
             userAction = <div className="logButton">Sign in</div>;
         }
 
         return (
-            <Navbar inverse collapseOnSelect className="navbar">
-                <Navbar.Header>
-                    <Navbar.Brand>
-                        <img src={logo} alt="#iwashere" className="app-logo"/>
-                    </Navbar.Brand>
-                    <Navbar.Toggle/>
-                </Navbar.Header>
-                <Navbar.Collapse>
-                    <Nav>
-                        <NavItem eventKey={1} href="#">Link</NavItem>
-                        <NavItem eventKey={2} href="#">Link</NavItem>
-                        <NavDropdown eventKey={3} title="Dropdown" id="basic-nav-dropdown">
-                            <MenuItem eventKey={3.1}>Action</MenuItem>
-                            <MenuItem eventKey={3.2}>Another action</MenuItem>
-                            <MenuItem eventKey={3.3}>Something else here</MenuItem>
-                            <MenuItem divider />
-                            <MenuItem eventKey={3.3}>Separated link</MenuItem>
-                        </NavDropdown>
-                    </Nav>
-                    <Nav pullRight>
-                        <NavItem eventKey={1} href="#">Link Right</NavItem>
-                        <NavItem eventKey={2} href="#">Link Right</NavItem>
-                        <NavItem onClick={ this.toggleUserStatus.bind(this) }>{ userAction }</NavItem>
-                    </Nav>
-                </Navbar.Collapse>
-            </Navbar>
+                <Navbar inverse collapseOnSelect className="navbar">
+                    <Navbar.Header>
+                        <Navbar.Brand>
+                            <img src={logo} alt="#iwashere" className="app-logo"/>
+                        </Navbar.Brand>
+                        <Navbar.Toggle/>
+                    </Navbar.Header>
+                    <Navbar.Collapse>
+                        <Nav>
+                            <NavItem eventKey={1} href="#">Link</NavItem>
+                            <NavItem eventKey={2} href="#">Link</NavItem>
+                        </Nav>
+                        <Nav pullRight>
+                            <NavItem eventKey={1} href="#">Link Right</NavItem>
+                            <NavItem eventKey={2} href="#">Link Right</NavItem>
+
+                            <NavDropdown eventKey={3} title={user} id="basic-nav-dropdown">
+                                {userPicture}
+                                {userProfile}
+                                <MenuItem divider />
+                                <MenuItem onClick={ this.toggleUserStatus.bind(this) }>{ userAction }</MenuItem>
+                            </NavDropdown>
+                        </Nav>
+                    </Navbar.Collapse>
+                </Navbar>
         );
     }
 }
