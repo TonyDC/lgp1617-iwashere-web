@@ -229,9 +229,6 @@ export default class Login extends Component {
                                 or
                             </FormGroup>
 
-
-                            <Col sm={10}>
-
                                 <FormGroup>
                                     <Button bsStyle="btn btn-block btn-social btn-md btn-facebook"
                                             onClick={ this.loginFacebook.bind(this) }>
@@ -254,7 +251,6 @@ export default class Login extends Component {
                                 <FormGroup>
                                     <Link to="/register">Don't have an account?</Link>
                                 </FormGroup>
-                            </Col>
 
                         </div>
                     </div>
