@@ -5,7 +5,7 @@ import { Navbar, Nav, NavItem, MenuItem, NavDropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import * as firebase from 'firebase';
 
-import logo from 'img/logo.png';
+import logoCompact from 'img/logo-compact.png';
 
 export default class NavBar extends Component {
     constructor(props) {
@@ -69,19 +69,12 @@ export default class NavBar extends Component {
                 <Navbar inverse collapseOnSelect className="navbar">
                     <Navbar.Header>
                         <Navbar.Brand>
-                            <img src={logo} alt="#iwashere" className="app-logo"/>
+                            <img src={logoCompact} alt="#iwashere" className="app-logo"/>
                         </Navbar.Brand>
                         <Navbar.Toggle/>
                     </Navbar.Header>
                     <Navbar.Collapse>
-                        <Nav>
-                            <NavItem eventKey={1} href="#">Link</NavItem>
-                            <NavItem eventKey={2} href="#">Link</NavItem>
-                        </Nav>
                         <Nav pullRight>
-                            <NavItem eventKey={1} href="#">Link Right</NavItem>
-                            <NavItem eventKey={2} href="#">Link Right</NavItem>
-
                             <NavDropdown eventKey={3} title={user} id="basic-nav-dropdown">
                                 {userPicture}
                                 {userProfile}

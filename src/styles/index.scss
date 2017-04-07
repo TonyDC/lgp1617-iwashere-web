@@ -3,3 +3,24 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+.colorPrimary{
+    background-color: #012935;
+}
+
+.colorAccent, .colorAccent:hover{
+    background-color: #E5402A;
+    border-color: transparent;
+}
+
+.colorAccentSecundary{
+    background-color: #39A8E0;
+    border-color: transparent;
+}
+
+.main {
+    margin: 35px;
+}
+
+
+
