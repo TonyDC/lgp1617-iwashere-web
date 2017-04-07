@@ -50,7 +50,7 @@ export default class Login extends Component {
             errorList.push(this.newError("The username entered is not valid."));
         }
 
-        if (typeof name !== 'string' || !email || validator.isEmpty(email.trim()) || !validator.isEmail(email)) {
+        if (typeof email !== 'string' || !email || validator.isEmpty(email.trim()) || !validator.isEmail(email)) {
             errorList.push(this.newError("The email entered is not valid."));
         }
 
@@ -93,7 +93,7 @@ export default class Login extends Component {
             : firebase.auth().currentUser;
 
         if (!newUser.emailVerified) {
-            Alert.info('A verification email has been sent to your email address.', {
+            Alert.info(`A verification email has been sent to ${newUser.email}.`, {
                 effect: 'slide',
                 position: 'bottom-right',
                 timeout: 5000
@@ -223,13 +223,13 @@ export default class Login extends Component {
         return (
             <div>
                 <Helmet>
-                    <title>#iwashere - Register</title>
+                    <title>#iwashere - Sign up</title>
                 </Helmet>
                 <div className="container">
                     <div className="row main">
                         <div className="panel-heading">
                             <div className="panel-title text-center">
-                                <h1 className="title">#iwashere</h1>
+                                <h1>Sign up</h1>
                                 <hr />
                             </div>
                         </div>

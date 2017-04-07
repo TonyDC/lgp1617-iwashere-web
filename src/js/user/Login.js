@@ -114,7 +114,7 @@ export default class Login extends Component {
         const { email, password } = this.state;
         const errorList = [];
 
-        if (typeof name !== 'string' || !email || validator.isEmpty(email.trim()) || !validator.isEmail(email)) {
+        if (typeof email !== 'string' || !email || validator.isEmpty(email.trim()) || !validator.isEmail(email)) {
             errorList.push(this.newError("The email entered is not valid."));
         }
 
@@ -187,7 +187,7 @@ export default class Login extends Component {
                     <div className="row main">
                         <div className="panel-heading">
                             <div className="panel-title text-center">
-                                <h1 className="title">#iwashere</h1>
+                                <h1>Sign in</h1>
                                 <hr/>
                             </div>
                         </div>
@@ -199,7 +199,7 @@ export default class Login extends Component {
                                     <div className="cols-sm-10">
                                         <div className="input-group">
                                             <span className="input-group-addon"><i className="fa fa-envelope fa" aria-hidden="true"/></span>
-                                            <input type="text" className="form-control" name="email" id="email" placeholder="Enter your Email" onChange={ this.handleEmail.bind(this) }/>
+                                            <input type="text" className="form-control" name="email" id="email" placeholder="Enter your email" onChange={ this.handleEmail.bind(this) }/>
                                         </div>
                                     </div>
                                 </div>
@@ -209,7 +209,7 @@ export default class Login extends Component {
                                     <div className="cols-sm-10">
                                         <div className="input-group">
                                             <span className="input-group-addon"><i className="fa fa-lock fa-lg" aria-hidden="true"/></span>
-                                            <input type="password" className="form-control" name="password" id="password" placeholder="Enter your Password" onChange={ this.handlePassword.bind(this) }/>
+                                            <input type="password" className="form-control" name="password" id="password" placeholder="Enter your password" onChange={ this.handlePassword.bind(this) }/>
                                         </div>
                                     </div>
                                 </div>
