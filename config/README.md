@@ -26,7 +26,7 @@ module.exports = {
 };
 ```
 
-#### `db-config.js`
+#### `db-config.json`
 
 This is a file representing the required configurations for database migration.
 

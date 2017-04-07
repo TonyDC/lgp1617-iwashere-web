@@ -9,6 +9,8 @@ import { BAD_REQUEST } from 'http-status-codes';
 import 'styles/login.scss';
 import 'styles/utils.scss';
 
+import logo from 'img/logo.png';
+
 export default class Login extends Component {
 
     constructor(props) {
@@ -116,9 +118,7 @@ export default class Login extends Component {
             return response.json();
         }).
         then((body) => {
-            this.setState({
-                loggedIn: true
-            });
+            this.setState({loggedIn: true});
             this.props.history.push('/');
         }).
         catch((error) => {
@@ -157,8 +157,7 @@ export default class Login extends Component {
                     <div className="row main">
                         <div className="panel-heading">
                             <div className="panel-title text-center">
-                                <h1 className="title">#iwashere</h1>
-                                <hr/>
+                                <img src={logo} alt="#iwashere"/>
                             </div>
                         </div>
 
@@ -185,7 +184,7 @@ export default class Login extends Component {
                                 </div>
 
                                 <div className="form-group ">
-                                    <button type="submit" className="btn btn-primary btn-lg btn-block login-button" onClick={ this.loginUser.bind(this) }>Sign In</button>
+                                    <button type="submit" className="btn btn-primary btn-lg btn-block login-button colorAccent" onClick={ this.loginUser.bind(this) }>Sign In</button>
                                 </div>
                             </form>
 
