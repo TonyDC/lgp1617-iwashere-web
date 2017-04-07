@@ -12,6 +12,7 @@ import Map from './map/Map';
 import UserLogin from './user/Login';
 import UserRegister from './user/Register';
 import UserPasswordReset from './user/PassowrdReset';
+import Authentication from "./user/Authentication";
 
 import 'react-s-alert/dist/s-alert-default.css';
 import 'react-s-alert/dist/s-alert-css-effects/slide.css';
@@ -32,6 +33,7 @@ export default class App extends Component {
                             <Route path="/login" component={ UserLogin } />
                             <Route path="/register" component={ UserRegister } />
                             <Route path="/password-reset" component={ UserPasswordReset } />
+                            <Route path="/auth" component={ Authentication } />
                             <Route component={ NoMatch }/>
                         </Switch>
 
