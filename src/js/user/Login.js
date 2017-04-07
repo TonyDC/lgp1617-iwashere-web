@@ -155,17 +155,10 @@ export default class Login extends Component {
                 </Helmet>
                 <div className="container">
                     <div className="row main">
-                        <div className="panel-heading">
-                            <div className="panel-title text-center">
-                                <h1 className="title">#iwashere</h1>
-                                <hr/>
-                            </div>
-                        </div>
-
+                        <hr/>
                         <div className="main-login main-center">
                             <form className="form-horizontal" onSubmit={ this.loginUser.bind(this) }>
                                 <div className="form-group">
-                                    <label htmlFor="email" className="cols-sm-2 control-label">Your Email</label>
                                     <div className="cols-sm-10">
                                         <div className="input-group">
                                             <span className="input-group-addon"><i className="fa fa-envelope fa" aria-hidden="true"/></span>
@@ -175,7 +168,6 @@ export default class Login extends Component {
                                 </div>
 
                                 <div className="form-group">
-                                    <label htmlFor="password" className="cols-sm-2 control-label">Password</label>
                                     <div className="cols-sm-10">
                                         <div className="input-group">
                                             <span className="input-group-addon"><i className="fa fa-lock fa-lg" aria-hidden="true"/></span>
@@ -185,7 +177,7 @@ export default class Login extends Component {
                                 </div>
 
                                 <div className="form-group ">
-                                    <button type="submit" className="btn btn-primary btn-lg btn-block login-button" onClick={ this.loginUser.bind(this) }>Sign In</button>
+                                    <button type="submit" className="btn btn-primary btn-md btn-block login-button" onClick={ this.loginUser.bind(this) }>Sign In</button>
                                 </div>
                             </form>
 
@@ -194,13 +186,13 @@ export default class Login extends Component {
                             </div>
 
                             <div className="form-group" >
-                                <button className="btn btn-block btn-social btn-lg btn-facebook" onClick={ this.loginFacebook.bind(this) }>
+                                <button className="btn btn-block btn-social btn-md btn-facebook" onClick={ this.loginFacebook.bind(this) }>
                                     <span className="fa fa-facebook"/> Sign in with Facebook
                                 </button>
                             </div>
 
                             <div className="form-group" >
-                                <button className="btn btn-block btn-social btn-lg btn-google" onClick={ this.loginGoogle.bind(this) }>
+                                <button className="btn btn-block btn-social btn-md btn-google" onClick={ this.loginGoogle.bind(this) }>
                                     <span className="fa fa-google"/> Sign in with Google
                                 </button>
                             </div>
