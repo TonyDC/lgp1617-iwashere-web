@@ -11,6 +11,7 @@ import Map from './map/Map';
 
 import UserLogin from './user/Login';
 import UserRegister from './user/Register';
+import UserPasswordReset from './user/PassowrdReset';
 
 import 'react-s-alert/dist/s-alert-default.css';
 import 'react-s-alert/dist/s-alert-css-effects/slide.css';
@@ -26,14 +27,14 @@ export default class App extends Component {
                 <div>
                     <Route path="/" component={ NavBar }/>
 
-                    <div>
                         <Switch>
                             <Route exact path="/" component={ Map }/>
                             <Route path="/login" component={ UserLogin } />
                             <Route path="/register" component={ UserRegister } />
+                            <Route path="/password-reset" component={ UserPasswordReset } />
                             <Route component={ NoMatch }/>
                         </Switch>
-                    </div>
+
                     <Alert stack={{limit: 30}} />
                 </div>
             </Router>
