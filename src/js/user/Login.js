@@ -10,6 +10,8 @@ const validator = require('validator');
 import 'styles/login.scss';
 import 'styles/utils.scss';
 
+import logo from 'img/logo.png'
+
 export default class Login extends Component {
 
     constructor(props) {
@@ -179,21 +181,18 @@ export default class Login extends Component {
 
     render() {
         return (
-            <div>
+            <div className="colorAccentSecundary">
                 <Helmet>
                     <title>#iwashere - Sign in</title>
                 </Helmet>
                 <div className="container">
                     <div className="row main">
-                        <hr/>
-                        <div className="panel-heading">
-                            <div className="panel-title text-center">
-                                <h1>Sign in</h1>
-                                <hr/>
-                            </div>
-                        </div>
-
                         <div className="main-login main-center">
+                            <div className="panel-heading">
+                                <div className="panel-title text-center">
+                                    <img src={logo} alt="#iwashere"/>
+                                </div>
+                            </div>
                             <form className="form-horizontal" onSubmit={ this.loginUser.bind(this) }>
                                 <div className="form-group">
                                     <div className="cols-sm-10">
@@ -214,7 +213,7 @@ export default class Login extends Component {
                                 </div>
 
                                 <div className="form-group ">
-                                    <button type="submit" className="btn btn-primary btn-md btn-block login-button" onClick={ this.loginUser.bind(this) }>Sign In</button>
+                                    <button type="submit" className="btn btn-primary btn-md btn-block login-button colorAccent" onClick={ this.loginUser.bind(this) }>Sign In</button>
                                 </div>
                             </form>
 

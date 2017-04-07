@@ -62,3 +62,8 @@ input::-webkit-input-placeholder {
     font-size: 11px;
     text-align: center;
 }
+
+.panel-heading *{
+    max-width: 100%;
+    max-height: 100%;
+}
