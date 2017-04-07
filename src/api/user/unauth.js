@@ -7,8 +7,6 @@ const firebaseAdmin = require('firebase-admin');
 const httpStatus = require('http-status-codes');
 const validator = require('validator');
 
-const { User } = root_require('models');
-
 /**
  * Register endpoint
  * Body properties:
@@ -21,7 +19,7 @@ const { User } = root_require('models');
  */
 
 router.post('/register', (req, res) => {
-    const { email, password, confirmPassword, name } = req.body;
+    const { email, password, confirmPassword, username } = req.body;
 
     if (typeof password !== 'string' || typeof confirmPassword !== 'string' || password !== confirmPassword) {
         res.status(httpStatus.BAD_REQUEST).send({message: 'Bad password'}).
@@ -29,53 +27,42 @@ router.post('/register', (req, res) => {
 
         return;
 
-    } else if (!validator.isEmail(email)) {
+    } else if (typeof email !== 'string' || !validator.isEmail(email)) {
         res.status(httpStatus.BAD_REQUEST).send({message: 'Bad email'}).
         end();
 
         return;
 
-    } else if (typeof name !== 'string' || validator.isEmpty(name.trim())) {
-        res.status(httpStatus.BAD_REQUEST).send({message: 'Bad user name'}).
+    } else if (typeof username !== 'string' || validator.isEmpty(username.trim())) {
+        res.status(httpStatus.BAD_REQUEST).send({message: 'Bad username'}).
         end();
 
         return;
     }
 
-    // ************************
-
-    User.findOne({ where: { email } }).then((user) => {
-        // User will be the first entry of the MainUser table || null
-        return user
-            ? new Error('User with the given email already exists')
-            : null;
-
-    }).
-    then(() => {
-        return firebaseAdmin.auth().createUser({
-            disabled: false,
-            displayName: name,
-            email,
-            emailVerified: false,
-            password
-        });
-    }).
-    then((userRecord) => {
-        // See the UserRecord reference doc for the contents of userRecord.
-        console.log("Successfully created new user:", userRecord);
-
-        return User.create({
-            email,
-            uid: userRecord.uid
-        });
+    firebaseAdmin.auth().createUser({
+        disabled: false,
+        displayName: username,
+        email,
+        emailVerified: false,
+        password
     }).
     then((user) => {
-        console.log(`Successfully inserted new user into database: ${user}`);
-        res.end();
+        // See the UserRecord reference doc for the contents of userRecord.
+        console.log("Successfully created new user.", user);
+        res.send({
+            ok: true,
+            user
+        }).
+        end();
     }).
     catch((error) => {
-        console.error("Error creating new user:", error);
-        res.status(httpStatus.BAD_REQUEST).end();
+        console.error("Error creating new user:", error.errorInfo);
+        res.status(httpStatus.BAD_REQUEST).send({
+            error: error.errorInfo,
+            ok: false
+        }).
+        end();
     });
 });
 

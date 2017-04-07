@@ -40,6 +40,7 @@
     "react-helmet": "^5.0.2",
     "react-router": "^4.0.0",
     "react-router-dom": "^4.0.0",
+    "react-s-alert": "^1.2.2",
     "sass-loader": "^6.0.2",
     "sequelize": "^3.30.4",
     "sequelize-cli": "^2.7.0",
