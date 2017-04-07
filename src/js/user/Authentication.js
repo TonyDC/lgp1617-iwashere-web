@@ -8,7 +8,7 @@ import {BAD_REQUEST} from 'http-status-codes';
 import {Form, FormGroup, InputGroup, FormControl, Button, Col} from 'react-bootstrap';
 const validator = require('validator');
 
-import 'styles/login.scss';
+import 'styles/authentication.scss';
 import 'styles/utils.scss';
 
 import logo from 'img/logo.png'
@@ -188,7 +188,6 @@ export default class Login extends Component {
                                   onSubmit={ this.loginUser.bind(this) }
                             >
                                 <FormGroup
-                                    controlId="formBasicText"
                                     onSubmit={ this.loginUser.bind(this)}
                                 >
                                     <InputGroup>
@@ -198,7 +197,7 @@ export default class Login extends Component {
                                         <FormControl
                                             type="text"
                                             value={this.state.value}
-                                            placeholder="Enter email"
+                                            placeholder="Enter your email"
                                             onChange={this.handleEmail.bind(this)}
                                         />
                                     </InputGroup>
@@ -212,7 +211,7 @@ export default class Login extends Component {
                                         <FormControl
                                             type="text"
                                             value={this.state.value}
-                                            placeholder="Enter email"
+                                            placeholder="Enter your password"
                                             onChange={this.handlePassword.bind(this)}
                                         />
                                     </InputGroup>
