@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Alert from 'react-s-alert';
 import { Link, Redirect } from 'react-router-dom';
+import { Form, FormGroup, InputGroup, FormControl, Button } from 'react-bootstrap';
 import { Helmet } from 'react-helmet';
 import * as firebase from 'firebase';
 import validator from 'validator';
@@ -10,6 +11,7 @@ import { BAD_REQUEST } from 'http-status-codes';
 import Alerts from '../utils/Alerts';
 
 import 'styles/login.scss';
+import logo from 'img/logo.png';
 
 const NO_ERRORS = 0;
 
@@ -167,6 +169,20 @@ export default class Register extends Component {
         });
     }
 
+    loginFacebook(event) {
+        event.preventDefault();
+        const provider = new firebase.auth.FacebookAuthProvider();
+
+        this.loginPopup(provider);
+    }
+
+    loginGoogle(event) {
+        event.preventDefault();
+        const provider = new firebase.auth.GoogleAuthProvider();
+
+        this.loginPopup(provider);
+    }
+
     handleUsername(event) {
         event.preventDefault();
         this.setState({ username: event.target.value });
@@ -203,71 +219,106 @@ export default class Register extends Component {
         }
 
         return (
-            <div>
+            <div className="colorAccentSecondary">
                 <Helmet>
-                    <title>#iwashere - Register</title>
+                    <title>#iwashere - Sign in</title>
                 </Helmet>
 
                 <div className="container">
                     <div className="row main">
-                        <div className="panel-heading">
-                            <div className="panel-title text-center">
-                                <h1>Sign up</h1>
-                                <hr />
-                            </div>
-                        </div>
                         <div className="main-login main-center">
-                            <form className="form-horizontal" onSubmit={this.registerUser.bind(this)}>
-                                <div className="form-group">
-                                    <label htmlFor="name" className="cols-sm-2 control-label">Username</label>
-                                    <div className="cols-sm-10">
-                                        <div className="input-group">
-                                            <span className="input-group-addon"><i className="fa fa-user fa" aria-hidden="true"/></span>
-                                            <input type="text" className="form-control" name="name" id="name" placeholder="Enter your username" onChange={this.handleUsername.bind(this)}/>
-                                        </div>
-                                    </div>
+                            <div className="panel-heading">
+                                <div className="panel-title text-center">
+                                    <img src={logo} alt="#iwashere logo"/>
                                 </div>
+                            </div>
 
-                                <div className="form-group">
-                                    <label htmlFor="email" className="cols-sm-2 control-label">Your Email</label>
-                                    <div className="cols-sm-10">
-                                        <div className="input-group">
-                                            <span className="input-group-addon"><i className="fa fa-envelope fa" aria-hidden="true"/></span>
-                                            <input type="text" className="form-control" name="email" id="email" placeholder="Enter your email" onChange={this.handleEmail.bind(this)}/>
-                                        </div>
-                                    </div>
-                                </div>
+                            <Form horizontal onSubmit={ this.registerUser.bind(this)}>
+                                <FormGroup>
+                                    <InputGroup>
+                                        <InputGroup.Addon>
+                                            <i className="fa fa-user fa" aria-hidden="true"/>
+                                        </InputGroup.Addon>
+                                        <FormControl
+                                            type="text"
+                                            value={this.state.value}
+                                            placeholder="Enter your username"
+                                            onChange={this.handleUsername.bind(this)}
+                                        />
+                                    </InputGroup>
+                                </FormGroup>
 
-                                <div className="form-group">
-                                    <label htmlFor="password" className="cols-sm-2 control-label">Password</label>
-                                    <div className="cols-sm-10">
-                                        <div className="input-group">
-                                            <span className="input-group-addon"><i className="fa fa-lock fa-lg" aria-hidden="true"/></span>
-                                            <input type="password" className="form-control" name="password" id="password" placeholder="Enter your password" onChange={this.handlePassword.bind(this)}/>
-                                        </div>
-                                    </div>
-                                </div>
+                                <FormGroup>
+                                    <InputGroup>
+                                        <InputGroup.Addon>
+                                            <i className="fa fa-envelope fa" aria-hidden="true"/>
+                                        </InputGroup.Addon>
+                                        <FormControl
+                                            type="text"
+                                            value={this.state.value}
+                                            placeholder="Enter your email"
+                                            onChange={this.handleEmail.bind(this)}
+                                        />
+                                    </InputGroup>
+                                </FormGroup>
+                                <FormGroup>
+                                    <InputGroup>
+                                        <InputGroup.Addon>
+                                            <i className="fa fa-lock fa-lg" aria-hidden="true"/>
+                                        </InputGroup.Addon>
+                                        <FormControl
+                                            type="password"
+                                            value={this.state.value}
+                                            placeholder="Enter your password"
+                                            onChange={this.handlePassword.bind(this)}
+                                        />
+                                    </InputGroup>
+                                </FormGroup>
 
-                                <div className="form-group">
-                                    <label htmlFor="confirm" className="cols-sm-2 control-label">Confirm Password</label>
-                                    <div className="cols-sm-10">
-                                        <div className="input-group">
-                                            <span className="input-group-addon"><i className="fa fa-lock fa-lg" aria-hidden="true"/></span>
-                                            <input type="password" className="form-control" name="confirm" id="confirm" placeholder="Confirm your password" onChange={this.handleConfirmPassword.bind(this)}/>
-                                        </div>
-                                    </div>
-                                </div>
+                                <FormGroup>
+                                    <InputGroup>
+                                        <InputGroup.Addon>
+                                            <i className="fa fa-lock fa-lg" aria-hidden="true"/>
+                                        </InputGroup.Addon>
+                                        <FormControl
+                                            type="password"
+                                            value={this.state.value}
+                                            placeholder="Confirm your password"
+                                            onChange={this.handleConfirmPassword.bind(this)}
+                                        />
+                                    </InputGroup>
+                                </FormGroup>
 
-                                <div className="form-group">
-                                    <button type="submit" className="btn btn-primary btn-lg btn-block login-button" onClick={this.registerUser.bind(this)}>Sign up</button>
-                                </div>
+                                <FormGroup>
+                                    <Button type="submit"
+                                            className="btn-primary btn-md btn-block login-button colorAccent"
+                                            onClick={ this.registerUser.bind(this) }>
+                                        Sign Up
+                                    </Button>
+                                </FormGroup>
+                            </Form>
 
-                                <div className="form-group">
-                                    <Link to="/login">Already have an account?</Link>
-                                </div>
+                            <FormGroup className="hor-align">
+                                or
+                            </FormGroup>
 
-                            </form>
-                            { registerInProgress }
+                            <FormGroup>
+                                <Button className="btn-block btn-social btn-md btn-facebook"
+                                        onClick={ this.loginFacebook.bind(this) }>
+                                    <span className="fa fa-facebook"/> Sign up with Facebook
+                                </Button>
+                            </FormGroup>
+
+                            <FormGroup>
+                                <Button className="btn-block btn-social btn-md btn-google"
+                                        onClick={ this.loginGoogle.bind(this) }>
+                                    <span className="fa fa-google"/> Sign up with Google
+                                </Button>
+                            </FormGroup>
+
+                            <FormGroup>
+                                <Link to="/login">Already have an account?</Link>
+                            </FormGroup>
                         </div>
                     </div>
                 </div>
