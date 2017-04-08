@@ -73,7 +73,7 @@
     "id-blacklist": "error",
     "id-length": "error",
     "id-match": "error",
-    "indent": "error",
+    "indent": ["error", 4, { "SwitchCase": 1 }],
     "init-declarations": "error",
     "jsx-quotes": [
       "error",
@@ -203,7 +203,7 @@
     "no-with": "error",
     "nonblock-statement-body-position": "error",
     "object-curly-newline": "error",
-    "object-curly-spacing": "off",
+    "object-curly-spacing": ["error", "always"],
     "object-property-newline": "error",
     "object-shorthand": "error",
     "one-var": "off",
@@ -273,7 +273,7 @@
     "react/react-in-jsx-scope": 1,
     "import/extensions": [2, "never", { "jpeg": "always", "jpg": "always", "png": "always", "svg": "always", "scss": "always" }],
     "react/self-closing-comp": 2,
-    "react/sort-comp": 1,
+    "react/sort-comp": 2,
     "react/jsx-wrap-multilines": 1
   }
 }

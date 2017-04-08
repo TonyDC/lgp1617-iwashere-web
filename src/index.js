@@ -1,6 +1,9 @@
 import React from 'react';
 import { render } from 'react-dom';
 import * as firebase from 'firebase';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+import reducers from './js/redux/reducers';
 
 import App from './js/App';
 
@@ -13,7 +16,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 // Bootstrap Social
 import 'bootstrap-social';
 
-// Custmom CSS
+// Custom CSS
 import './styles/index.scss';
 
 // Initialize Firebase
@@ -27,4 +30,15 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 
-render(<App/>, document.getElementById('main'));
+// Initialize Redux container
+const store = createStore(reducers);
+store.subscribe(() => {
+   const state = store.getState();
+   console.log(state.userStatus);
+});
+
+render(
+    <Provider store={store}>
+        <App/>
+    </Provider>,
+    document.getElementById('main'));
