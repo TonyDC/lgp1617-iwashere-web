@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 export default class Pin extends Component {
 
@@ -13,8 +14,8 @@ export default class Pin extends Component {
 }
 
 Pin.propTypes = {
-    children: React.PropTypes.any,
-    lat: React.PropTypes.number,
-    lng: React.PropTypes.number,
-    text: React.PropTypes.string
+    children: PropTypes.any,
+    lat: PropTypes.number,
+    lng: PropTypes.number,
+    text: PropTypes.string
 };

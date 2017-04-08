@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Alert from 'react-s-alert';
 import { Link, Redirect } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
@@ -275,4 +276,4 @@ export default class Register extends Component {
     }
 }
 
-Register.propTypes = { history: React.PropTypes.object };
+Register.propTypes = { history: PropTypes.object };

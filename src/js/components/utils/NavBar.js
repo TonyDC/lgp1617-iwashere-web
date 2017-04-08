@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Navbar, Nav, NavItem, MenuItem, NavDropdown } from 'react-bootstrap';
 import * as firebase from 'firebase';
 
@@ -83,7 +84,7 @@ export default class NavBar extends Component {
     }
 }
 
-NavBar.propTypes = { history: React.PropTypes.object };
+NavBar.propTypes = { history: PropTypes.object };
 
 // To access Redux store
-NavBar.contextTypes = { store: React.PropTypes.object };
+NavBar.contextTypes = { store: PropTypes.object };

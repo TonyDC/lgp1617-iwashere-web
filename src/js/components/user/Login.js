@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Alert from 'react-s-alert';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
@@ -205,7 +206,7 @@ export default class Login extends Component {
     }
 }
 
-Login.propTypes = { history: React.PropTypes.object };
+Login.propTypes = { history: PropTypes.object };
 
 // To access Redux store
-Login.contextTypes = { store: React.PropTypes.object };
+Login.contextTypes = { store: PropTypes.object };

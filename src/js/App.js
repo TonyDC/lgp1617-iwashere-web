@@ -1,6 +1,7 @@
 /* eslint react/jsx-sort-props: "off" */
 
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import * as firebase from 'firebase';
 
@@ -59,4 +60,4 @@ export default class App extends Component {
 }
 
 // To access Redux store
-App.contextTypes = { store: React.PropTypes.object };
+App.contextTypes = { store: PropTypes.object };

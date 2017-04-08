@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import GoogleMapReact from 'google-map-react';
 
 import Pin from './Pin';
@@ -28,9 +29,9 @@ Map.defaultProps = {
 };
 
 Map.propTypes = {
-    center: React.PropTypes.shape({
-        lat: React.PropTypes.number,
-        lng: React.PropTypes.number
+    center: PropTypes.shape({
+        lat: PropTypes.number,
+        lng: PropTypes.number
     }),
-    zoom: React.PropTypes.number
+    zoom: PropTypes.number
 };

@@ -1,8 +1,20 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { mount } from 'enzyme';
+
 import App from '../App';
 
-it('renders without crashing', () => {
-    const div = document.createElement('div');
-    ReactDOM.render(<App />, div);
+const EXPECTED_NR_CHILDREN = 1;
+const context = {
+    store: {
+        subscribe: (callback) => {
+            return typeof callback === 'function';
+        }
+    }
+};
+const wrapper = mount(<App/>, { context });
+
+describe('(Component) MyComponent', () => {
+    it('renders without crashing', () => {
+        expect(wrapper).toHaveLength(EXPECTED_NR_CHILDREN);
+    });
 });

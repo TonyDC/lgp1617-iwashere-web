@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Alert from 'react-s-alert';
 import { Helmet } from 'react-helmet';
 import * as firebase from 'firebase';
@@ -118,4 +119,4 @@ export default class PasswordReset extends Component {
     }
 }
 
-PasswordReset.propTypes = { history: React.PropTypes.object };
+PasswordReset.propTypes = { history: PropTypes.object };

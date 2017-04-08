@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import Alert from 'react-s-alert';
 
@@ -61,4 +62,4 @@ export default class Alerts extends Component {
 }
 
 // To access Redux store
-Alerts.contextTypes = { store: React.PropTypes.object };
+Alerts.contextTypes = { store: PropTypes.object };
