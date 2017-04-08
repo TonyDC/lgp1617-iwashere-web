@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import * as firebase from 'firebase';
 import { Form, FormGroup, InputGroup, FormControl, Button } from 'react-bootstrap';
 import validator from 'validator';
+import Halogen from 'halogen';
 
 import Alerts from '../utils/Alerts';
 
@@ -20,7 +21,10 @@ export default class Login extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { errors: [] };
+        this.state = {
+            errors: [],
+            loggingIn: false
+        };
     }
 
     componentWillUnmount() {
@@ -42,10 +46,15 @@ export default class Login extends Component {
         this.closePreviousErrors();
 
         const currentError = Alerts.createErrorAlert(message);
-        this.setState({ errors: [currentError] });
+        this.setState({
+            errors: [currentError],
+            loggingIn: false
+        });
     }
 
     loginPopup(provider) {
+        this.setState({ loggingIn: true });
+
         firebase.auth().signInWithPopup(provider).
         then(() => {
             this.props.history.push('/');
@@ -61,6 +70,8 @@ export default class Login extends Component {
         if (!this.checkForm()) {
             return;
         }
+
+        this.setState({ loggingIn: true });
 
         const { email, password } = this.state;
         firebase.auth().signInWithEmailAndPassword(email, password).
@@ -116,6 +127,84 @@ export default class Login extends Component {
     }
 
     render() {
+        let signInForm = null;
+        let otherSignInOptions = null;
+        let loader = null;
+
+        if (this.state.loggingIn) {
+            loader =
+                <FormGroup className="text-center">
+                    <div className="loader-text">Signing in</div>
+                    <Halogen.PulseLoader color="#012935" className="loader"/>
+                </FormGroup>;
+        } else {
+            signInForm =
+                <Form horizontal onSubmit={ this.loginUser.bind(this) }>
+                    <FormGroup onSubmit={ this.loginUser.bind(this)}>
+                        <InputGroup>
+                            <InputGroup.Addon>
+                                <i className="fa fa-envelope fa" aria-hidden="true"/>
+                            </InputGroup.Addon>
+                            <FormControl
+                                type="text"
+                                value={this.state.value}
+                                placeholder="Enter your email"
+                                onChange={this.handleEmail.bind(this)}
+                            />
+                        </InputGroup>
+                    </FormGroup>
+                    <FormGroup>
+                        <InputGroup>
+                            <InputGroup.Addon>
+                                <i className="fa fa-lock fa-lg" aria-hidden="true"/>
+                            </InputGroup.Addon>
+                            <FormControl
+                                type="password"
+                                value={this.state.value}
+                                placeholder="Enter your password"
+                                onChange={this.handlePassword.bind(this)}
+                            />
+                        </InputGroup>
+                    </FormGroup>
+                    <FormGroup>
+                        <Button type="submit"
+                                className="btn-primary btn-md btn-block login-button colorAccent"
+                                onClick={ this.loginUser.bind(this) }>
+                            Sign In
+                        </Button>
+                    </FormGroup>
+                </Form>;
+
+            otherSignInOptions =
+                <div>
+                    <FormGroup className="hor-align">
+                        or
+                    </FormGroup>
+
+                    <FormGroup>
+                        <Button className="btn-block btn-social btn-md btn-facebook"
+                                onClick={ this.loginFacebook.bind(this) }>
+                            <span className="fa fa-facebook"/> Sign in with Facebook
+                        </Button>
+                    </FormGroup>
+
+                    <FormGroup>
+                        <Button className="btn-block btn-social btn-md btn-google"
+                                onClick={ this.loginGoogle.bind(this) }>
+                            <span className="fa fa-google"/> Sign in with Google
+                        </Button>
+                    </FormGroup>
+
+                    <FormGroup>
+                        <Link to="/password-reset">Forgot your password?</Link>
+                    </FormGroup>
+
+                    <FormGroup>
+                        <Link to="/register">Don't have an account?</Link>
+                    </FormGroup>
+                </div>;
+        }
+
         return (
             <div className="colorAccentSecondary">
                 <Helmet>
@@ -130,68 +219,13 @@ export default class Login extends Component {
                                     <img src={logo} alt="#iwashere logo"/>
                                 </div>
                             </div>
-                            <Form horizontal onSubmit={ this.loginUser.bind(this) }>
-                                <FormGroup onSubmit={ this.loginUser.bind(this)}>
-                                    <InputGroup>
-                                        <InputGroup.Addon>
-                                            <i className="fa fa-envelope fa" aria-hidden="true"/>
-                                        </InputGroup.Addon>
-                                        <FormControl
-                                            type="text"
-                                            value={this.state.value}
-                                            placeholder="Enter your email"
-                                            onChange={this.handleEmail.bind(this)}
-                                        />
-                                    </InputGroup>
-                                </FormGroup>
-                                <FormGroup>
-                                    <InputGroup>
-                                        <InputGroup.Addon>
-                                            <i className="fa fa-lock fa-lg" aria-hidden="true"/>
-                                        </InputGroup.Addon>
-                                        <FormControl
-                                            type="password"
-                                            value={this.state.value}
-                                            placeholder="Enter your password"
-                                            onChange={this.handlePassword.bind(this)}
-                                        />
-                                    </InputGroup>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Button type="submit"
-                                            className="btn-primary btn-md btn-block login-button colorAccent"
-                                            onClick={ this.loginUser.bind(this) }>
-                                        Sign In
-                                    </Button>
-                                </FormGroup>
-                            </Form>
 
-                            <FormGroup className="hor-align">
-                                or
-                            </FormGroup>
+                            {signInForm}
 
-                            <FormGroup>
-                                <Button className="btn-block btn-social btn-md btn-facebook"
-                                        onClick={ this.loginFacebook.bind(this) }>
-                                    <span className="fa fa-facebook"/> Sign in with Facebook
-                                </Button>
-                            </FormGroup>
+                            {otherSignInOptions}
 
-                            <FormGroup>
-                                <Button className="btn-block btn-social btn-md btn-google"
-                                        onClick={ this.loginGoogle.bind(this) }>
-                                    <span className="fa fa-google"/> Sign in with Google
-                                </Button>
-                            </FormGroup>
+                            {loader}
 
-
-                            <FormGroup>
-                                <Link to="/password-reset">Forgot your password?</Link>
-                            </FormGroup>
-
-                            <FormGroup>
-                                <Link to="/register">Don't have an account?</Link>
-                            </FormGroup>
                         </div>
                     </div>
                 </div>
