@@ -221,7 +221,7 @@ export default class Register extends Component {
         return (
             <div className="colorAccentSecondary">
                 <Helmet>
-                    <title>#iwashere - Sign in</title>
+                    <title>#iwashere - Sign up</title>
                 </Helmet>
 
                 <div className="container">
