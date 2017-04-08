@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { GridLoader as Loader } from 'halogen';
 
@@ -8,9 +9,11 @@ import UserPasswordReset from '../components/user/PasswordReset';
 
 export default class UnauthRoutes extends Component {
 
-    constructor(props) {
+    constructor(props, context) {
         super(props);
-        this.state = {};
+
+        const reduxState = context.store.getState();
+        this.state = { userStatus: reduxState.userStatus };
     }
 
     componentDidMount() {
@@ -46,4 +49,4 @@ export default class UnauthRoutes extends Component {
 }
 
 // To access Redux store
-UnauthRoutes.contextTypes = { store: React.PropTypes.object };
+UnauthRoutes.contextTypes = { store: PropTypes.object };

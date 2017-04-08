@@ -29,6 +29,7 @@ export default class Alerts extends Component {
         this.state = {};
     }
 
+    // Problem: The event may be received before the component mounting
     componentDidMount() {
         this.reduxListenerUnsubscribe = this.context.store.subscribe(() => {
             const reduxState = this.context.store.getState();
