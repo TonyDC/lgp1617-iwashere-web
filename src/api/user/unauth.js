@@ -13,7 +13,7 @@ const validator = require('validator');
  *  - email
  *  - password
  *  - confirmPassword
- *  - name
+ *  - username
  *
  * See: https://firebase.google.com/docs/auth/admin/manage-users
  */
@@ -66,11 +66,10 @@ router.post('/register', (req, res) => {
         end();
     }).
     catch((error) => {
-        console.error("Error creating new user:", error.errorInfo);
+        console.error(`Error creating new user: ${error.errorInfo}`);
         res.status(httpStatus.BAD_REQUEST).send({
             code: error.code,
-            error: error.errorInfo,
-            ok: false
+            error: error.errorInfo
         }).
         end();
     });

@@ -9,7 +9,7 @@ const validator = require('validator');
 import { BAD_REQUEST } from 'http-status-codes';
 import { browserHistory as history } from 'react-router';
 
-import 'styles/register.scss';
+import 'styles/login.scss';
 
 export default class Register extends Component {
 

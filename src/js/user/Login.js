@@ -4,12 +4,12 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import * as firebase from 'firebase';
 import { BAD_REQUEST } from 'http-status-codes';
-const validator = require('validator');
+import validator from 'validator';
 
 import 'styles/login.scss';
 import 'styles/utils.scss';
 
-import logo from 'img/logo.png'
+import logo from 'img/logo.png';
 
 export default class Login extends Component {
 
@@ -180,7 +180,7 @@ export default class Login extends Component {
 
     render() {
         return (
-            <div className="colorAccentSecundary">
+            <div className="colorAccentSecondary">
                 <Helmet>
                     <title>#iwashere - Sign in</title>
                 </Helmet>

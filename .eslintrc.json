@@ -271,7 +271,7 @@
     "react/no-unknown-property": 1,
     "react/prop-types": 1,
     "react/react-in-jsx-scope": 1,
-    "import/extensions": [2, "never", { "svg": "always", "scss": "always" }],
+    "import/extensions": [2, "never", { "jpeg": "always", "jpg": "always", "png": "always", "svg": "always", "scss": "always" }],
     "react/self-closing-comp": 2,
     "react/sort-comp": 1,
     "react/jsx-wrap-multilines": 1

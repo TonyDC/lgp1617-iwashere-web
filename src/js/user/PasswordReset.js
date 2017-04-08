@@ -2,15 +2,13 @@ import React, { Component } from 'react';
 import Alert from 'react-s-alert';
 
 import { Helmet } from 'react-helmet';
-import { Link } from 'react-router-dom';
 import * as firebase from 'firebase';
-import { BAD_REQUEST } from 'http-status-codes';
-const validator = require('validator');
+import validator from 'validator';
 
 import 'styles/login.scss';
 import 'styles/utils.scss';
 
-export default class PassowrdReset extends Component {
+export default class PasswordReset extends Component {
 
     constructor(props) {
         super(props);

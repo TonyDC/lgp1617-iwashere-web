@@ -14,9 +14,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-social';
 
 // Custmom CSS
-import './styles/utils.scss';
 import './styles/index.scss';
-import 'styles/navbar.scss';
 
 // Initialize Firebase
 const firebaseConfig = {

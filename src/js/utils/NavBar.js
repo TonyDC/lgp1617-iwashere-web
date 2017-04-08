@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Alert from 'react-s-alert';
 
 import { Navbar, Nav, NavItem, MenuItem, NavDropdown } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
 import * as firebase from 'firebase';
 
 import logoCompact from 'img/logo-compact.png';
