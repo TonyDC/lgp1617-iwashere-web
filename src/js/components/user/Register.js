@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
 import Alert from 'react-s-alert';
-
 import { Link, Redirect } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import * as firebase from 'firebase';
-const validator = require('validator');
-
+import validator from 'validator';
 import { BAD_REQUEST } from 'http-status-codes';
-import { browserHistory as history } from 'react-router';
+
+import Alerts from '../utils/Alerts';
 
 import 'styles/login.scss';
+
+const NO_ERRORS = 0;
 
 export default class Register extends Component {
 
@@ -22,6 +23,10 @@ export default class Register extends Component {
         };
     }
 
+    componentWillUnmount() {
+        this.closePreviousErrors();
+    }
+
     closePreviousErrors() {
         this.state.errors.forEach((error) => {
             Alert.close(error);
@@ -30,42 +35,29 @@ export default class Register extends Component {
         this.setState({ errors: [] });
     }
 
-    newError(errorMessage) {
-        return Alert.error(errorMessage, {
-            effect: 'slide',
-            position: 'bottom-right',
-            timeout: 'none'
-        });
-    }
-
-    componentWillUnmount() {
-        this.closePreviousErrors();
-    }
-
     checkForm() {
-
         const { username, email, password, confirmPassword } = this.state;
         const errorList = [];
 
         if (typeof username !== 'string' || !username || validator.isEmpty(username.trim())) {
-            errorList.push(this.newError("The username entered is not valid."));
+            errorList.push(Alerts.createErrorAlert("The username entered is not valid."));
         }
 
         if (typeof email !== 'string' || !email || validator.isEmpty(email.trim()) || !validator.isEmail(email)) {
-            errorList.push(this.newError("The email entered is not valid."));
+            errorList.push(Alerts.createErrorAlert("The email entered is not valid."));
         }
 
         if (!password || validator.isEmpty(password)) {
-            errorList.push(this.newError("The password is required."));
+            errorList.push(Alerts.createErrorAlert("The password is required."));
         }
 
         if (password !== confirmPassword) {
-            errorList.push(this.newError("The passwords entered don't match."));
+            errorList.push(Alerts.createErrorAlert("The passwords entered don't match."));
         }
 
         this.setState({ errors: errorList });
 
-        return errorList.length === 0;
+        return errorList.length === NO_ERRORS;
     }
 
     handleError(error) {
@@ -74,12 +66,7 @@ export default class Register extends Component {
 
         this.closePreviousErrors();
 
-        const currentError = Alert.error(message, {
-            effect: 'slide',
-            position: 'bottom-right',
-            timeout: 'none'
-        });
-
+        const currentError = Alerts.createErrorAlert(message);
         this.setState({
             errors: [currentError],
             inProgress: false,
@@ -93,18 +80,12 @@ export default class Register extends Component {
             : firebase.auth().currentUser;
 
         if (!newUser.emailVerified) {
-            Alert.info(`A verification email has been sent to ${newUser.email}.`, {
-                effect: 'slide',
-                position: 'bottom-right',
-                timeout: 5000
-            });
-
+            Alerts.createInfoAlert(`A verification email has been sent to ${newUser.email}.`);
             newUser.sendEmailVerification();
         }
     }
 
     loginUser() {
-
         const { email, password } = this.state;
         firebase.auth().signInWithEmailAndPassword(email, password).
         then(() => {
@@ -112,8 +93,8 @@ export default class Register extends Component {
         }).
         then((token) => {
             return fetch('/api/user/auth/login', {
-                body: JSON.stringify({token}),
-                headers: {'Authorization': `Bearer ${token}`},
+                body: JSON.stringify({ token }),
+                headers: { 'Authorization': `Bearer ${token}` },
                 method: 'POST'
             });
         }).
@@ -154,7 +135,7 @@ export default class Register extends Component {
         }
 
         const { username, email, password, confirmPassword } = this.state;
-        this.setState({inProgress: true});
+        this.setState({ inProgress: true });
 
         fetch('/api/user/unauth/register', {
             body: JSON.stringify({
@@ -187,22 +168,22 @@ export default class Register extends Component {
 
     handleUsername(event) {
         event.preventDefault();
-        this.setState({username: event.target.value});
+        this.setState({ username: event.target.value });
     }
 
     handleEmail(event) {
         event.preventDefault();
-        this.setState({email: event.target.value});
+        this.setState({ email: event.target.value });
     }
 
     handlePassword(event) {
         event.preventDefault();
-        this.setState({password: event.target.value});
+        this.setState({ password: event.target.value });
     }
 
     handleConfirmPassword(event) {
         event.preventDefault();
-        this.setState({confirmPassword: event.target.value});
+        this.setState({ confirmPassword: event.target.value });
     }
 
     render() {
@@ -223,7 +204,7 @@ export default class Register extends Component {
         return (
             <div>
                 <Helmet>
-                    <title>#iwashere - Sign up</title>
+                    <title>#iwashere - Register</title>
                 </Helmet>
 
                 <div className="container">
@@ -241,7 +222,7 @@ export default class Register extends Component {
                                     <div className="cols-sm-10">
                                         <div className="input-group">
                                             <span className="input-group-addon"><i className="fa fa-user fa" aria-hidden="true"/></span>
-                                            <input type="text" className="form-control" name="name" id="name" placeholder="Enter your username"  onChange={this.handleUsername.bind(this)}/>
+                                            <input type="text" className="form-control" name="name" id="name" placeholder="Enter your username" onChange={this.handleUsername.bind(this)}/>
                                         </div>
                                     </div>
                                 </div>

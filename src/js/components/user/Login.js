@@ -6,7 +6,7 @@ import * as firebase from 'firebase';
 import { Form, FormGroup, InputGroup, FormControl, Button } from 'react-bootstrap';
 import validator from 'validator';
 
-import { loginActionCreator } from '../redux/action creators/login';
+import Alerts from '../utils/Alerts';
 
 import 'styles/login.scss';
 import 'styles/utils.scss';
@@ -16,14 +16,6 @@ import logo from 'img/logo.png';
 const NO_ERROR = 0;
 
 export default class Login extends Component {
-
-    static newError(errorMessage) {
-        return Alert.error(errorMessage, {
-            effect: 'slide',
-            position: 'bottom-right',
-            timeout: 'none'
-        });
-    }
 
     constructor(props) {
         super(props);
@@ -51,12 +43,7 @@ export default class Login extends Component {
 
         this.closePreviousErrors();
 
-        const currentError = Alert.error(message, {
-            effect: 'slide',
-            position: 'bottom-right',
-            timeout: 'none'
-        });
-
+        const currentError = Alerts.createErrorAlert(message);
         this.setState({
             errors: [currentError],
             loggedIn: false
@@ -105,14 +92,16 @@ export default class Login extends Component {
     }
 
     checkForm() {
+        this.closePreviousErrors();
+        
         const { email, password } = this.state;
         const errorList = [];
 
         if (typeof email !== 'string' || !email || validator.isEmpty(email.trim()) || !validator.isEmail(email)) {
-            errorList.push(Login.newError("The email entered is not valid."));
+            errorList.push(Alerts.createErrorAlert("The email entered is not valid."));
 
         } else if (!password || validator.isEmpty(password)) {
-            errorList.push(Login.newError("The password is required."));
+            errorList.push(Alerts.createErrorAlert("The password is required."));
         }
 
         this.setState({ errors: errorList });

@@ -7,6 +7,22 @@ import 'react-s-alert/dist/s-alert-css-effects/slide.css';
 
 export default class Alerts extends Component {
 
+    static createInfoAlert(message) {
+        return Alert.info(message, {
+            effect: 'slide',
+            position: 'bottom-right',
+            timeout: 5000
+        });
+    }
+
+    static createErrorAlert(message) {
+        return Alert.error(message, {
+            effect: 'slide',
+            position: 'bottom-right',
+            timeout: 'none'
+        });
+    }
+
     constructor(props) {
         super(props);
         this.state = {};
@@ -27,19 +43,11 @@ export default class Alerts extends Component {
     alertUserLog(userStatus) {
         if (userStatus && userStatus.isLogged) {
             Alert.closeAll();
-            Alert.info(`You are signed in as ${userStatus.userInfo.displayName}`, {
-                effect: 'slide',
-                position: 'bottom-right',
-                timeout: 5000
-            });
+            Alerts.createInfoAlert(`You are signed in as ${userStatus.userInfo.displayName}`);
 
         } else if (this.state.previousUserStatus && this.state.previousUserStatus.isLogged && !userStatus.isLogged) {
             Alert.closeAll();
-            Alert.info('You are signed out.', {
-                effect: 'slide',
-                position: 'bottom-right',
-                timeout: 5000
-            });
+            Alerts.createInfoAlert('You are signed you');
         }
 
         this.setState({ previousUserStatus: userStatus });

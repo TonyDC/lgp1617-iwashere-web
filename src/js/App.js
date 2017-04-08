@@ -4,15 +4,15 @@ import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import * as firebase from 'firebase';
 
-import Alerts from './utils/Alerts';
-import NoMatch from './utils/NoMatch';
-import NavBar from './utils/NavBar';
+import Alerts from './components/utils/Alerts';
+import NoMatch from './components/utils/NoMatch';
+import NavBar from './components/utils/NavBar';
 
-import Map from './map/Map';
+import Map from './components/map/Map';
 
-import UserLogin from './user/Login';
-import UserRegister from './user/Register';
-import UserPasswordReset from './user/PasswordReset';
+import UserLogin from './components/user/Login';
+import UserRegister from './components/user/Register';
+import UserPasswordReset from './components/user/PasswordReset';
 
 import { loginActionCreator, logoutActionCreator } from './redux/action creators/login';
 

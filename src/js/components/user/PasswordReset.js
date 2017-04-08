@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import Alert from 'react-s-alert';
-
 import { Helmet } from 'react-helmet';
 import * as firebase from 'firebase';
 import validator from 'validator';
+
+import Alerts from '../utils/Alerts';
 
 import 'styles/login.scss';
 import 'styles/utils.scss';
@@ -18,6 +19,10 @@ export default class PasswordReset extends Component {
         };
     }
 
+    componentWillUnmount() {
+        this.closePreviousErrors();
+    }
+
     closePreviousErrors() {
         this.state.errors.forEach((error) => {
             Alert.close(error);
@@ -26,22 +31,13 @@ export default class PasswordReset extends Component {
         this.setState({ errors: [] });
     }
 
-    componentWillUnmount() {
-        this.closePreviousErrors();
-    }
-
     handleError(error) {
         const { code, message } = error;
         console.error(code, message);
 
         this.closePreviousErrors();
 
-        const currentError = Alert.error(message, {
-            effect: 'slide',
-            position: 'bottom-right',
-            timeout: 'none'
-        });
-
+        const currentError = Alerts.createErrorAlert(message);
         this.setState({
             errors: [currentError],
             loggedIn: false
@@ -52,14 +48,13 @@ export default class PasswordReset extends Component {
         const { email } = this.state;
 
         if (typeof email !== 'string' || !email || validator.isEmpty(email.trim()) || !validator.isEmail(email)) {
-            this.handleError({message: "The email entered is not valid."});
+            this.handleError({ message: "The email entered is not valid." });
 
             return false;
         }
 
         return true;
     }
-
 
     sendPasswordResetEmail(event) {
         event.preventDefault();
@@ -71,12 +66,7 @@ export default class PasswordReset extends Component {
         const { email } = this.state;
         firebase.auth().sendPasswordResetEmail(email).
         then(() => {
-            Alert.info(`An email with a token has been sent to ${email}.`, {
-                effect: 'slide',
-                position: 'bottom-right',
-                timeout: 5000
-            });
-
+            Alerts.createInfoAlert(`An email with a token has been sent to ${email}.`);
             this.props.history.push('/login');
         }).
         catch((error) => {
@@ -86,7 +76,7 @@ export default class PasswordReset extends Component {
 
     handleEmail(event) {
         event.preventDefault();
-        this.setState({email: event.target.value});
+        this.setState({ email: event.target.value });
     }
 
     render() {
@@ -127,3 +117,5 @@ export default class PasswordReset extends Component {
         );
     }
 }
+
+PasswordReset.propTypes = { history: React.PropTypes.object };

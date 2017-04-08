@@ -16,5 +16,5 @@ Pin.propTypes = {
     children: React.PropTypes.any,
     lat: React.PropTypes.number,
     lng: React.PropTypes.number,
-    text: React.PropTypes.string,
+    text: React.PropTypes.string
 };
