@@ -28,7 +28,7 @@ export default class Alerts extends Component {
         super(props);
         this.state = {};
     }
-    
+
     componentDidMount() {
         this.reduxListenerUnsubscribe = this.context.store.subscribe(() => {
             const reduxState = this.context.store.getState();
