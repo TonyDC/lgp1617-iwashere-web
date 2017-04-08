@@ -150,7 +150,7 @@ export default class Login extends Component {
                                             <i className="fa fa-lock fa-lg" aria-hidden="true"/>
                                         </InputGroup.Addon>
                                         <FormControl
-                                            type="text"
+                                            type="password"
                                             value={this.state.value}
                                             placeholder="Enter your password"
                                             onChange={this.handlePassword.bind(this)}
