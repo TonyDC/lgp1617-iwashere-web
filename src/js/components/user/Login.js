@@ -20,10 +20,7 @@ export default class Login extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            errors: [],
-            loggedIn: firebase.auth().currentUser !== null
-        };
+        this.state = { errors: [] };
     }
 
     componentWillUnmount() {
@@ -45,10 +42,7 @@ export default class Login extends Component {
         this.closePreviousErrors();
 
         const currentError = Alerts.createErrorAlert(message);
-        this.setState({
-            errors: [currentError],
-            loggedIn: false
-        });
+        this.setState({ errors: [currentError] });
     }
 
     loginPopup(provider) {
@@ -156,7 +150,7 @@ export default class Login extends Component {
                                             <i className="fa fa-lock fa-lg" aria-hidden="true"/>
                                         </InputGroup.Addon>
                                         <FormControl
-                                            type="text"
+                                            type="password"
                                             value={this.state.value}
                                             placeholder="Enter your password"
                                             onChange={this.handlePassword.bind(this)}
