@@ -29,7 +29,7 @@ export default class UnauthRoutes extends Component {
 
     render() {
         const { userStatus } = this.state;
-        if (!userStatus) {
+        if (typeof userStatus.isLogged === 'undefined') {
             return <div className="hor-align">
                 <Loader color="#E5402A" size="50px" margin="10px"/>
             </div>;
