@@ -20,10 +20,7 @@ export default class Login extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            errors: [],
-            loggedIn: firebase.auth().currentUser !== null
-        };
+        this.state = { errors: [] };
     }
 
     componentWillUnmount() {
@@ -45,10 +42,7 @@ export default class Login extends Component {
         this.closePreviousErrors();
 
         const currentError = Alerts.createErrorAlert(message);
-        this.setState({
-            errors: [currentError],
-            loggedIn: false
-        });
+        this.setState({ errors: [currentError] });
     }
 
     loginPopup(provider) {
