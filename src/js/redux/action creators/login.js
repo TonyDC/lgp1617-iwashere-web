@@ -7,7 +7,7 @@ import * as ActionTypes from '../actionTypes';
  */
 export function loginActionCreator(user) {
     return {
-        payload: { user },
+        payload: { ...user },
         type: ActionTypes.LOG_IN_ACTION
     };
 }

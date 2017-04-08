@@ -41,17 +41,22 @@ export default class NavBar extends Component {
     }
 
     render() {
-        let userAction = null;
-        let userPicture = null;
-        let userProfile = null;
-        let user = "Sign in";
+        let user = "Sign in",
+            userAction = null,
+            userPicture = null,
+            userProfile = null;
 
         if (this.state.userStatus && this.state.userStatus.isLogged) {
-            user = this.state.userStatus.displayName;
-            userAction = <div className="logButton">Sign out</div>;
+            const { userInfo } = this.state.userStatus;
+            user = userInfo.displayName;
+            if (!user) {
+                user = userInfo.email;
+            }
 
-            if (this.state.userStatus.photoURL) {
-                userPicture = <NavItem><img src={this.state.userStatus.photoURL} alt="user-profile-picture"
+            userAction = "Sign out";
+
+            if (userInfo.photoURL) {
+                userPicture = <NavItem><img src={userInfo.photoURL} alt="user-profile-picture"
                                             className="img-circle"/></NavItem>;
             }
 
@@ -74,8 +79,8 @@ export default class NavBar extends Component {
                         <NavDropdown eventKey={3} title={user} id="basic-nav-dropdown">
                             {userPicture}
                             {userProfile}
-                            <MenuItem divider />
-                            <MenuItem onClick={ this.toggleUserStatus.bind(this) }>{ userAction }</MenuItem>
+                            <MenuItem divider/>
+                            <MenuItem onClick={ this.toggleUserStatus.bind(this) }> <div className="logButton">{ userAction }</div></MenuItem>
                         </NavDropdown>
                     </Nav>
                 </Navbar.Collapse>

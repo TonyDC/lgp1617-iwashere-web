@@ -18,7 +18,8 @@ export default function (state = {}, action) {
         case ActionTypes.LOG_OUT_ACTION:
             return {
                 ...state,
-                isLogged: false
+                isLogged: false,
+                userInfo: null
             };
 
         default:
