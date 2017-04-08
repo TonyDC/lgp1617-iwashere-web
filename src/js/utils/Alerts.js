@@ -9,11 +9,40 @@ export default class Alerts extends Component {
 
     constructor(props) {
         super(props);
-
+        this.state = {};
     }
 
     componentDidMount() {
+        this.reduxListenerUnsubscribe = this.context.store.subscribe(() => {
+            const reduxState = this.context.store.getState();
 
+            this.alertUserLog(reduxState.userStatus);
+        });
+    }
+
+    componentWillUnmount() {
+        this.reduxListenerUnsubscribe();
+    }
+
+    alertUserLog(userStatus) {
+        if (userStatus && userStatus.isLogged) {
+            Alert.closeAll();
+            Alert.info(`You are signed in as ${userStatus.userInfo.displayName}`, {
+                effect: 'slide',
+                position: 'bottom-right',
+                timeout: 5000
+            });
+
+        } else if (this.state.previousUserStatus && this.state.previousUserStatus.isLogged && !userStatus.isLogged) {
+            Alert.closeAll();
+            Alert.info('You are signed out.', {
+                effect: 'slide',
+                position: 'bottom-right',
+                timeout: 5000
+            });
+        }
+
+        this.setState({ previousUserStatus: userStatus });
     }
 
     render() {
@@ -22,3 +51,6 @@ export default class Alerts extends Component {
         );
     }
 }
+
+// To access Redux store
+Alerts.contextTypes = { store: React.PropTypes.object };

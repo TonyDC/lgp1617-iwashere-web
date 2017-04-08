@@ -32,10 +32,6 @@ firebase.initializeApp(firebaseConfig);
 
 // Initialize Redux container
 const store = createStore(reducers);
-store.subscribe(() => {
-   const state = store.getState();
-   console.log(state.userStatus);
-});
 
 render(
     <Provider store={store}>

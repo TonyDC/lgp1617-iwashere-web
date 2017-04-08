@@ -80,8 +80,6 @@ export default class Login extends Component {
             return;
         }
 
-        this.context.store.dispatch(loginActionCreator({id: 'asldhjgaksjhgf', name: '123456789'}));
-
         const { email, password } = this.state;
         firebase.auth().signInWithEmailAndPassword(email, password).
         then(() => {

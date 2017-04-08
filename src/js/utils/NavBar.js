@@ -27,7 +27,7 @@ export default class NavBar extends Component {
     toggleUserStatus(event) {
         event.preventDefault();
 
-        // 'userStatus' not initialized
+        // 'userStatus' not yet initialized
         if (!this.state.userStatus) {
             return;
 
@@ -41,29 +41,29 @@ export default class NavBar extends Component {
     }
 
     render() {
-        let user = "Sign in",
-            userAction = null,
-            userPicture = null,
-            userProfile = null;
+        let signButton = <NavItem className="logButton" eventKey={1} onClick={ this.toggleUserStatus.bind(this) }>Sign in</NavItem>;
 
         if (this.state.userStatus && this.state.userStatus.isLogged) {
             const { userInfo } = this.state.userStatus;
-            user = userInfo.displayName;
+
+            let user = userInfo.displayName;
             if (!user) {
                 user = userInfo.email;
             }
 
-            userAction = "Sign out";
-
+            let userPicture = null;
             if (userInfo.photoURL) {
-                userPicture = <NavItem><img src={userInfo.photoURL} alt="user-profile-picture"
-                                            className="img-circle"/></NavItem>;
+                userPicture = <NavItem>
+                    <img src={userInfo.photoURL} alt="user-profile-picture" className="img-circle"/>
+                </NavItem>;
             }
 
-            userProfile = <MenuItem eventKey={3.1}>Profile</MenuItem>;
-
-        } else {
-            userAction = <div className="logButton">Sign in</div>;
+            signButton = <NavDropdown eventKey={3} title={user} id="basic-nav-dropdown">
+                {userPicture}
+                <MenuItem eventKey={3.1}>Profile</MenuItem>
+                <MenuItem divider/>
+                <MenuItem onClick={ this.toggleUserStatus.bind(this) }><div className="logButton">Sign out</div></MenuItem>
+            </NavDropdown>;
         }
 
         return (
@@ -76,12 +76,7 @@ export default class NavBar extends Component {
                 </Navbar.Header>
                 <Navbar.Collapse>
                     <Nav pullRight>
-                        <NavDropdown eventKey={3} title={user} id="basic-nav-dropdown">
-                            {userPicture}
-                            {userProfile}
-                            <MenuItem divider/>
-                            <MenuItem onClick={ this.toggleUserStatus.bind(this) }> <div className="logButton">{ userAction }</div></MenuItem>
-                        </NavDropdown>
+                        { signButton }
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
