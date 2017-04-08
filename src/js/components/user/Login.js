@@ -93,7 +93,7 @@ export default class Login extends Component {
 
     checkForm() {
         this.closePreviousErrors();
-        
+
         const { email, password } = this.state;
         const errorList = [];
 

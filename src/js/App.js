@@ -10,9 +10,7 @@ import NavBar from './components/utils/NavBar';
 
 import Map from './components/map/Map';
 
-import UserLogin from './components/user/Login';
-import UserRegister from './components/user/Register';
-import UserPasswordReset from './components/user/PasswordReset';
+import UnauthRoutes from './routes/UnauthRoutes';
 
 import { loginActionCreator, logoutActionCreator } from './redux/action creators/login';
 
@@ -50,9 +48,7 @@ export default class App extends Component {
                     <Route path="/" component={ NavBar }/>
                     <Switch>
                         <Route exact path="/" component={ Map }/>
-                        <Route path="/login" component={ UserLogin } />
-                        <Route path="/register" component={ UserRegister } />
-                        <Route path="/password-reset" component={ UserPasswordReset } />
+                        <UnauthRoutes/>
                         <Route component={ NoMatch }/>
                     </Switch>
                     <Alerts/>
