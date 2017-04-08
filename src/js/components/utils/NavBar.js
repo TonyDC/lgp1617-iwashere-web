@@ -28,15 +28,14 @@ export default class NavBar extends Component {
         event.preventDefault();
 
         // 'userStatus' not yet initialized
-        if (!this.state.userStatus) {
-            return;
+        if (this.state.userStatus) {
+            if (this.state.userStatus.isLogged) {
+                firebase.auth().signOut();
+                this.props.history.push('/');
 
-        } else if (this.state.userStatus.isLogged) {
-            firebase.auth().signOut();
-            this.props.history.push('/');
-
-        } else {
-            this.props.history.push('/login');
+            } else {
+                this.props.history.push('/login');
+            }
         }
     }
 

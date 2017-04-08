@@ -11,7 +11,7 @@ const report = sequelize.define('report', {
     reportDate: Sequelize.DATE
 });
 
-report.hasOne(post, {as: 'post'});
-report.hasOne(user, {as: 'reporter'});
+report.hasOne(post, { as: 'post' });
+report.hasOne(user, { as: 'reporter' });
 
 module.exports = report;

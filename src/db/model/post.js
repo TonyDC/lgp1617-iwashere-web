@@ -12,8 +12,8 @@ const post = sequelize.define('post', {
     publicationDate: Sequelize.DATE
 });
 
-post.belongsTo(user, {as: 'creator'});
-post.hasMany(user, {as: 'likes'});
-post.hasMany(tag, {as: 'tags'});
+post.belongsTo(user, { as: 'creator' });
+post.hasMany(user, { as: 'likes' });
+post.hasMany(tag, { as: 'tags' });
 
 module.exports = post;
