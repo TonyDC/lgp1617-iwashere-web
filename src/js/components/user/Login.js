@@ -23,7 +23,7 @@ export default class Login extends Component {
         super(props);
         this.state = {
             errors: [],
-            loggingIn: false
+            inProgress: false
         };
     }
 
@@ -48,12 +48,12 @@ export default class Login extends Component {
         const currentError = Alerts.createErrorAlert(message);
         this.setState({
             errors: [currentError],
-            loggingIn: false
+            inProgress: false
         });
     }
 
     loginPopup(provider) {
-        this.setState({ loggingIn: true });
+        this.setState({ inProgress: true });
 
         firebase.auth().signInWithPopup(provider).
         then(() => {
@@ -71,7 +71,7 @@ export default class Login extends Component {
             return;
         }
 
-        this.setState({ loggingIn: true });
+        this.setState({ inProgress: true });
 
         const { email, password } = this.state;
         firebase.auth().signInWithEmailAndPassword(email, password).
@@ -129,10 +129,10 @@ export default class Login extends Component {
     render() {
         let signInForm = null;
         let otherSignInOptions = null;
-        let loader = null;
+        let signInInProgress = null;
 
-        if (this.state.loggingIn) {
-            loader =
+        if (this.state.inProgress) {
+            signInInProgress =
                 <FormGroup className="text-center">
                     <div className="loader-text">Signing in</div>
                     <Halogen.PulseLoader color="#012935" className="loader"/>
@@ -140,7 +140,7 @@ export default class Login extends Component {
         } else {
             signInForm =
                 <Form horizontal onSubmit={ this.loginUser.bind(this) }>
-                    <FormGroup onSubmit={ this.loginUser.bind(this)}>
+                    <FormGroup>
                         <InputGroup>
                             <InputGroup.Addon>
                                 <i className="fa fa-envelope fa" aria-hidden="true"/>
@@ -224,7 +224,7 @@ export default class Login extends Component {
 
                             {otherSignInOptions}
 
-                            {loader}
+                            {signInInProgress}
 
                         </div>
                     </div>
