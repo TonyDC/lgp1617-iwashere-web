@@ -94,11 +94,8 @@ export default class Register extends Component {
         const { email, password } = this.state;
         firebase.auth().signInWithEmailAndPassword(email, password).
         then(() => {
-            return firebase.auth().currentUser.getToken(true);
-        }).
-        then(() => {
             this.sendEmailVerification();
-
+            
             this.setState({
                 inProgress: false,
                 registered: true
@@ -178,87 +175,86 @@ export default class Register extends Component {
         if (this.state.inProgress) {
             signUpInProgress =
                 <FormGroup className="text-center">
-                    <div className="loader-text">Signing up</div>
                     <Halogen.PulseLoader color="#012935" className="loader"/>
                 </FormGroup>;
         } else {
             signUpForm =
                 <Form horizontal onSubmit={this.registerUser.bind(this)}>
-                        <FormGroup>
-                            <ControlLabel htmlFor="username">Username</ControlLabel>
-                            <InputGroup>
-                                <InputGroup.Addon>
-                                    <i className="fa fa-user fa" aria-hidden="true"/>
-                                </InputGroup.Addon>
+                    <FormGroup>
+                        <ControlLabel htmlFor="username">Username</ControlLabel>
+                        <InputGroup>
+                            <InputGroup.Addon>
+                                <i className="fa fa-user fa" aria-hidden="true"/>
+                            </InputGroup.Addon>
+                        <FormControl
+                            name="username"
+                            type="text"
+                            value={this.state.username}
+                            placeholder="Enter your username"
+                            onChange={this.handleUsername.bind(this)}
+                        />
+                        </InputGroup>
+                    </FormGroup>
+
+                    <FormGroup>
+                        <ControlLabel htmlFor="email">Email</ControlLabel>
+                        <InputGroup>
+                            <InputGroup.Addon>
+                                <i className="fa fa-envelope fa" aria-hidden="true"/>
+                            </InputGroup.Addon>
                             <FormControl
-                                name="username"
+                                name="email"
                                 type="text"
-                                value={this.state.value}
-                                placeholder="Enter your username"
-                                onChange={this.handleUsername.bind(this)}
+                                value={this.state.email}
+                                placeholder="Enter your email"
+                                onChange={this.handleEmail.bind(this)}
                             />
-                            </InputGroup>
-                        </FormGroup>
+                        </InputGroup>
+                    </FormGroup>
 
-                        <FormGroup>
-                            <ControlLabel htmlFor="email">Email</ControlLabel>
-                            <InputGroup>
-                                <InputGroup.Addon>
-                                    <i className="fa fa-envelope fa" aria-hidden="true"/>
-                                </InputGroup.Addon>
-                                <FormControl
-                                    name="email"
-                                    type="text"
-                                    value={this.state.value}
-                                    placeholder="Enter your email"
-                                    onChange={this.handleEmail.bind(this)}
-                                />
-                            </InputGroup>
-                        </FormGroup>
+                    <FormGroup>
+                        <ControlLabel htmlFor="password">Password</ControlLabel>
+                        <InputGroup>
+                            <InputGroup.Addon>
+                                <i className="fa fa-lock fa-lg" aria-hidden="true"/>
+                            </InputGroup.Addon>
+                            <FormControl
+                                name="password"
+                                type="password"
+                                placeholder="Enter your password"
+                                onChange={this.handlePassword.bind(this)}
+                            />
+                        </InputGroup>
+                    </FormGroup>
 
-                        <FormGroup>
-                            <ControlLabel htmlFor="password">Password</ControlLabel>
-                            <InputGroup>
-                                <InputGroup.Addon>
-                                    <i className="fa fa-lock fa-lg" aria-hidden="true"/>
-                                </InputGroup.Addon>
-                                <FormControl
-                                    name="password"
-                                    type="password"
-                                    placeholder="Enter your password"
-                                    onChange={this.handlePassword.bind(this)}
-                                />
-                            </InputGroup>
-                        </FormGroup>
+                    <FormGroup>
+                        <ControlLabel htmlFor="confirm">Confirm Password</ControlLabel>
+                        <InputGroup>
+                            <InputGroup.Addon>
+                                <i className="fa fa-lock fa-lg" aria-hidden="true"/>
+                            </InputGroup.Addon>
+                            <FormControl
+                                name="confirm"
+                                type="password"
+                                placeholder="Confirm your password"
+                                onChange={this.handleConfirmPassword.bind(this)}
+                            />
+                        </InputGroup>
+                    </FormGroup>
 
-                        <FormGroup>
-                            <ControlLabel htmlFor="confirm">Confirm Password</ControlLabel>
-                            <InputGroup>
-                                <InputGroup.Addon>
-                                    <i className="fa fa-lock fa-lg" aria-hidden="true"/>
-                                </InputGroup.Addon>
-                                <FormControl
-                                    name="confirm"
-                                    type="password"
-                                    placeholder="Confirm your password"
-                                    onChange={this.handleConfirmPassword.bind(this)}
-                                />
-                            </InputGroup>
-                        </FormGroup>
+                    <FormGroup>
+                        <Button
+                            type="submit"
+                            className="btn-primary btn-md btn-block login-button colorAccent"
+                            onClick={this.registerUser.bind(this)}>
+                            Sign up
+                        </Button>
+                    </FormGroup>
 
-                        <FormGroup>
-                            <Button
-                                type="submit"
-                                className="btn-primary btn-md btn-block login-button colorAccent"
-                                onClick={this.registerUser.bind(this)}>
-                                Sign up
-                            </Button>
-                        </FormGroup>
-
-                        <FormGroup>
-                            <Link to="/login">Already have an account?</Link>
-                        </FormGroup>
-                    </Form>;
+                    <FormGroup>
+                        <Link to="/login">Already have an account?</Link>
+                    </FormGroup>
+                </Form>;
         }
 
         return (
@@ -274,6 +270,11 @@ export default class Register extends Component {
                                 <div className="panel-title text-center">
                                     <img src={logo} alt="#iwashere logo"/>
                                 </div>
+                            </div>
+
+                            <div>
+                                <h1 className="form-title">Sign up</h1>
+                                <hr/>
                             </div>
 
                             { signUpForm }

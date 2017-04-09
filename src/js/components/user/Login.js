@@ -134,12 +134,12 @@ export default class Login extends Component {
         if (this.state.inProgress) {
             signInInProgress =
                 <FormGroup className="text-center">
-                    <div className="loader-text">Signing in</div>
+                    <h1 className="loader-text">Signing in</h1>
                     <Halogen.PulseLoader color="#012935" className="loader"/>
                 </FormGroup>;
         } else {
             signInForm =
-                <Form horizontal onSubmit={ this.loginUser.bind(this) }>
+                <Form horizontal className="login-form" onSubmit={ this.loginUser.bind(this) }>
                     <FormGroup>
                         <InputGroup>
                             <InputGroup.Addon>
@@ -147,7 +147,7 @@ export default class Login extends Component {
                             </InputGroup.Addon>
                             <FormControl
                                 type="text"
-                                value={this.state.value}
+                                value={this.state.email}
                                 placeholder="Enter your email"
                                 onChange={this.handleEmail.bind(this)}
                             />
@@ -160,7 +160,6 @@ export default class Login extends Component {
                             </InputGroup.Addon>
                             <FormControl
                                 type="password"
-                                value={this.state.value}
                                 placeholder="Enter your password"
                                 onChange={this.handlePassword.bind(this)}
                             />
