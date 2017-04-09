@@ -6,6 +6,7 @@ import { GridLoader as Loader } from 'halogen';
 import UserLogin from '../components/user/Login';
 import UserRegister from '../components/user/Register';
 import UserPasswordReset from '../components/user/PasswordReset';
+import POIDetail from '../components/poi/POIDetail';
 
 export default class UnauthRoutes extends Component {
 
@@ -43,6 +44,7 @@ export default class UnauthRoutes extends Component {
                 <Route path="/login" component={ UserLogin }/>
                 <Route path="/register" component={ UserRegister }/>
                 <Route path="/password-reset" component={ UserPasswordReset }/>
+                <Route path="/poi" component={ POIDetail }/>
             </Switch>
         );
     }

@@ -17,6 +17,6 @@ const poi = sequelize.define('POI', {
 
 poi.belongsToMany(route, { through: 'POIs' });
 poi.hasMany(tag);
-poi.belongsToMany(user, { through: 'likes' });
+poi.belongsToMany(user, { through: 'POIRating' });
 
 module.exports = poi;
