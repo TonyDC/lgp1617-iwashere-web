@@ -2,11 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Alert from 'react-s-alert';
 import { Form, FormGroup, InputGroup, FormControl, Button, ControlLabel } from 'react-bootstrap';
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import * as firebase from 'firebase';
 import validator from 'validator';
-import { BAD_REQUEST } from 'http-status-codes';
 import Halogen from 'halogen';
 
 import Alerts from '../utils/Alerts';
@@ -95,7 +94,7 @@ export default class Register extends Component {
         firebase.auth().signInWithEmailAndPassword(email, password).
         then(() => {
             this.sendEmailVerification();
-            
+
             this.setState({
                 inProgress: false,
                 registered: true
