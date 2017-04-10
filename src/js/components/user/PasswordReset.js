@@ -86,46 +86,29 @@ export default class PasswordReset extends Component {
 
     render() {
         return (
-            <div className="colorAccentSecondary">
-                <Helmet>
-                    <title>#iwashere - Reset Password</title>
-                </Helmet>
+            <Form horizontal onSubmit={ this.sendPasswordResetEmail.bind(this) }>
+                <FormGroup>
+                    <InputGroup>
+                        <InputGroup.Addon>
+                            <i className="fa fa-envelope fa" aria-hidden="true"/>
+                        </InputGroup.Addon>
+                        <FormControl
+                            type="text"
+                            value={this.state.value}
+                            placeholder="Enter your email"
+                            onChange={this.handleEmail.bind(this)}
+                        />
+                    </InputGroup>
+                </FormGroup>
 
-                <div className="container">
-                    <div className="row main">
-                        <div className="main-login main-center">
-                            <div className="panel-heading">
-                                <div className="panel-title text-center">
-                                    <img src={logo} alt="#iwashere logo"/>
-                                </div>
-                            </div>
-                            <Form horizontal onSubmit={ this.sendPasswordResetEmail.bind(this) }>
-                                <FormGroup>
-                                    <InputGroup>
-                                        <InputGroup.Addon>
-                                            <i className="fa fa-envelope fa" aria-hidden="true"/>
-                                        </InputGroup.Addon>
-                                        <FormControl
-                                            type="text"
-                                            value={this.state.value}
-                                            placeholder="Enter your email"
-                                            onChange={this.handleEmail.bind(this)}
-                                        />
-                                    </InputGroup>
-                                </FormGroup>
-
-                                <FormGroup>
-                                    <Button type="submit"
-                                            className="btn-primary btn-md btn-block login-button colorAccent"
-                                            onClick={ this.sendPasswordResetEmail.bind(this) }>
-                                        Sign In
-                                    </Button>
-                                </FormGroup>
-                            </Form>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                <FormGroup>
+                    <Button type="submit"
+                            className="btn-primary btn-md btn-block login-button colorAccent"
+                            onClick={ this.sendPasswordResetEmail.bind(this) }>
+                        Sign In
+                    </Button>
+                </FormGroup>
+            </Form>
         );
     }
 }
