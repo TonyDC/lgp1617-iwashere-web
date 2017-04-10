@@ -12,8 +12,6 @@ import Alerts from '../utils/Alerts';
 import 'styles/login.scss';
 import 'styles/utils.scss';
 
-import logo from 'img/logo.png';
-
 const NO_ERROR = 0;
 
 export default class Login extends Component {
@@ -117,60 +115,71 @@ export default class Login extends Component {
 
     render() {
         return (
-            <div className="login-form">
-                <Form horizontal onSubmit={ this.loginUser.bind(this) }>
-                    <FormGroup onSubmit={ this.loginUser.bind(this)}>
-                        <InputGroup>
-                            <InputGroup.Addon>
-                                <i className="fa fa-envelope fa" aria-hidden="true"/>
-                            </InputGroup.Addon>
-                            <FormControl
-                                type="email"
-                                value={this.state.value}
-                                placeholder="Enter your email"
-                                onChange={this.handleEmail.bind(this)}
-                            />
-                        </InputGroup>
-                    </FormGroup>
-                    <FormGroup>
-                        <InputGroup>
-                            <InputGroup.Addon>
-                                <i className="fa fa-lock fa-lg" aria-hidden="true"/>
-                            </InputGroup.Addon>
-                            <FormControl
-                                type="password"
-                                value={this.state.value}
-                                placeholder="Enter your password"
-                                onChange={this.handlePassword.bind(this)}
-                            />
-                        </InputGroup>
-                    </FormGroup>
-                    <FormGroup>
-                        <Button type="submit"
-                                className="btn-primary btn-md btn-block login-button colorAccent"
-                                onClick={ this.loginUser.bind(this) }>
-                            Sign In
-                        </Button>
-                    </FormGroup>
-                </Form>
-                <div className="hor-align">
-                    or
-                </div>
+            <div>
+                <Helmet>
+                    <title>#iwashere - Sign in</title>
+                </Helmet>
 
-                <div className="federated-login">
-                    <Button className="btn-block btn-social btn-md btn-facebook"
-                            onClick={ this.loginFacebook.bind(this) }>
-                        <span className="fa fa-facebook"/> Sign in with Facebook
-                    </Button>
-                    <Button className="btn-block btn-social btn-md btn-google"
-                            onClick={ this.loginGoogle.bind(this) }>
-                        <span className="fa fa-google"/> Sign in with Google
-                    </Button>
-                </div>
+                <div className="login-form">
+                    <Form horizontal onSubmit={ this.loginUser.bind(this) }>
+                        <FormGroup onSubmit={ this.loginUser.bind(this)}>
+                            <InputGroup>
+                                <InputGroup.Addon>
+                                    <i className="fa fa-envelope fa" aria-hidden="true"/>
+                                </InputGroup.Addon>
+                                <FormControl
+                                    type="email"
+                                    value={this.state.value}
+                                    placeholder="Enter your email"
+                                    onChange={this.handleEmail.bind(this)}
+                                />
+                            </InputGroup>
+                        </FormGroup>
+                        <FormGroup>
+                            <InputGroup>
+                                <InputGroup.Addon>
+                                    <i className="fa fa-lock fa-lg" aria-hidden="true"/>
+                                </InputGroup.Addon>
+                                <FormControl
+                                    type="password"
+                                    value={this.state.value}
+                                    placeholder="Enter your password"
+                                    onChange={this.handlePassword.bind(this)}
+                                />
+                            </InputGroup>
+                        </FormGroup>
+                        <FormGroup>
+                            <Button type="submit"
+                                    className="btn-primary btn-md btn-block login-button colorAccent"
+                                    onClick={ this.loginUser.bind(this) }>
+                                Sign In
+                            </Button>
+                        </FormGroup>
+                    </Form>
 
-                <div className="extra-options">
-                    <Link to="/password-reset">Forgot your password?</Link>
-                    <Link to="/register">Don't have an account?</Link>
+                    <FormGroup className="hor-align">
+                        or
+                    </FormGroup>
+
+                    <div className="federated-login">
+                        <FormGroup>
+                            <Button className="btn-block btn-social btn-md btn-facebook"
+                                    onClick={ this.loginFacebook.bind(this) }>
+                                <span className="fa fa-facebook"/> Sign in with Facebook
+                            </Button>
+                        </FormGroup>
+                        <FormGroup>
+                            <Button className="btn-block btn-social btn-md btn-google"
+                                    onClick={ this.loginGoogle.bind(this) }>
+                                <span className="fa fa-google"/> Sign in with Google
+                            </Button>
+                        </FormGroup>
+                    </div>
+
+                    <div className="extra-options">
+                        <Link to="/password-reset">Forgot your password?</Link>
+                        <Link to="/register">Don't have an account?</Link>
+                    </div>
                 </div>
             </div>
         );

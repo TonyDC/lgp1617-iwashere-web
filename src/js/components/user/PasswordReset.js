@@ -9,8 +9,6 @@ import validator from 'validator';
 
 import Alerts from '../utils/Alerts';
 
-import logo from 'img/logo.png';
-
 import 'styles/login.scss';
 import 'styles/utils.scss';
 
@@ -86,29 +84,35 @@ export default class PasswordReset extends Component {
 
     render() {
         return (
-            <Form horizontal onSubmit={ this.sendPasswordResetEmail.bind(this) }>
-                <FormGroup>
-                    <InputGroup>
-                        <InputGroup.Addon>
-                            <i className="fa fa-envelope fa" aria-hidden="true"/>
-                        </InputGroup.Addon>
-                        <FormControl
-                            type="text"
-                            value={this.state.value}
-                            placeholder="Enter your email"
-                            onChange={this.handleEmail.bind(this)}
-                        />
-                    </InputGroup>
-                </FormGroup>
+            <div>
+                <Helmet>
+                    <title>#iwashere - Reset Password</title>
+                </Helmet>
 
-                <FormGroup>
-                    <Button type="submit"
-                            className="btn-primary btn-md btn-block login-button colorAccent"
-                            onClick={ this.sendPasswordResetEmail.bind(this) }>
-                        Sign In
-                    </Button>
-                </FormGroup>
-            </Form>
+                <Form horizontal onSubmit={ this.sendPasswordResetEmail.bind(this) }>
+                    <FormGroup>
+                        <InputGroup>
+                            <InputGroup.Addon>
+                                <i className="fa fa-envelope fa" aria-hidden="true"/>
+                            </InputGroup.Addon>
+                            <FormControl
+                                type="text"
+                                value={this.state.value}
+                                placeholder="Enter your email"
+                                onChange={this.handleEmail.bind(this)}
+                            />
+                        </InputGroup>
+                    </FormGroup>
+
+                    <FormGroup>
+                        <Button type="submit"
+                                className="btn-primary btn-md btn-block login-button colorAccent"
+                                onClick={ this.sendPasswordResetEmail.bind(this) }>
+                            Sign In
+                        </Button>
+                    </FormGroup>
+                </Form>
+            </div>
         );
     }
 }

@@ -3,10 +3,14 @@ import PropTypes from 'prop-types';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { GridLoader as Loader } from 'halogen';
 
-import UserAuthentication from '../components/user/Authentication';
 import UserLogin from '../components/user/Login';
 import UserRegister from '../components/user/Register';
 import UserPasswordReset from '../components/user/PasswordReset';
+
+import logo from 'img/logo.png';
+
+import 'styles/login.scss';
+import 'styles/utils.scss';
 
 export default class UnauthRoutes extends Component {
 
@@ -40,11 +44,26 @@ export default class UnauthRoutes extends Component {
         }
 
         return (
-            <Switch>
-                <Route path="/login" component={ UserAuthentication } />
-                <Route path="/register" component={ UserRegister }/>
-                <Route path="/password-reset" component={ UserPasswordReset }/>
-            </Switch>
+            <div className="colorAccentSecondary">
+                <div className="container">
+                    <div className="row main">
+                        <div className="main-login main-center">
+                            <div className="panel-heading">
+                                <div className="panel-title text-center">
+                                    <img src={logo} alt="#iwashere logo"/>
+                                </div>
+                            </div>
+
+                            <Switch>
+                                <Route path="/login" component={ UserLogin } />
+                                <Route path="/register" component={ UserRegister }/>
+                                <Route path="/password-reset" component={ UserPasswordReset }/>
+                            </Switch>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
         );
     }
 }

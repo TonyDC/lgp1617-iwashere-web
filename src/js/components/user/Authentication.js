@@ -1,3 +1,4 @@
+/* To remove
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Alert from 'react-s-alert';
@@ -82,3 +83,4 @@ Authentication.propTypes = { history: PropTypes.object };
 
 // To access Redux store
 Authentication.contextTypes = { store: PropTypes.object };
+*/

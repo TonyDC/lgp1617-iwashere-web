@@ -7,11 +7,12 @@ import { Helmet } from 'react-helmet';
 import * as firebase from 'firebase';
 import validator from 'validator';
 import { BAD_REQUEST } from 'http-status-codes';
+import { GridLoader as Loader } from 'halogen';
 
 import Alerts from '../utils/Alerts';
 
 import 'styles/login.scss';
-import logo from 'img/logo.png';
+import 'styles/utils.scss';
 
 const NO_ERRORS = 0;
 
@@ -131,6 +132,10 @@ export default class Register extends Component {
     registerUser(event) {
         event.preventDefault();
 
+        if (this.state.inProgress) {
+            return;
+        }
+
         this.closePreviousErrors();
 
         if (!this.checkForm()) {
@@ -214,14 +219,20 @@ export default class Register extends Component {
         }
 
 // eslint-disable-next-line no-unused-vars
-        let registerInProgress = null;
-        if (this.state.inProgress) {
-            registerInProgress = <span className="fa fa-spinner fa-spin" aria-hidden="true"/>;
+        let submitButton = <div className="hor-align"><Loader color="#E5402A" size="10px" margin="5px"/></div>;
+        if (!this.state.inProgress) {
+            submitButton = <Button type="submit"
+                                   className="btn-primary btn-md btn-block login-button colorAccent"
+                                   onClick={ this.registerUser.bind(this) }>Sign Up</Button>;
         }
 
         return (
             <div>
-                <Form horizontal onSubmit={ this.registerUser.bind(this)}>
+                <Helmet>
+                    <title>#iwashere - Register</title>
+                </Helmet>
+
+                <Form horizontal onSubmit={ this.registerUser.bind(this) }>
                     <FormGroup>
                         <InputGroup>
                             <InputGroup.Addon>
@@ -275,11 +286,7 @@ export default class Register extends Component {
                         </InputGroup>
                     </FormGroup>
                     <FormGroup>
-                        <Button type="submit"
-                                className="btn-primary btn-md btn-block login-button colorAccent"
-                                onClick={ this.registerUser.bind(this) }>
-                            Sign Up
-                        </Button>
+                        { submitButton }
                     </FormGroup>
 
                 </Form>
@@ -288,19 +295,21 @@ export default class Register extends Component {
                     or
                 </FormGroup>
 
-                <FormGroup>
-                    <Button className="btn-block btn-social btn-md btn-facebook"
-                    onClick={ this.loginFacebook.bind(this) }>
-                    <span className="fa fa-facebook"/> Sign up with Facebook
-                    </Button>
+                <div className="federated-login">
+                    <FormGroup>
+                        <Button className="btn-block btn-social btn-md btn-facebook"
+                                onClick={ this.loginFacebook.bind(this) }>
+                            <span className="fa fa-facebook"/> Sign up with Facebook
+                        </Button>
                     </FormGroup>
 
-                <FormGroup>
-                    <Button className="btn-block btn-social btn-md btn-google"
-                            onClick={ this.loginGoogle.bind(this) }>
-                        <span className="fa fa-google"/> Sign up with Google
-                    </Button>
-                </FormGroup>
+                    <FormGroup>
+                        <Button className="btn-block btn-social btn-md btn-google"
+                                onClick={ this.loginGoogle.bind(this) }>
+                            <span className="fa fa-google"/> Sign up with Google
+                        </Button>
+                    </FormGroup>
+                </div>
 
                 <FormGroup>
                     <Link to="/login">Already have an account?</Link>
