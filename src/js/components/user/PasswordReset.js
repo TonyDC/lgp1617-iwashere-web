@@ -3,9 +3,13 @@ import PropTypes from 'prop-types';
 import Alert from 'react-s-alert';
 import { Helmet } from 'react-helmet';
 import * as firebase from 'firebase';
+import { Form, FormGroup, InputGroup, FormControl, Button } from 'react-bootstrap';
+
 import validator from 'validator';
 
 import Alerts from '../utils/Alerts';
+
+import logo from 'img/logo.png';
 
 import 'styles/login.scss';
 import 'styles/utils.scss';
@@ -82,35 +86,42 @@ export default class PasswordReset extends Component {
 
     render() {
         return (
-            <div>
+            <div className="colorAccentSecondary">
                 <Helmet>
-                    <title>#iwashere - Reset password</title>
+                    <title>#iwashere - Reset Password</title>
                 </Helmet>
+
                 <div className="container">
                     <div className="row main">
-                        <div className="panel-heading">
-                            <div className="panel-title text-center">
-                                <h1>Reset password</h1>
-                                <hr/>
+                        <div className="main-login main-center">
+                            <div className="panel-heading">
+                                <div className="panel-title text-center">
+                                    <img src={logo} alt="#iwashere logo"/>
+                                </div>
                             </div>
-                        </div>
+                            <Form horizontal onSubmit={ this.sendPasswordResetEmail.bind(this) }>
+                                <FormGroup>
+                                    <InputGroup>
+                                        <InputGroup.Addon>
+                                            <i className="fa fa-envelope fa" aria-hidden="true"/>
+                                        </InputGroup.Addon>
+                                        <FormControl
+                                            type="text"
+                                            value={this.state.value}
+                                            placeholder="Enter your email"
+                                            onChange={this.handleEmail.bind(this)}
+                                        />
+                                    </InputGroup>
+                                </FormGroup>
 
-                        <div className="main-center">
-                            <form className="form-horizontal" onSubmit={ this.sendPasswordResetEmail.bind(this) }>
-                                <div className="form-group">
-                                    <label htmlFor="email" className="cols-sm-2 control-label">Your email</label>
-                                    <div className="cols-sm-10">
-                                        <div className="input-group">
-                                            <span className="input-group-addon"><i className="fa fa-envelope fa" aria-hidden="true"/></span>
-                                            <input type="text" className="form-control" name="email" id="email" placeholder="Enter your Email" onChange={ this.handleEmail.bind(this) }/>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="form-group ">
-                                    <button type="submit" className="btn btn-primary btn-lg btn-block login-button" onClick={ this.sendPasswordResetEmail.bind(this) }>Send email</button>
-                                </div>
-                            </form>
+                                <FormGroup>
+                                    <Button type="submit"
+                                            className="btn-primary btn-md btn-block login-button colorAccent"
+                                            onClick={ this.sendPasswordResetEmail.bind(this) }>
+                                        Sign In
+                                    </Button>
+                                </FormGroup>
+                            </Form>
                         </div>
                     </div>
                 </div>
