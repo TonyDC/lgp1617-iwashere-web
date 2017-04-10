@@ -160,6 +160,7 @@ export default class Login extends Component {
                             </InputGroup.Addon>
                             <FormControl
                                 type="password"
+                                value={this.state.password}
                                 placeholder="Enter your password"
                                 onChange={this.handlePassword.bind(this)}
                             />
