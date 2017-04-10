@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('POI', {
+    const POI = sequelize.define('POI', {
         description: {
             allowNull: false,
             type: DataTypes.TEXT
@@ -35,8 +35,12 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         classMethods: {
             associate: (models) => {
-                // associations can be defined here
+                //POI.belongsToMany(models.Route, {through: 'POIsRoutes' });
+                //POI.hasMany(models.Tag);
+                POI.hasMany(models.Media);
             }
         }
     });
+
+    return POI;
 };
