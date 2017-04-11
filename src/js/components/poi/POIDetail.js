@@ -3,14 +3,15 @@ import { Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 
+import { Carousel } from 'react-responsive-carousel';
+import 'react-responsive-carousel/lib/styles/carousel.css';
+
 import Rater from 'react-rater';
 import 'react-rater/lib/react-rater.css';
 
 import 'styles/poi-detail.scss';
 import 'styles/utils.scss';
 
-import { Carousel } from 'react-responsive-carousel';
-import 'react-responsive-carousel/lib/styles/carousel.css';
 
 export default class POIDetail extends Component {
 
@@ -66,6 +67,10 @@ export default class POIDetail extends Component {
         });
 
         return mediaList;
+    }
+
+    dummy() {
+
     }
 
     render() {
