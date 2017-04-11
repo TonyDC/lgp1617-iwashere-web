@@ -23,11 +23,14 @@ h1.title {
     margin: 0 auto 0 auto;
     max-width: 330px;
     padding: 40px;
-
 }
 
 .login-button {
     margin-top: 5px;
+}
+
+.login-form {
+    padding-top: 3em;
 }
 
 .login-register {
@@ -35,7 +38,22 @@ h1.title {
     text-align: center;
 }
 
+.loader-text {
+    font-size: 20px;
+    text-align: center;
+}
+
+.loader {
+    padding: 15px;
+}
+
 .panel-heading * {
     max-width: 100%;
     max-height: 100%;
+}
+
+.form-title {
+    font-size: 2em;
+    text-align: center;
+    color: #012935;
 }

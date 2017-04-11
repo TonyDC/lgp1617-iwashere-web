@@ -53,12 +53,14 @@ export default class NavBar extends Component {
 
             let userPicture = null;
             if (userInfo.photoURL) {
-                userPicture = <NavItem>
+                userPicture =
+                <NavItem>
                     <img src={userInfo.photoURL} alt="user-profile-picture" className="img-circle"/>
                 </NavItem>;
             }
 
-            signButton = <NavDropdown eventKey={3} title={user} id="basic-nav-dropdown">
+            signButton =
+            <NavDropdown eventKey={3} title={user} id="basic-nav-dropdown">
                 {userPicture}
                 <MenuItem eventKey={3.1}>Profile</MenuItem>
                 <MenuItem divider/>
