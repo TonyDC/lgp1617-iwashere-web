@@ -22,3 +22,34 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+.colorPrimary {
+    background-color: #012935;
+}
+
+.colorAccent, .colorAccent:hover {
+    background-color: #E5402A;
+    border-color: transparent;
+}
+
+.colorAccentSecondary {
+    background-color: #39A8E0;
+    border-color: transparent;
+}
+
+.main {
+    margin: 10px;
+}
+
+#main, #main [data-reactroot] {
+    height: 100%;
+}
+
+.fill-remaining-container {
+    display: flex;
+    flex-flow: column;
+}
+
+.fill-remaining {
+    flex: 1;
+}

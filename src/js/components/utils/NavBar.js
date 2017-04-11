@@ -66,20 +66,25 @@ export default class NavBar extends Component {
             </NavDropdown>;
         }
 
+        /*
+         The <div> tags is required so that the navbar collapse menu is properly rendered
+         */
         return (
-            <Navbar inverse collapseOnSelect className="navbar">
-                <Navbar.Header>
-                    <Navbar.Brand>
-                        <img src={logoCompact} alt="#iwashere" className="app-logo"/>
-                    </Navbar.Brand>
-                    <Navbar.Toggle/>
-                </Navbar.Header>
-                <Navbar.Collapse>
-                    <Nav pullRight>
-                        { signButton }
-                    </Nav>
-                </Navbar.Collapse>
-            </Navbar>
+            <div>
+                <Navbar inverse collapseOnSelect className="navbar">
+                    <Navbar.Header>
+                        <Navbar.Brand>
+                            <img src={logoCompact} alt="#iwashere" className="app-logo"/>
+                        </Navbar.Brand>
+                        <Navbar.Toggle/>
+                    </Navbar.Header>
+                    <Navbar.Collapse>
+                        <Nav pullRight>
+                            { signButton }
+                        </Nav>
+                    </Navbar.Collapse>
+                </Navbar>
+            </div>
         );
     }
 }

@@ -1,5 +1,6 @@
 html, body {
     height: 100%;
+    width: 100%;
     margin: 0;
     padding: 0;
     font-family: 'Oxygen', sans-serif;
@@ -22,22 +23,4 @@ label {
 input, input::-webkit-input-placeholder {
     font-size: 11px;
     padding-top: 3px;
-}
-
-.colorPrimary{
-    background-color: #012935;
-}
-
-.colorAccent, .colorAccent:hover{
-    background-color: #E5402A;
-    border-color: transparent;
-}
-
-.colorAccentSecondary{
-    background-color: #39A8E0;
-    border-color: transparent;
-}
-
-.main {
-    margin: 35px;
 }

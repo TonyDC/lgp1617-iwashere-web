@@ -9,6 +9,7 @@ import { BAD_REQUEST } from 'http-status-codes';
 
 import Alerts from '../utils/Alerts';
 
+import 'styles/app.scss';
 import 'styles/login.scss';
 
 const NO_ERRORS = 0;
@@ -203,7 +204,7 @@ export default class Register extends Component {
         }
 
         return (
-            <div>
+            <div className="colorAccentSecondary vert-align hor-align wrapper-fill">
                 <Helmet>
                     <title>#iwashere - Register</title>
                 </Helmet>

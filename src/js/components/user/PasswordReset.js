@@ -7,6 +7,7 @@ import validator from 'validator';
 
 import Alerts from '../utils/Alerts';
 
+import 'styles/app.scss';
 import 'styles/login.scss';
 import 'styles/utils.scss';
 
@@ -82,7 +83,7 @@ export default class PasswordReset extends Component {
 
     render() {
         return (
-            <div>
+            <div className="colorAccentSecondary vert-align hor-align wrapper-fill">
                 <Helmet>
                     <title>#iwashere - Reset password</title>
                 </Helmet>
