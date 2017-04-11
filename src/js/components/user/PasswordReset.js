@@ -82,7 +82,7 @@ export default class PasswordReset extends Component {
 
     render() {
         return (
-            <div>
+            <div className="colorAccentSecondary vert-align hor-align wrapper-fill">
                 <Helmet>
                     <title>#iwashere - Reset password</title>
                 </Helmet>

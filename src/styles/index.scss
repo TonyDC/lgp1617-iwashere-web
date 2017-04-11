@@ -1,5 +1,6 @@
 html, body {
     height: 100%;
+    width: 100%;
     margin: 0;
     padding: 0;
     font-family: 'Oxygen', sans-serif;
@@ -33,7 +34,7 @@ input, input::-webkit-input-placeholder {
     border-color: transparent;
 }
 
-.colorAccentSecondary{
+.colorAccentSecondary {
     background-color: #39A8E0;
     border-color: transparent;
 }

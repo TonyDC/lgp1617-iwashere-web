@@ -117,7 +117,7 @@ export default class Login extends Component {
 
     render() {
         return (
-            <div className="colorAccentSecondary">
+            <div className="colorAccentSecondary vert-align hor-align wrapper-fill">
                 <Helmet>
                     <title>#iwashere - Sign in</title>
                 </Helmet>

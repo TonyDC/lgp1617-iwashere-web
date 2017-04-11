@@ -203,7 +203,7 @@ export default class Register extends Component {
         }
 
         return (
-            <div>
+            <div className="colorAccentSecondary vert-align hor-align wrapper-fill">
                 <Helmet>
                     <title>#iwashere - Register</title>
                 </Helmet>
