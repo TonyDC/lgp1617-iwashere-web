@@ -9,6 +9,7 @@ import validator from 'validator';
 
 import Alerts from '../utils/Alerts';
 
+import 'styles/app.scss';
 import 'styles/login.scss';
 import 'styles/utils.scss';
 
@@ -123,7 +124,7 @@ export default class Login extends Component {
                 </Helmet>
 
                 <div className="container">
-                    <div className="row main">
+                    <div className="main">
                         <div className="main-login main-center">
                             <div className="panel-heading">
                                 <div className="panel-title text-center">

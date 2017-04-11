@@ -7,6 +7,7 @@ import validator from 'validator';
 
 import Alerts from '../utils/Alerts';
 
+import 'styles/app.scss';
 import 'styles/login.scss';
 import 'styles/utils.scss';
 
