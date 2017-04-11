@@ -10,6 +10,7 @@ import Halogen from 'halogen';
 
 import Alerts from '../utils/Alerts';
 
+import 'styles/app.scss';
 import 'styles/login.scss';
 import 'styles/utils.scss';
 
@@ -257,7 +258,7 @@ export default class Register extends Component {
         }
 
         return (
-            <div className="colorAccentSecondary">
+            <div className="colorAccentSecondary vert-align hor-align wrapper-fill">
                 <Helmet>
                     <title>#iwashere - Sign up</title>
                 </Helmet>

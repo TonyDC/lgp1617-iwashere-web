@@ -10,6 +10,40 @@
         <title>#iwashere</title>
     </head>
     <body>
+        <noscript>
+            <style>
+                * {
+                    font-family: 'Oxygen', sans-serif;
+                }
+
+                img {
+                    float: none;
+                }
+
+                @media screen and (max-width: 1000px) {
+                    img {
+                        clear: both;
+                    }
+                }
+
+                @media screen and (min-width: 1000px) {
+                    img {
+                        float: left;
+                    }
+                }
+            </style>
+
+            <div style="width: 60%; margin: auto;">
+                <img src="/public/noscript.png" alt="no javascript icon" width="200" style="margin: 1em 3em;">
+                <h1>Uh Oh!</h1>
+                <div>
+                    <p>It seems your browser does not have JavaScript enabled.</p>
+                    <p><em>&num;iwashere</em> requires JavaScript to work properly.</p>
+                    <p>Please <em><b>enable JavaScript</b></em>.</p>
+                    <h3>Thank you!</h3>
+                </div>
+            </div>
+        </noscript>
         <div id="main"></div>
         <script type="text/javascript" src="/public/bundle.js"></script>
     </body>
