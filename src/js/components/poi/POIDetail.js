@@ -2,13 +2,14 @@ import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
+
 import Rater from 'react-rater';
+import 'react-rater/lib/react-rater.css';
 
 import 'styles/poi-detail.scss';
 import 'styles/utils.scss';
 
 import { Carousel } from 'react-responsive-carousel';
-import 'react-responsive-carousel/lib/styles/main.css';
 import 'react-responsive-carousel/lib/styles/carousel.css';
 
 export default class POIDetail extends Component {
@@ -50,14 +51,15 @@ export default class POIDetail extends Component {
     }
 
     getPOIMedia() {
-        var mediaList = [];
+        const mediaList = [];
+        let key = 0;
         this.state.poi.media.forEach((mediaEntry) => {
             if (mediaEntry.type === 'IMG') {
-                mediaList.push(<div>
+                mediaList.push(<div key={key++}>
                     <img src={mediaEntry.url} />
                 </div>);
             } else if (mediaEntry.type === 'VID') {
-                mediaList.push(<div>
+                mediaList.push(<div key={key++}>
                     <iframe src={mediaEntry.url} />
                 </div>);
             }
@@ -104,10 +106,22 @@ export default class POIDetail extends Component {
                                     <p>{this.state.poi.description}</p>
                                 </div>
                                 <div className="ratings">
-                                    <Rater interactive={false} total={MAX_RATING_SCALE} rating={this.state.poi.rating} />
-                                    {userRating}
+                                    <Row className="show-grid">
+                                        <Col xs={12} md={12} lg={12}>
+                                            <Rater interactive={false} total={MAX_RATING_SCALE} rating={this.state.poi.rating} />
+                                            <span className="rating-description"> {this.state.poi.rating.toFixed(1)} stars</span>
+                                        </Col>
+                                        <Col xs={12} md={12} lg={12}>
+                                            {userRating}
+                                            <span className="rating-description"> Your rating</span>
+                                        </Col>
+                                    </Row>
                                 </div>
                             </div>
+                        </Col>
+
+                        <Col xs={12} mdOffset={2} md={8} lgOffset={2} lg={8}>
+
                         </Col>
                     </Row>
                 </div>
