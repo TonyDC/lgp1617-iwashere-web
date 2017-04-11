@@ -53,12 +53,14 @@ export default class NavBar extends Component {
 
             let userPicture = null;
             if (userInfo.photoURL) {
-                userPicture = <NavItem>
+                userPicture =
+                <NavItem>
                     <img src={userInfo.photoURL} alt="user-profile-picture" className="img-circle"/>
                 </NavItem>;
             }
 
-            signButton = <NavDropdown eventKey={3} title={user} id="basic-nav-dropdown">
+            signButton =
+            <NavDropdown eventKey={3} title={user} id="basic-nav-dropdown">
                 {userPicture}
                 <MenuItem eventKey={3.1}>Profile</MenuItem>
                 <MenuItem divider/>
@@ -66,20 +68,25 @@ export default class NavBar extends Component {
             </NavDropdown>;
         }
 
+        /*
+         The <div> tags is required so that the navbar collapse menu is properly rendered
+         */
         return (
-            <Navbar inverse collapseOnSelect className="navbar">
-                <Navbar.Header>
-                    <Navbar.Brand>
-                        <img src={logoCompact} alt="#iwashere" className="app-logo"/>
-                    </Navbar.Brand>
-                    <Navbar.Toggle/>
-                </Navbar.Header>
-                <Navbar.Collapse>
-                    <Nav pullRight>
-                        { signButton }
-                    </Nav>
-                </Navbar.Collapse>
-            </Navbar>
+            <div>
+                <Navbar inverse collapseOnSelect className="navbar">
+                    <Navbar.Header>
+                        <Navbar.Brand>
+                            <img src={logoCompact} alt="#iwashere" className="app-logo"/>
+                        </Navbar.Brand>
+                        <Navbar.Toggle/>
+                    </Navbar.Header>
+                    <Navbar.Collapse>
+                        <Nav pullRight>
+                            { signButton }
+                        </Nav>
+                    </Navbar.Collapse>
+                </Navbar>
+            </div>
         );
     }
 }

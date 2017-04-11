@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Alert from 'react-s-alert';
-import { Link, Redirect } from 'react-router-dom';
-import { Form, FormGroup, InputGroup, FormControl, Button } from 'react-bootstrap';
+import { Form, FormGroup, InputGroup, FormControl, Button, ControlLabel } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import * as firebase from 'firebase';
 import validator from 'validator';
@@ -11,8 +11,11 @@ import { GridLoader as Loader } from 'halogen';
 
 import Alerts from '../utils/Alerts';
 
+import 'styles/app.scss';
 import 'styles/login.scss';
 import 'styles/utils.scss';
+
+import logo from 'img/logo.png';
 
 const NO_ERRORS = 0;
 
@@ -23,7 +26,7 @@ export default class Register extends Component {
         this.state = {
             errors: [],
             inProgress: false,
-            register: false
+            registered: false
         };
     }
 
@@ -74,7 +77,7 @@ export default class Register extends Component {
         this.setState({
             errors: [currentError],
             inProgress: false,
-            register: false
+            registered: false
         });
     }
 
@@ -93,36 +96,14 @@ export default class Register extends Component {
         const { email, password } = this.state;
         firebase.auth().signInWithEmailAndPassword(email, password).
         then(() => {
-            return firebase.auth().currentUser.getToken(true);
-        }).
-        then((token) => {
-            return fetch('/api/user/auth/login', {
-                body: JSON.stringify({ token }),
-                headers: { 'Authorization': `Bearer ${token}` },
-                method: 'POST'
-            });
-        }).
-        then((response) => {
-            const { status, statusText } = response;
-            if (status >= BAD_REQUEST) {
-                const error = new Error('Bad request');
-                error.code = status;
-                error.message = statusText;
-
-                return Promise.reject(error);
-            }
-
-            return response.json();
-        }).
-        then(() => {
             this.sendEmailVerification();
 
             this.setState({
                 inProgress: false,
-                register: true
+                registered: true
             });
 
-            history.push('/');
+            this.props.history.push('/');
         }).
         catch((error) => {
             this.handleError(error);
@@ -209,16 +190,6 @@ export default class Register extends Component {
     }
 
     render() {
-        if (this.state.register) {
-            return (
-                <Redirect to={{
-                    pathname: '/',
-                    state: { registerOK: true }
-                }}/>
-            );
-        }
-
-// eslint-disable-next-line no-unused-vars
         let submitButton = <div className="hor-align"><Loader color="#E5402A" size="10px" margin="5px"/></div>;
         if (!this.state.inProgress) {
             submitButton = <Button type="submit"
@@ -227,93 +198,99 @@ export default class Register extends Component {
         }
 
         return (
-            <div>
+            <div className="colorAccentSecondary vert-align hor-align wrapper-fill">
                 <Helmet>
-                    <title>#iwashere - Register</title>
+                    <title>#iwashere - Sign up</title>
                 </Helmet>
 
-                <Form horizontal onSubmit={ this.registerUser.bind(this) }>
-                    <FormGroup>
-                        <InputGroup>
-                            <InputGroup.Addon>
-                                <i className="fa fa-user fa" aria-hidden="true"/>
-                            </InputGroup.Addon>
-                            <FormControl
-                                type="text"
-                                value={this.state.value}
-                                placeholder="Enter your username"
-                                onChange={this.handleUsername.bind(this)}
-                            />
-                        </InputGroup>
-                    </FormGroup>
-                    <FormGroup>
-                        <InputGroup>
-                            <InputGroup.Addon>
-                                <i className="fa fa-envelope fa" aria-hidden="true"/>
-                            </InputGroup.Addon>
-                            <FormControl
-                                type="text"
-                                value={this.state.value}
-                                placeholder="Enter your email"
-                                onChange={this.handleEmail.bind(this)}
-                            />
-                        </InputGroup>
-                    </FormGroup>
-                    <FormGroup>
-                        <InputGroup>
-                            <InputGroup.Addon>
-                                <i className="fa fa-lock fa-lg" aria-hidden="true"/>
-                            </InputGroup.Addon>
-                            <FormControl
-                                type="password"
-                                value={this.state.value}
-                                placeholder="Enter your password"
-                                onChange={this.handlePassword.bind(this)}
-                            />
-                        </InputGroup>
-                    </FormGroup>
-                    <FormGroup>
-                        <InputGroup>
-                            <InputGroup.Addon>
-                                <i className="fa fa-lock fa-lg" aria-hidden="true"/>
-                            </InputGroup.Addon>
-                            <FormControl
-                                type="password"
-                                value={this.state.value}
-                                placeholder="Confirm your password"
-                                onChange={this.handleConfirmPassword.bind(this)}
-                            />
-                        </InputGroup>
-                    </FormGroup>
-                    <FormGroup>
-                        { submitButton }
-                    </FormGroup>
+                <div className="container">
+                    <div className="row main">
+                        <div className="main-login main-center">
+                            <div className="panel-heading">
+                                <div className="panel-title text-center">
+                                    <img src={logo} alt="#iwashere logo"/>
+                                </div>
+                            </div>
 
-                </Form>
+                            <div>
+                                <h1 className="form-title">Sign up</h1>
+                                <hr/>
+                            </div>
 
-                <FormGroup className="hor-align">
-                    or
-                </FormGroup>
+                            <Form horizontal onSubmit={this.registerUser.bind(this)}>
+                                <FormGroup>
+                                    <ControlLabel htmlFor="username">Username</ControlLabel>
+                                    <InputGroup>
+                                        <InputGroup.Addon>
+                                            <i className="fa fa-user fa" aria-hidden="true"/>
+                                        </InputGroup.Addon>
+                                        <FormControl
+                                            name="username"
+                                            type="text"
+                                            value={this.state.username}
+                                            placeholder="Enter your username"
+                                            onChange={this.handleUsername.bind(this)}
+                                        />
+                                    </InputGroup>
+                                </FormGroup>
 
-                <div className="federated-login">
-                    <FormGroup>
-                        <Button className="btn-block btn-social btn-md btn-facebook"
-                                onClick={ this.loginFacebook.bind(this) }>
-                            <span className="fa fa-facebook"/> Sign up with Facebook
-                        </Button>
-                    </FormGroup>
+                                <FormGroup>
+                                    <ControlLabel htmlFor="email">Email</ControlLabel>
+                                    <InputGroup>
+                                        <InputGroup.Addon>
+                                            <i className="fa fa-envelope fa" aria-hidden="true"/>
+                                        </InputGroup.Addon>
+                                        <FormControl
+                                            name="email"
+                                            type="text"
+                                            value={this.state.email}
+                                            placeholder="Enter your email"
+                                            onChange={this.handleEmail.bind(this)}
+                                        />
+                                    </InputGroup>
+                                </FormGroup>
 
-                    <FormGroup>
-                        <Button className="btn-block btn-social btn-md btn-google"
-                                onClick={ this.loginGoogle.bind(this) }>
-                            <span className="fa fa-google"/> Sign up with Google
-                        </Button>
-                    </FormGroup>
+                                <FormGroup>
+                                    <ControlLabel htmlFor="password">Password</ControlLabel>
+                                    <InputGroup>
+                                        <InputGroup.Addon>
+                                            <i className="fa fa-lock fa-lg" aria-hidden="true"/>
+                                        </InputGroup.Addon>
+                                        <FormControl
+                                            name="password"
+                                            type="password"
+                                            placeholder="Enter your password"
+                                            onChange={this.handlePassword.bind(this)}
+                                        />
+                                    </InputGroup>
+                                </FormGroup>
+
+                                <FormGroup>
+                                    <ControlLabel htmlFor="confirm">Confirm Password</ControlLabel>
+                                    <InputGroup>
+                                        <InputGroup.Addon>
+                                            <i className="fa fa-lock fa-lg" aria-hidden="true"/>
+                                        </InputGroup.Addon>
+                                        <FormControl
+                                            name="confirm"
+                                            type="password"
+                                            placeholder="Confirm your password"
+                                            onChange={this.handleConfirmPassword.bind(this)}
+                                        />
+                                    </InputGroup>
+                                </FormGroup>
+
+                                <FormGroup>
+                                    { submitButton }
+                                </FormGroup>
+
+                                <FormGroup>
+                                    <Link to="/login">Already have an account?</Link>
+                                </FormGroup>
+                            </Form>
+                        </div>
+                    </div>
                 </div>
-
-                <FormGroup>
-                    <Link to="/login">Already have an account?</Link>
-                </FormGroup>
             </div>
 
         );

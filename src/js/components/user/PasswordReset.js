@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Alert from 'react-s-alert';
 import { Helmet } from 'react-helmet';
+import { Form, FormGroup, InputGroup, FormControl, Button, ControlLabel } from 'react-bootstrap';
 import * as firebase from 'firebase';
 import { Form, FormGroup, InputGroup, FormControl, Button } from 'react-bootstrap';
 
@@ -9,17 +10,16 @@ import validator from 'validator';
 
 import Alerts from '../utils/Alerts';
 
+import 'styles/app.scss';
 import 'styles/login.scss';
 import 'styles/utils.scss';
+import logo from 'img/logo.png';
 
 export default class PasswordReset extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            errors: [],
-            loggedIn: firebase.auth().currentUser !== null
-        };
+        this.state = { errors: [] };
     }
 
     componentWillUnmount() {
@@ -41,10 +41,7 @@ export default class PasswordReset extends Component {
         this.closePreviousErrors();
 
         const currentError = Alerts.createErrorAlert(message);
-        this.setState({
-            errors: [currentError],
-            loggedIn: false
-        });
+        this.setState({ errors: [currentError] });
     }
 
     checkForm() {
@@ -84,7 +81,7 @@ export default class PasswordReset extends Component {
 
     render() {
         return (
-            <div>
+            <div className="colorAccentSecondary vert-align hor-align wrapper-fill">
                 <Helmet>
                     <title>#iwashere - Reset Password</title>
                 </Helmet>
