@@ -45,14 +45,16 @@ export default class App extends Component {
     render() {
         return (
             <Router>
-                <div>
+                <div className="fill-remaining-container">
                     <Route path="/" component={ NavBar }/>
-                    <Switch>
-                        <Route exact path="/" component={ Map }/>
-                        <UnauthRoutes/>
-                        <Route component={ NoMatch }/>
-                    </Switch>
-                    <Alerts/>
+                    <div className="fill-remaining">
+                        <Switch>
+                            <Route exact path="/" component={ Map }/>
+                            <UnauthRoutes/>
+                            <Route component={ NoMatch }/>
+                        </Switch>
+                        <Alerts/>
+                    </div>
                 </div>
             </Router>
         );

@@ -24,11 +24,11 @@ input, input::-webkit-input-placeholder {
     padding-top: 3px;
 }
 
-.colorPrimary{
+.colorPrimary {
     background-color: #012935;
 }
 
-.colorAccent, .colorAccent:hover{
+.colorAccent, .colorAccent:hover {
     background-color: #E5402A;
     border-color: transparent;
 }
@@ -40,4 +40,17 @@ input, input::-webkit-input-placeholder {
 
 .main {
     margin: 35px;
+}
+
+#main, #main [data-reactroot] {
+    height: 100%;
+}
+
+.fill-remaining-container {
+    display: flex;
+    flex-flow: column;
+}
+
+.fill-remaining {
+    flex: 1;
 }
