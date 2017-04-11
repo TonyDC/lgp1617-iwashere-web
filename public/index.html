@@ -15,10 +15,26 @@
                 * {
                     font-family: 'Oxygen', sans-serif;
                 }
+
+                img {
+                    float: none;
+                }
+
+                @media screen and (max-width: 1000px) {
+                    img {
+                        clear: both;
+                    }
+                }
+
+                @media screen and (min-width: 1000px) {
+                    img {
+                        float: left;
+                    }
+                }
             </style>
 
             <div style="width: 60%; margin: auto;">
-                <img src="/public/logo-compact.png" alt="Travis CI mascot" width="200" style="float: left; margin: 1em 3em;">
+                <img src="/public/noscript.png" alt="no javascript icon" width="200" style="margin: 1em 3em;">
                 <h1>Uh Oh!</h1>
                 <div>
                     <p>It seems your browser does not have JavaScript enabled.</p>
