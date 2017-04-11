@@ -15,6 +15,7 @@ import 'styles/login.scss';
 import 'styles/utils.scss';
 
 import logo from 'img/logo.png';
+
 const NO_ERRORS = 0;
 
 export default class Register extends Component {

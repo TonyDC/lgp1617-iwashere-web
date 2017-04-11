@@ -68,7 +68,7 @@ export default class Login extends Component {
     loginUser(event) {
         event.preventDefault();
 
-        if (!this.checkForm()) {
+        if (!this.checkForm() || this.state.inProgress) {
             return;
         }
 
@@ -220,13 +220,9 @@ export default class Login extends Component {
                                     <img src={logo} alt="#iwashere logo"/>
                                 </div>
                             </div>
-
                             {signInForm}
-
                             {otherSignInOptions}
-
                             {signInInProgress}
-
                         </div>
                     </div>
                 </div>
