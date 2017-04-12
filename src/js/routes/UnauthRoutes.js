@@ -1,11 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Route, Switch, Redirect } from 'react-router-dom';
 import { GridLoader as Loader } from 'halogen';
-
-import UserLogin from '../components/user/Login';
-import UserRegister from '../components/user/Register';
-import UserPasswordReset from '../components/user/PasswordReset';
 
 import logo from 'img/logo.png';
 
@@ -38,9 +33,6 @@ export default class UnauthRoutes extends Component {
             return <div className="hor-align">
                 <Loader color="#E5402A" size="50px" margin="10px"/>
             </div>;
-
-        } else if (userStatus.isLogged) {
-            return <Redirect to="/"/>;
         }
 
         return (
@@ -53,13 +45,7 @@ export default class UnauthRoutes extends Component {
                                     <img src={logo} alt="#iwashere logo"/>
                                 </div>
                             </div>
-
-                            <Switch>
-                                <Route path="/login" component={ UserLogin } />
-                                <Route path="/register" component={ UserRegister }/>
-                                <Route path="/password-reset" component={ UserPasswordReset }/>
-                            </Switch>
-
+                            { this.props.children }
                         </div>
                     </div>
                 </div>
@@ -67,6 +53,8 @@ export default class UnauthRoutes extends Component {
         );
     }
 }
+
+UnauthRoutes.propTypes = { children: PropTypes.object.isRequired };
 
 // To access Redux store
 UnauthRoutes.contextTypes = { store: PropTypes.object };

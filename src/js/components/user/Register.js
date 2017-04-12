@@ -2,20 +2,17 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Alert from 'react-s-alert';
 import { Form, FormGroup, InputGroup, FormControl, Button, ControlLabel } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import * as firebase from 'firebase';
 import validator from 'validator';
-import { BAD_REQUEST } from 'http-status-codes';
 import { GridLoader as Loader } from 'halogen';
 
+import MyButton from '../utils/MyButton';
 import Alerts from '../utils/Alerts';
 
 import 'styles/app.scss';
 import 'styles/login.scss';
 import 'styles/utils.scss';
-
-import logo from 'img/logo.png';
 
 const NO_ERRORS = 0;
 
@@ -103,7 +100,7 @@ export default class Register extends Component {
                 registered: true
             });
 
-            this.props.history.push('/');
+            this.props.router.push('/');
         }).
         catch((error) => {
             this.handleError(error);
@@ -113,13 +110,9 @@ export default class Register extends Component {
     registerUser(event) {
         event.preventDefault();
 
-        if (this.state.inProgress) {
-            return;
-        }
-
         this.closePreviousErrors();
 
-        if (!this.checkForm()) {
+        if (this.state.inProgress || !this.checkForm()) {
             return;
         }
 
@@ -155,20 +148,6 @@ export default class Register extends Component {
         });
     }
 
-    loginFacebook(event) {
-        event.preventDefault();
-        const provider = new firebase.auth.FacebookAuthProvider();
-
-        this.loginPopup(provider);
-    }
-
-    loginGoogle(event) {
-        event.preventDefault();
-        const provider = new firebase.auth.GoogleAuthProvider();
-
-        this.loginPopup(provider);
-    }
-
     handleUsername(event) {
         event.preventDefault();
         this.setState({ username: event.target.value });
@@ -190,11 +169,12 @@ export default class Register extends Component {
     }
 
     render() {
-        let submitButton = <div className="hor-align"><Loader color="#E5402A" size="10px" margin="5px"/></div>;
+        let submitButton = <FormGroup><div className="hor-align"><Loader color="#E5402A" size="10px" margin="5px"/></div></FormGroup>;
         if (!this.state.inProgress) {
-            submitButton = <Button type="submit"
-                                   className="btn-primary btn-md btn-block login-button colorAccent"
-                                   onClick={ this.registerUser.bind(this) }>Sign Up</Button>;
+            submitButton = <FormGroup className="box"><Button type="submit"
+                                                              className="btn-primary btn-md btn-block login-button colorAccent"
+                                                              onClick={ this.registerUser.bind(this) }>Sign Up</Button>
+            </FormGroup>;
         }
 
         return (
@@ -271,17 +251,14 @@ export default class Register extends Component {
                         </InputGroup>
                     </FormGroup>
 
-                    <FormGroup>
-                        { submitButton }
-                    </FormGroup>
+                    { submitButton }
 
-                    <FormGroup>
-                        <Link to="/login">Already have an account?</Link>
-                    </FormGroup>
+                    <MyButton url="/user/login">Already have an account?</MyButton>
+
                 </Form>
             </div>
         );
     }
 }
 
-Register.propTypes = { history: PropTypes.object };
+Register.propTypes = { router: PropTypes.object.isRequired };

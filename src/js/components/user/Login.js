@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Alert from 'react-s-alert';
 import { Helmet } from 'react-helmet';
-import { Link } from 'react-router-dom';
 import * as firebase from 'firebase';
 import { Form, FormGroup, InputGroup, FormControl, Button } from 'react-bootstrap';
 import validator from 'validator';
-import Halogen from 'halogen';
+import { GridLoader as Loader } from 'halogen';
 
+import MyButton from '../utils/MyButton';
 import Alerts from '../utils/Alerts';
 
 import 'styles/app.scss';
@@ -52,11 +52,16 @@ export default class Login extends Component {
     }
 
     loginPopup(provider) {
+        if (this.state.inProgress) {
+            return;
+        }
+
         this.setState({ inProgress: true });
 
         firebase.auth().signInWithPopup(provider).
         then(() => {
-            this.props.history.push('/');
+            this.setState({ inProgress: false });
+            this.props.router.push('/');
         }).
         catch((error) => {
             this.handleError(error);
@@ -66,7 +71,7 @@ export default class Login extends Component {
     loginUser(event) {
         event.preventDefault();
 
-        if (!this.checkForm() || this.state.inProgress) {
+        if (this.state.inProgress || !this.checkForm()) {
             return;
         }
 
@@ -75,7 +80,8 @@ export default class Login extends Component {
         const { email, password } = this.state;
         firebase.auth().signInWithEmailAndPassword(email, password).
         then(() => {
-            this.props.history.push('/');
+            this.setState({ inProgress: false });
+            this.props.router.push('/');
         }).
         catch((error) => {
             this.handleError(error);
@@ -132,9 +138,9 @@ export default class Login extends Component {
 
         if (this.state.inProgress) {
             signInInProgress =
-                <FormGroup className="text-center">
-                    <h1 className="loader-text">Signing in</h1>
-                    <Halogen.PulseLoader color="#012935" className="loader"/>
+                <FormGroup className="hor-align vert-align">
+                    <h1 className="loader-text">Signing in progress...</h1>
+                    <Loader color="#012935" className="loader"/>
                 </FormGroup>;
         } else {
             signInForm =
@@ -165,9 +171,9 @@ export default class Login extends Component {
                             />
                         </InputGroup>
                     </FormGroup>
-                    <FormGroup>
+                    <FormGroup className="box">
                         <Button type="submit"
-                                className="btn-primary btn-md btn-block login-button colorAccent"
+                                className="btn btn-primary btn-md btn-block login-button colorAccent"
                                 onClick={ this.loginUser.bind(this) }>
                             Sign In
                         </Button>
@@ -180,27 +186,24 @@ export default class Login extends Component {
                         or
                     </FormGroup>
 
-                    <FormGroup>
-                        <Button className="btn-block btn-social btn-md btn-facebook"
+                    <FormGroup className="box">
+                        <Button className="btn btn-block btn-social btn-md btn-facebook"
                                 onClick={ this.loginFacebook.bind(this) }>
                             <span className="fa fa-facebook"/> Sign in with Facebook
                         </Button>
                     </FormGroup>
 
-                    <FormGroup>
-                        <Button className="btn-block btn-social btn-md btn-google"
+                    <FormGroup className="box">
+                        <Button className="btn btn-block btn-social btn-md btn-google"
                                 onClick={ this.loginGoogle.bind(this) }>
                             <span className="fa fa-google"/> Sign in with Google
                         </Button>
                     </FormGroup>
 
-                    <FormGroup>
-                        <Link to="/password-reset">Forgot your password?</Link>
-                    </FormGroup>
+                    <MyButton url="/user/recover">Forgot your password?</MyButton>
 
-                    <FormGroup>
-                        <Link to="/register">Don't have an account?</Link>
-                    </FormGroup>
+                    <MyButton url="/user/register">Don't have an account?</MyButton>
+
                 </div>;
         }
 
@@ -209,15 +212,15 @@ export default class Login extends Component {
                 <Helmet>
                     <title>#iwashere - Sign in</title>
                 </Helmet>
-                {signInForm}
-                {otherSignInOptions}
-                {signInInProgress}
+                { signInForm }
+                { otherSignInOptions }
+                { signInInProgress }
             </div>
         );
     }
 }
 
-Login.propTypes = { history: PropTypes.object };
+Login.propTypes = { router: PropTypes.object.isRequired };
 
 // To access Redux store
 Login.contextTypes = { store: PropTypes.object };

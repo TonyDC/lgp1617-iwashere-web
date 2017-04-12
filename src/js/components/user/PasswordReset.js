@@ -65,7 +65,7 @@ export default class PasswordReset extends Component {
         firebase.auth().sendPasswordResetEmail(email).
         then(() => {
             Alerts.createInfoAlert(`An email with a token has been sent to ${email}.`);
-            this.props.history.push('/login');
+            this.props.router.push('/login');
         }).
         catch((error) => {
             this.handleError(error);
@@ -89,7 +89,6 @@ export default class PasswordReset extends Component {
                     <hr/>
                 </div>
 
-
                 <Form horizontal onSubmit={ this.sendPasswordResetEmail.bind(this) }>
                     <FormGroup>
                         <InputGroup>
@@ -98,7 +97,7 @@ export default class PasswordReset extends Component {
                             </InputGroup.Addon>
                             <FormControl
                                 type="text"
-                                value={this.state.value}
+                                value={this.state.email}
                                 placeholder="Enter your email"
                                 onChange={this.handleEmail.bind(this)}
                             />
@@ -109,7 +108,7 @@ export default class PasswordReset extends Component {
                         <Button type="submit"
                                 className="btn-primary btn-md btn-block login-button colorAccent"
                                 onClick={ this.sendPasswordResetEmail.bind(this) }>
-                            Sign In
+                            Send email
                         </Button>
                     </FormGroup>
                 </Form>
@@ -118,4 +117,4 @@ export default class PasswordReset extends Component {
     }
 }
 
-PasswordReset.propTypes = { history: PropTypes.object };
+PasswordReset.propTypes = { router: PropTypes.object.isRequired };
