@@ -10,6 +10,7 @@ import Rater from 'react-rater';
 import 'react-rater/lib/react-rater.css';
 
 import 'styles/poi-detail.scss';
+import 'styles/timeline.scss';
 import 'styles/utils.scss';
 
 
@@ -98,7 +99,7 @@ export default class POIDetail extends Component {
                 <div className="container">
                     <Row className="show-grid">
 
-                        <Col xs={12} mdOffset={2} md={8} lgOffset={2} lg={8}>
+                        <Col xs={12} mdOffset={1} md={10} lgOffset={1} lg={10}>
                             <div className="thumbnail">
                                 <Carousel useKeyboardArrows={true} autoPlay={true} infiniteLoop={true}
                                           showArrows={true} showThumbs={ false } showStatus={ false }
@@ -126,7 +127,50 @@ export default class POIDetail extends Component {
                         </Col>
 
                         <Col xs={12} mdOffset={2} md={8} lgOffset={2} lg={8}>
+                            <ul className="timeline">
+                                {/*<li><div className="timeline-badge tldate">Apr 2014</div></li>*/}
 
+                                <li>
+                                    <div className="timeline-badge primary"><a><i className="glyphicon glyphicon-record" rel="tooltip" title="11 hours ago via Twitter" id=""></i></a></div>
+                                    <div className="timeline-panel">
+                                        <div className="timeline-heading">
+                                            <img className="img-responsive" src="http://lorempixel.com/1600/500/sports/2" />
+                                        </div>
+
+                                        <div className="timeline-footer">
+                                            <a><i className="glyphicon glyphicon-thumbs-up"></i></a>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li className="timeline-inverted">
+                                    <div className="timeline-badge primary"><a><i className="glyphicon glyphicon-record invert" rel="tooltip" title="11 hours ago via Twitter" id=""></i></a></div>
+                                    <div className="timeline-panel">
+                                        <div className="timeline-heading">
+                                            <img className="img-responsive" src="http://lorempixel.com/1600/500/sports/2" />
+                                        </div>
+
+                                        <div className="timeline-footer">
+                                            <a><i className="glyphicon glyphicon-thumbs-up"></i></a>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div className="timeline-badge primary"><a><i className="glyphicon glyphicon-record" rel="tooltip" title="11 hours ago via Twitter" id=""></i></a></div>
+                                    <div className="timeline-panel">
+                                        <div className="timeline-heading">
+                                            <img className="img-responsive" src="http://lorempixel.com/1600/500/sports/2" />
+
+                                        </div>
+
+                                        <div className="timeline-footer">
+                                            <a><i className="glyphicon glyphicon-thumbs-up"></i></a>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li className="clearfix" style={ { float: 'none' } }></li>
+                            </ul>
                         </Col>
                     </Row>
                 </div>
