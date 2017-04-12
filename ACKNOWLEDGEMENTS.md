@@ -18,4 +18,5 @@
 - https://gist.github.com/Turbo87/e8e941e68308d3b40ef6
 - http://stackoverflow.com/questions/30371000/react-bootstrap-using-webpack
 - https://certbot.eff.org/#ubuntuxenial-nginx
+- http://tobiasahlin.com/spinkit/
 

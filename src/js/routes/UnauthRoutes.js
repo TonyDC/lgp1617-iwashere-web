@@ -44,7 +44,7 @@ export default class UnauthRoutes extends Component {
         }
 
         return (
-            <div className="colorAccentSecondary">
+            <div className="colorAccentSecondary vert-align hor-align wrapper-fill">
                 <div className="container">
                     <div className="row main">
                         <div className="main-login main-center">

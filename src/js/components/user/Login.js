@@ -205,25 +205,13 @@ export default class Login extends Component {
         }
 
         return (
-            <div className="colorAccentSecondary vert-align hor-align wrapper-fill">
+            <div>
                 <Helmet>
                     <title>#iwashere - Sign in</title>
                 </Helmet>
-
-                <div className="container">
-                    <div className="main">
-                        <div className="main-login main-center">
-                            <div className="panel-heading">
-                                <div className="panel-title text-center">
-                                    <img src={logo} alt="#iwashere logo"/>
-                                </div>
-                            </div>
-                            {signInForm}
-                            {otherSignInOptions}
-                            {signInInProgress}
-                        </div>
-                    </div>
-                </div>
+                {signInForm}
+                {otherSignInOptions}
+                {signInInProgress}
             </div>
         );
     }

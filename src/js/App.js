@@ -50,7 +50,7 @@ export default class App extends Component {
                     <div className="fill-remaining">
                         <Switch>
                             <Route exact path="/" component={ Map }/>
-                            <UnauthRoutes/>
+                            <Route path="/" component={ UnauthRoutes }/>
                             <Route component={ NoMatch }/>
                         </Switch>
                         <Alerts/>

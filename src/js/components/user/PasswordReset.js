@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Alert from 'react-s-alert';
 import { Helmet } from 'react-helmet';
-import { Form, FormGroup, InputGroup, FormControl, Button, ControlLabel } from 'react-bootstrap';
 import * as firebase from 'firebase';
 import { Form, FormGroup, InputGroup, FormControl, Button } from 'react-bootstrap';
 
@@ -13,7 +12,6 @@ import Alerts from '../utils/Alerts';
 import 'styles/app.scss';
 import 'styles/login.scss';
 import 'styles/utils.scss';
-import logo from 'img/logo.png';
 
 export default class PasswordReset extends Component {
 
@@ -81,10 +79,16 @@ export default class PasswordReset extends Component {
 
     render() {
         return (
-            <div className="colorAccentSecondary vert-align hor-align wrapper-fill">
+            <div>
                 <Helmet>
                     <title>#iwashere - Reset Password</title>
                 </Helmet>
+
+                <div>
+                    <h1 className="form-title">Reset Password</h1>
+                    <hr/>
+                </div>
+
 
                 <Form horizontal onSubmit={ this.sendPasswordResetEmail.bind(this) }>
                     <FormGroup>
