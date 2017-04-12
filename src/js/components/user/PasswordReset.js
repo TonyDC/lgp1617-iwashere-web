@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Alert from 'react-s-alert';
 import { Helmet } from 'react-helmet';
-import { Form, FormGroup, InputGroup, FormControl, Button, ControlLabel } from 'react-bootstrap';
 import * as firebase from 'firebase';
+import { Form, FormGroup, InputGroup, FormControl, Button } from 'react-bootstrap';
+
 import validator from 'validator';
 
 import Alerts from '../utils/Alerts';
@@ -11,7 +12,6 @@ import Alerts from '../utils/Alerts';
 import 'styles/app.scss';
 import 'styles/login.scss';
 import 'styles/utils.scss';
-import logo from 'img/logo.png';
 
 export default class PasswordReset extends Component {
 
@@ -65,7 +65,7 @@ export default class PasswordReset extends Component {
         firebase.auth().sendPasswordResetEmail(email).
         then(() => {
             Alerts.createInfoAlert(`An email with a token has been sent to ${email}.`);
-            this.props.history.push('/login');
+            this.props.router.push('/login');
         }).
         catch((error) => {
             this.handleError(error);
@@ -79,57 +79,42 @@ export default class PasswordReset extends Component {
 
     render() {
         return (
-            <div className="colorAccentSecondary vert-align hor-align wrapper-fill">
+            <div>
                 <Helmet>
-                    <title>#iwashere - Reset password</title>
+                    <title>#iwashere - Reset Password</title>
                 </Helmet>
 
-                <div className="container">
-                    <div className="row main">
-                        <div className="main-login main-center">
-                            <div className="panel-heading">
-                                <div className="panel-title text-center">
-                                    <img src={logo} alt="#iwashere logo"/>
-                                </div>
-                            </div>
-
-                            <div>
-                                <h1 className="form-title">Reset password</h1>
-                                <hr/>
-                            </div>
-
-                            <Form horizontal onSubmit={ this.sendPasswordResetEmail.bind(this) }>
-                                <FormGroup>
-                                    <ControlLabel htmlFor="email">Email</ControlLabel>
-                                    <InputGroup>
-                                        <InputGroup.Addon>
-                                            <i className="fa fa-envelope fa" aria-hidden="true"/>
-                                        </InputGroup.Addon>
-                                        <FormControl
-                                            name="email"
-                                            type="text"
-                                            value={this.state.email}
-                                            placeholder="Enter your email"
-                                            onChange={this.handleEmail.bind(this)}
-                                        />
-                                    </InputGroup>
-                                </FormGroup>
-
-                                <FormGroup>
-                                    <Button type="submit"
-                                            className="btn-primary btn-md btn-block login-button colorAccent"
-                                            onClick={ this.sendPasswordResetEmail.bind(this) }>
-                                        Send email
-                                    </Button>
-                                </FormGroup>
-
-                            </Form>
-                        </div>
-                    </div>
+                <div>
+                    <h1 className="form-title">Reset Password</h1>
+                    <hr/>
                 </div>
+
+                <Form horizontal onSubmit={ this.sendPasswordResetEmail.bind(this) }>
+                    <FormGroup>
+                        <InputGroup>
+                            <InputGroup.Addon>
+                                <i className="fa fa-envelope fa" aria-hidden="true"/>
+                            </InputGroup.Addon>
+                            <FormControl
+                                type="text"
+                                value={this.state.email}
+                                placeholder="Enter your email"
+                                onChange={this.handleEmail.bind(this)}
+                            />
+                        </InputGroup>
+                    </FormGroup>
+
+                    <FormGroup>
+                        <Button type="submit"
+                                className="btn-primary btn-md btn-block login-button colorAccent"
+                                onClick={ this.sendPasswordResetEmail.bind(this) }>
+                            Send email
+                        </Button>
+                    </FormGroup>
+                </Form>
             </div>
         );
     }
 }
 
-PasswordReset.propTypes = { history: PropTypes.object };
+PasswordReset.propTypes = { router: PropTypes.object.isRequired };

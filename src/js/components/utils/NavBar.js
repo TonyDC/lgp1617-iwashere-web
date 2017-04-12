@@ -32,10 +32,10 @@ export default class NavBar extends Component {
         if (this.state.userStatus) {
             if (this.state.userStatus.isLogged) {
                 firebase.auth().signOut();
-                this.props.history.push('/');
+                this.props.router.push('/');
 
             } else {
-                this.props.history.push('/login');
+                this.props.router.push('/user/login');
             }
         }
     }
@@ -91,7 +91,7 @@ export default class NavBar extends Component {
     }
 }
 
-NavBar.propTypes = { history: PropTypes.object };
+NavBar.propTypes = { router: PropTypes.object.isRequired };
 
 // To access Redux store
 NavBar.contextTypes = { store: PropTypes.object };

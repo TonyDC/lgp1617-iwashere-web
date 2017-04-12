@@ -2,19 +2,17 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Alert from 'react-s-alert';
 import { Form, FormGroup, InputGroup, FormControl, Button, ControlLabel } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import * as firebase from 'firebase';
 import validator from 'validator';
-import Halogen from 'halogen';
+import { GridLoader as Loader } from 'halogen';
 
+import MyButton from '../utils/MyButton';
 import Alerts from '../utils/Alerts';
 
 import 'styles/app.scss';
 import 'styles/login.scss';
 import 'styles/utils.scss';
-
-import logo from 'img/logo.png';
 
 const NO_ERRORS = 0;
 
@@ -102,7 +100,7 @@ export default class Register extends Component {
                 registered: true
             });
 
-            this.props.history.push('/');
+            this.props.router.push('/');
         }).
         catch((error) => {
             this.handleError(error);
@@ -114,7 +112,7 @@ export default class Register extends Component {
 
         this.closePreviousErrors();
 
-        if (!this.checkForm()) {
+        if (this.state.inProgress || !this.checkForm()) {
             return;
         }
 
@@ -171,15 +169,25 @@ export default class Register extends Component {
     }
 
     render() {
-        let signUpInProgress = null;
-        let signUpForm = null;
-        if (this.state.inProgress) {
-            signUpInProgress =
-                <FormGroup className="text-center">
-                    <Halogen.PulseLoader color="#012935" className="loader"/>
-                </FormGroup>;
-        } else {
-            signUpForm =
+        let submitButton = <FormGroup><div className="hor-align"><Loader color="#E5402A" size="10px" margin="5px"/></div></FormGroup>;
+        if (!this.state.inProgress) {
+            submitButton = <FormGroup className="box"><Button type="submit"
+                                                              className="btn-primary btn-md btn-block login-button colorAccent"
+                                                              onClick={ this.registerUser.bind(this) }>Sign Up</Button>
+            </FormGroup>;
+        }
+
+        return (
+            <div>
+                <Helmet>
+                    <title>#iwashere - Sign up</title>
+                </Helmet>
+
+                <div>
+                    <h1 className="form-title">Sign up</h1>
+                    <hr/>
+                </div>
+
                 <Form horizontal onSubmit={this.registerUser.bind(this)}>
                     <FormGroup>
                         <ControlLabel htmlFor="username">Username</ControlLabel>
@@ -187,13 +195,13 @@ export default class Register extends Component {
                             <InputGroup.Addon>
                                 <i className="fa fa-user fa" aria-hidden="true"/>
                             </InputGroup.Addon>
-                        <FormControl
-                            name="username"
-                            type="text"
-                            value={this.state.username}
-                            placeholder="Enter your username"
-                            onChange={this.handleUsername.bind(this)}
-                        />
+                            <FormControl
+                                name="username"
+                                type="text"
+                                value={this.state.username}
+                                placeholder="Enter your username"
+                                onChange={this.handleUsername.bind(this)}
+                            />
                         </InputGroup>
                     </FormGroup>
 
@@ -243,49 +251,14 @@ export default class Register extends Component {
                         </InputGroup>
                     </FormGroup>
 
-                    <FormGroup>
-                        <Button
-                            type="submit"
-                            className="btn-primary btn-md btn-block login-button colorAccent"
-                            onClick={this.registerUser.bind(this)}>
-                            Sign up
-                        </Button>
-                    </FormGroup>
+                    { submitButton }
 
-                    <FormGroup>
-                        <Link to="/login">Already have an account?</Link>
-                    </FormGroup>
-                </Form>;
-        }
+                    <MyButton url="/user/login">Already have an account?</MyButton>
 
-        return (
-            <div className="colorAccentSecondary vert-align hor-align wrapper-fill">
-                <Helmet>
-                    <title>#iwashere - Sign up</title>
-                </Helmet>
-
-                <div className="container">
-                    <div className="row main">
-                        <div className="main-login main-center">
-                            <div className="panel-heading">
-                                <div className="panel-title text-center">
-                                    <img src={logo} alt="#iwashere logo"/>
-                                </div>
-                            </div>
-
-                            <div>
-                                <h1 className="form-title">Sign up</h1>
-                                <hr/>
-                            </div>
-
-                            { signUpForm }
-                            { signUpInProgress }
-                        </div>
-                    </div>
-                </div>
+                </Form>
             </div>
         );
     }
 }
 
-Register.propTypes = { history: PropTypes.object };
+Register.propTypes = { router: PropTypes.object.isRequired };

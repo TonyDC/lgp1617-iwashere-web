@@ -57,3 +57,11 @@ h1.title {
     text-align: center;
     color: #012935;
 }
+
+.authentication-form > * > * {
+    margin-bottom: 15px;
+}
+.extra-options * {
+    margin-bottom: 15px;
+    display: table;
+}
