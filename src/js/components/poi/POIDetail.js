@@ -128,48 +128,33 @@ export default class POIDetail extends Component {
 
                         <Col xs={12} mdOffset={2} md={8} lgOffset={2} lg={8}>
                             <ul className="timeline">
-                                {/*<li><div className="timeline-badge tldate">Apr 2014</div></li>*/}
+                                <li><div className="tldate">Apr 2014</div></li>
 
-                                <li>
-                                    <div className="timeline-badge primary"><a><i className="glyphicon glyphicon-record" rel="tooltip" title="11 hours ago via Twitter" id=""></i></a></div>
+                                <li className="timeline">
                                     <div className="timeline-panel">
-                                        <div className="timeline-heading">
-                                            <img className="img-responsive" src="http://lorempixel.com/1600/500/sports/2" />
+                                        <div className="tl-heading">
+                                            <h4>No icon here</h4>
+                                            <p><small className="text-muted"><i className="glyphicon glyphicon-time"/> 3/16/2014</small></p>
                                         </div>
-
-                                        <div className="timeline-footer">
-                                            <a><i className="glyphicon glyphicon-thumbs-up"></i></a>
+                                        <div className="tl-body">
+                                            <p><img src="http://lorempixel.com/600/300/nightlife/" alt="lorem pixel"/></p>
                                         </div>
                                     </div>
                                 </li>
+
+                                <li><div className="tldate">Mar 2014</div></li>
 
                                 <li className="timeline-inverted">
-                                    <div className="timeline-badge primary"><a><i className="glyphicon glyphicon-record invert" rel="tooltip" title="11 hours ago via Twitter" id=""></i></a></div>
                                     <div className="timeline-panel">
-                                        <div className="timeline-heading">
-                                            <img className="img-responsive" src="http://lorempixel.com/1600/500/sports/2" />
+                                        <div className="tl-heading">
+                                            <h4>No icon here</h4>
+                                            <p><small className="text-muted"><i className="glyphicon glyphicon-time"/> 3/16/2014</small></p>
                                         </div>
-
-                                        <div className="timeline-footer">
-                                            <a><i className="glyphicon glyphicon-thumbs-up"></i></a>
+                                        <div className="tl-body">
+                                            <p><img src="http://lorempixel.com/600/300/nightlife/" alt="lorem pixel"/></p>
                                         </div>
                                     </div>
                                 </li>
-                                <li>
-                                    <div className="timeline-badge primary"><a><i className="glyphicon glyphicon-record" rel="tooltip" title="11 hours ago via Twitter" id=""></i></a></div>
-                                    <div className="timeline-panel">
-                                        <div className="timeline-heading">
-                                            <img className="img-responsive" src="http://lorempixel.com/1600/500/sports/2" />
-
-                                        </div>
-
-                                        <div className="timeline-footer">
-                                            <a><i className="glyphicon glyphicon-thumbs-up"></i></a>
-                                        </div>
-                                    </div>
-                                </li>
-
-                                <li className="clearfix" style={ { float: 'none' } }></li>
                             </ul>
                         </Col>
                     </Row>
