@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
+import Moment from 'moment';
 
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.css';
@@ -13,6 +14,9 @@ import 'styles/poi-detail.scss';
 import 'styles/timeline.scss';
 import 'styles/utils.scss';
 
+const MAX_RATING_SCALE = 5;
+const TRANSITION_INTERVAL = 10000;
+const LIMIT = 6;
 
 export default class POIDetail extends Component {
 
@@ -27,12 +31,14 @@ export default class POIDetail extends Component {
                 rating: 4,
                 userRating: 3,
                 media: [{url: 'http://placehold.it/800x300', type: 'IMG'}, {url: 'http://placehold.it/800x300', type: 'IMG'}, {url: 'https://www.youtube.com/embed/n0F6hSpxaFc', type: 'VID'}]
-            }
+            },
+            userMedia: [{time: 'March 21, 2012', url: 'http://lorempixel.com/600/300/nightlife'}, {time: 'March 23, 2012', url: 'http://lorempixel.com/600/300/nightlife'}],
+            userMediaOffset: 0
         };
-        //this.getPOI();
+        //this.fetchPOIInformation();
     }
 
-    getPOI() {
+    fetchPOIInformation() {
         fetch(`/api/poi/${this.state.poi.id}`, {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
@@ -52,10 +58,10 @@ export default class POIDetail extends Component {
         }
     }
 
-    getPOIMedia() {
+    getPOIMedia(poiMedia) {
         const mediaList = [];
         let key = 0;
-        this.state.poi.media.forEach((mediaEntry) => {
+        poiMedia.forEach((mediaEntry) => {
             if (mediaEntry.type === 'IMG') {
                 mediaList.push(<div key={key++}>
                     <img src={mediaEntry.url} />
@@ -70,14 +76,68 @@ export default class POIDetail extends Component {
         return mediaList;
     }
 
-    dummy() {
+    getUserMedia(userMedia) {
+        const mediaList = [];
 
+        let itemClassInverted = false;
+        let previousTimeStamp = null;
+        let key = 0;
+        userMedia.forEach((mediaEntry) => {
+            const date = new Date(mediaEntry.time);
+
+            if (date.getMonth() !== previousTimeStamp) {
+                previousTimeStamp = date.getMonth();
+                mediaList.push(<li key={key++}><div className="tldate">{ Moment(date).format("MMM") } { date.getFullYear()} </div></li>);
+            }
+
+            mediaList.push(
+            <li className={`timeline${itemClassInverted
+                                        ? '-inverted'
+                                        : ''}`} key={key++}>
+                <div className="timeline-panel">
+                    <div className="tl-heading">
+                        <p><small className="text-muted"><i className="glyphicon glyphicon-time"/>{ mediaEntry.time }</small></p>
+                    </div>
+                    <div className="tl-body">
+                        <p><img src={ mediaEntry.url }/></p>
+                    </div>
+                </div>
+            </li>
+            );
+
+            itemClassInverted = !itemClassInverted;
+        });
+
+        return mediaList;
+    }
+
+    fetchUserMedia() {
+        fetch(`/api/poi/media/${this.state.poi.id}`, {
+            body: {
+                limit: LIMIT,
+                offset: this.state.userMediaOffset,
+            },
+            headers: { 'Content-Type': 'application/json' },
+            method: 'GET'
+        }).
+        then((response) => {
+            return response.json();
+        }).
+        then((response) => {
+            console.log(response);
+
+            const userMedia = this.state.userMedia.concat(this.getUserMedia(response));
+
+            const userMediaOffset = this.state.userMediaOffset + LIMIT;
+
+            this.setState({
+                userMedia,
+                userMediaOffset
+            });
+        });
     }
 
     render() {
-        const MAX_RATING_SCALE = 5;
-        const TRANSITION_INTERVAL = 10000;
-
         let userRating = null;
         if (this.state.poi.userRating) {
             userRating =
@@ -85,9 +145,13 @@ export default class POIDetail extends Component {
         }
 
         let poiMedia = null;
-
         if (this.state.poi) {
-            poiMedia = this.getPOIMedia();
+            poiMedia = this.getPOIMedia(this.state.poi.media);
+        }
+
+        let userMedia = null;
+        if (this.state.userMedia) {
+            userMedia = this.getUserMedia(this.state.userMedia);
         }
 
         return (
@@ -128,33 +192,7 @@ export default class POIDetail extends Component {
 
                         <Col xs={12} mdOffset={2} md={8} lgOffset={2} lg={8}>
                             <ul className="timeline">
-                                <li><div className="tldate">Apr 2014</div></li>
-
-                                <li className="timeline">
-                                    <div className="timeline-panel">
-                                        <div className="tl-heading">
-                                            <h4>No icon here</h4>
-                                            <p><small className="text-muted"><i className="glyphicon glyphicon-time"/> 3/16/2014</small></p>
-                                        </div>
-                                        <div className="tl-body">
-                                            <p><img src="http://lorempixel.com/600/300/nightlife/" alt="lorem pixel"/></p>
-                                        </div>
-                                    </div>
-                                </li>
-
-                                <li><div className="tldate">Mar 2014</div></li>
-
-                                <li className="timeline-inverted">
-                                    <div className="timeline-panel">
-                                        <div className="tl-heading">
-                                            <h4>No icon here</h4>
-                                            <p><small className="text-muted"><i className="glyphicon glyphicon-time"/> 3/16/2014</small></p>
-                                        </div>
-                                        <div className="tl-body">
-                                            <p><img src="http://lorempixel.com/600/300/nightlife/" alt="lorem pixel"/></p>
-                                        </div>
-                                    </div>
-                                </li>
+                                {userMedia}
                             </ul>
                         </Col>
                     </Row>
