@@ -5,6 +5,8 @@ const router = express.Router();
 
 const authMiddlewares = require('../middleware/auth');
 
+router.use('/', require('./all'));
+
 router.use('/unauth', require('./unauth'));
 
 // Check if user is authenticated

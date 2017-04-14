@@ -4,8 +4,8 @@ module.exports = function(sequelize, DataTypes) {
     return sequelize.define('poi', {
         name: DataTypes.STRING,
         description: DataTypes.STRING,
-        latitude: DataTypes.NUMBER,
-        longitude: DataTypes.NUMBER,
+        latitude: DataTypes.REAL,
+        longitude: DataTypes.REAL,
         address: DataTypes.STRING
     }, {
         classMethods: {

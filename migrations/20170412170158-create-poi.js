@@ -28,7 +28,7 @@ module.exports = {
             address: {
                 allowNull: false,
                 type: Sequelize.STRING
-            }/*,
+            },
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE
@@ -36,7 +36,7 @@ module.exports = {
             updatedAt: {
                 allowNull: false,
                 type: Sequelize.DATE
-            }*/
+            }
         }).
         then(() => {
             // language=POSTGRES-SQL
