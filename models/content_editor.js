@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('Content_Editor', {
+    return sequelize.define('content_editor', {
         uid: {
             type: DataTypes.STRING,
             allowNull: false,

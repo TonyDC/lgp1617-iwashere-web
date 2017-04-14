@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = function(sequelize, DataTypes) {
-    return sequelize.define('POI', {
+    return sequelize.define('poi', {
         name: DataTypes.STRING,
         description: DataTypes.STRING,
         latitude: DataTypes.NUMBER,

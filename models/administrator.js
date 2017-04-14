@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('Administrator', {
+    return sequelize.define('administrator', {
         uid: {
             type: DataTypes.STRING,
             allowNull: false,
