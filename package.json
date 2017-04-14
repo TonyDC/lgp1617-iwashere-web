@@ -77,6 +77,8 @@
     "jest": "jest --config=./jest-config.json",
     "lint": "eslint src",
     "migrate-up-all": "sequelize db:migrate",
-    "migrate-down-all": "sequelize db:migrate:undo:all"
+    "migrate-down-all": "sequelize db:migrate:undo:all",
+    "seed-up-all": "sequelize db:seed:all",
+    "seed-down-all": "sequelize db:seed:undo:all"
   }
 }
