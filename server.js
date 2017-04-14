@@ -97,7 +97,7 @@ app.use(expressWinston.errorLogger({
 // Error middleware handler
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(httpCodes.INTERNAL_SERVER_ERROR).send({message: 'Something went wrong!'});
+    res.status(httpCodes.INTERNAL_SERVER_ERROR).send({ message: 'Something went wrong!' });
 });
 
 /* *********************************** */

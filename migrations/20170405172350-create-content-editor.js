@@ -2,7 +2,7 @@
 
 module.exports = {
     up: (queryInterface, Sequelize) => {
-        return queryInterface.createTable('Content_Editors', {
+        return queryInterface.createTable('content_editors', {
             id: {
                 allowNull: false,
                 autoIncrement: true,
@@ -25,6 +25,6 @@ module.exports = {
         });
     },
     down: (queryInterface, Sequelize) => {
-        return queryInterface.dropTable('Content_Editors');
+        return queryInterface.dropTable('content_editors');
     }
 };
