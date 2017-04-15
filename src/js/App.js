@@ -55,11 +55,12 @@ export default class App extends Component {
             <Router history={ browserHistory }>
                 <Route path="/" component={ MainRoutes }>
                     <IndexRoute component={ Map } />
+                    <Route path="poi/detail/:id" component={ POIDetail } />
+
                     <Route path="user" component={ UnauthRoutes }>
                         <Route path="login" component={ Login } onEnter={ this.redirectIfLoggedIn.bind(this) } />
                         <Route path="register" component={ Register } onEnter={ this.redirectIfLoggedIn.bind(this) } />
                         <Route path="recover" component={ PasswordReset } onEnter={ this.redirectIfLoggedIn.bind(this) } />
-                        <Route path="recover" component={ POIDetail } />
                     </Route>
                     <Route path="*" component={ NoMatch }/>
                 </Route>

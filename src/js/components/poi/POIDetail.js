@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
+import { GridLoader as Loader } from 'halogen';
 import Moment from 'moment';
 
 import { Carousel } from 'react-responsive-carousel';
@@ -25,21 +26,15 @@ export default class POIDetail extends Component {
 
         // For testing purposes only
         this.state = {
-            poi: {
-                description: 'POI description',
-                name: 'POI name',
-                rating: 4,
-                userRating: 3,
-                media: [{url: 'http://placehold.it/800x300', type: 'IMG'}, {url: 'http://placehold.it/800x300', type: 'IMG'}, {url: 'https://www.youtube.com/embed/n0F6hSpxaFc', type: 'VID'}]
-            },
-            userMedia: [{time: 'March 21, 2012', url: 'http://lorempixel.com/600/300/nightlife'}, {time: 'March 21, 2012', url: 'http://lorempixel.com/600/300/nightlife'}, {time: 'April 23, 2012', url: 'http://lorempixel.com/600/300/nightlife'}],
+            loadingPOIInfo: true,
             userMediaOffset: 0
         };
-        //this.fetchPOIInformation();
+
+        this.fetchPOIInfo();
     }
 
-    fetchPOIInformation() {
-        fetch(`/api/poi/${this.state.poi.id}`, {
+    fetchPOIInfo() {
+        fetch(`/api/poi/info/${this.props.params.id}`, {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
         }).
@@ -48,7 +43,13 @@ export default class POIDetail extends Component {
         }).
         then((response) => {
             console.log(response);
-            this.setState({ poi: response });
+            this.setState({
+                loadingPOIInfo: false,
+                poiInfo: response
+            });
+        }).
+        catch(() => {
+            //this.props.router.push('/');
         });
     }
 
@@ -113,7 +114,7 @@ export default class POIDetail extends Component {
     }
 
     fetchUserMedia() {
-        fetch(`/api/poi/media/${this.state.poi.id}`, {
+        fetch(`/api/poi/media/${this.state.poiInfo.id}`, {
             body: {
                 limit: LIMIT,
                 offset: this.state.userMediaOffset,
@@ -139,22 +140,62 @@ export default class POIDetail extends Component {
     }
 
     render() {
+        if (this.state.loadingPOIInfo) {
+            return (
+                <div className="hor-align vert-align">
+                    <Loader color="#012935" className="loader"/>
+                </div>
+            );
+        }
+
         let userRating = null;
-        if (this.state.poi.userRating) {
+        if (this.state.poiRating && this.state.poiRating.userRating) {
             userRating =
-               <Rater total={MAX_RATING_SCALE} rating={this.state.poi.userRating} onRate={this.updatePOIRating.bind(this)}/>;
+               <Rater total={MAX_RATING_SCALE} rating={this.state.poiInfo.userRating} onRate={this.updatePOIRating.bind(this)}/>;
+        }
+
+        let ratings = null;
+        if (this.state.poiRating) {
+            ratings =
+                <div className="ratings">
+                    <Row className="show-grid">
+                        <Col xs={12} md={12} lg={12}>
+                            <Rater interactive={false} total={MAX_RATING_SCALE} rating={this.state.poiRating.rating} />
+                            <span className="rating-description"> {this.state.poiRating.rating.toFixed(1)} stars</span>
+                        </Col>
+                        <Col xs={12} md={12} lg={12}>
+                            {userRating}
+                            <span className="rating-description"> Your rating</span>
+                        </Col>
+                    </Row>
+                </div>;
         }
 
         let poiMedia = null;
-        if (this.state.poi) {
-            poiMedia = this.getPOIMedia(this.state.poi.media);
+        let poiSlider = null;
+        if (this.state.poiMedia) {
+            poiMedia = this.getPOIMedia(this.state.poiMedia);
+
+            poiSlider =
+                <Carousel useKeyboardArrows={true} autoPlay={true} infiniteLoop={true}
+                          showArrows={true} showThumbs={ false } showStatus={ false }
+                          interval={TRANSITION_INTERVAL}>
+                    {poiMedia}
+                </Carousel>;
         }
 
         let userMedia = null;
+        let poiTimeline = null;
         if (this.state.userMedia) {
             userMedia = this.getUserMedia(this.state.userMedia);
+            poiTimeline =
+                <Col xs={12} mdOffset={2} md={8} lgOffset={2} lg={8}>
+                    <ul className="timeline">
+                        {userMedia}
+                    </ul>
+                </Col>;
         }
-
+        
         return (
             <div className="colorAccentSecondary">
                 <Helmet>
@@ -166,36 +207,17 @@ export default class POIDetail extends Component {
 
                         <Col xs={12} mdOffset={1} md={10} lgOffset={1} lg={10}>
                             <div className="thumbnail">
-                                <Carousel useKeyboardArrows={true} autoPlay={true} infiniteLoop={true}
-                                          showArrows={true} showThumbs={ false } showStatus={ false }
-                                          interval={TRANSITION_INTERVAL}>
-                                        {poiMedia}
-                                </Carousel>
+                                {poiSlider}
 
                                 <div className="caption-full">
-                                    <h4>{this.state.poi.name}</h4>
-                                    <p>{this.state.poi.description}</p>
+                                    <h4>{this.state.poiInfo.name}</h4>
+                                    <p>{this.state.poiInfo.description}</p>
                                 </div>
-                                <div className="ratings">
-                                    <Row className="show-grid">
-                                        <Col xs={12} md={12} lg={12}>
-                                            <Rater interactive={false} total={MAX_RATING_SCALE} rating={this.state.poi.rating} />
-                                            <span className="rating-description"> {this.state.poi.rating.toFixed(1)} stars</span>
-                                        </Col>
-                                        <Col xs={12} md={12} lg={12}>
-                                            {userRating}
-                                            <span className="rating-description"> Your rating</span>
-                                        </Col>
-                                    </Row>
-                                </div>
+                                {ratings}
                             </div>
                         </Col>
 
-                        <Col xs={12} mdOffset={2} md={8} lgOffset={2} lg={8}>
-                            <ul className="timeline">
-                                {userMedia}
-                            </ul>
-                        </Col>
+                        {poiTimeline}
                     </Row>
                 </div>
             </div>
