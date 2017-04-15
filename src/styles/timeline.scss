@@ -1,7 +1,7 @@
 /** timeline box structure **/
 .timeline {
     list-style: none;
-    padding: 20px 0 20px;
+    padding: 0 0 20px;
     position: relative;
 }
 
@@ -19,13 +19,13 @@
 .tldate {
     display: block;
     width: 200px;
-    background: #414141;
-    border: 3px solid #212121;
+    background: #E5402A;
     color: #ededed;
     margin: 0 auto;
     padding: 3px 0;
     font-weight: bold;
     text-align: center;
+    border: 3px solid #fff;
     -webkit-box-shadow: 0 0 11px rgba(0,0,0,0.35);
 }
 
@@ -55,7 +55,7 @@
     width: 46%;
     float: left;
     background: #fff;
-    border: 1px solid #d4d4d4;
+    border: 2px solid #fff;
     padding: 20px;
     position: relative;
     -webkit-border-radius: 8px;
@@ -73,8 +73,8 @@
     right: -15px;
     display: inline-block;
     border-top: 15px solid transparent;
-    border-left: 15px solid #ccc;
-    border-right: 0 solid #ccc;
+    border-left: 15px solid #fff;
+    border-right: 0 solid #fff;
     border-bottom: 15px solid transparent;
     content: " ";
 }
@@ -122,13 +122,13 @@
     top: 23px;
     left: 50%;
     text-align: center;
-    background: #6a8db3;
+    background: #012935;
     color: #fff;
     width: 35px;
     height: 35px;
     line-height: 35px;
     margin-left: -16px;
-    border: 3px solid #90acc7;
+    border: 3px solid #fff;
     border-top-right-radius: 50%;
     border-top-left-radius: 50%;
     border-bottom-right-radius: 50%;

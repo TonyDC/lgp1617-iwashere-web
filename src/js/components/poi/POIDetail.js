@@ -32,7 +32,7 @@ export default class POIDetail extends Component {
                 userRating: 3,
                 media: [{url: 'http://placehold.it/800x300', type: 'IMG'}, {url: 'http://placehold.it/800x300', type: 'IMG'}, {url: 'https://www.youtube.com/embed/n0F6hSpxaFc', type: 'VID'}]
             },
-            userMedia: [{time: 'March 21, 2012', url: 'http://lorempixel.com/600/300/nightlife'}, {time: 'March 23, 2012', url: 'http://lorempixel.com/600/300/nightlife'}],
+            userMedia: [{time: 'March 21, 2012', url: 'http://lorempixel.com/600/300/nightlife'}, {time: 'March 21, 2012', url: 'http://lorempixel.com/600/300/nightlife'}, {time: 'April 23, 2012', url: 'http://lorempixel.com/600/300/nightlife'}],
             userMediaOffset: 0
         };
         //this.fetchPOIInformation();
@@ -94,9 +94,10 @@ export default class POIDetail extends Component {
             <li className={`timeline${itemClassInverted
                                         ? '-inverted'
                                         : ''}`} key={key++}>
+                <div className="tl-circ"></div>
                 <div className="timeline-panel">
                     <div className="tl-heading">
-                        <p><small className="text-muted"><i className="glyphicon glyphicon-time"/>{ mediaEntry.time }</small></p>
+                        <p><small className="text-muted"><i className="glyphicon glyphicon-time"/> { mediaEntry.time }</small></p>
                     </div>
                     <div className="tl-body">
                         <p><img src={ mediaEntry.url }/></p>
