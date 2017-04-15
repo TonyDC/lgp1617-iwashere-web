@@ -2,7 +2,7 @@
 
 module.exports = {
     up: (queryInterface, Sequelize) => {
-        return queryInterface.createTable('Super_Administrators', {
+        return queryInterface.createTable('super_administrators', {
             id: {
                 allowNull: false,
                 autoIncrement: true,
@@ -25,6 +25,6 @@ module.exports = {
         });
     },
     down: function(queryInterface, Sequelize) {
-        return queryInterface.dropTable('Super_Administrators');
+        return queryInterface.dropTable('super_administrators');
     }
 };

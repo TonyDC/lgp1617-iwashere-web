@@ -3,10 +3,14 @@ import PropTypes from 'prop-types';
 import Alert from 'react-s-alert';
 import { Helmet } from 'react-helmet';
 import * as firebase from 'firebase';
+import { Form, FormGroup, InputGroup, FormControl, Button } from 'react-bootstrap';
+import { GridLoader as Loader } from 'halogen';
+
 import validator from 'validator';
 
 import Alerts from '../utils/Alerts';
 
+import 'styles/app.scss';
 import 'styles/login.scss';
 import 'styles/utils.scss';
 
@@ -15,8 +19,9 @@ export default class PasswordReset extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            email: '',
             errors: [],
-            loggedIn: firebase.auth().currentUser !== null
+            inProgress: false
         };
     }
 
@@ -41,7 +46,7 @@ export default class PasswordReset extends Component {
         const currentError = Alerts.createErrorAlert(message);
         this.setState({
             errors: [currentError],
-            loggedIn: false
+            inProgress: false
         });
     }
 
@@ -64,11 +69,13 @@ export default class PasswordReset extends Component {
             return;
         }
 
+        this.setState({ inProgress: true });
+
         const { email } = this.state;
         firebase.auth().sendPasswordResetEmail(email).
         then(() => {
             Alerts.createInfoAlert(`An email with a token has been sent to ${email}.`);
-            this.props.history.push('/login');
+            this.props.router.push('/user/login');
         }).
         catch((error) => {
             this.handleError(error);
@@ -81,42 +88,58 @@ export default class PasswordReset extends Component {
     }
 
     render() {
+        let resetInProgress = null;
+        let resetForm = null;
+
+        if (this.state.inProgress) {
+            resetInProgress =
+                <FormGroup className="hor-align vert-align">
+                    <Loader color="#012935" className="loader"/>
+                </FormGroup>;
+        } else {
+            resetForm =
+                <Form horizontal onSubmit={ this.sendPasswordResetEmail.bind(this) }>
+                    <FormGroup>
+                        <InputGroup>
+                            <InputGroup.Addon>
+                                <i className="fa fa-envelope fa" aria-hidden="true"/>
+                            </InputGroup.Addon>
+                            <FormControl
+                                type="text"
+                                value={this.state.email}
+                                placeholder="Enter your email"
+                                onChange={this.handleEmail.bind(this)}
+                            />
+                        </InputGroup>
+                    </FormGroup>
+
+                    <FormGroup>
+                        <Button type="submit"
+                                className="btn-primary btn-md btn-block login-button colorAccent"
+                                onClick={ this.sendPasswordResetEmail.bind(this) }>
+                            Send email
+                        </Button>
+                    </FormGroup>
+                </Form>;
+        }
+
         return (
             <div>
                 <Helmet>
-                    <title>#iwashere - Reset password</title>
+                    <title>#iwashere - Reset Password</title>
                 </Helmet>
-                <div className="container">
-                    <div className="row main">
-                        <div className="panel-heading">
-                            <div className="panel-title text-center">
-                                <h1>Reset password</h1>
-                                <hr/>
-                            </div>
-                        </div>
 
-                        <div className="main-center">
-                            <form className="form-horizontal" onSubmit={ this.sendPasswordResetEmail.bind(this) }>
-                                <div className="form-group">
-                                    <label htmlFor="email" className="cols-sm-2 control-label">Your email</label>
-                                    <div className="cols-sm-10">
-                                        <div className="input-group">
-                                            <span className="input-group-addon"><i className="fa fa-envelope fa" aria-hidden="true"/></span>
-                                            <input type="text" className="form-control" name="email" id="email" placeholder="Enter your Email" onChange={ this.handleEmail.bind(this) }/>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="form-group ">
-                                    <button type="submit" className="btn btn-primary btn-lg btn-block login-button" onClick={ this.sendPasswordResetEmail.bind(this) }>Send email</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
+                <div>
+                    <h1 className="form-title">Reset Password</h1>
+                    <hr/>
                 </div>
+
+                {resetInProgress}
+
+                {resetForm}
             </div>
         );
     }
 }
 
-PasswordReset.propTypes = { history: PropTypes.object };
+PasswordReset.propTypes = { router: PropTypes.object.isRequired };

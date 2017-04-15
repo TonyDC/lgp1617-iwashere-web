@@ -16,7 +16,7 @@ router.use('/poi', require('./poi'));
 
 // No API endpoint found
 router.use((req, res) => {
-    res.sendStatus(httpCode.METHOD_NOT_ALLOWED).end();
+    res.sendStatus(httpCode.NOT_IMPLEMENTED).end();
 });
 
 module.exports = router;

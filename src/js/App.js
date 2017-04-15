@@ -2,21 +2,22 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 import * as firebase from 'firebase';
 
-import Alerts from './components/utils/Alerts';
+import MainRoutes from './routes/MainRoutes';
+
 import NoMatch from './components/utils/NoMatch';
-import NavBar from './components/utils/NavBar';
 
 import Map from './components/map/Map';
+import Login from './components/user/Login';
+import Register from './components/user/Register';
+import PasswordReset from './components/user/PasswordReset';
+import POIDetail from './components/poi/POIDetail';
 
 import UnauthRoutes from './routes/UnauthRoutes';
 
 import { loginActionCreator, logoutActionCreator } from './redux/action creators/login';
-
-import 'react-s-alert/dist/s-alert-default.css';
-import 'react-s-alert/dist/s-alert-css-effects/slide.css';
 
 import 'styles/app.scss';
 
@@ -42,18 +43,26 @@ export default class App extends Component {
         });
     }
 
+    redirectIfLoggedIn(nextState, replace) {
+        const currentState = this.context.store.getState();
+        if (currentState.userStatus.isLogged) {
+            replace({ pathname: '/' });
+        }
+    }
+
     render() {
         return (
-            <Router>
-                <div>
-                    <Route path="/" component={ NavBar }/>
-                    <Switch>
-                        <Route exact path="/" component={ Map }/>
-                        <UnauthRoutes/>
-                        <Route component={ NoMatch }/>
-                    </Switch>
-                    <Alerts/>
-                </div>
+            <Router history={ browserHistory }>
+                <Route path="/" component={ MainRoutes }>
+                    <IndexRoute component={ Map } />
+                    <Route path="user" component={ UnauthRoutes }>
+                        <Route path="login" component={ Login } onEnter={ this.redirectIfLoggedIn.bind(this) } />
+                        <Route path="register" component={ Register } onEnter={ this.redirectIfLoggedIn.bind(this) } />
+                        <Route path="recover" component={ PasswordReset } onEnter={ this.redirectIfLoggedIn.bind(this) } />
+                        <Route path="recover" component={ POIDetail } />
+                    </Route>
+                    <Route path="*" component={ NoMatch }/>
+                </Route>
             </Router>
         );
     }

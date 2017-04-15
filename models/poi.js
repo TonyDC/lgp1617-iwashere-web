@@ -1,46 +1,17 @@
 'use strict';
 
-module.exports = (sequelize, DataTypes) => {
-    const POI = sequelize.define('POI', {
-        description: {
-            allowNull: false,
-            type: DataTypes.TEXT
-        },
-        latitude: {
-            allowNull: false,
-            type: DataTypes.FLOAT,
-            validate: {
-                max: 90,
-                min: -90
-            }
-        },
-        longitude: {
-            allowNull: false,
-            type: DataTypes.INTEGER,
-            validate: {
-                max: 180,
-                min: -180
-            }
-        },
-        name: {
-            allowNull: false,
-            type: DataTypes.STRING,
-            unique: true
-        },
-        rating: {
-            allowNull: false,
-            defaultValue: 0,
-            type: DataTypes.FLOAT
-        }
+module.exports = function(sequelize, DataTypes) {
+    return sequelize.define('poi', {
+        address: DataTypes.STRING,
+        description: DataTypes.STRING,
+        latitude: DataTypes.REAL,
+        longitude: DataTypes.REAL,
+        name: DataTypes.STRING
     }, {
         classMethods: {
-            associate: (models) => {
-                //POI.belongsToMany(models.Route, {through: 'POIsRoutes' });
-                //POI.hasMany(models.Tag);
-                POI.hasMany(models.Media);
+            associate: function(models) {
+                // associations can be defined here
             }
         }
     });
-
-    return POI;
 };

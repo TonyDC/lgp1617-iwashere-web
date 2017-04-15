@@ -2,17 +2,17 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Alert from 'react-s-alert';
 import { Helmet } from 'react-helmet';
-import { Link } from 'react-router-dom';
 import * as firebase from 'firebase';
 import { Form, FormGroup, InputGroup, FormControl, Button } from 'react-bootstrap';
 import validator from 'validator';
+import { GridLoader as Loader } from 'halogen';
 
+import MyButton from '../utils/MyButton';
 import Alerts from '../utils/Alerts';
 
+import 'styles/app.scss';
 import 'styles/login.scss';
 import 'styles/utils.scss';
-
-import logo from 'img/logo.png';
 
 const NO_ERROR = 0;
 
@@ -21,8 +21,10 @@ export default class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            email: '',
             errors: [],
-            loggedIn: firebase.auth().currentUser !== null
+            inProgress: false,
+            password: ''
         };
     }
 
@@ -47,14 +49,21 @@ export default class Login extends Component {
         const currentError = Alerts.createErrorAlert(message);
         this.setState({
             errors: [currentError],
-            loggedIn: false
+            inProgress: false
         });
     }
 
     loginPopup(provider) {
+        if (this.state.inProgress) {
+            return;
+        }
+
+        this.setState({ inProgress: true });
+
         firebase.auth().signInWithPopup(provider).
         then(() => {
-            this.props.history.push('/');
+            this.setState({ inProgress: false });
+            this.props.router.push('/');
         }).
         catch((error) => {
             this.handleError(error);
@@ -64,14 +73,17 @@ export default class Login extends Component {
     loginUser(event) {
         event.preventDefault();
 
-        if (!this.checkForm()) {
+        if (this.state.inProgress || !this.checkForm()) {
             return;
         }
+
+        this.setState({ inProgress: true });
 
         const { email, password } = this.state;
         firebase.auth().signInWithEmailAndPassword(email, password).
         then(() => {
-            this.props.history.push('/');
+            this.setState({ inProgress: false });
+            this.props.router.push('/');
         }).
         catch((error) => {
             this.handleError(error);
@@ -122,91 +134,95 @@ export default class Login extends Component {
     }
 
     render() {
+        let signInForm = null;
+        let otherSignInOptions = null;
+        let signInInProgress = null;
+
+        if (this.state.inProgress) {
+            signInInProgress =
+                <FormGroup className="hor-align vert-align">
+                    <h1 className="loader-text">Signing in progress...</h1>
+                    <Loader color="#012935" className="loader"/>
+                </FormGroup>;
+        } else {
+            signInForm =
+                <Form horizontal className="login-form" onSubmit={ this.loginUser.bind(this) }>
+                    <FormGroup>
+                        <InputGroup>
+                            <InputGroup.Addon>
+                                <i className="fa fa-envelope fa" aria-hidden="true"/>
+                            </InputGroup.Addon>
+                            <FormControl
+                                type="text"
+                                value={this.state.email}
+                                placeholder="Enter your email"
+                                onChange={this.handleEmail.bind(this)}
+                            />
+                        </InputGroup>
+                    </FormGroup>
+                    <FormGroup>
+                        <InputGroup>
+                            <InputGroup.Addon>
+                                <i className="fa fa-lock fa-lg" aria-hidden="true"/>
+                            </InputGroup.Addon>
+                            <FormControl
+                                type="password"
+                                value={this.state.password}
+                                placeholder="Enter your password"
+                                onChange={this.handlePassword.bind(this)}
+                            />
+                        </InputGroup>
+                    </FormGroup>
+                    <FormGroup className="box">
+                        <Button type="submit"
+                                className="btn btn-primary btn-md btn-block login-button colorAccent"
+                                onClick={ this.loginUser.bind(this) }>
+                            Sign In
+                        </Button>
+                    </FormGroup>
+                </Form>;
+
+            otherSignInOptions =
+                <div>
+                    <FormGroup className="hor-align">
+                        or
+                    </FormGroup>
+
+                    <FormGroup className="box">
+                        <Button className="btn btn-block btn-social btn-md btn-facebook"
+                                onClick={ this.loginFacebook.bind(this) }>
+                            <span className="fa fa-facebook"/> Sign in with Facebook
+                        </Button>
+                    </FormGroup>
+
+                    <FormGroup className="box">
+                        <Button className="btn btn-block btn-social btn-md btn-google"
+                                onClick={ this.loginGoogle.bind(this) }>
+                            <span className="fa fa-google"/> Sign in with Google
+                        </Button>
+                    </FormGroup>
+
+                    <MyButton url="/user/recover">Forgot your password?</MyButton>
+
+                    <MyButton url="/user/register">Don't have an account?</MyButton>
+
+                </div>;
+        }
+
         return (
-            <div className="colorAccentSecondary">
+            <div>
                 <Helmet>
                     <title>#iwashere - Sign in</title>
                 </Helmet>
-
-                <div className="container">
-                    <div className="row main">
-                        <div className="main-login main-center">
-                            <div className="panel-heading">
-                                <div className="panel-title text-center">
-                                    <img src={logo} alt="#iwashere logo"/>
-                                </div>
-                            </div>
-                            <Form horizontal onSubmit={ this.loginUser.bind(this) }>
-                                <FormGroup onSubmit={ this.loginUser.bind(this)}>
-                                    <InputGroup>
-                                        <InputGroup.Addon>
-                                            <i className="fa fa-envelope fa" aria-hidden="true"/>
-                                        </InputGroup.Addon>
-                                        <FormControl
-                                            type="text"
-                                            value={this.state.value}
-                                            placeholder="Enter your email"
-                                            onChange={this.handleEmail.bind(this)}
-                                        />
-                                    </InputGroup>
-                                </FormGroup>
-                                <FormGroup>
-                                    <InputGroup>
-                                        <InputGroup.Addon>
-                                            <i className="fa fa-lock fa-lg" aria-hidden="true"/>
-                                        </InputGroup.Addon>
-                                        <FormControl
-                                            type="text"
-                                            value={this.state.value}
-                                            placeholder="Enter your password"
-                                            onChange={this.handlePassword.bind(this)}
-                                        />
-                                    </InputGroup>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Button type="submit"
-                                            className="btn-primary btn-md btn-block login-button colorAccent"
-                                            onClick={ this.loginUser.bind(this) }>
-                                        Sign In
-                                    </Button>
-                                </FormGroup>
-                            </Form>
-
-                            <FormGroup className="hor-align">
-                                or
-                            </FormGroup>
-
-                            <FormGroup>
-                                <Button className="btn-block btn-social btn-md btn-facebook"
-                                        onClick={ this.loginFacebook.bind(this) }>
-                                    <span className="fa fa-facebook"/> Sign in with Facebook
-                                </Button>
-                            </FormGroup>
-
-                            <FormGroup>
-                                <Button className="btn-block btn-social btn-md btn-google"
-                                        onClick={ this.loginGoogle.bind(this) }>
-                                    <span className="fa fa-google"/> Sign in with Google
-                                </Button>
-                            </FormGroup>
-
-
-                            <FormGroup>
-                                <Link to="/password-reset">Forgot your password?</Link>
-                            </FormGroup>
-
-                            <FormGroup>
-                                <Link to="/register">Don't have an account?</Link>
-                            </FormGroup>
-                        </div>
-                    </div>
-                </div>
+                { signInForm }
+                { otherSignInOptions }
+                { signInInProgress }
             </div>
         );
     }
 }
 
-Login.propTypes = { history: PropTypes.object };
+Login.propTypes = { router: PropTypes.object.isRequired };
 
 // To access Redux store
 Login.contextTypes = { store: PropTypes.object };
