@@ -86,8 +86,8 @@ router.get('/rating/:poiId', (req, res) => {
 });
 
 router.post('/rating', (req, res) => {
-    console.log(req.body);
-    const { poiId, userId, rating } = req.body;
+    const { userId, rating } = req.body;
+    const poiId = req.body.entityId;
 
     if (!poiId || !userId || !rating || isNaN(parseInt(rating, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();

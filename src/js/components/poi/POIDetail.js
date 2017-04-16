@@ -5,15 +5,12 @@ import { Helmet } from 'react-helmet';
 import { GridLoader as Loader } from 'halogen';
 import Moment from 'moment';
 
-import MyRater from '../utils/MyRater';
-
-import { Carousel } from 'react-responsive-carousel';
-import 'react-responsive-carousel/lib/styles/carousel.css';
+import Rater from '../utils/MyRater';
+import Carousel from '../utils/MyCarousel';
 
 import 'styles/timeline.scss';
 import 'styles/utils.scss';
 
-const TRANSITION_INTERVAL = 10000;
 const LIMIT = 6;
 
 export default class POIDetail extends Component {
@@ -56,24 +53,6 @@ export default class POIDetail extends Component {
         });
     }
 
-    getPOIMedia(poiMedia) {
-        const mediaList = [];
-        let key = 0;
-        poiMedia.forEach((mediaEntry) => {
-            if (mediaEntry.type === 'IMG') {
-                mediaList.push(<div key={key++}>
-                    <img src={mediaEntry.url} />
-                </div>);
-            } else if (mediaEntry.type === 'VID') {
-                mediaList.push(<div key={key++}>
-                    <iframe src={mediaEntry.url} />
-                </div>);
-            }
-        });
-
-        return mediaList;
-    }
-
     getUserMedia(userMedia) {
         const mediaList = [];
 
@@ -111,7 +90,7 @@ export default class POIDetail extends Component {
     }
 
     fetchUserMedia() {
-        fetch(`/api/poi/media/${this.state.poiInfo.id}`, {
+        fetch(`${this.props.url}${this.props.poiId}`, {
             body: {
                 limit: LIMIT,
                 offset: this.state.userMediaOffset,
@@ -145,22 +124,11 @@ export default class POIDetail extends Component {
             );
         }
 
-        let rating = null;
+        let ratingPanel = null;
+        let poiMediaSlider = null;
         if (this.props.params.id) {
-            rating = <MyRater url="/api/poi/rating" poiId={this.props.params.id} userId={'1'} />; //this.state.user.id
-        }
-
-        let poiMedia = null;
-        let poiSlider = null;
-        if (this.state.poiMedia) {
-            poiMedia = this.getPOIMedia(this.state.poiMedia);
-
-            poiSlider =
-                <Carousel useKeyboardArrows={true} autoPlay={true} infiniteLoop={true}
-                          showArrows={true} showThumbs={ false } showStatus={ false }
-                          interval={TRANSITION_INTERVAL}>
-                    {poiMedia}
-                </Carousel>;
+            ratingPanel = <Rater url="/api/poi/rating" entityId={this.props.params.id} userId={this.state.user.id} />;
+            poiMediaSlider = <Carousel url="/api/poi/media" entityId={this.props.params.id} />
         }
 
         let userMedia = null;
@@ -186,13 +154,14 @@ export default class POIDetail extends Component {
 
                         <Col xs={12} mdOffset={1} md={10} lgOffset={1} lg={10}>
                             <div className="thumbnail">
-                                {poiSlider}
+                                {poiMediaSlider}
 
                                 <div className="caption-full">
                                     <h4>{this.state.poiInfo.name}</h4>
+                                    <h5>{this.state.poiInfo.address}</h5>
                                     <p>{this.state.poiInfo.description}</p>
                                 </div>
-                                {rating}
+                                {ratingPanel}
                             </div>
                         </Col>
 

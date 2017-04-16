@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { GridLoader as Loader } from 'halogen';
+
 import Rater from 'react-rater';
 import 'react-rater/lib/react-rater.css';
 import 'styles/my_rater.scss';
@@ -23,7 +24,7 @@ export default class MyRater extends Component {
     }
 
     getRating() {
-        let urlGet = `${this.props.url}/${this.props.poiId}`;
+        let urlGet = `${this.props.url}/${this.props.entityId}`;
 
         if (this.props.userId) {
             urlGet += `/${this.props.userId}`;
@@ -48,7 +49,7 @@ export default class MyRater extends Component {
         if (ratingEvent.lastRating >= NO_RATING) {
             fetch(this.props.url, {
                 body: JSON.stringify({
-                    poiId: this.props.poiId,
+                    entityId: this.props.entityId,
                     rating: ratingEvent.rating,
                     userId: this.props.userId
                 }),
@@ -101,7 +102,7 @@ export default class MyRater extends Component {
 }
 
 MyRater.propTypes = {
-    poiId: PropTypes.string.isRequired,
+    entityId: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired,
     userId: PropTypes.string
 };
