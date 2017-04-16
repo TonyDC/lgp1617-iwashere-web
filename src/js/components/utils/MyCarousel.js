@@ -20,7 +20,7 @@ export default class MyCarousel extends Component {
     }
 
     fetchMedia() {
-        fetch(`${this.props.url}${this.props.poiId}`, {
+        fetch(this.props.url, {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
         }).
@@ -74,6 +74,5 @@ export default class MyCarousel extends Component {
 }
 
 MyCarousel.propTypes = {
-    entityId: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired
 };

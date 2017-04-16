@@ -11,6 +11,7 @@ module.exports = function(sequelize, DataTypes) {
         classMethods: {
             associate: (models) => {
                 models.poi.hasMany(models.poi_rating, { as: 'ratings' });
+                models.poi.belongsToMany(models.media, { as: 'media', through: 'poi_media' });
             }
         }
     });

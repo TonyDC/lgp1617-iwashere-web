@@ -33,6 +33,34 @@ router.get('/info/:id', (req, res) => {
     });
 });
 
+router.get('/media/:id', (req, res) => {
+    const { id } = req.params;
+
+    if (!id) {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    const POI = db.poi;
+    POI.findById(id, {include: [{ model: db.media }]}).then((result) => {console.log(result);});
+    /*const POIMedia = db.poi_media;
+    POIMedia.findAll({ where: { poiId: id }, include: [{ model: db.media, as: 'lll' }]}).
+    then((media) => {
+        if (media) {
+            res.json(media.map((item) => {
+                return item.dataValues;
+            })).end();
+        } else {
+            res.sendStatus(httpCodes.NOT_FOUND).end();
+        }
+    }).
+    catch((error) => {
+        console.error(error);
+        res.sendStatus(httpCodes.INTERNAL_SERVER_ERROR).end();
+    });*/
+});
+
 function getPOIRating(res, poiId, userId) {
     const POIRating = db.poi_rating;
 
@@ -42,7 +70,7 @@ function getPOIRating(res, poiId, userId) {
 
         poiRatings.forEach((row) => {
             const ratingEntry = row.dataValues;
-            console.log(ratingEntry);
+
             poiRating.rating += ratingEntry.rating;
 
             if (ratingEntry.userId === userId) {
