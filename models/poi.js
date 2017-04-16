@@ -9,8 +9,8 @@ module.exports = function(sequelize, DataTypes) {
         name: DataTypes.STRING
     }, {
         classMethods: {
-            associate: function(models) {
-                // associations can be defined here
+            associate: (models) => {
+                models.poi.hasMany(models.poi_rating, { as: 'ratings' });
             }
         }
     });

@@ -5,17 +5,14 @@ import { Helmet } from 'react-helmet';
 import { GridLoader as Loader } from 'halogen';
 import Moment from 'moment';
 
+import MyRater from '../utils/MyRater';
+
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.css';
 
-import Rater from 'react-rater';
-import 'react-rater/lib/react-rater.css';
-
-import 'styles/poi-detail.scss';
 import 'styles/timeline.scss';
 import 'styles/utils.scss';
 
-const MAX_RATING_SCALE = 5;
 const TRANSITION_INTERVAL = 10000;
 const LIMIT = 6;
 
@@ -29,6 +26,13 @@ export default class POIDetail extends Component {
             loadingPOIInfo: true,
             userMediaOffset: 0
         };
+    }
+
+    componentDidMount() {
+        this.reduxListenerUnsubscribe = this.context.store.subscribe(() => {
+            const reduxState = this.context.store.getState();
+            this.setState({ user: reduxState.userStatus });
+        });
 
         this.fetchPOIInfo();
     }
@@ -42,21 +46,14 @@ export default class POIDetail extends Component {
             return response.json();
         }).
         then((response) => {
-            console.log(response);
             this.setState({
                 loadingPOIInfo: false,
                 poiInfo: response
             });
         }).
         catch(() => {
-            //this.props.router.push('/');
+            this.props.router.push('/');
         });
-    }
-
-    updatePOIRating(ratingEvent) {
-        if (ratingEvent.lastRating) {
-            // TODO create or update user rating
-        }
     }
 
     getPOIMedia(poiMedia) {
@@ -148,27 +145,9 @@ export default class POIDetail extends Component {
             );
         }
 
-        let userRating = null;
-        if (this.state.poiRating && this.state.poiRating.userRating) {
-            userRating =
-               <Rater total={MAX_RATING_SCALE} rating={this.state.poiInfo.userRating} onRate={this.updatePOIRating.bind(this)}/>;
-        }
-
-        let ratings = null;
-        if (this.state.poiRating) {
-            ratings =
-                <div className="ratings">
-                    <Row className="show-grid">
-                        <Col xs={12} md={12} lg={12}>
-                            <Rater interactive={false} total={MAX_RATING_SCALE} rating={this.state.poiRating.rating} />
-                            <span className="rating-description"> {this.state.poiRating.rating.toFixed(1)} stars</span>
-                        </Col>
-                        <Col xs={12} md={12} lg={12}>
-                            {userRating}
-                            <span className="rating-description"> Your rating</span>
-                        </Col>
-                    </Row>
-                </div>;
+        let rating = null;
+        if (this.props.params.id) {
+            rating = <MyRater url="/api/poi/rating" poiId={this.props.params.id} userId={'1'} />; //this.state.user.id
         }
 
         let poiMedia = null;
@@ -195,7 +174,7 @@ export default class POIDetail extends Component {
                     </ul>
                 </Col>;
         }
-        
+
         return (
             <div className="colorAccentSecondary">
                 <Helmet>
@@ -213,7 +192,7 @@ export default class POIDetail extends Component {
                                     <h4>{this.state.poiInfo.name}</h4>
                                     <p>{this.state.poiInfo.description}</p>
                                 </div>
-                                {ratings}
+                                {rating}
                             </div>
                         </Col>
 

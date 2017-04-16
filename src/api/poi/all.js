@@ -33,7 +33,7 @@ router.get('/info/:id', (req, res) => {
     });
 });
 
-function getPOIRating(poiId, userId, res) {
+function getPOIRating(res, poiId, userId) {
     const POIRating = db.poi_rating;
 
     POIRating.findAll({ where: { poiId } }).
@@ -42,7 +42,7 @@ function getPOIRating(poiId, userId, res) {
 
         poiRatings.forEach((row) => {
             const ratingEntry = row.dataValues;
-
+            console.log(ratingEntry);
             poiRating.rating += ratingEntry.rating;
 
             if (ratingEntry.userId === userId) {
@@ -64,17 +64,30 @@ function getPOIRating(poiId, userId, res) {
 router.get('/rating/:poiId/:userId', (req, res) => {
     const { poiId, userId } = req.params;
 
+    if (!poiId || !userId) {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    getPOIRating(res, poiId, userId);
+});
+
+router.get('/rating/:poiId', (req, res) => {
+    const { poiId } = req.params;
+
     if (!poiId) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
 
-    getPOIRating(poiId, userId, res);
+    getPOIRating(res, poiId);
 });
 
-router.post('/rating/:poiId/:userId/:rating', (req, res) => {
-    const { poiId, userId, rating } = req.params;
+router.post('/rating', (req, res) => {
+    console.log(req.body);
+    const { poiId, userId, rating } = req.body;
 
     if (!poiId || !userId || !rating || isNaN(parseInt(rating, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
@@ -83,13 +96,21 @@ router.post('/rating/:poiId/:userId/:rating', (req, res) => {
     }
 
     const POIRating = db.poi_rating;
-    POIRating.upsert({
-        poiId,
-        rating,
-        userId
+    POIRating.findOrCreate({
+        defaults: {
+            poiId,
+            rating,
+            userId
+        },
+        where: { $and: [{ poiId }, { userId }] }
     }).
-    then(() => {
-        getPOIRating(poiId, userId, res);
+    then((ratingEntry, created) => {
+        if (created) {
+            res.sendStatus(httpCodes.OK).end();
+        } else {
+            ratingEntry[0].updateAttributes({ rating }).
+            then(res.sendStatus(httpCodes.CREATED).end());
+        }
     }).
     catch((error) => {
         console.error(error);

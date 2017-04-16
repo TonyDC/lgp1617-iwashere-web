@@ -9,12 +9,9 @@ export default class NoMatch extends Component {
             <div className="App">
                 <div className="App-header">
                     <img alt="logo" className="App-logo" src={logo} />
-                    <h2>React Test Page</h2>
-                    <h5>This is a page</h5>
+                    <h2>Oops!</h2>
+                    <h5>The page you were looking for could not be found...</h5>
                 </div>
-                <p className="App-intro">
-                    To get started, edit <code>src/App.js</code> and save to reload.
-                </p>
             </div>
         );
     }
