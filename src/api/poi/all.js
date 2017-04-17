@@ -5,7 +5,7 @@ const httpCodes = require('http-status-codes');
 const express = require('express');
 const router = express.Router();
 
-const db = root_require('models');
+const db = root_require('src/db/query');
 
 const DECIMAL_BASE = 10;
 
@@ -18,11 +18,11 @@ router.get('/info/:id', (req, res) => {
         return;
     }
 
-    const POI = db.poi;
-    POI.findById(id).
+    const { POI } = db;
+    POI.getPOIDetail(id).
     then((poi) => {
-        if (poi) {
-            res.json(poi.dataValues).end();
+        if (poi && poi.length === 1) {
+            res.json(poi[0]).end();
         } else {
             res.sendStatus(httpCodes.NOT_FOUND).end();
         }
@@ -32,6 +32,7 @@ router.get('/info/:id', (req, res) => {
         res.sendStatus(httpCodes.INTERNAL_SERVER_ERROR).end();
     });
 });
+
 
 router.get('/media/:id', (req, res) => {
     const { id } = req.params;
@@ -47,7 +48,7 @@ router.get('/media/:id', (req, res) => {
     then((result) => {
         console.log(result);
     });
-    /*const POIMedia = db.poi_media;
+    const POIMedia = db.poi_media;
     POIMedia.findAll({ where: { poiId: id }, include: [{ model: db.media, as: 'lll' }]}).
     then((media) => {
         if (media) {
@@ -61,7 +62,8 @@ router.get('/media/:id', (req, res) => {
     catch((error) => {
         console.error(error);
         res.sendStatus(httpCodes.INTERNAL_SERVER_ERROR).end();
-    });*/
+    });
+
 });
 
 function getPOIRating(res, poiId, userId) {
