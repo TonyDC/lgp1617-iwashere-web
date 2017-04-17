@@ -39,7 +39,7 @@
     "callback-return": "error",
     "camelcase": "error",
     "capitalized-comments": [
-      "error",
+      "warn",
       "always"
     ],
     "class-methods-use-this": "off",
