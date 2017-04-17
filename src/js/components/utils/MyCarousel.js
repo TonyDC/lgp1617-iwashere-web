@@ -64,8 +64,8 @@ export default class MyCarousel extends Component {
         }
 
         return (
-            <Carousel useKeyboardArrows={true} autoPlay={true} infiniteLoop={true}
-                      showArrows={true} showThumbs={ false } showStatus={ false }
+            <Carousel useKeyboardArrows autoPlay infiniteLoop
+                      showArrows showThumbs={ false } showStatus={ false }
                       interval={TRANSITION_INTERVAL}>
                 {this.state.media}
             </Carousel>

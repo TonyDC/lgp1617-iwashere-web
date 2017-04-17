@@ -43,7 +43,10 @@ router.get('/media/:id', (req, res) => {
     }
 
     const POI = db.poi;
-    POI.findById(id, {include: [{ model: db.media }]}).then((result) => {console.log(result);});
+    POI.findById(id, { include: [{ model: db.media }] }).
+    then((result) => {
+        console.log(result);
+    });
     /*const POIMedia = db.poi_media;
     POIMedia.findAll({ where: { poiId: id }, include: [{ model: db.media, as: 'lll' }]}).
     then((media) => {
