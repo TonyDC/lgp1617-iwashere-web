@@ -25,8 +25,8 @@ export default class Register extends Component {
             email: '',
             errors: [],
             inProgress: false,
-            registered: false,
             password: '',
+            registered: false,
             username: ''
         };
     }

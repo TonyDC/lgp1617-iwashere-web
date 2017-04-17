@@ -73,6 +73,4 @@ export default class MyCarousel extends Component {
     }
 }
 
-MyCarousel.propTypes = {
-    url: PropTypes.string.isRequired
-};
+MyCarousel.propTypes = { url: PropTypes.string.isRequired };

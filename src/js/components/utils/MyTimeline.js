@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { Row, Col } from 'react-bootstrap';
+import { Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { GridLoader as Loader } from 'halogen';
 import Moment from 'moment';
 
 import 'styles/timeline.scss';
@@ -28,7 +27,7 @@ export default class MyTimeline extends Component {
         fetch(this.props.url, {
             body: {
                 limit: LIMIT,
-                offset: this.state.userMediaOffset,
+                offset: this.state.userMediaOffset
             },
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
@@ -68,7 +67,7 @@ export default class MyTimeline extends Component {
                 <li className={`timeline${itemClassInverted
                     ? '-inverted'
                     : ''}`} key={key++}>
-                    <div className="tl-circ"></div>
+                    <div className="tl-circ" />
                     <div className="timeline-panel">
                         <div className="tl-heading">
                             <p><small className="text-muted"><i className="glyphicon glyphicon-time"/> { mediaEntry.time }</small></p>
