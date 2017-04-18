@@ -9,8 +9,8 @@ module.exports = {
 
         return queryInterface.bulkInsert('poi_media', [
             {
-                poiId: 1,
-                mediaId: 1,
+                poi_id: 1,
+                media_id: 1,
                 createdAt: TODAY,
                 updatedAt: TODAY
             }

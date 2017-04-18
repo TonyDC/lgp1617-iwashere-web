@@ -9,17 +9,16 @@ const db = root_require('src/db/query');
 
 const DECIMAL_BASE = 10;
 
-router.get('/info/:id', (req, res) => {
+router.get('/:id', (req, res, next) => {
     const { id } = req.params;
-
-    if (!id) {
+    if (!id || isNaN(parseInt(id, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
 
     const { POI } = db;
-    POI.getPOIDetail(id).
+    POI.getPOIDetailByID(id).
     then((poi) => {
         if (poi && poi.length === 1) {
             res.json(poi[0]).end();
@@ -28,40 +27,31 @@ router.get('/info/:id', (req, res) => {
         }
     }).
     catch((error) => {
-        console.error(error);
-        res.sendStatus(httpCodes.INTERNAL_SERVER_ERROR).end();
+        next(error);
     });
 });
 
 
-router.get('/media/:id', (req, res) => {
-    const { id } = req.params;
-
-    if (!id) {
+router.get('/media/:poiID', (req, res, next) => {
+    const { poiID } = req.params;
+    if (!poiID || isNaN(parseInt(poiID, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
 
-    const POI = db.poi;
-    POI.findById(id, { include: [{ model: db.media }] }).
-    then((result) => {
-        console.log(result);
-    });
-    const POIMedia = db.poi_media;
-    POIMedia.findAll({ where: { poiId: id }, include: [{ model: db.media, as: 'lll' }]}).
+    const { POI } = db;
+
+    POI.getMediaFromPOI(poiID).
     then((media) => {
         if (media) {
-            res.json(media.map((item) => {
-                return item.dataValues;
-            })).end();
+            res.json(media).end();
         } else {
             res.sendStatus(httpCodes.NOT_FOUND).end();
         }
     }).
     catch((error) => {
-        console.error(error);
-        res.sendStatus(httpCodes.INTERNAL_SERVER_ERROR).end();
+        next(error);
     });
 
 });
@@ -151,7 +141,7 @@ router.post('/rating', (req, res) => {
     });
 });
 
-router.get('/range/:minLat/:maxLat/:minLng/:maxLng', (req, res) => {
+router.get('/range/:minLat/:maxLat/:minLng/:maxLng', (req, res, next) => {
     const { minLat, maxLat, minLng, maxLng } = req.params;
 
     if (!minLat || !maxLat || !minLng || !maxLng ||
@@ -161,31 +151,17 @@ router.get('/range/:minLat/:maxLat/:minLng/:maxLng', (req, res) => {
         return;
     }
 
-    const POI = db.poi;
-    POI.findAll({
-        where: {
-            latitude: {
-                $gte: minLat,
-                $lte: maxLat
-            },
-            longitude: {
-                $gte: minLng,
-                $lte: maxLng
-            }
-        }
-    }).
+    const { POI } = db;
+    POI.getPOIsWithinWindow(minLat, maxLat, minLng, maxLng).
     then((rows) => {
         if (rows) {
-            res.json(rows.map((item) => {
-                return item.dataValues;
-            })).end();
+            res.json(rows).end();
         } else {
             res.sendStatus(httpCodes.NOT_FOUND).end();
         }
     }).
     catch((error) => {
-        console.error(error);
-        res.sendStatus(httpCodes.INTERNAL_SERVER_ERROR).end();
+        next(error);
     });
 });
 

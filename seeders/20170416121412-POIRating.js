@@ -10,8 +10,8 @@ module.exports = {
         return queryInterface.bulkInsert('poi_ratings', [
             {
                 rating: 2,
-                userId: '123ujhjhaosiu1287',
-                poiId: 1,
+                user_id: '123ujhjhaosiu1287',
+                poi_id: 1,
                 createdAt: TODAY,
                 updatedAt: TODAY
             }

@@ -13,12 +13,12 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
-            poiId: {
+            poi_id: {
                 onDelete: 'cascade',
                 onUpdate: 'cascade',
                 references: {
-                    key: "id",
-                    model: "pois"
+                    key: 'id',
+                    model: 'pois'
                 },
                 type: Sequelize.INTEGER,
                 unique: 'uniquePOIRating'
@@ -31,7 +31,7 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.DATE
             },
-            userId: {
+            user_id: {
                 allowNull: false,
                 type: Sequelize.STRING,
                 unique: 'uniquePOIRating'

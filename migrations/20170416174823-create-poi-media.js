@@ -13,21 +13,21 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
-            mediaId: {
+            media_id: {
                 onDelete: 'cascade',
                 onUpdate: 'cascade',
                 references: {
-                    key: "id",
-                    model: "media"
+                    key: 'id',
+                    model: 'media'
                 },
                 type: Sequelize.INTEGER
             },
-            poiId: {
+            poi_id: {
                 onDelete: 'cascade',
                 onUpdate: 'cascade',
                 references: {
-                    key: "id",
-                    model: "pois"
+                    key: 'id',
+                    model: 'pois'
                 },
                 type: Sequelize.INTEGER
             },
