@@ -58,7 +58,7 @@ router.get('/media/:poiID', (req, res, next) => {
 
     const { poiDB } = db;
 
-    poiDB.getMediaFromPOI(poiID).
+    poiDB.getPOIMedia(poiID).
     then((media) => {
         if (media) {
             res.json(media).end();
@@ -167,7 +167,7 @@ router.get('/range/:minLat/:maxLat/:minLng/:maxLng', (req, res, next) => {
     }
 
     const { poiDB } = db;
-    poiDB.getPOIsWithinWindow(minLat, maxLat, minLng, maxLng).
+    poiDB.getPOIsWithin(minLat, maxLat, minLng, maxLng).
     then((rows) => {
         if (rows) {
             res.json(rows).end();

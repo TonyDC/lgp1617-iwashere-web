@@ -28,7 +28,7 @@ export default class MyRater extends Component {
 
         if (this.props.poiId) {
             urlGet += `/${this.props.poiId}`;
-        }else if (this.props.routeId) {
+        } else if (this.props.routeId) {
             urlGet += `/${this.props.routeId}`;
         }
 

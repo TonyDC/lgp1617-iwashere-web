@@ -10,7 +10,7 @@ module.exports.getPOIDetailByID = (id) => {
     });
 };
 
-module.exports.getPOIsWithinWindow = (minLat, maxLat, minLng, maxLng) => {
+module.exports.getPOIsWithin = (minLat, maxLat, minLng, maxLng) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT * FROM pois WHERE latitude >= :minLat AND latitude <= :maxLat AND longitude >= :minLng AND longitude <= :maxLng`, {
         replacements: {
@@ -23,9 +23,9 @@ module.exports.getPOIsWithinWindow = (minLat, maxLat, minLng, maxLng) => {
     });
 };
 
-module.exports.getMediaFromPOI = (poiID) => {
+module.exports.getPOIMedia = (poiID) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT * FROM media INNER JOIN poi_media ON (media.id = poi_media.media_id) WHERE poi_media.poi_id = :poiID`, {
+    return db.query(`SELECT * FROM content INNER JOIN poi_content ON (content.id = poi_content.content_id) WHERE poi_content.poi_id = :poiID`, {
         replacements: { poiID },
         type: db.QueryTypes.SELECT
     });

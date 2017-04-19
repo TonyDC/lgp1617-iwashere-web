@@ -21,13 +21,13 @@ module.exports = {
                     key: 'id',
                     model: 'pois'
                 },
-                values: [0, 1, 2, 3, 4, 5],
                 type: Sequelize.BIGINT,
                 unique: 'uniquePOIRating'
             },
             rating: {
                 allowNull: false,
-                type: Sequelize.INTEGER
+                type: Sequelize.INTEGER,
+                values: [0, 1, 2, 3, 4, 5]
             },
             updatedAt: {
                 type: Sequelize.DATE

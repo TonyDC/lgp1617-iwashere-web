@@ -3,15 +3,14 @@
 module.exports = {
     up: (queryInterface, Sequelize) => {
 
-        return queryInterface.bulkInsert('poi_media', [
+        return queryInterface.bulkInsert('contents', [
             {
-                poi_id: 1,
-                media_id: 1
+                type: 'IMG'
             }
         ], {});
     },
 
     down: (queryInterface, Sequelize) => {
-        return queryInterface.bulkDelete('poi_media', null, {});
+        return queryInterface.bulkDelete('contents', null, {});
     }
 };
