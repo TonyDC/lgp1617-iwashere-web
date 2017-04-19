@@ -19,11 +19,11 @@ export default class POIDetail extends Component {
     }
 
     componentDidMount() {
-        this.reduxListenerUnsubscribe = this.context.store.subscribe(() => {
-            const reduxState = this.context.store.getState();
-            this.setState({ user: reduxState.userStatus });
-        });
 
+        const reduxState = this.context.store.getState();
+        this.setState({ user: reduxState.userStatus });
+
+        console.log(this.state.user);
         this.fetchPOIInfo();
     }
 
