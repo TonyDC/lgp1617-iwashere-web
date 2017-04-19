@@ -2,10 +2,24 @@
 
 module.exports = {
     up: (queryInterface, Sequelize) => {
-        return queryInterface.createTable('poi_ratings', {
+        return queryInterface.createTable('posts', {
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE
+            },
+            content_id: {
+                allowNull: false,
+                onDelete: 'cascade',
+                onUpdate: 'cascade',
+                references: {
+                    key: 'id',
+                    model: 'contents'
+                },
+                type: Sequelize.BIGINT
+            },
+            description: {
+                allowNull: true,
+                type: Sequelize.TEXT
             },
             id: {
                 allowNull: false,
@@ -21,13 +35,7 @@ module.exports = {
                     key: 'id',
                     model: 'pois'
                 },
-                type: Sequelize.BIGINT,
-                unique: 'uniquePOIRating'
-            },
-            rating: {
-                allowNull: false,
-                type: Sequelize.INTEGER,
-                values: [0, 1, 2, 3, 4, 5]
+                type: Sequelize.BIGINT
             },
             updatedAt: {
                 allowNull: false,
@@ -41,12 +49,11 @@ module.exports = {
                     key: 'uid',
                     model: 'users'
                 },
-                type: Sequelize.STRING,
-                unique: 'uniquePOIRating'
+                type: Sequelize.STRING
             }
         });
     },
     down: (queryInterface, Sequelize) => {
-        return queryInterface.dropTable('poi_ratings');
+        return queryInterface.dropTable('post');
     }
 };

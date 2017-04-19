@@ -3,19 +3,19 @@
 module.exports = {
     up: (queryInterface, Sequelize) => {
         return queryInterface.createTable('pois', {
-            id: {
-                allowNull: false,
-                autoIncrement: true,
-                primaryKey: true,
-                type: Sequelize.BIGINT
-            },
-            name: {
+            address: {
                 allowNull: false,
                 type: Sequelize.STRING
             },
             description: {
                 allowNull: false,
                 type: Sequelize.STRING
+            },
+            id: {
+                allowNull: false,
+                autoIncrement: true,
+                primaryKey: true,
+                type: Sequelize.BIGINT
             },
             latitude: {
                 allowNull: false,
@@ -25,7 +25,7 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.REAL
             },
-            address: {
+            name: {
                 allowNull: false,
                 type: Sequelize.STRING
             },

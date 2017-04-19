@@ -2,7 +2,16 @@
 
 module.exports = {
     up: (queryInterface, Sequelize) => {
-        return queryInterface.createTable('poi_ratings', {
+        return queryInterface.createTable('poi_content', {
+            content_id: {
+                onDelete: 'cascade',
+                onUpdate: 'cascade',
+                references: {
+                    key: 'id',
+                    model: 'contents'
+                },
+                type: Sequelize.BIGINT
+            },
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE
@@ -14,39 +23,21 @@ module.exports = {
                 type: Sequelize.BIGINT
             },
             poi_id: {
-                allowNull: false,
                 onDelete: 'cascade',
                 onUpdate: 'cascade',
                 references: {
                     key: 'id',
                     model: 'pois'
                 },
-                type: Sequelize.BIGINT,
-                unique: 'uniquePOIRating'
-            },
-            rating: {
-                allowNull: false,
-                type: Sequelize.INTEGER,
-                values: [0, 1, 2, 3, 4, 5]
+                type: Sequelize.BIGINT
             },
             updatedAt: {
                 allowNull: false,
                 type: Sequelize.DATE
-            },
-            user_id: {
-                allowNull: false,
-                onDelete: 'cascade',
-                onUpdate: 'cascade',
-                references: {
-                    key: 'uid',
-                    model: 'users'
-                },
-                type: Sequelize.STRING,
-                unique: 'uniquePOIRating'
             }
         });
     },
     down: (queryInterface, Sequelize) => {
-        return queryInterface.dropTable('poi_ratings');
+        return queryInterface.dropTable('poi_content');
     }
 };

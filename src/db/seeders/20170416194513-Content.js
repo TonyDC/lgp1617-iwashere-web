@@ -7,11 +7,9 @@ const TODAY = moment().format();
 module.exports = {
     up: (queryInterface, Sequelize) => {
 
-        return queryInterface.bulkInsert('poi_ratings', [
+        return queryInterface.bulkInsert('content', [
             {
-                rating: 2,
-                user_id: '1234567890',
-                poi_id: 1,
+                type: 'IMG',
                 createdAt: TODAY,
                 updatedAt: TODAY
             }
@@ -19,6 +17,6 @@ module.exports = {
     },
 
     down: (queryInterface, Sequelize) => {
-        return queryInterface.bulkDelete('poi_ratings', null, {});
+        return queryInterface.bulkDelete('content', null, {});
     }
 };
