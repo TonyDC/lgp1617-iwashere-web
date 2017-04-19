@@ -8,6 +8,7 @@ const router = express.Router();
 const db = root_require('models');
 
 const DECIMAL_BASE = 10;
+const ZERO = 0;
 
 router.get('/info/:id', (req, res) => {
     const { id } = req.params;
@@ -64,6 +65,14 @@ router.get('/media/:id', (req, res) => {
     });*/
 });
 
+/**
+ * Calculates the rating of the POI with the specified poiId.
+ * Reply with the POI's rating and with the rating attributed
+ * by the user associated with the specified userId, if set.
+ * @param res
+ * @param poiId
+ * @param userId
+ */
 function getPOIRating(res, poiId, userId) {
     const POIRating = db.poi_rating;
 
@@ -139,7 +148,7 @@ router.post('/rating', (req, res) => {
         if (created) {
             res.sendStatus(httpCodes.OK).end();
         } else {
-            ratingEntry[0].updateAttributes({ rating }).
+            ratingEntry[ZERO].updateAttributes({ rating }).
             then(res.sendStatus(httpCodes.CREATED).end());
         }
     }).
