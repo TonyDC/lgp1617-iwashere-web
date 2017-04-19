@@ -19,11 +19,11 @@ module.exports = {
                 type: Sequelize.DATE
             },
             updatedAt: {
-                allowNull: false,
                 type: Sequelize.DATE
             }
         }).
         then(() => {
+            // language=POSTGRES-PSQL
             return queryInterface.sequelize.query(`
                 CREATE TRIGGER insert_users_trigger
                 BEFORE INSERT ON users
@@ -31,6 +31,7 @@ module.exports = {
                 EXECUTE PROCEDURE register_dates_trigger_body()`);
         }).
         then(() => {
+            // language=POSTGRES-PSQL
             return queryInterface.sequelize.query(`
                 CREATE TRIGGER update_users_trigger
                 BEFORE INSERT ON users
@@ -40,8 +41,10 @@ module.exports = {
     },
 
     down: (queryInterface, Sequelize) => {
+        // language=POSTGRES-PSQL
         return queryInterface.sequelize.query(`DROP TRIGGER update_users_trigger ON users`).
         then(() => {
+            // language=POSTGRES-PSQL
             return queryInterface.sequelize.query(`DROP TRIGGER insert_users_trigger ON users`);
         }).
         then(() => {

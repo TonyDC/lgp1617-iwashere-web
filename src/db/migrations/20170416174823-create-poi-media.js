@@ -32,12 +32,35 @@ module.exports = {
                 type: Sequelize.BIGINT
             },
             updatedAt: {
-                allowNull: false,
                 type: Sequelize.DATE
             }
+        }).
+        then(() => {
+            // language=POSTGRES-PSQL
+            return queryInterface.sequelize.query(`
+                CREATE TRIGGER insert_poi_media_trigger
+                BEFORE INSERT ON poi_media
+                FOR EACH ROW
+                EXECUTE PROCEDURE register_dates_trigger_body()`);
+        }).
+        then(() => {
+            // language=POSTGRES-PSQL
+            return queryInterface.sequelize.query(`
+                CREATE TRIGGER update_poi_media_trigger
+                BEFORE INSERT ON poi_media
+                FOR EACH ROW
+                EXECUTE PROCEDURE register_dates_trigger_body()`);
         });
     },
     down: (queryInterface, Sequelize) => {
-        return queryInterface.dropTable('poi_media');
+        // language=POSTGRES-PSQL
+        return queryInterface.sequelize.query(`DROP TRIGGER update_poi_media_trigger ON poi_media`).
+        then(() => {
+            // language=POSTGRES-PSQL
+            return queryInterface.sequelize.query(`DROP TRIGGER insert_poi_media_trigger ON poi_media`);
+        }).
+        then(() => {
+            return queryInterface.dropTable('poi_media');
+        });
     }
 };

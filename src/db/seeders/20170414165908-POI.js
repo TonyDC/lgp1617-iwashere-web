@@ -1,9 +1,5 @@
 'use strict';
 
-const moment = require('moment');
-
-const TODAY = moment().format();
-
 module.exports = {
     up: (queryInterface, Sequelize) => {
         /*
@@ -24,8 +20,6 @@ module.exports = {
                 latitude: 41.1785734,
                 longitude: -8.598412,
                 name: 'Faculdade de Engenharia da Universidade do Porto',
-                createdAt: TODAY,
-                updatedAt: TODAY
             }
         ], {});
     },

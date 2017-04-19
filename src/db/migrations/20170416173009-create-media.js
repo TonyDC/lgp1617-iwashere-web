@@ -24,12 +24,35 @@ module.exports = {
                 type: Sequelize.DATE
             },
             updatedAt: {
-                allowNull: false,
                 type: Sequelize.DATE
             }
+        }).
+        then(() => {
+            // language=POSTGRES-PSQL
+            return queryInterface.sequelize.query(`
+                CREATE TRIGGER insert_media_trigger
+                BEFORE INSERT ON media
+                FOR EACH ROW
+                EXECUTE PROCEDURE register_dates_trigger_body()`);
+        }).
+        then(() => {
+            // language=POSTGRES-PSQL
+            return queryInterface.sequelize.query(`
+                CREATE TRIGGER update_media_trigger
+                BEFORE INSERT ON media
+                FOR EACH ROW
+                EXECUTE PROCEDURE register_dates_trigger_body()`);
         });
     },
     down: (queryInterface, Sequelize) => {
-        return queryInterface.dropTable('media');
+        // language=POSTGRES-PSQL
+        return queryInterface.sequelize.query(`DROP TRIGGER update_media_trigger ON media`).
+        then(() => {
+            // language=POSTGRES-PSQL
+            return queryInterface.sequelize.query(`DROP TRIGGER insert_media_trigger ON media`);
+        }).
+        then(() => {
+            return queryInterface.dropTable('media');
+        });
     }
 };

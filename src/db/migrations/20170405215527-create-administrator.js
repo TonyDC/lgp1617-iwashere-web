@@ -19,12 +19,34 @@ module.exports = {
                 type: Sequelize.DATE
             },
             updatedAt: {
-                allowNull: false,
                 type: Sequelize.DATE
             }
+        }).
+        then(() => {
+            // language=POSTGRES-PSQL
+            return queryInterface.sequelize.query(`
+                CREATE TRIGGER insert_administrators_trigger
+                BEFORE INSERT ON administrators
+                FOR EACH ROW
+                EXECUTE PROCEDURE register_dates_trigger_body()`);
+        }).
+        then(() => {
+            // language=POSTGRES-PSQL
+            return queryInterface.sequelize.query(`
+                CREATE TRIGGER update_administrators_trigger
+                BEFORE INSERT ON administrators
+                FOR EACH ROW
+                EXECUTE PROCEDURE register_dates_trigger_body()`);
         });
     },
     down: (queryInterface, Sequelize) => {
-        return queryInterface.dropTable('administrators');
+        // language=POSTGRES-PSQL
+        return queryInterface.sequelize.query(`DROP TRIGGER update_administrators_trigger ON administrators`).
+        then(() => {
+            return queryInterface.sequelize.query(`DROP TRIGGER insert_administrators_trigger ON administrators`);
+        }).
+        then(() => {
+            return queryInterface.dropTable('administrators');
+        });
     }
 };
