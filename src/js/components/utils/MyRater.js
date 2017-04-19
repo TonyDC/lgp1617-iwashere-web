@@ -10,6 +10,7 @@ import 'styles/my_rater.scss';
 const MAX_RATING_SCALE = 5;
 const RATING_PRECISION = 1;
 const NO_RATING = 0;
+const DECIMAL_BASE = 10;
 
 export default class MyRater extends Component {
 
@@ -33,7 +34,7 @@ export default class MyRater extends Component {
         }
 
         if (this.props.userId) {
-            urlGet += `/${this.props.userId}`;
+            this.getUserRating();
         }
 
         fetch(urlGet, {
@@ -43,7 +44,36 @@ export default class MyRater extends Component {
         then((response) => {
             return response.json();
         }).
-        then((ratingInfo) => {
+        then((response) => {
+            const ratingInfo = {};
+            ratingInfo.rating = parseInt(response.rating, DECIMAL_BASE);
+            this.setState({ ratingInfo });
+        }).
+        catch((error) => {
+            console.error(error);
+        });
+
+    }
+
+    getUserRating() {
+        let urlGet = this.props.url;
+
+        if (this.props.poiId) {
+            urlGet += `/${this.props.poiId}/${this.props.userId}`;
+        } else if (this.props.routeId) {
+            urlGet += `/${this.props.routeId}/${this.props.userId}`;
+        }
+
+        fetch(urlGet, {
+            headers: { 'Content-Type': 'application/json' },
+            method: 'GET'
+        }).
+        then((response) => {
+            return response.json();
+        }).
+        then((response) => {
+            const { ratingInfo } = this.state;
+            ratingInfo.userRating = parseInt(response.rating, DECIMAL_BASE);
             this.setState({ ratingInfo });
         }).
         catch((error) => {
