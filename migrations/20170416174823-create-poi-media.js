@@ -11,7 +11,7 @@ module.exports = {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
-                type: Sequelize.INTEGER
+                type: Sequelize.BIGINT
             },
             media_id: {
                 onDelete: 'cascade',
@@ -20,7 +20,7 @@ module.exports = {
                     key: 'id',
                     model: 'media'
                 },
-                type: Sequelize.INTEGER
+                type: Sequelize.BIGINT
             },
             poi_id: {
                 onDelete: 'cascade',
@@ -29,7 +29,7 @@ module.exports = {
                     key: 'id',
                     model: 'pois'
                 },
-                type: Sequelize.INTEGER
+                type: Sequelize.BIGINT
             },
             updatedAt: {
                 allowNull: false,

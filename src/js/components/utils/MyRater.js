@@ -49,9 +49,9 @@ export default class MyRater extends Component {
         if (ratingEvent.lastRating >= NO_RATING) {
             fetch(this.props.url, {
                 body: JSON.stringify({
-                    entityId: this.props.entityId,
+                    poiID: this.props.entityId,
                     rating: ratingEvent.rating,
-                    userId: this.props.userId
+                    userID: this.props.userId
                 }),
                 headers: { 'Content-Type': 'application/json' },
                 method: 'POST'

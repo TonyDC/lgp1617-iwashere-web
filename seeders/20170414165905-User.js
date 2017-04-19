@@ -6,12 +6,20 @@ const TODAY = moment().format();
 
 module.exports = {
     up: (queryInterface, Sequelize) => {
+        /*
+         Add altering commands here.
+         Return a promise to correctly handle asynchronicity.
 
-        return queryInterface.bulkInsert('poi_ratings', [
+         Example:
+         return queryInterface.bulkInsert('Person', [{
+         name: 'John Doe',
+         isBetaMember: false
+         }], {});
+         */
+
+        return queryInterface.bulkInsert('users', [
             {
-                rating: 2,
-                user_id: '1234567890',
-                poi_id: 1,
+                uid: '1234567890',
                 createdAt: TODAY,
                 updatedAt: TODAY
             }
@@ -26,6 +34,6 @@ module.exports = {
          Example:
          return queryInterface.bulkDelete('Person', null, {});
          */
-        return queryInterface.bulkDelete('poi_ratings', null, {});
+        return queryInterface.bulkDelete('users', null, {});
     }
 };

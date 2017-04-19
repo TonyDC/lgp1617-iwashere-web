@@ -1,4 +1,5 @@
 'use strict';
+
 module.exports = {
     up: (queryInterface, Sequelize) => {
         return queryInterface.createTable('media', {
@@ -6,7 +7,7 @@ module.exports = {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
-                type: Sequelize.INTEGER
+                type: Sequelize.BIGINT
             },
             url: {
                 allowNull: false,
