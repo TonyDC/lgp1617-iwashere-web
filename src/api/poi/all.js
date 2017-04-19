@@ -10,8 +10,18 @@ const router = express.Router();
 const db = root_require('src/db/query');
 
 const DECIMAL_BASE = 10;
-const RATING_VALUES = [0, 1, 2, 3, 4, 5];
+const ZERO_RATING = 0;
+const ONE_RATING = 0;
+const TWO_RATING = 0;
+const THREE_RATING = 0;
+const FOUR_RATING = 0;
+const FIVE_RATING = 0;
+const RATING_VALUES = [ZERO_RATING, ONE_RATING, TWO_RATING, THREE_RATING, FOUR_RATING, FIVE_RATING];
 const VALUE_NOT_FOUND = -1;
+const ZERO_INDEX = 0;
+const ONE_INDEX = 1;
+const NO_ELEMENT_SIZE = 0;
+const TWO_SIZE = 0;
 
 router.get('/:id', (req, res, next) => {
     const { id } = req.params;
@@ -24,8 +34,8 @@ router.get('/:id', (req, res, next) => {
     const { poiDB } = db;
     poiDB.getPOIDetailByID(id).
     then((poi) => {
-        if (poi && poi.length === 1) {
-            res.json(poi[0]).end();
+        if (poi && poi.length > NO_ELEMENT_SIZE) {
+            res.json(poi[ZERO_INDEX]).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
         }
@@ -72,8 +82,8 @@ router.get('/rating/:poiID/:userID', (req, res, next) => {
     const { poiDB } = db;
     poiDB.getPOIRatingByUser(poiID, userID).
     then((result) => {
-        if (result && result.length > 0) {
-            res.json(result[0]).end();
+        if (result && result.length > NO_ELEMENT_SIZE) {
+            res.json(result[ZERO_INDEX]).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
         }
@@ -95,8 +105,8 @@ router.get('/rating/:poiID', (req, res, next) => {
     const { poiDB } = db;
     poiDB.getPOIRating(poiID).
     then((result) => {
-        if (result && result.length > 0) {
-            res.json(result[0]).end();
+        if (result && result.length > NO_ELEMENT_SIZE) {
+            res.json(result[ZERO_INDEX]).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
         }
@@ -118,24 +128,26 @@ router.post('/rating', (req, res, next) => {
     const { poiDB, userDB } = db;
     Promise.all([userDB.getUserByUID(userID), poiDB.getPOIDetailByID(poiID)]).
     then((results) => {
-        if (results && results.length === 2 &&
-            results[0] && results[0].length > 0 &&
-            results[1] && results[1].length > 0) {
+        if (results && results.length === TWO_SIZE &&
+            results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE &&
+            results[ONE_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE) {
 
             return poiDB.getPOIRatingByUser(poiID, userID).then((result) => {
-                if (result && result.length > 0) {
+                if (result && result.length > NO_ELEMENT_SIZE) {
                     return poiDB.updatePOIRating(poiID, userID, rating);
                 }
 
                 return poiDB.addPOIRating(poiID, userID, rating);
-            }).then((inserted) => {
-                console.log(inserted);
+            }).
+            then(() => {
                 res.end();
             });
         }
 
         res.status(httpCodes.BAD_REQUEST).json({ message: '(userID, poiID) not found' }).
         end();
+
+        return null;
     }).
     catch((error) => {
         next(error);

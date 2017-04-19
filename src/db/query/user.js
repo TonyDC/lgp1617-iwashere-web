@@ -1,8 +1,5 @@
 "use strict";
 
-const moment = require('moment');
-const TODAY = moment().format();
-
 const db = require('../index');
 
 module.exports.getUserByUID = (uid) => {
