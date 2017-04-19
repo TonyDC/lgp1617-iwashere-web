@@ -2,12 +2,12 @@
 
 module.exports = {
     up: (queryInterface, Sequelize) => {
-        return queryInterface.createTable('super_administrators', {
+        return queryInterface.createTable('administrators', {
             id: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
-                type: Sequelize.INTEGER
+                type: Sequelize.BIGINT
             },
             uid: {
                 allowNull: false,
@@ -24,7 +24,7 @@ module.exports = {
             }
         });
     },
-    down: function(queryInterface, Sequelize) {
-        return queryInterface.dropTable('super_administrators');
+    down: (queryInterface, Sequelize) => {
+        return queryInterface.dropTable('administrators');
     }
 };

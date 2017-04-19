@@ -59,7 +59,7 @@ export default class POIDetail extends Component {
         let poiMediaSlider = null;
         let userMediaTimeline = null;
         if (this.props.params.id) {
-            ratingPanel = <Rater url="/api/poi/rating" entityId={this.props.params.id} userId={this.state.user.id} />;
+            ratingPanel = <Rater url="/api/poi/rating" poiId={this.props.params.id} userId={this.state.user.id} />;
             poiMediaSlider = <Carousel url={`/api/poi/media/${this.props.params.id}`} />;
             userMediaTimeline = <Timeline url={`/api/poi/posts/${this.props.params.id}`} userId={this.state.user.id} />;
         }

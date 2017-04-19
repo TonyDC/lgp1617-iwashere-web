@@ -1,12 +1,8 @@
+/* global root_require */
+
 'use strict';
 
-const sequelizeOptions = {
-    define: {
-        // Prevent sequelize from pluralizing table names
-        freezeTableName: true
-    }
-};
+const config = require('../../config').POSTGRESQL_CONFIG;
 
-/* global root_require */
 const Sequelize = require('sequelize');
-module.exports = new Sequelize(root_require('config/my-config').POSTGRESQL_CONN_STRING, sequelizeOptions);
+module.exports = new Sequelize(config.DATABASE, config.USERNAME, config.PASSWORD, config.CONN_CONFIG);

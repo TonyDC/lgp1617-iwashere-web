@@ -24,7 +24,13 @@ export default class MyRater extends Component {
     }
 
     getRating() {
-        let urlGet = `${this.props.url}/${this.props.entityId}`;
+        let urlGet = this.props.url;
+
+        if (this.props.poiId) {
+            urlGet += `/${this.props.poiId}`;
+        }else if (this.props.routeId) {
+            urlGet += `/${this.props.routeId}`;
+        }
 
         if (this.props.userId) {
             urlGet += `/${this.props.userId}`;
@@ -49,9 +55,10 @@ export default class MyRater extends Component {
         if (ratingEvent.lastRating >= NO_RATING) {
             fetch(this.props.url, {
                 body: JSON.stringify({
-                    entityId: this.props.entityId,
+                    poiID: this.props.poiId,
                     rating: ratingEvent.rating,
-                    userId: this.props.userId
+                    routeID: this.props.routeId,
+                    userID: this.props.userId
                 }),
                 headers: { 'Content-Type': 'application/json' },
                 method: 'POST'
@@ -102,7 +109,8 @@ export default class MyRater extends Component {
 }
 
 MyRater.propTypes = {
-    entityId: PropTypes.string.isRequired,
+    poiId: PropTypes.string,
+    routeId: PropTypes.string,
     url: PropTypes.string.isRequired,
     userId: PropTypes.string
 };

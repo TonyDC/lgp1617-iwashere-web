@@ -11,25 +11,25 @@ module.exports = {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
-                type: Sequelize.INTEGER
+                type: Sequelize.BIGINT
             },
-            mediaId: {
+            media_id: {
                 onDelete: 'cascade',
                 onUpdate: 'cascade',
                 references: {
-                    key: "id",
-                    model: "media"
+                    key: 'id',
+                    model: 'media'
                 },
-                type: Sequelize.INTEGER
+                type: Sequelize.BIGINT
             },
-            poiId: {
+            poi_id: {
                 onDelete: 'cascade',
                 onUpdate: 'cascade',
                 references: {
-                    key: "id",
-                    model: "pois"
+                    key: 'id',
+                    model: 'pois'
                 },
-                type: Sequelize.INTEGER
+                type: Sequelize.BIGINT
             },
             updatedAt: {
                 allowNull: false,

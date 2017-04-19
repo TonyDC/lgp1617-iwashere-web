@@ -11,16 +11,18 @@ module.exports = {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
-                type: Sequelize.INTEGER
+                type: Sequelize.BIGINT
             },
-            poiId: {
+            poi_id: {
+                allowNull: false,
                 onDelete: 'cascade',
                 onUpdate: 'cascade',
                 references: {
-                    key: "id",
-                    model: "pois"
+                    key: 'id',
+                    model: 'pois'
                 },
-                type: Sequelize.INTEGER,
+                values: [0, 1, 2, 3, 4, 5],
+                type: Sequelize.BIGINT,
                 unique: 'uniquePOIRating'
             },
             rating: {
@@ -31,8 +33,14 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.DATE
             },
-            userId: {
+            user_id: {
                 allowNull: false,
+                onDelete: 'cascade',
+                onUpdate: 'cascade',
+                references: {
+                    key: 'uid',
+                    model: 'users'
+                },
                 type: Sequelize.STRING,
                 unique: 'uniquePOIRating'
             }
