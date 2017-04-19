@@ -38,7 +38,6 @@ module.exports = {
                 type: Sequelize.DATE
             },
             updatedAt: {
-                allowNull: false,
                 type: Sequelize.DATE
             }
         }).
@@ -77,11 +76,34 @@ module.exports = {
         then(() => {
             // language=POSTGRES-SQL
             return queryInterface.sequelize.query(`CREATE INDEX poi_text_index ON pois USING GIN (to_tsvector('portuguese', text))`);
+        }).
+        then(() => {
+            // language=POSTGRES-PSQL
+            return queryInterface.sequelize.query(`
+                CREATE TRIGGER insert_pois_trigger
+                BEFORE INSERT ON pois
+                FOR EACH ROW
+                EXECUTE PROCEDURE register_dates_trigger_body()`);
+        }).
+        then(() => {
+            // language=POSTGRES-PSQL
+            return queryInterface.sequelize.query(`
+                CREATE TRIGGER update_pois_trigger
+                BEFORE INSERT ON pois
+                FOR EACH ROW
+                EXECUTE PROCEDURE register_dates_trigger_body()`);
         });
     },
 
     down: (queryInterface, Sequelize) => {
-        return queryInterface.removeIndex('pois', 'poi_text_index').
+        // language=POSTGRES-PSQL
+        return queryInterface.sequelize.query(`DROP TRIGGER update_pois_trigger ON pois`).
+        then(() => {
+            return queryInterface.sequelize.query(`DROP TRIGGER insert_pois_trigger ON pois`);
+        }).
+        then(() => {
+            return queryInterface.removeIndex('pois', 'poi_text_index');
+        }).
         then(() => {
             return queryInterface.sequelize.query(`DROP TRIGGER insert_poi_text_trigger ON pois`);
         }).

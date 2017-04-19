@@ -1,9 +1,5 @@
 'use strict';
 
-const moment = require('moment');
-
-const TODAY = moment().format();
-
 module.exports = {
     up: (queryInterface, Sequelize) => {
 
@@ -11,9 +7,7 @@ module.exports = {
             {
                 rating: 2,
                 user_id: '1234567890',
-                poi_id: 1,
-                createdAt: TODAY,
-                updatedAt: TODAY
+                poi_id: 1
             }
         ], {});
     },

@@ -1,9 +1,5 @@
 'use strict';
 
-const moment = require('moment');
-
-const TODAY = moment().format();
-
 module.exports = {
     up: (queryInterface, Sequelize) => {
         /*
@@ -19,9 +15,7 @@ module.exports = {
 
         return queryInterface.bulkInsert('users', [
             {
-                uid: '1234567890',
-                createdAt: TODAY,
-                updatedAt: TODAY
+                uid: '1234567890'
             }
         ], {});
     },

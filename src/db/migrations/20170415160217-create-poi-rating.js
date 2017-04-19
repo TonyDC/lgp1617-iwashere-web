@@ -30,7 +30,6 @@ module.exports = {
                 values: [0, 1, 2, 3, 4, 5]
             },
             updatedAt: {
-                allowNull: false,
                 type: Sequelize.DATE
             },
             user_id: {
@@ -44,9 +43,33 @@ module.exports = {
                 type: Sequelize.STRING,
                 unique: 'uniquePOIRating'
             }
+        }).
+        then(() => {
+            // language=POSTGRES-PSQL
+            return queryInterface.sequelize.query(`
+                CREATE TRIGGER insert_poi_ratings_trigger
+                BEFORE INSERT ON poi_ratings
+                FOR EACH ROW
+                EXECUTE PROCEDURE register_dates_trigger_body()`);
+        }).
+        then(() => {
+            // language=POSTGRES-PSQL
+            return queryInterface.sequelize.query(`
+                CREATE TRIGGER update_poi_ratings_trigger
+                BEFORE INSERT ON poi_ratings
+                FOR EACH ROW
+                EXECUTE PROCEDURE register_dates_trigger_body()`);
         });
     },
     down: (queryInterface, Sequelize) => {
-        return queryInterface.dropTable('poi_ratings');
+        // language=POSTGRES-PSQL
+        return queryInterface.sequelize.query(`DROP TRIGGER update_poi_ratings_trigger ON poi_ratings`).
+        then(() => {
+            // language=POSTGRES-PSQL
+            return queryInterface.sequelize.query(`DROP TRIGGER insert_poi_ratings_trigger ON poi_ratings`);
+        }).
+        then(() => {
+            return queryInterface.dropTable('poi_ratings');
+        });
     }
 };

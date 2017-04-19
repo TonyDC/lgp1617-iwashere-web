@@ -19,12 +19,34 @@ module.exports = {
                 type: Sequelize.DATE
             },
             updatedAt: {
-                allowNull: false,
                 type: Sequelize.DATE
             }
+        }).
+        then(() => {
+            // language=POSTGRES-PSQL
+            return queryInterface.sequelize.query(`
+                CREATE TRIGGER insert_content_editors_trigger
+                BEFORE INSERT ON content_editors
+                FOR EACH ROW
+                EXECUTE PROCEDURE register_dates_trigger_body()`);
+        }).
+        then(() => {
+            // language=POSTGRES-PSQL
+            return queryInterface.sequelize.query(`
+                CREATE TRIGGER update_content_editors_trigger
+                BEFORE INSERT ON content_editors
+                FOR EACH ROW
+                EXECUTE PROCEDURE register_dates_trigger_body()`);
         });
     },
     down: (queryInterface, Sequelize) => {
-        return queryInterface.dropTable('content_editors');
+        // language=POSTGRES-PSQL
+        return queryInterface.sequelize.query(`DROP TRIGGER update_content_editors_trigger ON content_editors`).
+        then(() => {
+            return queryInterface.sequelize.query(`DROP TRIGGER insert_content_editors_trigger ON content_editors`);
+        }).
+        then(() => {
+            return queryInterface.dropTable('content_editors');
+        });
     }
 };
