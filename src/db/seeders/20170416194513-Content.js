@@ -7,7 +7,7 @@ const TODAY = moment().format();
 module.exports = {
     up: (queryInterface, Sequelize) => {
 
-        return queryInterface.bulkInsert('content', [
+        return queryInterface.bulkInsert('contents', [
             {
                 type: 'IMG',
                 createdAt: TODAY,
@@ -17,6 +17,6 @@ module.exports = {
     },
 
     down: (queryInterface, Sequelize) => {
-        return queryInterface.bulkDelete('content', null, {});
+        return queryInterface.bulkDelete('contents', null, {});
     }
 };

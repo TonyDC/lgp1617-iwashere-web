@@ -7,7 +7,7 @@ const TODAY = moment().format();
 module.exports = {
     up: (queryInterface, Sequelize) => {
 
-        return queryInterface.bulkInsert('content', [
+        return queryInterface.bulkInsert('images', [
             {
                 content_id: 1,
                 url: 'http://lorempixel.com/400/200',
@@ -18,6 +18,6 @@ module.exports = {
     },
 
     down: (queryInterface, Sequelize) => {
-        return queryInterface.bulkDelete('content', null, {});
+        return queryInterface.bulkDelete('images', null, {});
     }
 };
