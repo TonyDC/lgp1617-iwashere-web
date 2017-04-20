@@ -10,6 +10,18 @@ module.exports.getPOIDetailByID = (id) => {
     });
 };
 
+module.exports.getPOIPosts = (id, offset, limit) => {
+    // language=POSTGRES-SQL
+    return db.query(`SELECT * FROM posts WHERE poi_id = :id ORDER BY createdAt LIMIT TO :limit OFFSET :offset`, {
+        replacements: {
+            id,
+            limit,
+            offset
+        },
+        type: db.QueryTypes.SELECT
+    });
+};
+
 module.exports.getPOIsWithin = (minLat, maxLat, minLng, maxLng) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT * FROM pois WHERE latitude >= :minLat AND latitude <= :maxLat AND longitude >= :minLng AND longitude <= :maxLng`, {
@@ -25,9 +37,12 @@ module.exports.getPOIsWithin = (minLat, maxLat, minLng, maxLng) => {
 
 module.exports.getPOIMedia = (poiID) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT * FROM contents INNER JOIN poi_content ON (contents.id = poi_content.content_id) WHERE poi_content.poi_id = :poiID`, {
+    return db.query(`WITH poi_media AS (SELECT content.id FROM contents INNER JOIN poi_content ON (contents.id = poi_content.content_id) WHERE poi_content.poi_id = :poiID)
+    (SELECT * FROM images WHERE content_id IN poi_media)
+    UNION 
+    (SELECT * FROM videos WHERE content_id IN poi_media)`, {
         replacements: { poiID },
-        type: db.QueryTypes.SELECT
+        type: db.QueryTypes.RAW
     });
 };
 

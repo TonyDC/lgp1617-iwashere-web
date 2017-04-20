@@ -121,7 +121,8 @@ router.get('/rating/:poiID', (req, res, next) => {
 router.post('/rating', (req, res, next) => {
     const { userID, poiID, rating } = req.body;
 
-    if (!poiID || !userID || typeof userID !== 'string' || !rating || RATING_VALUES.indexOf(rating) === VALUE_NOT_FOUND) {
+    if (!poiID || !userID || typeof userID !== 'string' || !rating || RATING_VALUES.indexOf(rating) === VALUE_NOT_FOUND
+        || isNaN(parseInt(poiID, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
@@ -130,7 +131,7 @@ router.post('/rating', (req, res, next) => {
     const { poiDB, userDB } = db;
     Promise.all([userDB.getUserByUID(userID), poiDB.getPOIDetailByID(poiID)]).
     then((results) => {
-        
+
         if (results && results.length === TWO_SIZE &&
             results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE &&
             results[ONE_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE) {
@@ -191,6 +192,30 @@ router.get('/:id', (req, res, next) => {
 
     const { poiDB } = db;
     poiDB.getPOIDetailByID(id).
+    then((poi) => {
+        if (poi && poi.length > NO_ELEMENT_SIZE) {
+            res.json(poi[ZERO_INDEX]).end();
+        } else {
+            res.sendStatus(httpCodes.NO_CONTENT).end();
+        }
+    }).
+    catch((error) => {
+        next(error);
+    });
+});
+
+router.get('/posts/:id', (req, res, next) => {
+    const { id } = req.params;
+    const { limit, offset } = req.body;
+
+    if (!id || isNaN(parseInt(id, DECIMAL_BASE)) || !limit || isNaN(parseInt(limit, DECIMAL_BASE)) || !offset || isNaN(parseInt(offset, DECIMAL_BASE))) {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    const { poiDB } = db;
+    poiDB.getPOIPosts(id, offset, limit).
     then((poi) => {
         if (poi && poi.length > NO_ELEMENT_SIZE) {
             res.json(poi[ZERO_INDEX]).end();
