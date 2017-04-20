@@ -12,19 +12,27 @@ import 'styles/utils.scss';
 
 export default class POIDetail extends Component {
 
-    constructor(props) {
+    constructor(props, context) {
         super(props);
 
-        this.state = { loadingPOIInfo: true };
+        const reduxState = context.store.getState();
+        this.state = {
+            loadingPOIInfo: true,
+            user: reduxState.userStatus.userInfo
+        };
     }
 
     componentDidMount() {
+        this.reduxListenerUnsubscribe = this.context.store.subscribe(() => {
+            const reduxState = this.context.store.getState();
+            this.setState({ user: reduxState.userStatus.userInfo });
+        });
 
-        const reduxState = this.context.store.getState();
-        this.setState({ user: reduxState.userStatus });
-
-        console.log(this.state.user);
         this.fetchPOIInfo();
+    }
+
+    componentWillUnmount() {
+        this.reduxListenerUnsubscribe();
     }
 
     fetchPOIInfo() {
@@ -41,7 +49,8 @@ export default class POIDetail extends Component {
                 poiInfo: response
             });
         }).
-        catch(() => {
+        catch((error) => {
+            console.log(error);
             this.props.router.push('/');
         });
     }
@@ -55,13 +64,13 @@ export default class POIDetail extends Component {
             );
         }
 
-        let ratingPanel = null;
         let poiMediaSlider = null;
+        let ratingPanel = null;
         let userMediaTimeline = null;
         if (this.props.params.id) {
-            ratingPanel = <Rater url="/api/poi/rating" poiId={this.props.params.id} userId={this.state.user.id} />;
             poiMediaSlider = <Carousel url={`/api/poi/media/${this.props.params.id}`} />;
-            userMediaTimeline = <Timeline url={`/api/poi/posts/${this.props.params.id}`} userId={this.state.user.id} />;
+            ratingPanel = <Rater url="/api/poi/rating" poiId={this.props.params.id} user={this.state.user}/>;
+            userMediaTimeline = <Timeline url={`/api/poi/posts/${this.props.params.id}`} user={this.state.user}/>;
         }
 
         return (

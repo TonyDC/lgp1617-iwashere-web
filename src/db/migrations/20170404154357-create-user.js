@@ -25,16 +25,8 @@ module.exports = {
         then(() => {
             // language=POSTGRES-PSQL
             return queryInterface.sequelize.query(`
-                CREATE TRIGGER insert_users_trigger
-                BEFORE INSERT ON users
-                FOR EACH ROW
-                EXECUTE PROCEDURE register_dates_trigger_body()`);
-        }).
-        then(() => {
-            // language=POSTGRES-PSQL
-            return queryInterface.sequelize.query(`
-                CREATE TRIGGER update_users_trigger
-                BEFORE INSERT ON users
+                CREATE TRIGGER timestamp_users_trigger
+                BEFORE INSERT OR UPDATE ON users
                 FOR EACH ROW
                 EXECUTE PROCEDURE register_dates_trigger_body()`);
         });
@@ -42,11 +34,7 @@ module.exports = {
 
     down: (queryInterface, Sequelize) => {
         // language=POSTGRES-PSQL
-        return queryInterface.sequelize.query(`DROP TRIGGER update_users_trigger ON users`).
-        then(() => {
-            // language=POSTGRES-PSQL
-            return queryInterface.sequelize.query(`DROP TRIGGER insert_users_trigger ON users`);
-        }).
+        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_users_trigger ON users`).
         then(() => {
             return queryInterface.dropTable('users');
         });

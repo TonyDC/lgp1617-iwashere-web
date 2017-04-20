@@ -25,26 +25,15 @@ module.exports = {
         then(() => {
             // language=POSTGRES-PSQL
             return queryInterface.sequelize.query(`
-                CREATE TRIGGER insert_administrators_trigger
-                BEFORE INSERT ON administrators
-                FOR EACH ROW
-                EXECUTE PROCEDURE register_dates_trigger_body()`);
-        }).
-        then(() => {
-            // language=POSTGRES-PSQL
-            return queryInterface.sequelize.query(`
-                CREATE TRIGGER update_administrators_trigger
-                BEFORE INSERT ON administrators
+                CREATE TRIGGER timestamp_administrators_trigger
+                BEFORE INSERT OR UPDATE ON administrators
                 FOR EACH ROW
                 EXECUTE PROCEDURE register_dates_trigger_body()`);
         });
     },
     down: (queryInterface, Sequelize) => {
         // language=POSTGRES-PSQL
-        return queryInterface.sequelize.query(`DROP TRIGGER update_administrators_trigger ON administrators`).
-        then(() => {
-            return queryInterface.sequelize.query(`DROP TRIGGER insert_administrators_trigger ON administrators`);
-        }).
+        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_administrators_trigger ON administrators`).
         then(() => {
             return queryInterface.dropTable('administrators');
         });

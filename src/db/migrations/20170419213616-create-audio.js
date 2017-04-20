@@ -29,12 +29,22 @@ module.exports = {
                 type: Sequelize.DATE
             },
             updatedAt: {
-                allowNull: false,
                 type: Sequelize.DATE
-            }
+            },
+        }).
+        then(() => {
+            // language=POSTGRES-PSQL
+            return queryInterface.sequelize.query(`
+                CREATE TRIGGER timestamp_audio_trigger
+                BEFORE INSERT OR UPDATE ON audio
+                FOR EACH ROW
+                EXECUTE PROCEDURE register_dates_trigger_body()`);
         });
     },
     down: (queryInterface, Sequelize) => {
-        return queryInterface.dropTable('audio');
+        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_audio_trigger ON audio`).
+        then(() => {
+            queryInterface.dropTable('audio');
+        });
     }
 };

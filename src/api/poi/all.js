@@ -121,8 +121,12 @@ router.get('/rating/:poiID', (req, res, next) => {
 router.post('/rating', (req, res, next) => {
     const { userID, poiID, rating } = req.body;
 
-    if (!poiID || !userID || !rating || RATING_VALUES.indexOf(rating) === VALUE_NOT_FOUND || typeof userID !== 'string' || isNaN(parseInt(poiID, DECIMAL_BASE))) {
+    console.log(req.body);
+
+    if (!poiID || !userID || typeof userID !== 'string' || !rating || RATING_VALUES.indexOf(rating) === VALUE_NOT_FOUND) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        console.log('?!?!??!');
 
         return;
     }
@@ -130,6 +134,8 @@ router.post('/rating', (req, res, next) => {
     const { poiDB, userDB } = db;
     Promise.all([userDB.getUserByUID(userID), poiDB.getPOIDetailByID(poiID)]).
     then((results) => {
+
+        console.log(results);
         if (results && results.length === TWO_SIZE &&
             results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE &&
             results[ONE_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE) {
@@ -149,7 +155,7 @@ router.post('/rating', (req, res, next) => {
         res.status(httpCodes.BAD_REQUEST).json({ message: '(userID, poiID) not found' }).
         end();
 
-        return null;
+        return;
     }).
     catch((error) => {
         next(error);

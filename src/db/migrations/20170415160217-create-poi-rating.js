@@ -47,27 +47,15 @@ module.exports = {
         then(() => {
             // language=POSTGRES-PSQL
             return queryInterface.sequelize.query(`
-                CREATE TRIGGER insert_poi_ratings_trigger
-                BEFORE INSERT ON poi_ratings
-                FOR EACH ROW
-                EXECUTE PROCEDURE register_dates_trigger_body()`);
-        }).
-        then(() => {
-            // language=POSTGRES-PSQL
-            return queryInterface.sequelize.query(`
-                CREATE TRIGGER update_poi_ratings_trigger
-                BEFORE INSERT ON poi_ratings
+                CREATE TRIGGER timestamp_poi_ratings_trigger
+                BEFORE INSERT OR UPDATE ON poi_ratings
                 FOR EACH ROW
                 EXECUTE PROCEDURE register_dates_trigger_body()`);
         });
     },
     down: (queryInterface, Sequelize) => {
         // language=POSTGRES-PSQL
-        return queryInterface.sequelize.query(`DROP TRIGGER update_poi_ratings_trigger ON poi_ratings`).
-        then(() => {
-            // language=POSTGRES-PSQL
-            return queryInterface.sequelize.query(`DROP TRIGGER insert_poi_ratings_trigger ON poi_ratings`);
-        }).
+        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_poi_ratings_trigger ON poi_ratings`).
         then(() => {
             return queryInterface.dropTable('poi_ratings');
         });

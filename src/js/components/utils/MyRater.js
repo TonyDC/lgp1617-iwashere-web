@@ -33,7 +33,7 @@ export default class MyRater extends Component {
             urlGet += `/${this.props.routeId}`;
         }
 
-        if (this.props.userId) {
+        if (this.props.user) {
             this.getUserRating();
         }
 
@@ -59,9 +59,9 @@ export default class MyRater extends Component {
         let urlGet = this.props.url;
 
         if (this.props.poiId) {
-            urlGet += `/${this.props.poiId}/${this.props.userId}`;
+            urlGet += `/${this.props.poiId}/${this.props.user.uid}`;
         } else if (this.props.routeId) {
-            urlGet += `/${this.props.routeId}/${this.props.userId}`;
+            urlGet += `/${this.props.routeId}/${this.props.user.uid}`;
         }
 
         fetch(urlGet, {
@@ -82,13 +82,14 @@ export default class MyRater extends Component {
     }
 
     updateRating(ratingEvent) {
+
         if (ratingEvent.lastRating >= NO_RATING) {
             fetch(this.props.url, {
                 body: JSON.stringify({
                     poiID: this.props.poiId,
                     rating: ratingEvent.rating,
                     routeID: this.props.routeId,
-                    userID: this.props.userId
+                    userID: this.props.user.uid
                 }),
                 headers: { 'Content-Type': 'application/json' },
                 method: 'POST'
@@ -116,7 +117,7 @@ export default class MyRater extends Component {
         }
 
         let userRating = null;
-        if (this.props.userId) {
+        if (this.props.user) {
             userRating =
                 <Col xs={12} md={12} lg={12}>
                     <Rater total={MAX_RATING_SCALE} rating={this.state.ratingInfo.userRating} onRate={this.updateRating.bind(this)}/>
@@ -142,5 +143,5 @@ MyRater.propTypes = {
     poiId: PropTypes.string,
     routeId: PropTypes.string,
     url: PropTypes.string.isRequired,
-    userId: PropTypes.string
+    user: PropTypes.any
 };

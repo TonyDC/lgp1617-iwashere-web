@@ -38,7 +38,6 @@ module.exports = {
                 type: Sequelize.BIGINT
             },
             updatedAt: {
-                allowNull: false,
                 type: Sequelize.DATE
             },
             user_id: {
@@ -51,9 +50,20 @@ module.exports = {
                 },
                 type: Sequelize.STRING
             }
+        }).
+        then(() => {
+            // language=POSTGRES-PSQL
+            return queryInterface.sequelize.query(`
+                CREATE TRIGGER timestamp_post_trigger
+                BEFORE INSERT OR UPDATE ON posts
+                FOR EACH ROW
+                EXECUTE PROCEDURE register_dates_trigger_body()`);
         });
     },
     down: (queryInterface, Sequelize) => {
-        return queryInterface.dropTable('post');
+        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_post_trigger ON posts`).
+        then(() => {
+            queryInterface.dropTable('posts');
+        });
     }
 };

@@ -25,26 +25,15 @@ module.exports = {
         then(() => {
             // language=POSTGRES-PSQL
             return queryInterface.sequelize.query(`
-                CREATE TRIGGER insert_content_editors_trigger
-                BEFORE INSERT ON content_editors
-                FOR EACH ROW
-                EXECUTE PROCEDURE register_dates_trigger_body()`);
-        }).
-        then(() => {
-            // language=POSTGRES-PSQL
-            return queryInterface.sequelize.query(`
-                CREATE TRIGGER update_content_editors_trigger
-                BEFORE INSERT ON content_editors
+                CREATE TRIGGER timestamp_content_editors_trigger
+                BEFORE INSERT OR UPDATE ON content_editors
                 FOR EACH ROW
                 EXECUTE PROCEDURE register_dates_trigger_body()`);
         });
     },
     down: (queryInterface, Sequelize) => {
         // language=POSTGRES-PSQL
-        return queryInterface.sequelize.query(`DROP TRIGGER update_content_editors_trigger ON content_editors`).
-        then(() => {
-            return queryInterface.sequelize.query(`DROP TRIGGER insert_content_editors_trigger ON content_editors`);
-        }).
+        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_content_editors_trigger ON content_editors`).
         then(() => {
             return queryInterface.dropTable('content_editors');
         });

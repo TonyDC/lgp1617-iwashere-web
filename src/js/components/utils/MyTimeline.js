@@ -104,5 +104,5 @@ export default class MyTimeline extends Component {
 
 MyTimeline.propTypes = {
     url: PropTypes.string.isRequired,
-    userId: PropTypes.string
+    user: PropTypes.any
 };

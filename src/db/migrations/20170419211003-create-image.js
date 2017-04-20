@@ -29,12 +29,22 @@ module.exports = {
                 type: Sequelize.DATE
             },
             updatedAt: {
-                allowNull: false,
                 type: Sequelize.DATE
             }
+        }).
+        then(() => {
+            // language=POSTGRES-PSQL
+            return queryInterface.sequelize.query(`
+                CREATE TRIGGER timestamp_images_trigger
+                BEFORE INSERT OR UPDATE ON images
+                FOR EACH ROW
+                EXECUTE PROCEDURE register_dates_trigger_body()`);
         });
     },
     down: (queryInterface, Sequelize) => {
-        return queryInterface.dropTable('images');
+        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_images_trigger ON images`).
+        then(() => {
+            queryInterface.dropTable('images');
+        });
     }
 };
