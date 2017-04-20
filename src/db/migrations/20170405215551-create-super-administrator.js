@@ -1,8 +1,19 @@
 'use strict';
 
 module.exports = {
+    down: (queryInterface) => {
+        // language=POSTGRES-PSQL
+        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_super_administrators_trigger ON super_administrators`).
+        then(() => {
+            return queryInterface.dropTable('super_administrators');
+        });
+    },
     up: (queryInterface, Sequelize) => {
         return queryInterface.createTable('super_administrators', {
+            createdAt: {
+                allowNull: false,
+                type: Sequelize.DATE
+            },
             id: {
                 allowNull: false,
                 autoIncrement: true,
@@ -14,13 +25,7 @@ module.exports = {
                 type: Sequelize.STRING,
                 unique: true
             },
-            createdAt: {
-                allowNull: false,
-                type: Sequelize.DATE
-            },
-            updatedAt: {
-                type: Sequelize.DATE
-            }
+            updatedAt: { type: Sequelize.DATE }
         }).
         then(() => {
             // language=POSTGRES-PSQL
@@ -29,13 +34,6 @@ module.exports = {
                 BEFORE INSERT OR UPDATE ON super_administrators
                 FOR EACH ROW
                 EXECUTE PROCEDURE register_dates_trigger_body()`);
-        });
-    },
-    down: function(queryInterface, Sequelize) {
-        // language=POSTGRES-PSQL
-        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_super_administrators_trigger ON super_administrators`).
-        then(() => {
-            return queryInterface.dropTable('super_administrators');
         });
     }
 };

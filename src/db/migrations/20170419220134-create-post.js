@@ -1,12 +1,14 @@
 'use strict';
 
 module.exports = {
+    down: (queryInterface) => {
+        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_post_trigger ON posts`).
+        then(() => {
+            queryInterface.dropTable('posts');
+        });
+    },
     up: (queryInterface, Sequelize) => {
         return queryInterface.createTable('posts', {
-            createdAt: {
-                allowNull: false,
-                type: Sequelize.DATE
-            },
             content_id: {
                 allowNull: false,
                 onDelete: 'cascade',
@@ -16,6 +18,10 @@ module.exports = {
                     model: 'contents'
                 },
                 type: Sequelize.BIGINT
+            },
+            createdAt: {
+                allowNull: false,
+                type: Sequelize.DATE
             },
             description: {
                 allowNull: true,
@@ -37,9 +43,7 @@ module.exports = {
                 },
                 type: Sequelize.BIGINT
             },
-            updatedAt: {
-                type: Sequelize.DATE
-            },
+            updatedAt: { type: Sequelize.DATE },
             user_id: {
                 allowNull: false,
                 onDelete: 'cascade',
@@ -58,12 +62,6 @@ module.exports = {
                 BEFORE INSERT OR UPDATE ON posts
                 FOR EACH ROW
                 EXECUTE PROCEDURE register_dates_trigger_body()`);
-        });
-    },
-    down: (queryInterface, Sequelize) => {
-        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_post_trigger ON posts`).
-        then(() => {
-            queryInterface.dropTable('posts');
         });
     }
 };

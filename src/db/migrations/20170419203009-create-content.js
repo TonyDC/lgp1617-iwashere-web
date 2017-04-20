@@ -1,8 +1,18 @@
 'use strict';
 
 module.exports = {
+    down: (queryInterface) => {
+        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_contents_trigger ON contents`).
+        then(() => {
+            queryInterface.dropTable('contents');
+        });
+    },
     up: (queryInterface, Sequelize) => {
         return queryInterface.createTable('contents', {
+            createdAt: {
+                allowNull: false,
+                type: Sequelize.DATE
+            },
             id: {
                 allowNull: false,
                 autoIncrement: true,
@@ -14,13 +24,7 @@ module.exports = {
                 type: Sequelize.ENUM,
                 values: ['TXT', 'IMG', 'VID', 'AUD']
             },
-            createdAt: {
-                allowNull: false,
-                type: Sequelize.DATE
-            },
-            updatedAt: {
-                type: Sequelize.DATE
-            }
+            updatedAt: { type: Sequelize.DATE }
         }).
         then(() => {
             // language=POSTGRES-PSQL
@@ -29,12 +33,6 @@ module.exports = {
                 BEFORE INSERT OR UPDATE ON contents
                 FOR EACH ROW
                 EXECUTE PROCEDURE register_dates_trigger_body()`);
-        });
-    },
-    down: (queryInterface, Sequelize) => {
-        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_contents_trigger ON contents`).
-        then(() => {
-            queryInterface.dropTable('contents');
         });
     }
 };

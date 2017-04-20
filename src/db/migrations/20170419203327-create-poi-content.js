@@ -1,6 +1,12 @@
 'use strict';
 
 module.exports = {
+    down: (queryInterface) => {
+        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_poi_content_trigger ON poi_content`).
+        then(() => {
+            queryInterface.dropTable('poi_content');
+        });
+    },
     up: (queryInterface, Sequelize) => {
         return queryInterface.createTable('poi_content', {
             content_id: {
@@ -31,9 +37,7 @@ module.exports = {
                 },
                 type: Sequelize.BIGINT
             },
-            updatedAt: {
-                type: Sequelize.DATE
-            }
+            updatedAt: { type: Sequelize.DATE }
         }).
         then(() => {
             // language=POSTGRES-PSQL
@@ -42,12 +46,6 @@ module.exports = {
                 BEFORE INSERT OR UPDATE ON poi_content
                 FOR EACH ROW
                 EXECUTE PROCEDURE register_dates_trigger_body()`);
-        });
-    },
-    down: (queryInterface, Sequelize) => {
-        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_poi_content_trigger ON poi_content`).
-        then(() => {
-            queryInterface.dropTable('poi_content');
         });
     }
 };

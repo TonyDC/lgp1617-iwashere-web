@@ -1,6 +1,12 @@
 'use strict';
 
 module.exports = {
+    down: (queryInterface) => {
+        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_audio_trigger ON audio`).
+        then(() => {
+            queryInterface.dropTable('audio');
+        });
+    },
     up: (queryInterface, Sequelize) => {
         return queryInterface.createTable('audio', {
             content_id: {
@@ -13,24 +19,22 @@ module.exports = {
                 },
                 type: Sequelize.BIGINT
             },
+            createdAt: {
+                allowNull: false,
+                type: Sequelize.DATE
+            },
             id: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
                 type: Sequelize.BIGINT
             },
+            updatedAt: { type: Sequelize.DATE },
             url: {
                 allowNull: true,
                 type: Sequelize.STRING,
                 unique: true
-            },
-            createdAt: {
-                allowNull: false,
-                type: Sequelize.DATE
-            },
-            updatedAt: {
-                type: Sequelize.DATE
-            },
+            }
         }).
         then(() => {
             // language=POSTGRES-PSQL
@@ -39,12 +43,6 @@ module.exports = {
                 BEFORE INSERT OR UPDATE ON audio
                 FOR EACH ROW
                 EXECUTE PROCEDURE register_dates_trigger_body()`);
-        });
-    },
-    down: (queryInterface, Sequelize) => {
-        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_audio_trigger ON audio`).
-        then(() => {
-            queryInterface.dropTable('audio');
         });
     }
 };

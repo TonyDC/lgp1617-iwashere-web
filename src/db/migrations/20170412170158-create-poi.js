@@ -1,11 +1,37 @@
 'use strict';
 
 module.exports = {
+    down: (queryInterface) => {
+        // language=POSTGRES-PSQL
+        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_pois_trigger ON pois`).
+        then(() => {
+            return queryInterface.removeIndex('pois', 'poi_text_index');
+        }).
+        then(() => {
+            return queryInterface.sequelize.query(`DROP TRIGGER insert_poi_text_trigger ON pois`);
+        }).
+        then(() => {
+            return queryInterface.sequelize.query(`DROP TRIGGER update_poi_text_trigger ON pois`);
+        }).
+        then(() => {
+            return queryInterface.sequelize.query(`DROP FUNCTION poi_description_trigger_body()`);
+        }).
+        then(() => {
+            return queryInterface.removeIndex('pois', 'poi_latitude_longitude_index');
+        }).
+        then(() => {
+            return queryInterface.dropTable('pois');
+        });
+    },
     up: (queryInterface, Sequelize) => {
         return queryInterface.createTable('pois', {
             address: {
                 allowNull: false,
                 type: Sequelize.STRING
+            },
+            createdAt: {
+                allowNull: false,
+                type: Sequelize.DATE
             },
             description: {
                 allowNull: false,
@@ -33,13 +59,7 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.STRING
             },
-            createdAt: {
-                allowNull: false,
-                type: Sequelize.DATE
-            },
-            updatedAt: {
-                type: Sequelize.DATE
-            }
+            updatedAt: { type: Sequelize.DATE }
         }).
         then(() => {
             // language=POSTGRES-SQL
@@ -84,29 +104,6 @@ module.exports = {
                 BEFORE INSERT OR UPDATE ON pois
                 FOR EACH ROW
                 EXECUTE PROCEDURE register_dates_trigger_body()`);
-        });
-    },
-
-    down: (queryInterface, Sequelize) => {
-        // language=POSTGRES-PSQL
-        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_pois_trigger ON pois`).
-        then(() => {
-            return queryInterface.removeIndex('pois', 'poi_text_index');
-        }).
-        then(() => {
-            return queryInterface.sequelize.query(`DROP TRIGGER insert_poi_text_trigger ON pois`);
-        }).
-        then(() => {
-            return queryInterface.sequelize.query(`DROP TRIGGER update_poi_text_trigger ON pois`);
-        }).
-        then(() => {
-            return queryInterface.sequelize.query(`DROP FUNCTION poi_description_trigger_body()`);
-        }).
-        then(() => {
-            return queryInterface.removeIndex('pois', 'poi_latitude_longitude_index');
-        }).
-        then(() => {
-            return queryInterface.dropTable('pois');
         });
     }
 };

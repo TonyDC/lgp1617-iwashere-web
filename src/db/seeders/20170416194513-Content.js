@@ -1,16 +1,13 @@
 'use strict';
 
 module.exports = {
-    up: (queryInterface, Sequelize) => {
+    down: (queryInterface) => {
+        return queryInterface.bulkDelete('contents', null, {});
+    },
+    up: (queryInterface) => {
 
         return queryInterface.bulkInsert('contents', [
-            {
-                type: 'IMG'
-            }
+            { type: 'IMG' }
         ], {});
-    },
-
-    down: (queryInterface, Sequelize) => {
-        return queryInterface.bulkDelete('contents', null, {});
     }
 };

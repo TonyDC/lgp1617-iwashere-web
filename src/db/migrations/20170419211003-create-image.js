@@ -1,6 +1,12 @@
 'use strict';
 
 module.exports = {
+    down: (queryInterface) => {
+        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_images_trigger ON images`).
+        then(() => {
+            queryInterface.dropTable('images');
+        });
+    },
     up: (queryInterface, Sequelize) => {
         return queryInterface.createTable('images', {
             content_id: {
@@ -13,23 +19,21 @@ module.exports = {
                 },
                 type: Sequelize.BIGINT
             },
+            createdAt: {
+                allowNull: false,
+                type: Sequelize.DATE
+            },
             id: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
                 type: Sequelize.BIGINT
             },
+            updatedAt: { type: Sequelize.DATE },
             url: {
                 allowNull: true,
                 type: Sequelize.STRING,
                 unique: true
-            },
-            createdAt: {
-                allowNull: false,
-                type: Sequelize.DATE
-            },
-            updatedAt: {
-                type: Sequelize.DATE
             }
         }).
         then(() => {
@@ -39,12 +43,6 @@ module.exports = {
                 BEFORE INSERT OR UPDATE ON images
                 FOR EACH ROW
                 EXECUTE PROCEDURE register_dates_trigger_body()`);
-        });
-    },
-    down: (queryInterface, Sequelize) => {
-        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_images_trigger ON images`).
-        then(() => {
-            queryInterface.dropTable('images');
         });
     }
 };

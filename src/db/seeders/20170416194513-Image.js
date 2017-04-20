@@ -1,7 +1,10 @@
 'use strict';
 
 module.exports = {
-    up: (queryInterface, Sequelize) => {
+    down: (queryInterface) => {
+        return queryInterface.bulkDelete('images', null, {});
+    },
+    up: (queryInterface) => {
 
         return queryInterface.bulkInsert('images', [
             {
@@ -9,9 +12,5 @@ module.exports = {
                 url: 'http://lorempixel.com/400/200'
             }
         ], {});
-    },
-
-    down: (queryInterface, Sequelize) => {
-        return queryInterface.bulkDelete('images', null, {});
     }
 };

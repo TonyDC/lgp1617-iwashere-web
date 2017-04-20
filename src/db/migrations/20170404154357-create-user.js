@@ -1,8 +1,20 @@
 'use strict';
 
 module.exports = {
+    down: (queryInterface) => {
+        // language=POSTGRES-PSQL
+        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_users_trigger ON users`).
+        then(() => {
+            return queryInterface.dropTable('users');
+        });
+    },
+
     up: (queryInterface, Sequelize) => {
         return queryInterface.createTable('users', {
+            createdAt: {
+                allowNull: false,
+                type: Sequelize.DATE
+            },
             id: {
                 allowNull: false,
                 autoIncrement: true,
@@ -14,13 +26,7 @@ module.exports = {
                 type: Sequelize.STRING,
                 unique: true
             },
-            createdAt: {
-                allowNull: false,
-                type: Sequelize.DATE
-            },
-            updatedAt: {
-                type: Sequelize.DATE
-            }
+            updatedAt: { type: Sequelize.DATE }
         }).
         then(() => {
             // language=POSTGRES-PSQL
@@ -29,14 +35,6 @@ module.exports = {
                 BEFORE INSERT OR UPDATE ON users
                 FOR EACH ROW
                 EXECUTE PROCEDURE register_dates_trigger_body()`);
-        });
-    },
-
-    down: (queryInterface, Sequelize) => {
-        // language=POSTGRES-PSQL
-        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_users_trigger ON users`).
-        then(() => {
-            return queryInterface.dropTable('users');
         });
     }
 };

@@ -58,7 +58,6 @@ router.post('/register', (req, res) => {
     }).
     then((user) => {
         // See the UserRecord reference doc for the contents of userRecord.
-        console.log("Successfully created new user.", user);
         res.send({
             ok: true,
             user
@@ -66,7 +65,6 @@ router.post('/register', (req, res) => {
         end();
     }).
     catch((error) => {
-        console.error(`Error creating new user: ${error.errorInfo}`);
         res.status(httpStatus.BAD_REQUEST).send({
             code: error.code,
             error: error.errorInfo

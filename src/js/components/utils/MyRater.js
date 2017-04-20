@@ -48,9 +48,6 @@ export default class MyRater extends Component {
             const ratingInfo = {};
             ratingInfo.rating = parseInt(response.rating, DECIMAL_BASE);
             this.setState({ ratingInfo });
-        }).
-        catch((error) => {
-            console.error(error);
         });
 
     }
@@ -75,9 +72,6 @@ export default class MyRater extends Component {
             const { ratingInfo } = this.state;
             ratingInfo.userRating = parseInt(response.rating, DECIMAL_BASE);
             this.setState({ ratingInfo });
-        }).
-        catch((error) => {
-            console.error(error);
         });
     }
 
@@ -97,8 +91,7 @@ export default class MyRater extends Component {
             then(() => {
                 this.getRating();
             }).
-            catch((error) => {
-                console.error(error);
+            catch(() => {
 
                 const { ratingInfo } = this.state;
                 ratingInfo.userRating = ratingEvent.lastRating;

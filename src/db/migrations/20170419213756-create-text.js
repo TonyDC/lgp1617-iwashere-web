@@ -1,8 +1,18 @@
 'use strict';
 
 module.exports = {
+    down: (queryInterface) => {
+        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_text_trigger ON text`).
+        then(() => {
+            queryInterface.dropTable('text');
+        });
+    },
     up: (queryInterface, Sequelize) => {
         return queryInterface.createTable('text', {
+            body: {
+                allowNull: true,
+                type: Sequelize.TEXT
+            },
             content_id: {
                 allowNull: false,
                 onDelete: 'cascade',
@@ -13,9 +23,9 @@ module.exports = {
                 },
                 type: Sequelize.BIGINT
             },
-            body: {
-                allowNull: true,
-                type: Sequelize.TEXT
+            createdAt: {
+                allowNull: false,
+                type: Sequelize.DATE
             },
             id: {
                 allowNull: false,
@@ -23,13 +33,7 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.BIGINT
             },
-            createdAt: {
-                allowNull: false,
-                type: Sequelize.DATE
-            },
-            updatedAt: {
-                type: Sequelize.DATE
-            },
+            updatedAt: { type: Sequelize.DATE }
         }).
         then(() => {
             // language=POSTGRES-PSQL
@@ -38,12 +42,6 @@ module.exports = {
                 BEFORE INSERT OR UPDATE ON text
                 FOR EACH ROW
                 EXECUTE PROCEDURE register_dates_trigger_body()`);
-        });
-    },
-    down: (queryInterface, Sequelize) => {
-        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_text_trigger ON text`).
-        then(() => {
-            queryInterface.dropTable('text');
         });
     }
 };
