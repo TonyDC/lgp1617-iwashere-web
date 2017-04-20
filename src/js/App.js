@@ -57,10 +57,10 @@ export default class App extends Component {
                     <IndexRoute component={ Map } />
                     <Route path="poi/detail/:id" component={ POIDetail } />
 
-                    <Route path="user" component={ UnauthRoutes }>
-                        <Route path="login" component={ Login } onEnter={ this.redirectIfLoggedIn.bind(this) } />
-                        <Route path="register" component={ Register } onEnter={ this.redirectIfLoggedIn.bind(this) } />
-                        <Route path="recover" component={ PasswordReset } onEnter={ this.redirectIfLoggedIn.bind(this) } />
+                    <Route path="user" component={ UnauthRoutes } onEnter={ this.redirectIfLoggedIn.bind(this) }>
+                        <Route path="login" component={ Login }/>
+                        <Route path="register" component={ Register }/>
+                        <Route path="recover" component={ PasswordReset }/>
                     </Route>
                     <Route path="*" component={ NoMatch }/>
                 </Route>

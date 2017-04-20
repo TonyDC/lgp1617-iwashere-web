@@ -91,7 +91,7 @@ module.exports.updatePOIRating = (poiID, userID, rating) => {
 
 module.exports.searchPOI = (query) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT * FROM pois WHERE text @@ to_tsquery(:query)`, {
+    return db.query(`SELECT * FROM pois WHERE text @@ to_tsquery(:query) `, {
         replacements: { query },
         type: db.QueryTypes.SELECT
     });

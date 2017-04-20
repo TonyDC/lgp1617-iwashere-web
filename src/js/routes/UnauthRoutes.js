@@ -29,26 +29,29 @@ export default class UnauthRoutes extends Component {
 
     render() {
         const { userStatus } = this.state;
-        if (typeof userStatus.isLogged === 'undefined') {
-            return <div className="hor-align">
-                <Loader color="#E5402A" size="50px" margin="10px"/>
+
+        let content = <div>
+            <Loader color="#E5402A" size="30px" margin="10px"/>
+            </div>;
+
+        if (typeof userStatus.isLogged !== 'undefined') {
+            content = <div className="container">
+                <div className="row main">
+                    <div className="main-login main-center">
+                        <div className="panel-heading">
+                            <div className="panel-title text-center">
+                                <img src={logo} alt="#iwashere logo"/>
+                            </div>
+                        </div>
+                        { this.props.children }
+                    </div>
+                </div>
             </div>;
         }
 
         return (
             <div className="colorAccentSecondary vert-align hor-align wrapper-fill">
-                <div className="container">
-                    <div className="row main">
-                        <div className="main-login main-center">
-                            <div className="panel-heading">
-                                <div className="panel-title text-center">
-                                    <img src={logo} alt="#iwashere logo"/>
-                                </div>
-                            </div>
-                            { this.props.children }
-                        </div>
-                    </div>
-                </div>
+                { content }
             </div>
         );
     }

@@ -9,3 +9,12 @@ module.exports.getUserByUID = (uid) => {
         type: db.QueryTypes.SELECT
     });
 };
+
+module.exports.insertUser = (uid) => {
+    // language=POSTGRES-SQL
+    return db.query(`INSERT INTO users(uid) VALUES (:uid)`, {
+        replacements: { uid },
+        type: db.QueryTypes.INSERT
+    });
+};
+
