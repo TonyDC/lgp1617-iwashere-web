@@ -111,6 +111,10 @@ export default class MyRater extends Component {
 
         let userRating = null;
         if (this.props.user) {
+            if (!this.state.ratingInfo.userRating) {
+                this.getUserRating();
+            }
+
             userRating =
                 <Col xs={12} md={12} lg={12}>
                     <Rater total={MAX_RATING_SCALE} rating={this.state.ratingInfo.userRating} onRate={this.updateRating.bind(this)}/>

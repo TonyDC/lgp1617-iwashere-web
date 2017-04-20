@@ -10,7 +10,7 @@ module.exports = {
             {
                 poi_id: 1,
                 rating: 2,
-                user_id: '1234567890'
+                user_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2'
             }
         ], {});
     }

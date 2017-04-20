@@ -48,7 +48,7 @@ module.exports.getPOIMedia = (poiID) => {
 
 module.exports.getPOIRating = (poiID) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT AVG(rating) AS rating FROM poi_ratings WHERE poi_id = :poiID`, {
+    return db.query(`SELECT AVG(rating) AS rating, COUNT(*) AS ratings FROM poi_ratings WHERE poi_id = :poiID`, {
         replacements: { poiID },
         type: db.QueryTypes.SELECT
     });
@@ -67,7 +67,7 @@ module.exports.getPOIRatingByUser = (poiID, userID) => {
 
 module.exports.addPOIRating = (poiID, userID, rating) => {
     // language=POSTGRES-SQL
-    return db.query(`INSERT INTO poi_ratings (poi_id, user_id, rating, "createdAt", "updatedAt") VALUES (:poiID, :userID, :rating, :createdAt, :updatedAt)`, {
+    return db.query(`INSERT INTO poi_ratings (poi_id, user_id, rating) VALUES (:poiID, :userID, :rating)`, {
         replacements: {
             poiID,
             rating,
@@ -79,7 +79,7 @@ module.exports.addPOIRating = (poiID, userID, rating) => {
 
 module.exports.updatePOIRating = (poiID, userID, rating) => {
     // language=POSTGRES-SQL
-    return db.query(`UPDATE poi_ratings SET rating = :rating, "updatedAt" = :updatedAt WHERE poi_id = :poiID AND user_id = :userID`, {
+    return db.query(`UPDATE poi_ratings SET rating = :rating WHERE poi_id = :poiID AND user_id = :userID`, {
         replacements: {
             poiID,
             rating,

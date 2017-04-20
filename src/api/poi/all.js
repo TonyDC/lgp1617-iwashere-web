@@ -108,7 +108,14 @@ router.get('/rating/:poiID', (req, res, next) => {
     poiDB.getPOIRating(poiID).
     then((result) => {
         if (result && result.length > NO_ELEMENT_SIZE) {
-            res.json(result[ZERO_INDEX]).end();
+            let poiRating = result[ZERO_INDEX];
+            if (!poiRating.rating || !poiRating.ratings) {
+                poiRating = {
+                    rating: 0,
+                    ratings: 0
+                };
+            }
+            res.json(poiRating).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
         }

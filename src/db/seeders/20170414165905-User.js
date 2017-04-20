@@ -7,7 +7,7 @@ module.exports = {
 
     up: (queryInterface) => {
         return queryInterface.bulkInsert('users', [
-            { uid: '1234567890' }
+            { uid: '2PR6AlwJNsR24FqVXx8HKIivpwY2' }
         ], {});
     }
 };
