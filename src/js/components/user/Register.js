@@ -21,13 +21,9 @@ export default class Register extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            confirmPassword: '',
-            email: '',
             errors: [],
             inProgress: false,
-            password: '',
-            registered: false,
-            username: ''
+            registered: false
         };
     }
 
@@ -69,7 +65,8 @@ export default class Register extends Component {
     }
 
     handleError(error) {
-        const { message } = error;
+        const { code, message } = error;
+        console.error(code, message);
 
         this.closePreviousErrors();
 

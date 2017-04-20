@@ -1,3 +1,6 @@
+/**
+ * Created by ADC on 12/04/17.
+ */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import NavBar from '../components/utils/NavBar';

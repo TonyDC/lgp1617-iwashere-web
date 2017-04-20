@@ -7,14 +7,6 @@ const firebaseAdmin = require('firebase-admin');
 const httpStatus = require('http-status-codes');
 const validator = require('validator');
 
-const db = root_require('src/db/query');
-
-const ONE_INDEX = 1,
-    ZERO_INDEX = 0;
-
-const NO_ELEMENTS_SIZE = 0,
-    TWO_ELEMENTS_SIZE = 2;
-
 /**
  * Register endpoint
  * Body properties:
@@ -66,6 +58,7 @@ router.post('/register', (req, res) => {
     }).
     then((user) => {
         // See the UserRecord reference doc for the contents of userRecord.
+        console.log("Successfully created new user.", user);
         res.send({
             ok: true,
             user
@@ -73,38 +66,12 @@ router.post('/register', (req, res) => {
         end();
     }).
     catch((error) => {
+        console.error(`Error creating new user: ${error.errorInfo}`);
         res.status(httpStatus.BAD_REQUEST).send({
             code: error.code,
             error: error.errorInfo
         }).
         end();
-    });
-});
-
-router.post('/register-by-provider', (req, res, next) => {
-    const { uid } = req.body;
-    const { userDB } = db;
-
-    Promise.all([firebaseAdmin.auth().getUser(uid), userDB.getUserByUID(uid)]).
-    then((results) => {
-        if (!results || results.length !== TWO_ELEMENTS_SIZE || !results[ZERO_INDEX] || !results[ZERO_INDEX].providerData || !results[ONE_INDEX]) {
-            return Promise.reject(new Error('Bad promise fulfilment'));
-        } else if (results[ZERO_INDEX].providerData.length === NO_ELEMENTS_SIZE) {
-            res.status(httpStatus.BAD_REQUEST).json({ message: 'the user is not authenticated by provider' }).
-            end();
-        } else if (results[ONE_INDEX].length === NO_ELEMENTS_SIZE) {
-            return userDB.insertUser(uid).
-            then(() => {
-                res.sendStatus(httpStatus.CREATED).end();
-            });
-        } else {
-            res.sendStatus(httpStatus.NOT_MODIFIED).end();
-        }
-
-        return null;
-    }).
-    catch((error) => {
-        next(error);
     });
 });
 

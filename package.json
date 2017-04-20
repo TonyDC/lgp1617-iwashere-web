@@ -41,9 +41,7 @@
     "react-dom": "^15.4.2",
     "react-gmaps": "^1.5.0",
     "react-helmet": "^5.0.2",
-    "react-rater": "^0.3.5",
     "react-redux": "^5.0.3",
-    "react-responsive-carousel": "^3.1.5",
     "react-router": "^3.0.5",
     "react-router-dom": "^4.1.0",
     "react-s-alert": "^1.2.2",
@@ -80,6 +78,10 @@
     "jest": "jest --config=./jest-config.json",
     "lint": "eslint src",
     "migrate-up-all": "sequelize db:migrate",
-    "migrate-down-all": "sequelize db:migrate:undo:all"
+    "migrate-down-all": "sequelize db:migrate:undo:all",
+    "seed-up-all": "sequelize db:seed:all",
+    "seed-down-all": "sequelize db:seed:undo:all",
+    "db-up": "npm run migrate-up-all && npm run seed-up-all",
+    "db-down": "npm run seed-down-all && npm run migrate-down-all"
   }
 }

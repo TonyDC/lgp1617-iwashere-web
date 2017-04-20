@@ -4,7 +4,6 @@ import Alert from 'react-s-alert';
 import { Helmet } from 'react-helmet';
 import * as firebase from 'firebase';
 import { Form, FormGroup, InputGroup, FormControl, Button } from 'react-bootstrap';
-import { GridLoader as Loader } from 'halogen';
 
 import validator from 'validator';
 
@@ -18,11 +17,7 @@ export default class PasswordReset extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            email: '',
-            errors: [],
-            inProgress: false
-        };
+        this.state = { errors: [] };
     }
 
     componentWillUnmount() {
@@ -38,15 +33,13 @@ export default class PasswordReset extends Component {
     }
 
     handleError(error) {
-        const { message } = error;
+        const { code, message } = error;
+        console.error(code, message);
 
         this.closePreviousErrors();
 
         const currentError = Alerts.createErrorAlert(message);
-        this.setState({
-            errors: [currentError],
-            inProgress: false
-        });
+        this.setState({ errors: [currentError] });
     }
 
     checkForm() {
@@ -68,13 +61,11 @@ export default class PasswordReset extends Component {
             return;
         }
 
-        this.setState({ inProgress: true });
-
         const { email } = this.state;
         firebase.auth().sendPasswordResetEmail(email).
         then(() => {
             Alerts.createInfoAlert(`An email with a token has been sent to ${email}.`);
-            this.props.router.push('/user/login');
+            this.props.router.push('/login');
         }).
         catch((error) => {
             this.handleError(error);
@@ -87,16 +78,17 @@ export default class PasswordReset extends Component {
     }
 
     render() {
-        let resetInProgress = null;
-        let resetForm = null;
+        return (
+            <div>
+                <Helmet>
+                    <title>#iwashere - Reset Password</title>
+                </Helmet>
 
-        if (this.state.inProgress) {
-            resetInProgress =
-                <FormGroup className="hor-align vert-align">
-                    <Loader color="#012935" className="loader"/>
-                </FormGroup>;
-        } else {
-            resetForm =
+                <div>
+                    <h1 className="form-title">Reset Password</h1>
+                    <hr/>
+                </div>
+
                 <Form horizontal onSubmit={ this.sendPasswordResetEmail.bind(this) }>
                     <FormGroup>
                         <InputGroup>
@@ -119,23 +111,7 @@ export default class PasswordReset extends Component {
                             Send email
                         </Button>
                     </FormGroup>
-                </Form>;
-        }
-
-        return (
-            <div>
-                <Helmet>
-                    <title>#iwashere - Reset Password</title>
-                </Helmet>
-
-                <div>
-                    <h1 className="form-title">Reset Password</h1>
-                    <hr/>
-                </div>
-
-                {resetInProgress}
-
-                {resetForm}
+                </Form>
             </div>
         );
     }

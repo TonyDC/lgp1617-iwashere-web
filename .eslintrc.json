@@ -37,9 +37,9 @@
     "block-spacing": "error",
     "brace-style": "error",
     "callback-return": "error",
-    "camelcase": "warn",
+    "camelcase": "error",
     "capitalized-comments": [
-      "warn",
+      "error",
       "always"
     ],
     "class-methods-use-this": "off",
@@ -89,7 +89,7 @@
     ],
     "line-comment-position": "error",
     "linebreak-style": [
-      "off",
+      "error",
       "unix"
     ],
     "lines-around-comment": "error",
@@ -114,7 +114,7 @@
     "no-catch-shadow": "error",
     "no-compare-neg-zero": "error",
     "no-confusing-arrow": "error",
-    "no-console": "error",
+    "no-console": ["off", { "allow" : ["warn", "error"] }],
     "no-continue": "error",
     "no-div-regex": "error",
     "no-duplicate-imports": "error",
@@ -157,6 +157,7 @@
     "no-octal-escape": "error",
     "no-param-reassign": "error",
     "no-path-concat": "error",
+    "no-plusplus": "error",
     "no-process-env": "error",
     "no-process-exit": "error",
     "no-proto": "error",
@@ -268,7 +269,7 @@
     "react/no-did-update-set-state": 1,
     "react/no-multi-comp": 1,
     "react/no-unknown-property": 1,
-    "react/prop-types": 2,
+    "react/prop-types": 1,
     "react/react-in-jsx-scope": 1,
     "import/extensions": [2, "never", { "jpeg": "always", "jpg": "always", "png": "always", "svg": "always", "scss": "always" }],
     "react/self-closing-comp": 2,
