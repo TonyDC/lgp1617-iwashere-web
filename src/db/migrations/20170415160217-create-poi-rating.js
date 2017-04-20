@@ -1,6 +1,21 @@
 'use strict';
 
+const ZERO_RATING = 0;
+const ONE_RATING = 1;
+const TWO_RATING = 2;
+const THREE_RATING = 3;
+const FOUR_RATING = 4;
+const FIVE_RATING = 5;
+const RATING_VALUES = [ZERO_RATING, ONE_RATING, TWO_RATING, THREE_RATING, FOUR_RATING, FIVE_RATING];
+
 module.exports = {
+    down: (queryInterface) => {
+        // language=POSTGRES-PSQL
+        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_poi_ratings_trigger ON poi_ratings`).
+        then(() => {
+            return queryInterface.dropTable('poi_ratings');
+        });
+    },
     up: (queryInterface, Sequelize) => {
         return queryInterface.createTable('poi_ratings', {
             createdAt: {
@@ -27,11 +42,9 @@ module.exports = {
             rating: {
                 allowNull: false,
                 type: Sequelize.INTEGER,
-                values: [0, 1, 2, 3, 4, 5]
+                values: RATING_VALUES
             },
-            updatedAt: {
-                type: Sequelize.DATE
-            },
+            updatedAt: { type: Sequelize.DATE },
             user_id: {
                 allowNull: false,
                 onDelete: 'cascade',
@@ -51,13 +64,6 @@ module.exports = {
                 BEFORE INSERT OR UPDATE ON poi_ratings
                 FOR EACH ROW
                 EXECUTE PROCEDURE register_dates_trigger_body()`);
-        });
-    },
-    down: (queryInterface, Sequelize) => {
-        // language=POSTGRES-PSQL
-        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_poi_ratings_trigger ON poi_ratings`).
-        then(() => {
-            return queryInterface.dropTable('poi_ratings');
         });
     }
 };

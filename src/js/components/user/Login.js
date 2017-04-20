@@ -42,8 +42,7 @@ export default class Login extends Component {
     }
 
     handleError(error) {
-        const { code, message } = error;
-        console.error(code, message);
+        const { message } = error;
 
         this.closePreviousErrors();
 

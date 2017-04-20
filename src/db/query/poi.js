@@ -38,9 +38,9 @@ module.exports.getPOIsWithin = (minLat, maxLat, minLng, maxLng) => {
 module.exports.getPOIMedia = (poiID) => {
     // language=POSTGRES-SQL
     return db.query(`WITH poi_media AS (SELECT contents.id FROM contents INNER JOIN poi_content ON (contents.id = poi_content.content_id) WHERE poi_content.poi_id = :poiID)
-    (SELECT * FROM images WHERE content_id IN (SELECT * FROM poi_media))
+    (SELECT * FROM images INNER JOIN contents ON images.content_id=contents.id WHERE content_id IN (SELECT * FROM poi_media))
     UNION 
-    (SELECT * FROM videos WHERE content_id IN (SELECT * FROM poi_media))`, {
+    (SELECT * FROM videos INNER JOIN contents ON videos.content_id=contents.id WHERE content_id IN (SELECT * FROM poi_media))`, {
         replacements: { poiID },
         type: db.QueryTypes.SELECT
     });
@@ -48,7 +48,7 @@ module.exports.getPOIMedia = (poiID) => {
 
 module.exports.getPOIRating = (poiID) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT AVG(rating) AS rating FROM poi_ratings WHERE poi_id = :poiID`, {
+    return db.query(`SELECT AVG(rating) AS rating, COUNT(*) AS ratings FROM poi_ratings WHERE poi_id = :poiID`, {
         replacements: { poiID },
         type: db.QueryTypes.SELECT
     });
@@ -67,7 +67,7 @@ module.exports.getPOIRatingByUser = (poiID, userID) => {
 
 module.exports.addPOIRating = (poiID, userID, rating) => {
     // language=POSTGRES-SQL
-    return db.query(`INSERT INTO poi_ratings (poi_id, user_id, rating, "createdAt", "updatedAt") VALUES (:poiID, :userID, :rating, :createdAt, :updatedAt)`, {
+    return db.query(`INSERT INTO poi_ratings (poi_id, user_id, rating) VALUES (:poiID, :userID, :rating)`, {
         replacements: {
             poiID,
             rating,
@@ -79,7 +79,7 @@ module.exports.addPOIRating = (poiID, userID, rating) => {
 
 module.exports.updatePOIRating = (poiID, userID, rating) => {
     // language=POSTGRES-SQL
-    return db.query(`UPDATE poi_ratings SET rating = :rating, "updatedAt" = :updatedAt WHERE poi_id = :poiID AND user_id = :userID`, {
+    return db.query(`UPDATE poi_ratings SET rating = :rating WHERE poi_id = :poiID AND user_id = :userID`, {
         replacements: {
             poiID,
             rating,

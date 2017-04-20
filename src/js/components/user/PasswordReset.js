@@ -38,8 +38,7 @@ export default class PasswordReset extends Component {
     }
 
     handleError(error) {
-        const { code, message } = error;
-        console.error(code, message);
+        const { message } = error;
 
         this.closePreviousErrors();
 

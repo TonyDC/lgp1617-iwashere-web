@@ -49,8 +49,7 @@ export default class POIDetail extends Component {
                 poiInfo: response
             });
         }).
-        catch((error) => {
-            console.log(error);
+        catch(() => {
             this.props.router.push('/');
         });
     }
@@ -103,7 +102,11 @@ export default class POIDetail extends Component {
     }
 }
 
-POIDetail.propTypes = { history: PropTypes.object };
+POIDetail.propTypes = {
+    history: PropTypes.object,
+    params: PropTypes.object,
+    router: PropTypes.object
+};
 
 // To access Redux store
 POIDetail.contextTypes = { store: PropTypes.object };

@@ -108,7 +108,14 @@ router.get('/rating/:poiID', (req, res, next) => {
     poiDB.getPOIRating(poiID).
     then((result) => {
         if (result && result.length > NO_ELEMENT_SIZE) {
-            res.json(result[ZERO_INDEX]).end();
+            let poiRating = result[ZERO_INDEX];
+            if (!poiRating.rating || !poiRating.ratings) {
+                poiRating = {
+                    rating: 0,
+                    ratings: 0
+                };
+            }
+            res.json(poiRating).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
         }
@@ -121,8 +128,8 @@ router.get('/rating/:poiID', (req, res, next) => {
 router.post('/rating', (req, res, next) => {
     const { userID, poiID, rating } = req.body;
 
-    if (!poiID || !userID || typeof userID !== 'string' || !rating || RATING_VALUES.indexOf(rating) === VALUE_NOT_FOUND
-        || isNaN(parseInt(poiID, DECIMAL_BASE))) {
+    if (!poiID || !userID || typeof userID !== 'string' || !rating || RATING_VALUES.indexOf(rating) === VALUE_NOT_FOUND ||
+        isNaN(parseInt(poiID, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
@@ -151,7 +158,7 @@ router.post('/rating', (req, res, next) => {
         res.status(httpCodes.BAD_REQUEST).json({ message: '(userID, poiID) not found' }).
         end();
 
-        return;
+        return null;
     }).
     catch((error) => {
         next(error);

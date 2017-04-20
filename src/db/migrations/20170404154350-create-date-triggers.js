@@ -1,8 +1,12 @@
 'use strict';
 
 module.exports = {
-    up: (queryInterface, Sequelize) => {
-        //language=POSTGRES-PSQL
+    down: (queryInterface) => {
+        // language=POSTGRES-PSQL
+        return queryInterface.sequelize.query(`DROP FUNCTION register_dates_trigger_body()`);
+    },
+    up: (queryInterface) => {
+        // language=POSTGRES-PSQL
         return queryInterface.sequelize.query(`
             CREATE FUNCTION register_dates_trigger_body() RETURNS trigger AS 
             $body$
@@ -17,10 +21,5 @@ module.exports = {
             END;
             $body$ LANGUAGE plpgsql
         `);
-    },
-
-    down: (queryInterface, Sequelize) => {
-        //language=POSTGRES-PSQL
-        return queryInterface.sequelize.query(`DROP FUNCTION register_dates_trigger_body()`);
     }
 };

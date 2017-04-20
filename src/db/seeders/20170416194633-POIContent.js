@@ -1,17 +1,20 @@
 'use strict';
 
 module.exports = {
-    up: (queryInterface, Sequelize) => {
+    down: (queryInterface) => {
+        return queryInterface.bulkDelete('poi_content', null, {});
+    },
+    up: (queryInterface) => {
 
         return queryInterface.bulkInsert('poi_content', [
             {
-                poi_id: 1,
-                content_id: 1
+                content_id: 1,
+                poi_id: 1
+            },
+            {
+                content_id: 2,
+                poi_id: 1
             }
         ], {});
-    },
-
-    down: (queryInterface, Sequelize) => {
-        return queryInterface.bulkDelete('poi_content', null, {});
     }
 };

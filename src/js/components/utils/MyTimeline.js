@@ -36,7 +36,6 @@ export default class MyTimeline extends Component {
             return response.json();
         }).
         then((response) => {
-            console.log(response);
 
             const media = this.state.media.concat(this.getMedia(response));
 

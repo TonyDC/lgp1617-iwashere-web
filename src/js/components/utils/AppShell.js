@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 export default class AppShell extends Component {
 
@@ -8,3 +9,5 @@ export default class AppShell extends Component {
         );
     }
 }
+
+AppShell.propTypes = { children: PropTypes.object };
