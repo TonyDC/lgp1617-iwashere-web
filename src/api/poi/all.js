@@ -26,26 +26,54 @@ const NO_ELEMENT_SIZE = 0;
 const TWO_SIZE = 2;
 
 router.get('/search', (req, res, next) => {
-    const { text } = req.query;
-    if (!text || typeof text !== 'string') {
+    let { query } = req.query;
+    let { lat, lng } = req.query;
+    if (!query || typeof query !== 'string') {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
 
+    query = query.trim().split(/\s+/).
+    join(' & ');
+
     const { poiDB } = db;
 
-    poiDB.searchPOI(text).
-    then((results) => {
-        if (results) {
-            res.json(results).end();
-        } else {
-            res.sendStatus(httpCodes.NO_CONTENT).end();
-        }
-    }).
-    catch((error) => {
-        next(error);
-    });
+    lat = parseFloat(lat);
+    lng = parseFloat(lng);
+
+    if (!isNaN(lat) && !isNaN(lng)) {
+        poiDB.searchNearbyPOI(query, lat, lng).
+        then((results) => {
+            if (results) {
+                const response = {
+                    results,
+                    type: 'distance'
+                };
+                res.json(response).end();
+            } else {
+                res.sendStatus(httpCodes.NO_CONTENT).end();
+            }
+        }).
+        catch((error) => {
+            next(error);
+        });
+    } else {
+        poiDB.searchPOI(query).then((results) => {
+            if (results) {
+                const response = {
+                    results,
+                    type: 'name'
+                };
+                res.json(response).end();
+            } else {
+                res.sendStatus(httpCodes.NO_CONTENT).end();
+            }
+        }).
+        catch((error) => {
+            next(error);
+        });
+    }
 });
 
 router.get('/media/:poiID', (req, res, next) => {
@@ -189,28 +217,6 @@ router.get('/range/:minLat/:maxLat/:minLng/:maxLng', (req, res, next) => {
     });
 });
 
-router.get('/:id', (req, res, next) => {
-    const { id } = req.params;
-    if (!id || isNaN(parseInt(id, DECIMAL_BASE))) {
-        res.sendStatus(httpCodes.BAD_REQUEST).end();
-
-        return;
-    }
-
-    const { poiDB } = db;
-    poiDB.getPOIDetailByID(id).
-    then((poi) => {
-        if (poi && poi.length > NO_ELEMENT_SIZE) {
-            res.json(poi[ZERO_INDEX]).end();
-        } else {
-            res.sendStatus(httpCodes.NO_CONTENT).end();
-        }
-    }).
-    catch((error) => {
-        next(error);
-    });
-});
-
 router.get('/posts/:id', (req, res, next) => {
     const { id } = req.params;
     const { limit, offset } = req.body;
@@ -223,6 +229,28 @@ router.get('/posts/:id', (req, res, next) => {
 
     const { poiDB } = db;
     poiDB.getPOIPosts(id, offset, limit).
+    then((poi) => {
+        if (poi && poi.length > NO_ELEMENT_SIZE) {
+            res.json(poi[ZERO_INDEX]).end();
+        } else {
+            res.sendStatus(httpCodes.NO_CONTENT).end();
+        }
+    }).
+    catch((error) => {
+        next(error);
+    });
+});
+
+router.get('/:id', (req, res, next) => {
+    const { id } = req.params;
+    if (!id || isNaN(parseInt(id, DECIMAL_BASE))) {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    const { poiDB } = db;
+    poiDB.getPOIDetailByID(id).
     then((poi) => {
         if (poi && poi.length > NO_ELEMENT_SIZE) {
             res.json(poi[ZERO_INDEX]).end();

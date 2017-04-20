@@ -96,3 +96,15 @@ module.exports.searchPOI = (query) => {
         type: db.QueryTypes.SELECT
     });
 };
+
+module.exports.searchNearbyPOI = (query, lat, lng) => {
+    // language=POSTGRES-SQL
+    return db.query(`SELECT *, get_distance_function(latitude, longitude, :lat, :lng) as distance FROM pois WHERE text @@ to_tsquery(:query) ORDER BY distance DESC`, {
+        replacements: {
+            lat,
+            lng,
+            query
+        },
+        type: db.QueryTypes.SELECT
+    });
+};

@@ -28,11 +28,7 @@ export default class MyCarousel extends Component {
             return response.json();
         }).
         then((response) => {
-
-            console.log(response);
-
             const media = this.getMedia(response);
-
             this.setState({ media });
         });
     }
