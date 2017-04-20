@@ -73,7 +73,7 @@ export default class POIDetail extends Component {
         }
 
         return (
-            <div className="colorAccentSecondary">
+            <div className="colorAccentSecondary wrapper-fill">
                 <Helmet>
                     <title>#iwashere</title>
                 </Helmet>
