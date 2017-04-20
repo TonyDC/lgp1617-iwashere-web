@@ -24,6 +24,14 @@ export default class Alerts extends Component {
         });
     }
 
+    static createWarningAlert(message) {
+        return Alert.warning(message, {
+            effect: 'slide',
+            position: 'bottom-right',
+            timeout: 'none'
+        });
+    }
+
     constructor(props) {
         super(props);
         this.state = {};

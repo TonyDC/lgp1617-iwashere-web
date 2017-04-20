@@ -1,0 +1,38 @@
+.ratings {
+    padding-right: 20px;
+    padding-left: 10px;
+    font-size: 2rem;
+}
+
+.rating-description {
+    padding: 10px;
+    font-size: 1.5rem;
+}
+
+.react-rater a {
+    cursor: pointer;
+    color: #ccc !important;
+    position: relative;
+    text-decoration: none !important;
+}
+.react-rater a.will-be-active {
+    color: #ffdd99 !important;
+}
+
+.react-rater a.is-active {
+    color: #fc6 !important;
+}
+
+.react-rater a.is-active-half:before {
+    color: #fc6 !important;
+    content: '\2605';
+    position: absolute;
+    left: 0;
+    width: 50%;
+    overflow: hidden;
+}
+
+.react-rater a.is-disabled {
+    cursor: default !important;
+    text-decoration: none !important;
+}
