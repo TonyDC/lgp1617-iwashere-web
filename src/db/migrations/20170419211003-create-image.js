@@ -32,8 +32,7 @@ module.exports = {
             updatedAt: { type: Sequelize.DATE },
             url: {
                 allowNull: true,
-                type: Sequelize.STRING,
-                unique: true
+                type: Sequelize.STRING
             }
         }).
         then(() => {

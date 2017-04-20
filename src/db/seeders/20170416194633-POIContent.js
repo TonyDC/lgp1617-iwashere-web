@@ -10,6 +10,10 @@ module.exports = {
             {
                 content_id: 1,
                 poi_id: 1
+            },
+            {
+                content_id: 2,
+                poi_id: 1
             }
         ], {});
     }

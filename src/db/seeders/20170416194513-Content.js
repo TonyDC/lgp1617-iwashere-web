@@ -7,6 +7,7 @@ module.exports = {
     up: (queryInterface) => {
 
         return queryInterface.bulkInsert('contents', [
+            { type: 'IMG' },
             { type: 'IMG' }
         ], {});
     }

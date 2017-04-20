@@ -38,9 +38,9 @@ module.exports.getPOIsWithin = (minLat, maxLat, minLng, maxLng) => {
 module.exports.getPOIMedia = (poiID) => {
     // language=POSTGRES-SQL
     return db.query(`WITH poi_media AS (SELECT contents.id FROM contents INNER JOIN poi_content ON (contents.id = poi_content.content_id) WHERE poi_content.poi_id = :poiID)
-    (SELECT * FROM images WHERE content_id IN (SELECT * FROM poi_media))
+    (SELECT * FROM images INNER JOIN contents ON images.content_id=contents.id WHERE content_id IN (SELECT * FROM poi_media))
     UNION 
-    (SELECT * FROM videos WHERE content_id IN (SELECT * FROM poi_media))`, {
+    (SELECT * FROM videos INNER JOIN contents ON videos.content_id=contents.id WHERE content_id IN (SELECT * FROM poi_media))`, {
         replacements: { poiID },
         type: db.QueryTypes.SELECT
     });
