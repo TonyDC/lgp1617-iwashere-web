@@ -250,10 +250,17 @@ router.get('/:id', (req, res, next) => {
     }
 
     const { poiDB } = db;
-    poiDB.getPOIDetailByID(id).
-    then((poi) => {
-        if (poi && poi.length > NO_ELEMENT_SIZE) {
-            res.json(poi[ZERO_INDEX]).end();
+
+    Promise.all([poiDB.getPOIDetailByID(id), poiDB.getPOITags(id)]).
+    then((results) => {
+
+        if (results && results.length === TWO_SIZE &&
+            results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE) {
+
+            const poi = results[ZERO_INDEX][ZERO_INDEX];
+            poi.tags = results[ONE_INDEX];
+
+            res.json(poi).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
         }

@@ -10,6 +10,14 @@ module.exports.getPOIDetailByID = (id) => {
     });
 };
 
+module.exports.getPOITags = (id) => {
+    // language=POSTGRES-SQL
+    return db.query(`SELECT tags.name AS name, tags.id AS id FROM poi_tags INNER JOIN tags ON poi_tags.tag_id=tags.id WHERE poi_tags.poi_id = :id`, {
+        replacements: { id },
+        type: db.QueryTypes.SELECT
+    });
+};
+
 module.exports.getPOIPosts = (id, offset, limit) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT * FROM posts WHERE poi_id = :id ORDER BY createdAt LIMIT TO :limit OFFSET :offset`, {
