@@ -121,12 +121,8 @@ router.get('/rating/:poiID', (req, res, next) => {
 router.post('/rating', (req, res, next) => {
     const { userID, poiID, rating } = req.body;
 
-    console.log(req.body);
-
     if (!poiID || !userID || typeof userID !== 'string' || !rating || RATING_VALUES.indexOf(rating) === VALUE_NOT_FOUND) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
-
-        console.log('?!?!??!');
 
         return;
     }
@@ -134,8 +130,7 @@ router.post('/rating', (req, res, next) => {
     const { poiDB, userDB } = db;
     Promise.all([userDB.getUserByUID(userID), poiDB.getPOIDetailByID(poiID)]).
     then((results) => {
-
-        console.log(results);
+        
         if (results && results.length === TWO_SIZE &&
             results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE &&
             results[ONE_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE) {
