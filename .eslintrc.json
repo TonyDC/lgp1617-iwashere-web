@@ -268,7 +268,7 @@
     "react/no-did-update-set-state": 1,
     "react/no-multi-comp": 1,
     "react/no-unknown-property": 1,
-    "react/prop-types": 1,
+    "react/prop-types": 2,
     "react/react-in-jsx-scope": 1,
     "import/extensions": [2, "never", { "jpeg": "always", "jpg": "always", "png": "always", "svg": "always", "scss": "always" }],
     "react/self-closing-comp": 2,
