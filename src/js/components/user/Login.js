@@ -5,7 +5,6 @@ import { Helmet } from 'react-helmet';
 import * as firebase from 'firebase';
 import { Form, FormGroup, InputGroup, FormControl, Button } from 'react-bootstrap';
 import validator from 'validator';
-import httpStatus from 'http-status-codes';
 import { GridLoader as Loader } from 'halogen';
 
 import MyButton from '../utils/MyButton';
@@ -22,10 +21,8 @@ export default class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            email: '',
             errors: [],
-            inProgress: false,
-            password: ''
+            inProgress: false
         };
     }
 
@@ -42,7 +39,8 @@ export default class Login extends Component {
     }
 
     handleError(error) {
-        const { message } = error;
+        const { code, message } = error;
+        console.error(code, message);
 
         this.closePreviousErrors();
 
@@ -61,23 +59,6 @@ export default class Login extends Component {
         this.setState({ inProgress: true });
 
         firebase.auth().signInWithPopup(provider).
-        then((userRecord) => {
-            const { uid } = userRecord.user;
-
-            return fetch('/api/user/unauth/register-by-provider', {
-                body: JSON.stringify({ uid }),
-                headers: { 'Content-Type': 'application/json' },
-                method: 'POST'
-            }).
-            then((response) => {
-                const { status } = response;
-                if (status >= httpStatus.BAD_REQUEST) {
-                    Alerts.createWarningAlert('Failure in registering user in database. Available features are limited. Please, try to login again later.');
-                }
-
-                return null;
-            });
-        }).
         then(() => {
             this.setState({ inProgress: false });
             this.props.router.push('/');

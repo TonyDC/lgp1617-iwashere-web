@@ -11,7 +11,7 @@ router.use('/example', require('./example'));
 // User-related endpoints
 router.use('/user', require('./user'));
 
-// POI-related endpoints
+// User-related endpoints
 router.use('/poi', require('./poi'));
 
 // No API endpoint found

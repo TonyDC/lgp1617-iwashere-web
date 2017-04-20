@@ -3,11 +3,9 @@
 const httpCodes = require('http-status-codes');
 const firebaseAdmin = require('firebase-admin');
 
-const AUTH_BODY_LENGTH = 2,
-    AUTH_TYPE_INDEX = 0,
-    TOKEN_INDEX = 1;
-
-const ELEMENT_NOT_FOUND_ARRAY = -1;
+const authBodyLength = 2,
+    authTypeIndex = 0,
+    tokenIndex = 1;
 
 /**
  * Fireabse Authentication ExpressJS middleware
@@ -29,30 +27,21 @@ function firebaseAuth (req, res, next) {
     }
 
     const authArray = authorization.split(' ');
-    if (authArray.length !== AUTH_BODY_LENGTH || authArray[AUTH_TYPE_INDEX].trim() !== 'Bearer') {
+    if (authArray.length !== authBodyLength || authArray[authTypeIndex].trim() !== 'Bearer') {
         res.sendStatus(httpCodes.UNAUTHORIZED).end();
 
         return;
     }
 
-    const token = authArray[TOKEN_INDEX].trim();
+    const token = authArray[tokenIndex].trim();
     firebaseAdmin.auth().verifyIdToken(token).
     then((decodedToken) => {
         req.auth = { token: decodedToken };
         next();
     }).
     catch((error) => {
-        // If 'next' is different than 'route', it is considered as an error and the error handler is invoked.
-        const { code } = error.errorInfo;
-
-        // Check https://firebase.google.com/docs/auth/admin/errors
-        if (['auth/operation-not-allowed', 'auth/invalid-credential', 'auth/project-not-found', 'auth/insufficient-permission', 'auth/internal-error'].indexOf(code) !== ELEMENT_NOT_FOUND_ARRAY) {
-            return next(error);
-        }
-
-        res.sendStatus(httpCodes.UNAUTHORIZED).end();
-
-        return null;
+        console.error(error);
+        res.sendStatus(httpCodes.INTERNAL_SERVER_ERROR).end();
     });
 }
 
