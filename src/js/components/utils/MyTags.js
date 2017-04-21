@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
-import { Col } from 'react-bootstrap';
+import { Component } from 'react';
+// import React, { Component } from 'react';
+// import { Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 // import TagsInput from 'react-tagsinput';
 
@@ -41,10 +42,7 @@ export default class MyTags extends Component {
     } */
 
     render() {
-        // if (this.props.tags.length === EMPTY)
-        return (
-            <Col xs={12} mdOffset={2} md={8} lgOffset={2} lg={8}/>
-        );
+        return null;
 
         // return <TagsInput value={this.state.tags} onChange={this.handleChange} />;
     }

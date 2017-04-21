@@ -33,10 +33,6 @@ export default class MyRater extends Component {
             urlGet += `/${this.props.routeId}`;
         }
 
-        if (this.props.user) {
-            this.getUserRating();
-        }
-
         fetch(urlGet, {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
@@ -46,7 +42,8 @@ export default class MyRater extends Component {
         }).
         then((response) => {
             const ratingInfo = {};
-            ratingInfo.rating = parseInt(response.rating, DECIMAL_BASE);
+            ratingInfo.rating = parseFloat(response.rating);
+            ratingInfo.ratings = parseInt(response.ratings, DECIMAL_BASE);
             this.setState({ ratingInfo });
         });
 
@@ -118,7 +115,8 @@ export default class MyRater extends Component {
             userRating =
                 <Col xs={12} md={12} lg={12}>
                     <Rater total={MAX_RATING_SCALE} rating={this.state.ratingInfo.userRating} onRate={this.updateRating.bind(this)}/>
-                    <span className="rating-description"> Your rating</span>
+                    <span className="rating-description"> {this.state.ratingInfo.userRating}/{MAX_RATING_SCALE}</span>
+                    <span className="rating-description"><small>Your evaluation</small></span>
                 </Col>;
         }
 
@@ -127,7 +125,8 @@ export default class MyRater extends Component {
                 <Row className="show-grid">
                     <Col xs={12} md={12} lg={12}>
                         <Rater interactive={false} total={MAX_RATING_SCALE} rating={this.state.ratingInfo.rating} />
-                        <span className="rating-description"> {this.state.ratingInfo.rating.toFixed(RATING_PRECISION)} stars</span>
+                        <span className="rating-description"> {this.state.ratingInfo.rating.toFixed(RATING_PRECISION)}/{MAX_RATING_SCALE}</span>
+                        <span className="rating-description"><small>{this.state.ratingInfo.ratings} evaluations </small></span>
                     </Col>
                     {userRating}
                 </Row>
