@@ -20,7 +20,9 @@ module.exports.getPOITags = (id) => {
 
 module.exports.getPOIPosts = (id, offset, limit) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT * FROM posts WHERE poi_id = :id ORDER BY createdAt LIMIT TO :limit OFFSET :offset`, {
+    return db.query(`WITH all_media AS (SELECT * FROM images UNION SELECT * FROM videos UNION SELECT * FROM audio)
+    SELECT * FROM posts INNER JOIN contents ON posts.content_id = contents.id INNER JOIN all_media ON contents.id = all_media.content_id
+    WHERE poi_id = :id ORDER BY posts."createdAt" LIMIT :limit OFFSET :offset`, {
         replacements: {
             id,
             limit,

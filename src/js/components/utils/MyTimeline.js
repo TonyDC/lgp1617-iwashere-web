@@ -24,11 +24,7 @@ export default class MyTimeline extends Component {
     }
 
     fetchMedia() {
-        fetch(this.props.url, {
-            body: {
-                limit: LIMIT,
-                offset: this.state.userMediaOffset
-            },
+        fetch(`${this.props.url}/${this.state.mediaOffset}/${LIMIT}`, {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
         }).
@@ -37,6 +33,7 @@ export default class MyTimeline extends Component {
         }).
         then((response) => {
 
+            console.log(response);
             const media = this.state.media.concat(this.getMedia(response));
 
             const mediaOffset = this.state.mediaOffset + LIMIT;
@@ -55,7 +52,7 @@ export default class MyTimeline extends Component {
         let previousTimeStamp = null;
         let key = 0;
         media.forEach((mediaEntry) => {
-            const date = new Date(mediaEntry.time);
+            const date = new Date(mediaEntry.createdAt);
 
             if (date.getMonth() !== previousTimeStamp) {
                 previousTimeStamp = date.getMonth();
@@ -69,7 +66,7 @@ export default class MyTimeline extends Component {
                     <div className="tl-circ" />
                     <div className="timeline-panel">
                         <div className="tl-heading">
-                            <p><small className="text-muted"><i className="glyphicon glyphicon-time"/> { mediaEntry.time }</small></p>
+                            <p><small className="text-muted"><i className="glyphicon glyphicon-time"/> { Moment(date).format('MMMM Do YYYY, h:mm') }</small></p>
                         </div>
                         <div className="tl-body">
                             <p><img src={ mediaEntry.url }/></p>

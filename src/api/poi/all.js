@@ -217,11 +217,10 @@ router.get('/range/:minLat/:maxLat/:minLng/:maxLng', (req, res, next) => {
     });
 });
 
-router.get('/posts/:id', (req, res, next) => {
-    const { id } = req.params;
-    const { limit, offset } = req.body;
+router.get('/posts/:id/:offset/:limit', (req, res, next) => {
+    const { id, offset, limit } = req.params;
 
-    if (!id || isNaN(parseInt(id, DECIMAL_BASE)) || !limit || isNaN(parseInt(limit, DECIMAL_BASE)) || !offset || isNaN(parseInt(offset, DECIMAL_BASE))) {
+    if (!id || isNaN(parseInt(id, DECIMAL_BASE)) || !limit || !offset || isNaN(parseInt(offset, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
@@ -229,9 +228,9 @@ router.get('/posts/:id', (req, res, next) => {
 
     const { poiDB } = db;
     poiDB.getPOIPosts(id, offset, limit).
-    then((poi) => {
-        if (poi && poi.length > NO_ELEMENT_SIZE) {
-            res.json(poi[ZERO_INDEX]).end();
+    then((posts) => {
+        if (posts) {
+            res.json(posts).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
         }
