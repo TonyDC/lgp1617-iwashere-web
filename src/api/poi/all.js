@@ -229,6 +229,7 @@ router.get('/posts/:id/:offset/:limit', (req, res, next) => {
     const { poiDB } = db;
     poiDB.getPOIPosts(id, offset, limit).
     then((posts) => {
+
         if (posts) {
             res.json(posts).end();
         } else {

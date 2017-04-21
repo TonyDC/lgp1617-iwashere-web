@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import { Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import Moment from 'moment';
+import { GridLoader as Loader } from 'halogen';
+import InfiniteScroll from 'react-infinite-scroller';
 
 import 'styles/timeline.scss';
 
-const LIMIT = 6;
+const LIMIT = 10;
 const EMPTY = 0;
 
 export default class MyTimeline extends Component {
@@ -14,6 +16,7 @@ export default class MyTimeline extends Component {
         super(props);
 
         this.state = {
+            hasMoreItems: true,
             media: [],
             mediaOffset: 0
         };
@@ -24,6 +27,11 @@ export default class MyTimeline extends Component {
     }
 
     fetchMedia() {
+        console.log('ll');
+        if (!this.state.hasMoreItems) {
+            return;
+        }
+
         fetch(`${this.props.url}/${this.state.mediaOffset}/${LIMIT}`, {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
@@ -32,13 +40,12 @@ export default class MyTimeline extends Component {
             return response.json();
         }).
         then((response) => {
-
-            console.log(response);
-            const media = this.state.media.concat(this.getMedia(response));
-
-            const mediaOffset = this.state.mediaOffset + LIMIT;
+            const newMedia = this.getMedia(response);
+            const media = this.state.media.concat(newMedia);
+            const mediaOffset = this.state.mediaOffset + newMedia.length;
 
             this.setState({
+                hasMoreItems: newMedia.length === LIMIT,
                 media,
                 mediaOffset
             });
@@ -59,6 +66,13 @@ export default class MyTimeline extends Component {
                 mediaList.push(<li key={key++}><div className="tldate">{ Moment(date).format("MMM") } { date.getFullYear()} </div></li>);
             }
 
+            let mediaComponent = null;
+            if (mediaEntry.type === "IMG") {
+                mediaComponent = <img src={ mediaEntry.url }/>;
+            } else if (mediaEntry.type === "VID") {
+                mediaComponent = <iframe src={ mediaEntry.url }/>;
+            }
+
             mediaList.push(
                 <li className={`timeline${itemClassInverted
                     ? '-inverted'
@@ -66,10 +80,13 @@ export default class MyTimeline extends Component {
                     <div className="tl-circ" />
                     <div className="timeline-panel">
                         <div className="tl-heading">
-                            <p><small className="text-muted"><i className="glyphicon glyphicon-time"/> { Moment(date).format('MMMM Do YYYY, h:mm') }</small></p>
+                            <p><small className="text-muted pull-right"><i className="glyphicon glyphicon-time"/> { Moment(date).format('MMMM Do YYYY, h:mm') }</small></p>
+                            <p><small className="text-muted"><i className="glyphicon glyphicon-tag"/> { mediaEntry.tags }</small></p>
                         </div>
                         <div className="tl-body">
-                            <p><img src={ mediaEntry.url }/></p>
+                            {mediaComponent}
+
+                            <p>{mediaEntry.description}</p>
                         </div>
                     </div>
                 </li>
@@ -88,11 +105,23 @@ export default class MyTimeline extends Component {
             );
         }
 
+        const loader =
+            <div className="hor-align vert-align">
+                <Loader color="#012935" className="loader"/>
+            </div>;
+
         return (
             <Col xs={12} mdOffset={2} md={8} lgOffset={2} lg={8}>
-                <ul className="timeline">
-                    {this.state.media}
-                </ul>
+                <InfiniteScroll
+                    pageStart={0}
+                    loadMore={this.fetchMedia.bind(this)}
+                    hasMore={this.state.hasMoreItems}
+                    loader={loader}
+                >
+                    <ul className="timeline">
+                        {this.state.media}
+                    </ul>
+                </InfiniteScroll>
             </Col>
         );
     }
