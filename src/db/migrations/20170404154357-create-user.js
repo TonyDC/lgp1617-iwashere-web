@@ -12,9 +12,8 @@ module.exports = {
     up: (queryInterface) => {
         return queryInterface.sequelize.query(`
             CREATE TABLE users (
-                id BIGSERIAL PRIMARY KEY,
+                user_id BIGSERIAL PRIMARY KEY,
                 uid TEXT NOT NULL,
-                role_id INTEGER NOT NULL REFERENCES roles(id),
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP
             );

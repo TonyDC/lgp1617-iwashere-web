@@ -12,7 +12,7 @@ module.exports = {
     up: (queryInterface) => {
         return queryInterface.sequelize.query(`
             CREATE TABLE poi_types (
-                id BIGSERIAL PRIMARY KEY,
+                poi_type_id BIGSERIAL PRIMARY KEY,
                 name TEXT NOT NULL UNIQUE,
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP

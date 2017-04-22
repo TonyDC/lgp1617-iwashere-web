@@ -12,7 +12,7 @@ module.exports = {
     up: (queryInterface) => {
         return queryInterface.sequelize.query(`
             CREATE TABLE roles (
-                id SERIAL PRIMARY KEY,
+                role_id SERIAL PRIMARY KEY,
                 name TEXT NOT NULL UNIQUE,
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP

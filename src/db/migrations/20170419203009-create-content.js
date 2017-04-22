@@ -12,11 +12,11 @@ module.exports = {
     up: (queryInterface) => {
         return queryInterface.sequelize.query(`
             CREATE TABLE contents (
-                id BIGSERIAL PRIMARY KEY,
+                content_id BIGSERIAL PRIMARY KEY,
                 url TEXT NOT NULL,
                 hash TEXT NOT NULL,
-                type INTEGER NOT NULL REFERENCES content_types(id) ON DELETE RESTRICT,
-                post BIGINT NOT NULL REFERENCES posts(id) ON DELETE RESTRICT,
+                content_type_id INTEGER NOT NULL REFERENCES content_types(content_type_id) ON DELETE RESTRICT,
+                post_id BIGINT NOT NULL REFERENCES posts(post_id) ON DELETE RESTRICT,
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP
             );

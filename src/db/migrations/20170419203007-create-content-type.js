@@ -12,7 +12,7 @@ module.exports = {
     up: (queryInterface) => {
         return queryInterface.sequelize.query(`
             CREATE TABLE content_types (
-                id SERIAL PRIMARY KEY,
+                content_type_id SERIAL PRIMARY KEY,
                 name TEXT NOT NULL UNIQUE,
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP

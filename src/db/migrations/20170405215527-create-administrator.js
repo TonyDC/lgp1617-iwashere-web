@@ -12,7 +12,7 @@ module.exports = {
     up: (queryInterface) => {
         return queryInterface.sequelize.query(`
             CREATE TABLE administrators (
-                id BIGSERIAL PRIMARY KEY,
+                administrator_id BIGSERIAL PRIMARY KEY,
                 uid TEXT NOT NULL,
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP

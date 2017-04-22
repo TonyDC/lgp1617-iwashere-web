@@ -20,16 +20,16 @@ module.exports = {
     up: (queryInterface) => {
         return queryInterface.sequelize.query(`
             CREATE TABLE pois (
-                id BIGSERIAL PRIMARY KEY,
+                poi_id BIGSERIAL PRIMARY KEY,
                 name TEXT NOT NULL,
                 description TEXT NOT NULL,
                 address TEXT NOT NULL,
                 text TEXT NOT NULL,
                 latitude DOUBLE PRECISION NOT NULL,
                 longitude DOUBLE PRECISION NOT NULL,
-                type BIGINT NOT NULL REFERENCES poi_types(id) ON DELETE RESTRICT,
-                parent BIGINT REFERENCES pois (id) CHECK (parent IS NULL OR parent != id),
-                content_editor BIGINT REFERENCES content_editors(id) NOT NULL,
+                poi_type_id BIGINT NOT NULL REFERENCES poi_types(poi_type_id) ON DELETE RESTRICT,
+                parent_id BIGINT REFERENCES pois (poi_id) CHECK (parent_id IS NULL OR parent_id != poi_id),
+                content_editor BIGINT REFERENCES content_editors(content_editor_id) NOT NULL,
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP
             );
