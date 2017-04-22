@@ -59,8 +59,8 @@ export default class POIDetail extends Component {
 
         search = search.trim();
         this.setState({ search });
-        if (search) {
-            return 'success';
+        if (!search) {
+            return 'error';
         }
 
         const geoOptions = {
@@ -71,10 +71,29 @@ export default class POIDetail extends Component {
         navigator.geolocation.getCurrentPosition((position) => {
             const { latitude, longitude } = position.coords;
 
-            fetch('/api/poi/search?')
+            fetch(`/api/poi/search?query=${search}&lat=${latitude}&lng=${longitude}`, {
+                headers: { 'Accept': 'application/json' },
+                method: 'GET'
+            }).
+            then((response) => {
+                if (response.code <= 400) {
+                    return Promise.reject(new Error(response));
+                }
+
+                return response.json();
+            }).
+            then((json) => {
+                this.setState({ results: json });
+            }).
+            catch((error) => {
+                console.log(error);
+            });
+
         }, (error) => {
+            console.log(error);
 
         }, geoOptions);
+
     }
 
     render() {
