@@ -1,109 +1,65 @@
 'use strict';
 
+// language=POSTGRES-PSQL
 module.exports = {
     down: (queryInterface) => {
-        // language=POSTGRES-PSQL
-        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_pois_trigger ON pois`).
-        then(() => {
-            return queryInterface.removeIndex('pois', 'poi_text_index');
-        }).
-        then(() => {
-            return queryInterface.sequelize.query(`DROP TRIGGER insert_poi_text_trigger ON pois`);
-        }).
-        then(() => {
-            return queryInterface.sequelize.query(`DROP TRIGGER update_poi_text_trigger ON pois`);
-        }).
-        then(() => {
-            return queryInterface.sequelize.query(`DROP FUNCTION poi_description_trigger_body()`);
-        }).
-        then(() => {
-            return queryInterface.removeIndex('pois', 'poi_latitude_longitude_index');
-        }).
-        then(() => {
-            return queryInterface.dropTable('pois');
-        });
+
+        return queryInterface.sequelize.query(`
+            DROP TRIGGER timestamp_pois_trigger ON pois;
+            DROP TRIGGER insert_poi_text_trigger ON pois;
+            DROP TRIGGER update_poi_text_trigger ON pois;
+            DROP FUNCTION poi_description_trigger_body();
+            
+            DROP INDEX poi_text_index;
+            DROP INDEX poi_latitude_longitude_index;
+            
+            DROP TABLE pois;
+        `);
     },
-    up: (queryInterface, Sequelize) => {
-        return queryInterface.createTable('pois', {
-            address: {
-                allowNull: false,
-                type: Sequelize.STRING
-            },
-            createdAt: {
-                allowNull: false,
-                type: Sequelize.DATE
-            },
-            description: {
-                allowNull: false,
-                type: Sequelize.STRING
-            },
-            id: {
-                allowNull: false,
-                autoIncrement: true,
-                primaryKey: true,
-                type: Sequelize.BIGINT
-            },
-            latitude: {
-                allowNull: false,
-                type: Sequelize.REAL
-            },
-            longitude: {
-                allowNull: false,
-                type: Sequelize.REAL
-            },
-            name: {
-                allowNull: false,
-                type: Sequelize.STRING
-            },
-            text: {
-                allowNull: false,
-                type: Sequelize.STRING
-            },
-            updatedAt: { type: Sequelize.DATE }
-        }).
-        then(() => {
-            // language=POSTGRES-SQL
-            return queryInterface.sequelize.query(`CREATE INDEX poi_latitude_longitude_index ON pois USING BTREE (latitude, longitude)`);
-        }).
-        then(() => {
-            // language=POSTGRES-PSQL
-            return queryInterface.sequelize.query(`
-                CREATE FUNCTION poi_description_trigger_body() RETURNS trigger AS
-                        $body$
-                        BEGIN
-                            NEW.text := NEW.name || ' ' || NEW.description || ' ' || NEW.address;
-                            RETURN NEW;
-                        END;
-                        $body$ LANGUAGE plpgsql`);
-        }).
-        then(() => {
-            // language=POSTGRES-PSQL
-            return queryInterface.sequelize.query(`
-                CREATE TRIGGER update_poi_text_trigger
+
+    up: (queryInterface) => {
+        return queryInterface.sequelize.query(`
+            CREATE TABLE pois (
+                id BIGSERIAL PRIMARY KEY,
+                name TEXT NOT NULL,
+                description TEXT NOT NULL,
+                address TEXT NOT NULL,
+                text TEXT NOT NULL,
+                latitude DOUBLE PRECISION NOT NULL,
+                longitude DOUBLE PRECISION NOT NULL,
+                type BIGINT NOT NULL REFERENCES poi_types(id) ON DELETE RESTRICT,
+                parent BIGINT REFERENCES pois (id) CHECK (parent IS NULL OR parent != id),
+                content_editor BIGINT REFERENCES content_editors(id) NOT NULL,
+                created_at TIMESTAMP NOT NULL,
+                updated_at TIMESTAMP
+            );
+        
+            CREATE INDEX poi_latitude_longitude_index ON pois USING BTREE (latitude, longitude);
+            CREATE INDEX poi_text_index ON pois USING GIN (to_tsvector('portuguese', text));
+            
+            CREATE FUNCTION poi_description_trigger_body() RETURNS trigger AS
+                $body$
+                BEGIN
+                    NEW.text := NEW.name || ' ' || NEW.description || ' ' || NEW.address;
+                    RETURN NEW;
+                END;
+                $body$ LANGUAGE plpgsql;
+                        
+            CREATE TRIGGER update_poi_text_trigger
                 BEFORE UPDATE ON pois
                 FOR EACH ROW
                 WHEN (OLD.name != NEW.name OR OLD.description != NEW.description OR OLD.address != NEW.address)
-                EXECUTE PROCEDURE poi_description_trigger_body()`);
-        }).
-        then(() => {
-            // language=POSTGRES-PSQL
-            return queryInterface.sequelize.query(`
-                CREATE TRIGGER insert_poi_text_trigger
+                EXECUTE PROCEDURE poi_description_trigger_body();
+                
+            CREATE TRIGGER insert_poi_text_trigger
                 BEFORE INSERT ON pois
                 FOR EACH ROW
-                EXECUTE PROCEDURE poi_description_trigger_body()`);
-        }).
-        then(() => {
-            // language=POSTGRES-SQL
-            return queryInterface.sequelize.query(`CREATE INDEX poi_text_index ON pois USING GIN (to_tsvector('portuguese', text))`);
-        }).
-        then(() => {
-            // language=POSTGRES-PSQL
-            return queryInterface.sequelize.query(`
-                CREATE TRIGGER timestamp_pois_trigger
+                EXECUTE PROCEDURE poi_description_trigger_body();
+                
+            CREATE TRIGGER timestamp_pois_trigger
                 BEFORE INSERT OR UPDATE ON pois
                 FOR EACH ROW
-                EXECUTE PROCEDURE register_dates_trigger_body()`);
-        });
+                EXECUTE PROCEDURE register_dates_trigger_body();
+        `);
     }
 };

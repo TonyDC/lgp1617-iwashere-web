@@ -1,25 +1,27 @@
 'use strict';
 
-        // language=POSTGRES-PSQL
+// language=POSTGRES-PSQL
 module.exports = {
     down: (queryInterface) => {
         return queryInterface.sequelize.query(`
-            DROP TRIGGER timestamp_administrators_trigger ON administrators;
-            DROP TABLE administrators;
+            DROP TRIGGER timestamp_posts_trigger ON posts;
+            DROP TABLE posts;
         `);
     },
 
     up: (queryInterface) => {
         return queryInterface.sequelize.query(`
-            CREATE TABLE administrators (
+            CREATE TABLE posts (
                 id BIGSERIAL PRIMARY KEY,
-                uid TEXT NOT NULL,
+                description TEXT NOT NULL,
+                poi_id BIGINT NOT NULL REFERENCES pois(id) ON DELETE RESTRICT,
+                user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP
             );
             
-            CREATE TRIGGER timestamp_administrators_trigger
-                BEFORE INSERT OR UPDATE ON administrators
+            CREATE TRIGGER timestamp_posts_trigger
+                BEFORE INSERT OR UPDATE ON posts
                 FOR EACH ROW
                 EXECUTE PROCEDURE register_dates_trigger_body();
         `);

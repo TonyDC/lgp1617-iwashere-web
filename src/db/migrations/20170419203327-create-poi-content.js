@@ -1,51 +1,30 @@
 'use strict';
 
+// language=POSTGRES-PSQL
 module.exports = {
     down: (queryInterface) => {
-        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_poi_content_trigger ON poi_content`).
-        then(() => {
-            queryInterface.dropTable('poi_content');
-        });
+        return queryInterface.sequelize.query(`
+            DROP TRIGGER timestamp_poi_contents_trigger ON poi_contents;
+            DROP TABLE poi_contents;
+        `);
     },
-    up: (queryInterface, Sequelize) => {
-        return queryInterface.createTable('poi_content', {
-            content_id: {
-                onDelete: 'cascade',
-                onUpdate: 'cascade',
-                references: {
-                    key: 'id',
-                    model: 'contents'
-                },
-                type: Sequelize.BIGINT
-            },
-            createdAt: {
-                allowNull: false,
-                type: Sequelize.DATE
-            },
-            id: {
-                allowNull: false,
-                autoIncrement: true,
-                primaryKey: true,
-                type: Sequelize.BIGINT
-            },
-            poi_id: {
-                onDelete: 'cascade',
-                onUpdate: 'cascade',
-                references: {
-                    key: 'id',
-                    model: 'pois'
-                },
-                type: Sequelize.BIGINT
-            },
-            updatedAt: { type: Sequelize.DATE }
-        }).
-        then(() => {
-            // language=POSTGRES-PSQL
-            return queryInterface.sequelize.query(`
-                CREATE TRIGGER timestamp_poi_content_trigger
-                BEFORE INSERT OR UPDATE ON poi_content
+
+    up: (queryInterface) => {
+        return queryInterface.sequelize.query(`
+            CREATE TABLE poi_contents (
+                id BIGSERIAL PRIMARY KEY,
+                url TEXT NOT NULL,
+                description TEXT NOT NULL,
+                type INTEGER NOT NULL REFERENCES content_types(id) ON DELETE RESTRICT,
+                poi BIGINT NOT NULL REFERENCES pois(id) ON DELETE RESTRICT,
+                created_at TIMESTAMP NOT NULL,
+                updated_at TIMESTAMP
+            );
+            
+            CREATE TRIGGER timestamp_poi_contents_trigger
+                BEFORE INSERT OR UPDATE ON poi_contents
                 FOR EACH ROW
-                EXECUTE PROCEDURE register_dates_trigger_body()`);
-        });
+                EXECUTE PROCEDURE register_dates_trigger_body();
+        `);
     }
 };

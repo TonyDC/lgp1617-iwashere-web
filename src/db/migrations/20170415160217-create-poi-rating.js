@@ -1,69 +1,31 @@
 'use strict';
 
-const ZERO_RATING = 0;
-const ONE_RATING = 1;
-const TWO_RATING = 2;
-const THREE_RATING = 3;
-const FOUR_RATING = 4;
-const FIVE_RATING = 5;
-const RATING_VALUES = [ZERO_RATING, ONE_RATING, TWO_RATING, THREE_RATING, FOUR_RATING, FIVE_RATING];
-
+// language=POSTGRES-PSQL
 module.exports = {
     down: (queryInterface) => {
-        // language=POSTGRES-PSQL
-        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_poi_ratings_trigger ON poi_ratings`).
-        then(() => {
-            return queryInterface.dropTable('poi_ratings');
-        });
+        return queryInterface.sequelize.query(`
+            DROP TRIGGER timestamp_poi_ratings_trigger ON poi_ratings;
+            DROP TABLE poi_ratings;
+        `);
     },
-    up: (queryInterface, Sequelize) => {
-        return queryInterface.createTable('poi_ratings', {
-            createdAt: {
-                allowNull: false,
-                type: Sequelize.DATE
-            },
-            id: {
-                allowNull: false,
-                autoIncrement: true,
-                primaryKey: true,
-                type: Sequelize.BIGINT
-            },
-            poi_id: {
-                allowNull: false,
-                onDelete: 'cascade',
-                onUpdate: 'cascade',
-                references: {
-                    key: 'id',
-                    model: 'pois'
-                },
-                type: Sequelize.BIGINT,
-                unique: 'uniquePOIRating'
-            },
-            rating: {
-                allowNull: false,
-                type: Sequelize.INTEGER,
-                values: RATING_VALUES
-            },
-            updatedAt: { type: Sequelize.DATE },
-            user_id: {
-                allowNull: false,
-                onDelete: 'cascade',
-                onUpdate: 'cascade',
-                references: {
-                    key: 'uid',
-                    model: 'users'
-                },
-                type: Sequelize.STRING,
-                unique: 'uniquePOIRating'
-            }
-        }).
-        then(() => {
-            // language=POSTGRES-PSQL
-            return queryInterface.sequelize.query(`
-                CREATE TRIGGER timestamp_poi_ratings_trigger
+
+    up: (queryInterface) => {
+        return queryInterface.sequelize.query(`
+            CREATE TABLE poi_ratings (
+                poi_id BIGINT NOT NULL REFERENCES pois(id) ON DELETE RESTRICT,
+                user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+                rating INTEGER NOT NULL,
+                created_at TIMESTAMP NOT NULL,
+                updated_at TIMESTAMP,
+                
+                CONSTRAINT rating_poi_rating_constraint CHECK (rating IN (0, 1, 2, 3, 4, 5)),
+                CONSTRAINT poi_user_pk PRIMARY KEY (poi_id, user_id)
+            );
+        
+            CREATE TRIGGER timestamp_poi_ratings_trigger
                 BEFORE INSERT OR UPDATE ON poi_ratings
                 FOR EACH ROW
-                EXECUTE PROCEDURE register_dates_trigger_body()`);
-        });
+                EXECUTE PROCEDURE register_dates_trigger_body();
+        `);
     }
 };
