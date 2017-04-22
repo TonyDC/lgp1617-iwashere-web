@@ -137,7 +137,7 @@ export default class POIDetail extends Component {
     }
 
     render() {
-        let searchButton = <div>
+        let searchButton = <div className="hor-align vert-align">
             <Loader color="#012935" className="loader"/>
             <em>{ this.state.inProgress }</em>
         </div>;
@@ -147,7 +147,7 @@ export default class POIDetail extends Component {
 
         let resultsArea = null;
         const { results } = this.state;
-        if (results) {
+        if (results && !this.state.inProgress) {
             if (results.length > 0) {
                 resultsArea = results.map((el) => {
                     return <div>
