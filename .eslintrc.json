@@ -89,7 +89,7 @@
     ],
     "line-comment-position": "error",
     "linebreak-style": [
-      "off",
+      "error",
       "unix"
     ],
     "lines-around-comment": "error",
