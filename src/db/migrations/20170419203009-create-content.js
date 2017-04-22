@@ -14,6 +14,7 @@ module.exports = {
             CREATE TABLE contents (
                 id BIGSERIAL PRIMARY KEY,
                 url TEXT NOT NULL,
+                hash TEXT NOT NULL,
                 type INTEGER NOT NULL REFERENCES content_types(id) ON DELETE RESTRICT,
                 post BIGINT NOT NULL REFERENCES posts(id) ON DELETE RESTRICT,
                 created_at TIMESTAMP NOT NULL,
