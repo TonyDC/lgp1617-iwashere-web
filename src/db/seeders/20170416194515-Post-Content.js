@@ -2,11 +2,11 @@
 
 module.exports = {
     down: (queryInterface) => {
-        return queryInterface.bulkDelete('contents', null, {});
+        return queryInterface.bulkDelete('post_contents', null, {});
     },
     up: (queryInterface) => {
 
-        return queryInterface.bulkInsert('contents', [
+        return queryInterface.bulkInsert('post_contents', [
             {
                 content_type_id: 1,
                 hash: 'lskbfalhb324231ihdlsjffwe34',

@@ -4,14 +4,14 @@
 module.exports = {
     down: (queryInterface) => {
         return queryInterface.sequelize.query(`
-            DROP TRIGGER timestamp_contents_trigger ON contents;
-            DROP TABLE contents;
+            DROP TRIGGER timestamp_post_contents_trigger ON post_contents;
+            DROP TABLE post_contents;
         `);
     },
 
     up: (queryInterface) => {
         return queryInterface.sequelize.query(`
-            CREATE TABLE contents (
+            CREATE TABLE post_contents (
                 content_id BIGSERIAL PRIMARY KEY,
                 url TEXT NOT NULL,
                 hash TEXT NOT NULL,
@@ -21,8 +21,8 @@ module.exports = {
                 updated_at TIMESTAMP
             );
             
-            CREATE TRIGGER timestamp_contents_trigger
-                BEFORE INSERT OR UPDATE ON contents
+            CREATE TRIGGER timestamp_post_contents_trigger
+                BEFORE INSERT OR UPDATE ON post_contents
                 FOR EACH ROW
                 EXECUTE PROCEDURE register_dates_trigger_body();
         `);
