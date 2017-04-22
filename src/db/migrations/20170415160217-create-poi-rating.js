@@ -13,7 +13,7 @@ module.exports = {
         return queryInterface.sequelize.query(`
             CREATE TABLE poi_ratings (
                 poi_id BIGINT NOT NULL REFERENCES pois(poi_id) ON DELETE RESTRICT,
-                user_id BIGINT NOT NULL REFERENCES users(user_id) ON DELETE RESTRICT,
+                user_id TEXT NOT NULL REFERENCES users(uid) ON DELETE RESTRICT,
                 rating INTEGER NOT NULL,
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP,

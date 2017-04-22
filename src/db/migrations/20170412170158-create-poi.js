@@ -29,7 +29,7 @@ module.exports = {
                 longitude DOUBLE PRECISION NOT NULL,
                 poi_type_id BIGINT NOT NULL REFERENCES poi_types(poi_type_id) ON DELETE RESTRICT,
                 parent_id BIGINT REFERENCES pois (poi_id) CHECK (parent_id IS NULL OR parent_id != poi_id),
-                content_editor BIGINT REFERENCES content_editors(content_editor_id) NOT NULL,
+                content_editor_id TEXT REFERENCES content_editors(uid) NOT NULL,
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP
             );

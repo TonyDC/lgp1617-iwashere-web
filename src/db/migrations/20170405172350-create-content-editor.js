@@ -12,8 +12,8 @@ module.exports = {
     up: (queryInterface) => {
         return queryInterface.sequelize.query(`
             CREATE TABLE content_editors (
-                content_editor_id BIGSERIAL PRIMARY KEY,
-                uid TEXT NOT NULL,
+                -- content_editor_id BIGSERIAL PRIMARY KEY,
+                uid TEXT PRIMARY KEY,
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP
             );
