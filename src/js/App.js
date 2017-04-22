@@ -14,6 +14,7 @@ import Login from './components/user/Login';
 import Register from './components/user/Register';
 import PasswordReset from './components/user/PasswordReset';
 import POIDetail from './components/poi/POIDetail';
+import POISearch from './components/poi/POISearch';
 
 import UnauthRoutes from './routes/UnauthRoutes';
 
@@ -56,6 +57,7 @@ export default class App extends Component {
                 <Route path="/" component={ MainRoutes }>
                     <IndexRoute component={ Map } />
                     <Route path="poi/detail/:id" component={ POIDetail } />
+                    <Route path="poi/search" component={ POISearch } />
 
                     <Route path="user" component={ UnauthRoutes } onEnter={ this.redirectIfLoggedIn.bind(this) }>
                         <Route path="login" component={ Login }/>
