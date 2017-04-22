@@ -17,22 +17,21 @@ export default class MyTimeline extends Component {
 
         this.state = {
             hasMoreItems: true,
-            media: [],
-            mediaOffset: 0
+            posts: [],
+            postsOffset: 0
         };
     }
 
     componentDidMount() {
-        this.fetchMedia();
+        this.fetchPosts();
     }
 
-    fetchMedia() {
-        console.log('ll');
+    fetchPosts() {
         if (!this.state.hasMoreItems) {
             return;
         }
 
-        fetch(`${this.props.url}/${this.state.mediaOffset}/${LIMIT}`, {
+        fetch(`${this.props.url}/${this.state.postsOffset}/${LIMIT}`, {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
         }).
@@ -40,40 +39,40 @@ export default class MyTimeline extends Component {
             return response.json();
         }).
         then((response) => {
-            const newMedia = this.getMedia(response);
-            const media = this.state.media.concat(newMedia);
-            const mediaOffset = this.state.mediaOffset + newMedia.length;
+            const newPosts = this.getPosts(response);
+            const posts = this.state.posts.concat(newPosts);
+            const postsOffset = this.state.postsOffset + newPosts.length;
 
             this.setState({
-                hasMoreItems: newMedia.length === LIMIT,
-                media,
-                mediaOffset
+                hasMoreItems: newPosts.length === LIMIT,
+                posts,
+                postsOffset
             });
         });
     }
 
-    getMedia(media) {
-        const mediaList = [];
+    getPosts(posts) {
+        const postsList = [];
 
         let itemClassInverted = false;
         let previousTimeStamp = null;
         let key = 0;
-        media.forEach((mediaEntry) => {
-            const date = new Date(mediaEntry.createdAt);
+        posts.forEach((postEntry) => {
+            const date = new Date(postEntry.createdAt);
 
             if (date.getMonth() !== previousTimeStamp) {
                 previousTimeStamp = date.getMonth();
-                mediaList.push(<li key={key++}><div className="tldate">{ Moment(date).format("MMM") } { date.getFullYear()} </div></li>);
+                postsList.push(<li key={key++}><div className="tldate">{ Moment(date).format("MMM") } { date.getFullYear()} </div></li>);
             }
 
-            let mediaComponent = null;
-            if (mediaEntry.type === "IMG") {
-                mediaComponent = <img src={ mediaEntry.url }/>;
-            } else if (mediaEntry.type === "VID") {
-                mediaComponent = <iframe src={ mediaEntry.url }/>;
+            let postComponent = null;
+            if (postEntry.type === "IMG") {
+                postComponent = <img src={ postEntry.url }/>;
+            } else if (postEntry.type === "VID") {
+                postComponent = <iframe src={ postEntry.url }/>;
             }
 
-            mediaList.push(
+            postsList.push(
                 <li className={`timeline${itemClassInverted
                     ? '-inverted'
                     : ''}`} key={key++}>
@@ -81,12 +80,12 @@ export default class MyTimeline extends Component {
                     <div className="timeline-panel">
                         <div className="tl-heading">
                             <p><small className="text-muted pull-right"><i className="glyphicon glyphicon-time"/> { Moment(date).format('MMMM Do YYYY, h:mm') }</small></p>
-                            <p><small className="text-muted"><i className="glyphicon glyphicon-tag"/> { mediaEntry.tags }</small></p>
+                            <p><small className="text-muted"><i className="glyphicon glyphicon-tag"/> { postEntry.tags }</small></p>
                         </div>
                         <div className="tl-body">
-                            {mediaComponent}
+                            {postComponent}
 
-                            <p>{mediaEntry.description}</p>
+                            <p>{postEntry.description}</p>
                         </div>
                     </div>
                 </li>
@@ -95,11 +94,11 @@ export default class MyTimeline extends Component {
             itemClassInverted = !itemClassInverted;
         });
 
-        return mediaList;
+        return postsList;
     }
 
     render() {
-        if (this.state.media.length === EMPTY) {
+        if (this.state.posts.length === EMPTY) {
             return (
                 <Col xs={12} mdOffset={2} md={8} lgOffset={2} lg={8}/>
             );
@@ -114,12 +113,12 @@ export default class MyTimeline extends Component {
             <Col xs={12} mdOffset={2} md={8} lgOffset={2} lg={8}>
                 <InfiniteScroll
                     pageStart={0}
-                    loadMore={this.fetchMedia.bind(this)}
+                    loadMore={this.fetchPosts.bind(this)}
                     hasMore={this.state.hasMoreItems}
                     loader={loader}
                 >
                     <ul className="timeline">
-                        {this.state.media}
+                        {this.state.posts}
                     </ul>
                 </InfiniteScroll>
             </Col>

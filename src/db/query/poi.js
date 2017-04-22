@@ -47,10 +47,8 @@ module.exports.getPOIsWithin = (minLat, maxLat, minLng, maxLng) => {
 
 module.exports.getPOIMedia = (poiID) => {
     // language=POSTGRES-SQL
-    return db.query(`WITH poi_media AS (SELECT contents.id FROM contents INNER JOIN poi_content ON (contents.id = poi_content.content_id) WHERE poi_content.poi_id = :poiID)
-    (SELECT * FROM images INNER JOIN contents ON images.content_id=contents.id WHERE content_id IN (SELECT * FROM poi_media))
-    UNION 
-    (SELECT * FROM videos INNER JOIN contents ON videos.content_id=contents.id WHERE content_id IN (SELECT * FROM poi_media))`, {
+    return db.query(`SELECT * FROM contents INNER JOIN content_types 
+    ON contents.content_type = content_types.id WHERE content_id IN (SELECT content_id FROM poi_content WHERE poi_id = :poiID))`, {
         replacements: { poiID },
         type: db.QueryTypes.SELECT
     });
@@ -58,7 +56,7 @@ module.exports.getPOIMedia = (poiID) => {
 
 module.exports.getPOIRating = (poiID) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT AVG(rating) AS rating, COUNT(*) AS ratings FROM poi_ratings WHERE poi_id = :poiID`, {
+    return db.query(`SELECT AVG(rating) AS rating, COUNT(*) AS ratings FROM poi_ratings WHERE id IN (SELECT id, MAX("createdAt") FROM poi_ratings WHERE poi_id = :poiID GROUP BY user_id)`, {
         replacements: { poiID },
         type: db.QueryTypes.SELECT
     });
@@ -66,7 +64,7 @@ module.exports.getPOIRating = (poiID) => {
 
 module.exports.getPOIRatingByUser = (poiID, userID) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT rating FROM poi_ratings WHERE poi_id = :poiID AND user_id = :userID`, {
+    return db.query(`SELECT rating, MAX("createdAt") FROM poi_ratings WHERE poi_id = :poiID AND user_id = :userID`, {
         replacements: {
             poiID,
             userID
@@ -84,18 +82,6 @@ module.exports.addPOIRating = (poiID, userID, rating) => {
             userID
         },
         type: db.QueryTypes.INSERT
-    });
-};
-
-module.exports.updatePOIRating = (poiID, userID, rating) => {
-    // language=POSTGRES-SQL
-    return db.query(`UPDATE poi_ratings SET rating = :rating WHERE poi_id = :poiID AND user_id = :userID`, {
-        replacements: {
-            poiID,
-            rating,
-            userID
-        },
-        type: db.QueryTypes.UPDATE
     });
 };
 

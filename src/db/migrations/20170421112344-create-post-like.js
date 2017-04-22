@@ -28,7 +28,7 @@ module.exports = {
                     model: 'posts'
                 },
                 type: Sequelize.BIGINT,
-                unique: 'uniquePOIRating'
+                unique: 'uniquePostLike'
             },
             updatedAt: { type: Sequelize.DATE },
             user_id: {
@@ -40,7 +40,7 @@ module.exports = {
                     model: 'users'
                 },
                 type: Sequelize.STRING,
-                unique: 'uniquePOIRating'
+                unique: 'uniquePostLike'
             }
         }).
         then(() => {

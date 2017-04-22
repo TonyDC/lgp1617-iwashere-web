@@ -171,13 +171,7 @@ router.post('/rating', (req, res, next) => {
             results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE &&
             results[ONE_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE) {
 
-            return poiDB.getPOIRatingByUser(poiID, userID).then((result) => {
-                if (result && result.length > NO_ELEMENT_SIZE) {
-                    return poiDB.updatePOIRating(poiID, userID, rating);
-                }
-
-                return poiDB.addPOIRating(poiID, userID, rating);
-            }).
+            return poiDB.addPOIRating(poiID, userID, rating).
             then(() => {
                 res.end();
             });
@@ -208,30 +202,6 @@ router.get('/range/:minLat/:maxLat/:minLng/:maxLng', (req, res, next) => {
     then((rows) => {
         if (rows) {
             res.json(rows).end();
-        } else {
-            res.sendStatus(httpCodes.NO_CONTENT).end();
-        }
-    }).
-    catch((error) => {
-        next(error);
-    });
-});
-
-router.get('/posts/:id/:offset/:limit', (req, res, next) => {
-    const { id, offset, limit } = req.params;
-
-    if (!id || isNaN(parseInt(id, DECIMAL_BASE)) || !limit || !offset || isNaN(parseInt(offset, DECIMAL_BASE))) {
-        res.sendStatus(httpCodes.BAD_REQUEST).end();
-
-        return;
-    }
-
-    const { poiDB } = db;
-    poiDB.getPOIPosts(id, offset, limit).
-    then((posts) => {
-
-        if (posts) {
-            res.json(posts).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
         }
