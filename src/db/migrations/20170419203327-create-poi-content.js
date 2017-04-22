@@ -15,8 +15,8 @@ module.exports = {
                 id BIGSERIAL PRIMARY KEY,
                 url TEXT NOT NULL,
                 description TEXT NOT NULL,
-                type INTEGER NOT NULL REFERENCES content_types(id) ON DELETE RESTRICT,
-                poi BIGINT NOT NULL REFERENCES pois(id) ON DELETE RESTRICT,
+                type_id INTEGER NOT NULL REFERENCES content_types(id) ON DELETE RESTRICT,
+                poi_id BIGINT NOT NULL REFERENCES pois(id) ON DELETE RESTRICT,
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP
             );

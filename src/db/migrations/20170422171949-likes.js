@@ -4,26 +4,24 @@
 module.exports = {
     down: (queryInterface) => {
         return queryInterface.sequelize.query(`
-            DROP TRIGGER timestamp_poi_ratings_trigger ON poi_ratings;
-            DROP TABLE poi_ratings;
+            DROP TRIGGER timestamp_likes_trigger ON likes;
+            DROP TABLE likes;
         `);
     },
 
     up: (queryInterface) => {
         return queryInterface.sequelize.query(`
-            CREATE TABLE poi_ratings (
+            CREATE TABLE likes (
                 poi_id BIGINT NOT NULL REFERENCES pois(id) ON DELETE RESTRICT,
                 user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
-                rating INTEGER NOT NULL,
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP,
                 
-                CONSTRAINT rating_poi_rating_constraint CHECK (rating IN (0, 1, 2, 3, 4, 5)),
-                CONSTRAINT poi_ratings_poi_user_pk PRIMARY KEY (poi_id, user_id)
+                CONSTRAINT likes_poi_user_pk PRIMARY KEY (poi_id, user_id)
             );
-        
-            CREATE TRIGGER timestamp_poi_ratings_trigger
-                BEFORE INSERT OR UPDATE ON poi_ratings
+            
+            CREATE TRIGGER timestamp_likes_trigger
+                BEFORE INSERT OR UPDATE ON likes
                 FOR EACH ROW
                 EXECUTE PROCEDURE register_dates_trigger_body();
         `);
