@@ -20,20 +20,6 @@ module.exports.getPOITags = (id) => {
     });
 };
 
-module.exports.getPOIPosts = (id, offset, limit) => {
-    // language=POSTGRES-SQL
-    return db.query(`SELECT * 
-    FROM posts INNER JOIN post_contents ON post_contents.post_id = posts.post_id INNER JOIN content_types ON post_contents.content_type_id = content_types.content_type_id
-    WHERE poi_id = :id ORDER BY posts.created_at LIMIT :limit OFFSET :offset`, {
-        replacements: {
-            id,
-            limit,
-            offset
-        },
-        type: db.QueryTypes.SELECT
-    });
-};
-
 module.exports.getPOIsWithin = (minLat, maxLat, minLng, maxLng) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT * 
