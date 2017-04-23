@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Button } from 'react-bootstrap';
 import { GridLoader as Loader } from 'halogen';
 import TextField from 'material-ui/TextField';
 import Paper from 'material-ui/Paper';
@@ -7,11 +6,14 @@ import { List, ListItem } from 'material-ui/List';
 import Divider from 'material-ui/Divider';
 import RaisedButton from 'material-ui/RaisedButton';
 import ActionSearch from 'material-ui/svg-icons/action/search';
+import httpCodes from 'http-status-codes';
 
 import Alerts from '../utils/Alerts';
 
 import 'styles/panel.scss';
 import 'styles/utils.scss';
+
+const NO_ELEMENTS = 0;
 
 export default class POIDetail extends Component {
 
@@ -40,14 +42,6 @@ export default class POIDetail extends Component {
         this.setState({ search: event.target.value });
     }
 
-    getValidationState() {
-        let { search } = this.state;
-
-        /*
-         TODO change
-         */
-    }
-
     performSearch(query, lat, lng) {
         if (!query || typeof query !== 'string') {
             throw new Error('Bad query parameter');
@@ -62,7 +56,7 @@ export default class POIDetail extends Component {
             method: 'GET'
         }).
         then((response) => {
-            if (response.code <= 400) {
+            if (response.status >= httpCodes.BAD_REQUEST) {
                 return Promise.reject(new Error(response));
             }
 
@@ -106,14 +100,12 @@ export default class POIDetail extends Component {
                     results: json.results
                 });
             }).
-            catch((error) => {
+            catch(() => {
                 this.setState({ inProgress: false });
-                console.error(error);
                 Alerts.createErrorAlert('Error while searching for POIs');
             });
 
-        }, (err) => {
-            console.log(err);
+        }, () => {
             Alerts.createInfoAlert('Error while retrieving current location');
 
             this.setState({ inProgress: 'Searching...' });
@@ -124,9 +116,8 @@ export default class POIDetail extends Component {
                     results: json.results
                 });
             }).
-            catch((error) => {
+            catch(() => {
                 this.setState({ inProgress: false });
-                console.error(error);
                 Alerts.createErrorAlert('Error while searching for POIs');
             });
         }, geoOptions);
@@ -148,7 +139,7 @@ export default class POIDetail extends Component {
         let resultsArea = null;
         const { results } = this.state;
         if (results && !this.state.inProgress) {
-            if (results.length > 0) {
+            if (results.length > NO_ELEMENTS) {
                 resultsArea = <List>
                     { results.map((element, index) => {
                         return (
@@ -192,7 +183,7 @@ export default class POIDetail extends Component {
                                 value={ this.state.search }
                                 onChange={ this.handleText.bind(this) }
                                 fullWidth
-                                errorText={ this.getValidationState() }
+                                errorText={ null }
                             />
                             <br />
                             { resultsArea }
