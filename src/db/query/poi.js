@@ -4,7 +4,7 @@ const db = require('../index');
 
 module.exports.getPOIDetailByID = (id) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT * FROM pois WHERE id = :id`, {
+    return db.query(`SELECT * FROM pois WHERE poi_id = :id`, {
         replacements: { id },
         type: db.QueryTypes.SELECT
     });
@@ -37,7 +37,7 @@ module.exports.getPOIsWithin = (minLat, maxLat, minLng, maxLng) => {
 
 module.exports.getPOIMedia = (poiID) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT * 
+    return db.query(`SELECT *, name AS type 
     FROM poi_contents INNER JOIN content_types ON poi_contents.content_type_id = content_types.content_type_id
     WHERE poi_contents.poi_id = :poiID`, {
         replacements: { poiID },
@@ -47,9 +47,9 @@ module.exports.getPOIMedia = (poiID) => {
 
 module.exports.getPOIRating = (poiID) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT AVG(rating), COUNT(*) as ratings 
-    FROM (SELECT * FROM poi_ratings WHERE poi_id = poiID
-    ORDER BY created_at DESC LIMIT 1) current_ratings;`, {
+    return db.query(`SELECT AVG(rating) AS rating, COUNT(*) AS ratings 
+    FROM (SELECT DISTINCT ON (user_id) * FROM poi_ratings WHERE poi_id = :poiID
+    ORDER BY user_id, created_at DESC) current_ratings`, {
         replacements: { poiID },
         type: db.QueryTypes.SELECT
     });
@@ -58,7 +58,7 @@ module.exports.getPOIRating = (poiID) => {
 module.exports.getPOIRatingByUser = (poiID, userID) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT rating FROM poi_ratings 
-    WHERE poi_id = :poiID AND user_id = userID 
+    WHERE poi_id = :poiID AND user_id = :userID 
     ORDER BY created_at DESC LIMIT 1`, {
         replacements: {
             poiID,
