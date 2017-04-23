@@ -12,12 +12,12 @@ module.exports = {
     up: (queryInterface) => {
         return queryInterface.sequelize.query(`
             CREATE TABLE likes (
-                poi_id BIGINT NOT NULL REFERENCES pois(poi_id) ON DELETE RESTRICT,
+                post_id BIGINT NOT NULL REFERENCES posts(post_id) ON DELETE RESTRICT,
                 user_id TEXT NOT NULL REFERENCES users(uid) ON DELETE RESTRICT,
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP,
                 
-                CONSTRAINT likes_poi_user_pk PRIMARY KEY (poi_id, user_id)
+                CONSTRAINT likes_poi_user_pk PRIMARY KEY (post_id, user_id)
             );
             
             CREATE TRIGGER timestamp_likes_trigger

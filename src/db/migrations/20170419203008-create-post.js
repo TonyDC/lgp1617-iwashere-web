@@ -8,7 +8,6 @@ module.exports = {
             DROP TABLE posts;
         `);
     },
-
     up: (queryInterface) => {
         return queryInterface.sequelize.query(`
             CREATE TABLE posts (

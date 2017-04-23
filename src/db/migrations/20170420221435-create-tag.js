@@ -2,37 +2,24 @@
 
 module.exports = {
     down: (queryInterface) => {
-        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_tag_trigger ON tags`).
+        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_tags_trigger ON tags`).
         then(() => {
             queryInterface.dropTable('tags');
         });
     },
-    up: (queryInterface, Sequelize) => {
-        return queryInterface.createTable('tags', {
-            createdAt: {
-                allowNull: false,
-                type: Sequelize.DATE
-            },
-            id: {
-                allowNull: false,
-                autoIncrement: true,
-                primaryKey: true,
-                type: Sequelize.BIGINT
-            },
-            name: {
-                allowNull: true,
-                type: Sequelize.STRING,
-                unique: true
-            },
-            updatedAt: { type: Sequelize.DATE }
-        }).
-        then(() => {
-            // language=POSTGRES-PSQL
-            return queryInterface.sequelize.query(`
-                CREATE TRIGGER timestamp_tag_trigger
+    up: (queryInterface) => {
+        return queryInterface.sequelize.query(`
+            CREATE TABLE tags (
+                tag_id SERIAL PRIMARY KEY,
+                name TEXT NOT NULL UNIQUE,
+                created_at TIMESTAMP NOT NULL,
+                updated_at TIMESTAMP
+            );
+        
+            CREATE TRIGGER timestamp_tags_trigger
                 BEFORE INSERT OR UPDATE ON tags
                 FOR EACH ROW
-                EXECUTE PROCEDURE register_dates_trigger_body()`);
-        });
+                EXECUTE PROCEDURE register_dates_trigger_body();
+        `);
     }
 };
