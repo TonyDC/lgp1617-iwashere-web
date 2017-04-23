@@ -4,7 +4,7 @@ const db = require('../index');
 
 module.exports.getPOIDetailByID = (id) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT * FROM pois WHERE id = :id`, {
+    return db.query(`SELECT * FROM pois WHERE poi_id = :id`, {
         replacements: { id },
         type: db.QueryTypes.SELECT
     });
@@ -99,7 +99,7 @@ module.exports.searchPOI = (query) => {
 
 module.exports.searchNearbyPOI = (query, lat, lng) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT *, get_distance_function(latitude, longitude, :lat, :lng) as distance FROM pois WHERE text @@ to_tsquery(:query) ORDER BY distance DESC`, {
+    return db.query(`SELECT *, get_distance_function(latitude::real, longitude::real, :lat::real, :lng::real) as distance FROM pois WHERE text @@ to_tsquery(:query) ORDER BY distance DESC`, {
         replacements: {
             lat,
             lng,

@@ -14,8 +14,10 @@ import Login from './components/user/Login';
 import Register from './components/user/Register';
 import PasswordReset from './components/user/PasswordReset';
 import POIDetail from './components/poi/POIDetail';
+import POISearch from './components/poi/POISearch';
 
 import UnauthRoutes from './routes/UnauthRoutes';
+import POIRoutes from './routes/POIRoutes';
 
 import { loginActionCreator, logoutActionCreator } from './redux/action creators/login';
 
@@ -25,6 +27,7 @@ export default class App extends Component {
 
     constructor(props) {
         super(props);
+        this.state = {};
 
         this.hookListeners();
     }
@@ -43,9 +46,16 @@ export default class App extends Component {
         });
     }
 
+    /*
+     * Note:
+     *  Firebase stores, in the local storage, information regarding the current logged in user.
+     *  Since Firebase has a delay as to confirm the identity of the user, it is required if a user is already logged in. Hence, the usage of the local storage.
+     */
     redirectIfLoggedIn(nextState, replace) {
         const currentState = this.context.store.getState();
-        if (currentState.userStatus.isLogged) {
+        // { pathname: '/', state: <anyState> }
+        const localStorageProperty = `firebase:authUser:${firebase.app().options.apiKey}:[DEFAULT]`;
+        if (currentState.userStatus.isLogged || localStorage[localStorageProperty]) {
             replace({ pathname: '/' });
         }
     }
@@ -55,7 +65,11 @@ export default class App extends Component {
             <Router history={ browserHistory }>
                 <Route path="/" component={ MainRoutes }>
                     <IndexRoute component={ Map } />
-                    <Route path="poi/detail/:id" component={ POIDetail } />
+
+                    <Route path="poi" component={ POIRoutes }>
+                        <Route path="search" component={ POISearch } />
+                        <Route path=":id" component={ POIDetail } />
+                    </Route>
 
                     <Route path="user" component={ UnauthRoutes } onEnter={ this.redirectIfLoggedIn.bind(this) }>
                         <Route path="login" component={ Login }/>

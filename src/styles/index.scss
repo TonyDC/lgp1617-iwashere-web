@@ -7,6 +7,10 @@ html, body {
     background: #d3d3d3 no-repeat;
 }
 
+button:focus {
+    outline: none !important;
+}
+
 a {
     color: #012935;
     text-decoration: none;
