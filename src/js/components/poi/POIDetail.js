@@ -41,7 +41,7 @@ export default class POIDetail extends Component {
     fetchPOIInfo() {
         if (isNaN(parseInt(this.props.params.id, DECIMAL_BASE))) {
             this.props.router.push('/not_found');
-            
+
             return;
         }
 

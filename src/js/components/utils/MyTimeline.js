@@ -80,7 +80,7 @@ export default class MyTimeline extends Component {
 
             posts.forEach((post) => {
                 if (post.postId === postId) {
-                    post.liked = true;
+                    post.liked = !post.liked;
                 }
             });
 
