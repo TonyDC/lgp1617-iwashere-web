@@ -62,6 +62,7 @@ export default class App extends Component {
                         <Route path="register" component={ Register }/>
                         <Route path="recover" component={ PasswordReset }/>
                     </Route>
+                    <Route path="not_found" component={ NoMatch }/>
                     <Route path="*" component={ NoMatch }/>
                 </Route>
             </Router>

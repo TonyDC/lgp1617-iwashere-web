@@ -11,6 +11,8 @@ import Tags from '../utils/MyTags';
 
 import 'styles/utils.scss';
 
+const DECIMAL_BASE = 10;
+
 export default class POIDetail extends Component {
 
     constructor(props, context) {
@@ -37,6 +39,12 @@ export default class POIDetail extends Component {
     }
 
     fetchPOIInfo() {
+        if (isNaN(parseInt(this.props.params.id, DECIMAL_BASE))) {
+            this.props.router.push('/not_found');
+            
+            return;
+        }
+
         fetch(`/api/poi/${this.props.params.id}`, {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
@@ -51,7 +59,7 @@ export default class POIDetail extends Component {
             });
         }).
         catch(() => {
-            this.props.router.push('/');
+            this.props.router.push('/not_found');
         });
     }
 
