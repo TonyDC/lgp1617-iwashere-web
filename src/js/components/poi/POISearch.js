@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
-import { Button, FormGroup, FormControl, ControlLabel, Panel } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { GridLoader as Loader } from 'halogen';
+import TextField from 'material-ui/TextField';
+import Paper from 'material-ui/Paper';
+import { List, ListItem } from 'material-ui/List';
+import Divider from 'material-ui/Divider';
+import RaisedButton from 'material-ui/RaisedButton';
+import ActionSearch from 'material-ui/svg-icons/action/search';
 
 import Alerts from '../utils/Alerts';
 
@@ -37,18 +43,9 @@ export default class POIDetail extends Component {
     getValidationState() {
         let { search } = this.state;
 
-        if (typeof search === 'undefined') {
-            return null;
-        } else if (!search) {
-            return 'error';
-        }
-
-        search = search.trim();
-        if (search) {
-            return 'success';
-        }
-
-        return 'error';
+        /*
+         TODO change
+         */
     }
 
     performSearch(query, lat, lng) {
@@ -142,44 +139,67 @@ export default class POIDetail extends Component {
             <em>{ this.state.inProgress }</em>
         </div>;
         if (!this.state.inProgress) {
-            searchButton = <Button onClick={ this.submitSearch.bind(this) }><i className="fa fa-search" aria-hidden="true"/></Button>;
+            searchButton = <RaisedButton
+                    icon={<ActionSearch />}
+                    onTouchTap={ this.submitSearch.bind(this) }
+                />;
         }
 
         let resultsArea = null;
         const { results } = this.state;
         if (results && !this.state.inProgress) {
             if (results.length > 0) {
-                resultsArea = results.map((el) => {
-                    return <div>
-                        <h6>Name</h6>
-                        <div>{ el.name }</div>
-                        <hr/>
-                        <h6>Description</h6>
-                        <div>{ el.description }</div>
-                    </div>;
-                });
+                resultsArea = <List>
+                    { results.map((element, index) => {
+                        return (
+                            <div key={index}>
+                                <ListItem
+                                    primaryText={ element.name }
+                                    secondaryText={
+                                        <p>{ element.description }</p>
+                                    }
+                                    secondaryTextLines={2}
+                                />
+                                <Divider inset/>
+                            </div>
+                        );
+                    }) }
+                </List>;
             } else {
-                resultsArea = <div>No results</div>;
+                resultsArea = <List>
+                    <ListItem
+                        primaryText="Results not found"
+                        secondaryText={
+                            <p>Try other keywords</p>
+                        }
+                        disabled
+                        secondaryTextLines={2}
+                    />
+                </List>;
             }
         }
 
         return (
             <div className="wrapper-fill vert-align hor-align">
-                <Panel header="Search" className="panel-min-width">
-                    <form onSubmit={ this.state.inProgress
-                        ? null
-                        : this.submitSearch.bind(this) } >
-                        <FormGroup controlId="formBasicText"
-                                   validationState={this.getValidationState()}
-                        >
-                            <ControlLabel>Search by name, description or address</ControlLabel>
-                            <FormControl type="text" value={ this.state.search } placeholder="Search" onChange={ this.handleText.bind(this) }/>
-                        </FormGroup>
-                        <br />
-                        { resultsArea }
-                        { searchButton }
-                    </form>
-                </Panel>
+                <Paper className="paper-min-width" zDepth={2}>
+                    <div className="paper-content">
+                        <form onSubmit={ this.state.inProgress
+                            ? null
+                            : this.submitSearch.bind(this) } >
+                            <TextField
+                                hintText="Keywords"
+                                floatingLabelText="Search POIs"
+                                value={ this.state.search }
+                                onChange={ this.handleText.bind(this) }
+                                fullWidth
+                                errorText={ this.getValidationState() }
+                            />
+                            <br />
+                            { resultsArea }
+                            { searchButton }
+                        </form>
+                    </div>
+                </Paper>
             </div>
         );
     }

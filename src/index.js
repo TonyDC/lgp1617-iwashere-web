@@ -30,11 +30,22 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 
+// Material Design
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+
+import injectTapEventPlugin from 'react-tap-event-plugin';
+
+// Needed for onTouchTap
+// http://stackoverflow.com/a/34015469/988941
+injectTapEventPlugin();
+
 // Initialize Redux container
 const store = createStore(reducers);
 
 render(
+    <MuiThemeProvider>
     <Provider store={store}>
         <App/>
-    </Provider>,
+    </Provider>
+    </MuiThemeProvider>,
     document.getElementById('main'));

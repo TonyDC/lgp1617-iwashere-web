@@ -4,7 +4,7 @@ const db = require('../index');
 
 module.exports.getPOIDetailByID = (id) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT * FROM pois WHERE id = :id`, {
+    return db.query(`SELECT * FROM pois WHERE poi_id = :id`, {
         replacements: { id },
         type: db.QueryTypes.SELECT
     });
