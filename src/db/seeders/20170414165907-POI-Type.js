@@ -6,7 +6,7 @@ module.exports = {
     },
     up: (queryInterface) => {
         return queryInterface.bulkInsert('poi_types', [
-            { name: 'place;lugar' }
+            { name: 'PLACE' }
         ], {});
     }
 };

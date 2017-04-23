@@ -31,7 +31,7 @@ export default class MyTimeline extends Component {
             return;
         }
 
-        fetch(`${this.props.url}/${this.state.postsOffset}/${LIMIT}`, {
+        fetch(`${this.props.url}/poi_posts/${this.props.poiId}/${this.state.postsOffset}/${LIMIT}`, {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
         }).
@@ -48,6 +48,43 @@ export default class MyTimeline extends Component {
                 posts,
                 postsOffset
             });
+        });
+    }
+
+    toggleLike(postId) {
+        let method = 'POST';
+
+        this.state.posts.forEach((post) => {
+            if (post.postId === postId && post.liked) {
+                method = 'DELETE';
+            }
+        });
+
+        fetch(`${this.props.url}/like`, {
+            body: JSON.stringify({
+                postID: postId,
+                userID: this.props.user.uid
+            }),
+            headers: { 'Content-Type': 'application/json' },
+            method
+        }).
+        then((response) => {
+            return response.json();
+        }).
+        then((response) => {
+            if (!response.ok) {
+                return;
+            }
+
+            const { posts } = this.state.posts;
+
+            posts.forEach((post) => {
+                if (post.postId === postId) {
+                    post.liked = true;
+                }
+            });
+
+            this.setState({ posts });
         });
     }
 
@@ -97,6 +134,8 @@ export default class MyTimeline extends Component {
                             {postComponent}
 
                             <p>{postEntry.description}</p>
+
+                            <a className="pull-right">{postEntry.likes} <i className="glyphicon glyphicon-thumbs-up"/></a>
                         </div>
                     </div>
                 </li>
@@ -138,6 +177,7 @@ export default class MyTimeline extends Component {
 }
 
 MyTimeline.propTypes = {
+    poiId: PropTypes.any.isRequired,
     url: PropTypes.string.isRequired,
     user: PropTypes.any
 };

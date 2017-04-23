@@ -71,7 +71,11 @@ export default class POIDetail extends Component {
         if (this.props.params.id) {
             poiMediaSlider = <Carousel url={`/api/poi/media/${this.props.params.id}`} />;
             ratingPanel = <Rater url="/api/poi/rating" poiId={this.props.params.id} user={this.state.user}/>;
-            userMediaTimeline = <Timeline url={`/api/post/poi_posts/${this.props.params.id}`} user={this.state.user}/>;
+
+            if (this.state.poiInfo && this.state.poiInfo.type === 'PLACE') {
+                userMediaTimeline =
+                    <Timeline url={`/api/post/`} poiId={this.props.params.id} user={this.state.user}/>;
+            }
 
             if (this.state.poiInfo) {
                 poiTagsPanel = <Tags readOnly tags={this.state.poiInfo.tags} />;

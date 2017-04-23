@@ -4,7 +4,9 @@ const db = require('../index');
 
 module.exports.getPOIDetailByID = (id) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT * FROM pois WHERE poi_id = :id`, {
+    return db.query(`SELECT pois.*, poi_types.name AS type 
+    FROM pois INNER JOIN poi_types ON pois.poi_type_id = poi_types.poi_type_id 
+    WHERE pois.poi_id = :id`, {
         replacements: { id },
         type: db.QueryTypes.SELECT
     });
