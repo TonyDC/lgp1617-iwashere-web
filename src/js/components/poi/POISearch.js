@@ -164,7 +164,7 @@ export default class POIDetail extends Component {
         }
 
         return (
-            <div className="colorAccentSecondary wrapper-fill vert-align hor-align">
+            <div className="wrapper-fill vert-align hor-align">
                 <Panel header="Search" className="panel-min-width">
                     <form onSubmit={ this.state.inProgress
                         ? null

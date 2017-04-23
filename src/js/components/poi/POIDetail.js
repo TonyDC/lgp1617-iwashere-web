@@ -73,7 +73,7 @@ export default class POIDetail extends Component {
         }
 
         return (
-            <div className="colorAccentSecondary wrapper-fill">
+            <div className="wrapper-fill">
                 <Helmet>
                     <title>#iwashere</title>
                 </Helmet>
@@ -83,7 +83,7 @@ export default class POIDetail extends Component {
 
                         <Col xs={12} mdOffset={1} md={10} lgOffset={1} lg={10}>
                             <div className="thumbnail">
-                                {poiMediaSlider}
+                                { poiMediaSlider }
 
                                 <div className="caption-full">
                                     <h4>{this.state.poiInfo.name}</h4>
