@@ -53,5 +53,30 @@ module.exports.convertObjectToCamelCase = (object) => {
  * @return {Object[]} array with converted objects
  */
 module.exports.convertObjectsToCamelCase = (objects) => {
-    return objects.map(convertObjectToCamelCase);
+    if (objects) {
+        return objects.map(convertObjectToCamelCase);
+    }
+
+    return [];
+};
+
+/**
+ * Returns the array in string form, as required by POSTGRESQL.
+ * @param {Object[]} objects array with original objects
+ *
+ * @return {string} array in string form
+ */
+module.exports.convertToString = (objects) => {
+    let arrayString = '{';
+
+    if (objects && objects.length) {
+        let index = ZERO_INDEX;
+        arrayString = `${arrayString}${objects[index++]}`;
+
+        for (; index < objects.length; index++) {
+            arrayString = `${arrayString}, ${objects[index]}`;
+        }
+    }
+
+    return `${arrayString}}`;
 };

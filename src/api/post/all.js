@@ -1,6 +1,6 @@
 'use strict';
 
-const utils = require('../utils/case-handler');
+const utils = require('../utils/utils');
 
 const httpCodes = require('http-status-codes');
 
@@ -13,13 +13,21 @@ const DECIMAL_BASE = 10;
 
 const ZERO_INDEX = 0;
 const ONE_INDEX = 1;
-const TWO_INDEX = 2;
-const THREE_INDEX = 3;
+const TWO_INDEX = 1;
 const NO_ELEMENT_SIZE = 0;
 const TWO_SIZE = 2;
+const THREE_SIZE = 2;
 
-router.get('/poi_posts/:poIID/:offset/:limit', (req, res, next) => {
-    const { poiID, offset, limit } = req.params;
+/**
+ * Handle GET request for posts.
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Object} next
+ *
+ * @return {void}
+ */
+function handlePostRequest(req, res, next) {
+    const { poiID, offset, limit, userID } = req.params;
 
     if (!poiID || isNaN(parseInt(poiID, DECIMAL_BASE)) || !limit || !offset || isNaN(parseInt(offset, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
@@ -30,33 +38,51 @@ router.get('/poi_posts/:poIID/:offset/:limit', (req, res, next) => {
     const { postDB } = db;
     postDB.getPOIPosts(poiID, offset, limit).
     then((postsList) => {
-        console.error(postsList);
 
         const posts = utils.convertObjectsToCamelCase(postsList);
 
-        console.log(posts);
-
         if (posts && posts.length > NO_ELEMENT_SIZE) {
             const postsIds = posts.map((post) => {
-                return post.id;
+                return post.postId;
             });
 
-            Promise.all([postDB.getPostTags(postsIds), postDB.getPostLikes(postsIds)]).
-            then((results) => {
-                if (results && results.length === TWO_SIZE) {
-                    const postTags = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
+            const additionalPostInfo = [postDB.getPostTags(utils.convertToString(postsIds)),
+                postDB.getPostLikes(utils.convertToString(postsIds))];
 
-                    const postLikes = utils.convertObjectsToCamelCase(results[TWO_INDEX]);
+            if (userID) {
+                additionalPostInfo.push(postDB.getPostLikedByUser(postsIds, userID));
+            }
+
+            Promise.all(additionalPostInfo).
+            then((results) => {
+                if (results && (results.length === TWO_SIZE || results.length === THREE_SIZE)) {
+
+                    const postTags = utils.convertObjectsToCamelCase(results[ZERO_INDEX]);
+                    const postLikes = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
+                    let postsLikedByUser = [];
+                    if (userID) {
+                        postsLikedByUser = utils.convertObjectsToCamelCase(results[TWO_INDEX]);
+                    }
 
                     posts.forEach((post) => {
                         post.tags = postTags.filter((tag) => {
-                            return tag.post_id === post.id;
+                            return tag.postId === post.postId;
                         });
-                    });
 
-                    // TODO merge with posts
-                    console.log(postTags);
-                    console.log(postLikes);
+                        post.likes = postLikes.filter((like) => {
+                            return like.postId === post.postId;
+                        });
+
+                        if (post.likes.length > NO_ELEMENT_SIZE) {
+                            post.likes = post.likes[ZERO_INDEX].likes;
+                        } else {
+                            post.likes = NO_ELEMENT_SIZE;
+                        }
+
+                        post.likedByUser = postsLikedByUser.filter((like) => {
+                            return like.postId === post.postId;
+                        }).length > NO_ELEMENT_SIZE;
+                    });
 
                     res.json(posts).end();
                 }
@@ -68,5 +94,94 @@ router.get('/poi_posts/:poIID/:offset/:limit', (req, res, next) => {
     catch((error) => {
         next(error);
     });
+}
+
+router.get('/poi_posts/:poiID/:offset/:limit', (req, res, next) => {
+    handlePostRequest(req, res, next);
 });
+
+router.get('/poi_posts/:userID/:poiID/:offset/:limit', (req, res, next) => {
+    handlePostRequest(req, res, next);
+});
+
+router.post('/like', (req, res, next) => {
+    const { userID, postID } = req.body;
+
+    if (!postID || !userID || typeof userID !== 'string') {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    const postIdList = utils.convertToString([postID]);
+    const { postDB, userDB } = db;
+    Promise.all([userDB.getUserByUID(userID), postDB.getPostById(postID), postDB.getPostLikedByUser(postIdList, userID)]).
+    then((results) => {
+
+        if (results && results.length === THREE_SIZE &&
+            results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE &&
+            results[ONE_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE &&
+            results[TWO_INDEX] && results[ONE_INDEX].length === NO_ELEMENT_SIZE) {
+
+            return postDB.addPostLike(postID, userID).
+            then(() => {
+                res.end();
+            });
+        }
+
+        if (results[TWO_INDEX] && results[ONE_INDEX].length === NO_ELEMENT_SIZE) {
+            res.status(httpCodes.BAD_REQUEST).json({ message: '(userID, postID) already found in likes' }).
+            end();
+        } else {
+            res.status(httpCodes.BAD_REQUEST).json({ message: '(userID, postID) not found' }).
+            end();
+        }
+
+        return null;
+    }).
+    catch((error) => {
+        next(error);
+    });
+});
+
+router.delete('/like', (req, res, next) => {
+    const { userID, postID } = req.body;
+
+    if (!postID || !userID || typeof userID !== 'string') {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    const postIdList = utils.convertToString([postID]);
+    const { postDB, userDB } = db;
+    Promise.all([userDB.getUserByUID(userID), postDB.getPostById(postID), postDB.getPostLikedByUser(postIdList, userID)]).
+    then((results) => {
+
+        if (results && results.length === THREE_SIZE &&
+            results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE &&
+            results[ONE_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE &&
+            results[TWO_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE) {
+
+            return postDB.removePostLike(postID, userID).
+            then(() => {
+                res.end();
+            });
+        }
+
+        if (results[TWO_INDEX] && results[ONE_INDEX].length === NO_ELEMENT_SIZE) {
+            res.status(httpCodes.BAD_REQUEST).json({ message: '(userID, postID) already not found in likes' }).
+            end();
+        } else {
+            res.status(httpCodes.BAD_REQUEST).json({ message: '(userID, postID) not found' }).
+            end();
+        }
+
+        return null;
+    }).
+    catch((error) => {
+        next(error);
+    });
+});
+
 module.exports = router;

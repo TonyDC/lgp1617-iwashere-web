@@ -1,3 +1,3 @@
 module.exports.poiDB = require('./poi');
 module.exports.userDB = require('./user');
-module.exports.userDB = require('./post');
+module.exports.postDB = require('./post');

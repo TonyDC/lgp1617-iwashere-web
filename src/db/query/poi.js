@@ -10,12 +10,12 @@ module.exports.getPOIDetailByID = (id) => {
     });
 };
 
-module.exports.getPOITags = (id) => {
+module.exports.getPOITags = (poiID) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT tags.name, tags.tag_id 
     FROM poi_tags INNER JOIN tags ON poi_tags.tag_id = tags.tag_id 
-    WHERE poi_tags.poi_id = :id`, {
-        replacements: { id },
+    WHERE poi_tags.poi_id = :poiID`, {
+        replacements: { poiID },
         type: db.QueryTypes.SELECT
     });
 };

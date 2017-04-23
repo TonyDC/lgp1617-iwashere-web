@@ -72,6 +72,17 @@ export default class MyTimeline extends Component {
                 postComponent = <iframe src={ postEntry.url }/>;
             }
 
+            let tagList = null;
+            if (postEntry.tags.length) {
+                const tags = [];
+
+                postEntry.tags.forEach((tag) => {
+                    tags.push(` ${tag.name} `);
+                });
+
+                tagList = <p><small className="text-muted"><i className="glyphicon glyphicon-tag"/>{tags}</small></p>;
+            }
+
             postsList.push(
                 <li className={`timeline${itemClassInverted
                     ? '-inverted'
@@ -80,7 +91,7 @@ export default class MyTimeline extends Component {
                     <div className="timeline-panel">
                         <div className="tl-heading">
                             <p><small className="text-muted pull-right"><i className="glyphicon glyphicon-time"/> { Moment(date).format('MMMM Do YYYY, h:mm') }</small></p>
-                            <p><small className="text-muted"><i className="glyphicon glyphicon-tag"/> { postEntry.tags }</small></p>
+                            {tagList}
                         </div>
                         <div className="tl-body">
                             {postComponent}
