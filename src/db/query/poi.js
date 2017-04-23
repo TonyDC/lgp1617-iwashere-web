@@ -61,11 +61,9 @@ module.exports.getPOIMedia = (poiID) => {
 
 module.exports.getPOIRating = (poiID) => {
     // language=POSTGRES-SQL
-    return db.query(`WITH current_poi_ratings AS (SELECT MAX(created_at), user_id, rating, poi_id FROM poi_ratings GROUP BY poi_id)
-    SELECT AVG(rating) AS rating, COUNT(*) AS ratings 
-    FROM current_poi_ratings
-    WHERE poi_id = :poiID
-    GROUP BY user_id`, {
+    return db.query(`SELECT AVG(rating), COUNT(*) as ratings 
+    FROM (SELECT * FROM poi_ratings WHERE poi_id = poiID
+    ORDER BY created_at DESC LIMIT 1) current_ratings;`, {
         replacements: { poiID },
         type: db.QueryTypes.SELECT
     });
@@ -73,7 +71,9 @@ module.exports.getPOIRating = (poiID) => {
 
 module.exports.getPOIRatingByUser = (poiID, userID) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT rating, MAX("createdAt") FROM poi_ratings WHERE poi_id = :poiID AND user_id = :userID GROUP BY user_id, rating`, {
+    return db.query(`SELECT rating FROM poi_ratings 
+    WHERE poi_id = :poiID AND user_id = userID 
+    ORDER BY created_at DESC LIMIT 1`, {
         replacements: {
             poiID,
             userID
