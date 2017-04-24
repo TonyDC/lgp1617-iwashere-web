@@ -5,9 +5,11 @@ import Alerts from '../utils/Alerts';
 
 import Pin from './Pin';
 
+import IconButton from 'material-ui/IconButton';
 import CommunicationLocationOn from 'material-ui/svg-icons/communication/location-on';
 
 import 'styles/utils.scss';
+import 'styles/map.scss';
 
 export default class Map extends Component {
 
@@ -24,49 +26,81 @@ export default class Map extends Component {
             timeout: 20000
         };
 
-        console.log('asofdiqweutfi');
+        Alerts.createInfoAlert(`Retrieving location...`);
+        navigator.geolocation.getCurrentPosition((position) => {
+            const { latitude, longitude } = position.coords;
 
+            this.setState({
+                lat: latitude,
+                lng: longitude,
+                location: true
+            });
 
-            Alerts.createInfoAlert(`Retrieving location...`);
-            navigator.geolocation.getCurrentPosition((position) => {
-                const { latitude, longitude } = position.coords;
+            this.map.setCenter({
+                lat: latitude,
+                lng: longitude
+            });
 
-                this.setState({
-                    lat: latitude,
-                    lng: longitude,
-                    location: true
-                });
-            }, () => {
-                Alerts.closeAll();
-                Alerts.createErrorAlert('Error while retrieving current location.');
-            }, geoOptions);
+        }, () => {
+            Alerts.closeAll();
+            Alerts.createErrorAlert('Error while retrieving current location.');
+        }, geoOptions);
 
+    }
+
+    onGoogleAPILoaded({ map, maps }) {
+        this.map = map;
+        this.maps = maps;
+
+        map.addListener('dragend', () => {
+            this.fetchPoints(map.getBounds());
+        });
+
+        this.handleLocation();
+    }
+
+    fetchPoints(borders) {
+        const { b, f } = borders;
+
+        fetch(`/api/poi/range/${f.f}/${f.b}/${b.b}/${b.f}`).then((response) => {
+            return response.json();
+        }).
+        then((response) => {
+            this.setState({ response });
+        });
     }
 
     render() {
         const { lat, lng } = this.state;
 
         let currentLocation = null;
-        let center = this.props.center;
         if (this.state.location) {
-            currentLocation = <Pin lat={lat} lng={lng}>
-                <CommunicationLocationOn/>
-            </Pin>;
-
-            center = {
-                lat,
-                lng
-            };
+            currentLocation =
+                <Pin lat={lat} lng={lng}>
+                    <div className="pin">
+                        <IconButton>
+                            <CommunicationLocationOn/>
+                        </IconButton>
+                    </div>
+                </Pin>;
         }
 
         return (
-            <GoogleMapReact bootstrapURLKeys={{key: "AIzaSyDifdID6peJ__zQ6cKA1KxPm0hSuevf6-w"}}
-                            center={center}
-                            zoom={12}
-                            minZoom={5}
-                            onGoogleApiLoaded={() => {console.log('sadkjbals');}}
+            <GoogleMapReact defaultCenter={this.props.center}
+                            defaultZoom={this.props.zoom}
+                            bootstrapURLKeys={{key: "AIzaSyDifdID6peJ__zQ6cKA1KxPm0hSuevf6-w"}}
+                            onGoogleApiLoaded={ this.onGoogleAPILoaded.bind(this) }
             >
                 { currentLocation }
+                { this.state.response? this.state.response.map((element) => {
+                    return <Pin lat={element.latitude} lng={element.longitude}>
+                        <div className="pin">
+                            <IconButton>
+                                <CommunicationLocationOn/>
+                            </IconButton>
+                        </div>
+                    </Pin>;
+                }) : null }
             </GoogleMapReact>
         );
     }
