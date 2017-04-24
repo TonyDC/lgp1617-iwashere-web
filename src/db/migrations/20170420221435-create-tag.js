@@ -1,5 +1,6 @@
 'use strict';
 
+// language=POSTGRES-PSQL
 module.exports = {
     down: (queryInterface) => {
         return queryInterface.sequelize.query(`DROP TRIGGER timestamp_tags_trigger ON tags`).
