@@ -7,9 +7,9 @@ module.exports = {
     up: (queryInterface) => {
 
         return queryInterface.bulkInsert('content_types', [
-            { name: 'IMG' },
-            { name: 'VID' },
-            { name: 'AUD' }
+            { name: 'image;imagem' },
+            { name: 'video;vídeo' },
+            { name: 'audio;áudio' }
         ], {});
     }
 };
