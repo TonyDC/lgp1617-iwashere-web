@@ -13,7 +13,6 @@ import Tags from '../utils/MyTags';
 import 'styles/utils.scss';
 
 const DECIMAL_BASE = 10;
-const PLACE_TYPE = 'place;lugar';
 
 export default class POIDetail extends Component {
 
@@ -82,7 +81,7 @@ export default class POIDetail extends Component {
             poiMediaSlider = <Carousel url={`/api/poi/media/${this.props.params.id}`} />;
             ratingPanel = <Rater url="/api/poi/rating" poiId={this.props.params.id} user={this.state.user}/>;
 
-            if (this.state.poiInfo && this.state.poiInfo.type === PLACE_TYPE) {
+            if (this.state.poiInfo && this.state.poiInfo.type === 'PLACE') {
                 userMediaTimeline =
                     <Timeline url={`/api/post/`} poiId={this.props.params.id} user={this.state.user}/>;
             }

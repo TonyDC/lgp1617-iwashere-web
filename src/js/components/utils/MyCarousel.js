@@ -5,6 +5,7 @@ import { GridLoader as Loader } from 'halogen';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.css';
 
+const NO_ELEMENT_SIZE = 0;
 const TRANSITION_INTERVAL = 10000;
 
 export default class MyCarousel extends Component {
@@ -28,6 +29,7 @@ export default class MyCarousel extends Component {
             return response.json();
         }).
         then((response) => {
+            console.log(response);
             const media = this.getMedia(response);
             this.setState({ media });
         });
@@ -58,6 +60,10 @@ export default class MyCarousel extends Component {
                     <Loader color="#012935" className="loader"/>
                 </div>
             );
+        }
+
+        if (this.state.media.length === NO_ELEMENT_SIZE) {
+            return null;
         }
 
         return (

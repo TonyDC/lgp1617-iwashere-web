@@ -3,6 +3,7 @@
 // Note regarding 'parseInt' function: Javascript supports 53bit mantissa
 
 const httpCodes = require('http-status-codes');
+const utils = require('../utils/utils');
 
 const express = require('express');
 const router = express.Router();
@@ -228,7 +229,7 @@ router.get('/:id', (req, res, next) => {
             results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE) {
 
             const poi = results[ZERO_INDEX][ZERO_INDEX];
-            poi.tags = results[ONE_INDEX];
+            poi.tags = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
 
             res.json(poi).end();
         } else {
