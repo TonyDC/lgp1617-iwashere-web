@@ -33,6 +33,7 @@ firebase.initializeApp(firebaseConfig);
 // Material Design
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
+// Inject onTouchTap event
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
 // Needed for onTouchTap
