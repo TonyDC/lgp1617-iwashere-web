@@ -19,7 +19,7 @@ module.exports = {
                 updated_at TIMESTAMP,
                 
                 CONSTRAINT rating_poi_rating_constraint CHECK (rating IN (0, 1, 2, 3, 4, 5)),
-                CONSTRAINT poi_ratings_poi_user_pk PRIMARY KEY (poi_id, user_id)
+                CONSTRAINT poi_ratings_pk PRIMARY KEY (poi_id, user_id, created_at)
             );
         
             CREATE TRIGGER timestamp_poi_ratings_trigger

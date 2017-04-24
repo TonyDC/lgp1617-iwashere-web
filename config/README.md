@@ -58,6 +58,37 @@ __Example of db-config.js__
 
 ```
 
+#### `config.js`
+
+__Example of config.js__
+module.exports = {
+    FIREBASE_ADMIN_SDK_PATH: './config/iwashere-mobile-firebase-adminsdk-fuch3-2a1e5fef6f.json',
+    FIREBASE_CONFIG: {
+        apiKey: "AIzaSyBBFDyYUUxcpXJLyqX0lzIi7EvMJ8Ygy3A",
+        authDomain: "iwashere-mobile.firebaseapp.com",
+        databaseURL: "https://iwashere-mobile.firebaseio.com",
+        messagingSenderId: "870991185151",
+        projectId: "iwashere-mobile",
+        storageBucket: "iwashere-mobile.appspot.com"
+    },
+    POSTGRESQL_CONN_STRING: 'postgres://user:password@location:5432/database',
+    POSTGRESQL_CONFIG: {
+        DATABASE: 'database',
+        USERNAME: 'user',
+        PASSWORD: 'password',
+        CONN_CONFIG: {
+            host: 'localhost',
+            dialect: 'postgres',
+            pool: {
+                max: 10,
+                min: 0,
+                idle: 10000
+            },
+        }
+    }
+};
+
+
 ### Production mode
 
 Same as above, except the filename, which is `config.js`.

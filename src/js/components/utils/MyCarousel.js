@@ -37,11 +37,11 @@ export default class MyCarousel extends Component {
         const mediaList = [];
         let key = 0;
         media.forEach((mediaEntry) => {
-            if (mediaEntry.type === 'IMG') {
+            if (mediaEntry.type === 'image;imagem') {
                 mediaList.push(<div key={key++}>
                     <img src={mediaEntry.url} />
                 </div>);
-            } else if (mediaEntry.type === 'VID') {
+            } else if (mediaEntry.type === 'video;vídeo') {
                 mediaList.push(<div key={key++}>
                     <iframe src={mediaEntry.url} />
                 </div>);

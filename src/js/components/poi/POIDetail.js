@@ -4,11 +4,15 @@ import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 import { GridLoader as Loader } from 'halogen';
 
+import Alerts from '../utils/Alerts';
 import Rater from '../utils/MyRater';
 import Carousel from '../utils/MyCarousel';
 import Timeline from '../utils/MyTimeline';
+import Tags from '../utils/MyTags';
 
 import 'styles/utils.scss';
+
+const DECIMAL_BASE = 10;
 
 export default class POIDetail extends Component {
 
@@ -36,6 +40,12 @@ export default class POIDetail extends Component {
     }
 
     fetchPOIInfo() {
+        if (isNaN(parseInt(this.props.params.id, DECIMAL_BASE))) {
+            Alerts.createErrorAlert("Unable to find the point of interest.");
+
+            return;
+        }
+
         fetch(`/api/poi/${this.props.params.id}`, {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
@@ -50,7 +60,7 @@ export default class POIDetail extends Component {
             });
         }).
         catch(() => {
-            this.props.router.push('/');
+            Alerts.createErrorAlert("Unable to find the point of interest.");
         });
     }
 
@@ -64,12 +74,21 @@ export default class POIDetail extends Component {
         }
 
         let poiMediaSlider = null;
+        let poiTagsPanel = null;
         let ratingPanel = null;
         let userMediaTimeline = null;
         if (this.props.params.id) {
             poiMediaSlider = <Carousel url={`/api/poi/media/${this.props.params.id}`} />;
             ratingPanel = <Rater url="/api/poi/rating" poiId={this.props.params.id} user={this.state.user}/>;
-            userMediaTimeline = <Timeline url={`/api/poi/posts/${this.props.params.id}`} user={this.state.user}/>;
+
+            if (this.state.poiInfo && this.state.poiInfo.type === 'PLACE') {
+                userMediaTimeline =
+                    <Timeline url={`/api/post/`} poiId={this.props.params.id} user={this.state.user}/>;
+            }
+
+            if (this.state.poiInfo) {
+                poiTagsPanel = <Tags readOnly tags={this.state.poiInfo.tags} />;
+            }
         }
 
         return (
@@ -87,6 +106,7 @@ export default class POIDetail extends Component {
 
                                 <div className="caption-full">
                                     <h4>{this.state.poiInfo.name}</h4>
+                                    {poiTagsPanel}
                                     <h5>{this.state.poiInfo.address}</h5>
                                     <p>{this.state.poiInfo.description}</p>
                                 </div>

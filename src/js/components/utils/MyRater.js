@@ -10,6 +10,7 @@ import 'styles/my_rater.scss';
 const MAX_RATING_SCALE = 5;
 const RATING_PRECISION = 1;
 const NO_RATING = 0;
+const ONE_RATING = 1;
 const DECIMAL_BASE = 10;
 
 export default class MyRater extends Component {
@@ -17,7 +18,7 @@ export default class MyRater extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {};
+        this.state = { };
     }
 
     componentDidMount() {
@@ -33,10 +34,6 @@ export default class MyRater extends Component {
             urlGet += `/${this.props.routeId}`;
         }
 
-        if (this.props.user) {
-            this.getUserRating();
-        }
-
         fetch(urlGet, {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
@@ -46,7 +43,8 @@ export default class MyRater extends Component {
         }).
         then((response) => {
             const ratingInfo = {};
-            ratingInfo.rating = parseInt(response.rating, DECIMAL_BASE);
+            ratingInfo.rating = parseFloat(response.rating);
+            ratingInfo.ratings = parseInt(response.ratings, DECIMAL_BASE);
             this.setState({ ratingInfo });
         });
 
@@ -72,6 +70,11 @@ export default class MyRater extends Component {
             const { ratingInfo } = this.state;
             ratingInfo.userRating = parseInt(response.rating, DECIMAL_BASE);
             this.setState({ ratingInfo });
+        }).
+        catch(() => {
+            const { ratingInfo } = this.state;
+            ratingInfo.userRating = NO_RATING;
+            this.setState({ ratingInfo });
         });
     }
 
@@ -88,11 +91,13 @@ export default class MyRater extends Component {
                 headers: { 'Content-Type': 'application/json' },
                 method: 'POST'
             }).
-            then(() => {
+            then((response) => {
+                if (!response.ok) {
+                    throw new Error();
+                }
                 this.getRating();
             }).
             catch(() => {
-
                 const { ratingInfo } = this.state;
                 ratingInfo.userRating = ratingEvent.lastRating;
                 this.setState({ ratingInfo });
@@ -111,14 +116,16 @@ export default class MyRater extends Component {
 
         let userRating = null;
         if (this.props.user) {
-            if (!this.state.ratingInfo.userRating) {
+
+            if (!(this.state.ratingInfo.userRating >= NO_RATING)) {
                 this.getUserRating();
             }
 
             userRating =
                 <Col xs={12} md={12} lg={12}>
                     <Rater total={MAX_RATING_SCALE} rating={this.state.ratingInfo.userRating} onRate={this.updateRating.bind(this)}/>
-                    <span className="rating-description"> Your rating</span>
+                    <span className="rating-description"> {this.state.ratingInfo.userRating}/{MAX_RATING_SCALE}</span>
+                    <span className="rating-description"><small>Your evaluation</small></span>
                 </Col>;
         }
 
@@ -127,7 +134,10 @@ export default class MyRater extends Component {
                 <Row className="show-grid">
                     <Col xs={12} md={12} lg={12}>
                         <Rater interactive={false} total={MAX_RATING_SCALE} rating={this.state.ratingInfo.rating} />
-                        <span className="rating-description"> {this.state.ratingInfo.rating.toFixed(RATING_PRECISION)} stars</span>
+                        <span className="rating-description"> {this.state.ratingInfo.rating.toFixed(RATING_PRECISION)}/{MAX_RATING_SCALE}</span>
+                        <span className="rating-description"><small>{this.state.ratingInfo.ratings} evaluation{ this.state.ratingInfo.ratings === ONE_RATING
+                                                                                                                ? ''
+                                                                                                                : 's'} </small></span>
                     </Col>
                     {userRating}
                 </Row>
