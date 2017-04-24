@@ -14,6 +14,7 @@ module.exports = {
             CREATE TABLE likes (
                 post_id BIGINT NOT NULL REFERENCES posts(post_id) ON DELETE RESTRICT,
                 user_id TEXT NOT NULL REFERENCES users(uid) ON DELETE RESTRICT,
+                liked BOOLEAN NOT NULL DEFAULT TRUE,
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP,
                 

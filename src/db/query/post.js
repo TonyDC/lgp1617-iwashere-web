@@ -30,7 +30,8 @@ module.exports.getPostLikes = (postIdList) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT posts.post_id, COUNT(*) as likes 
     FROM posts INNER JOIN likes ON posts.post_id = likes.post_id 
-    WHERE posts.post_id = ANY(:postIdList) GROUP BY posts.post_id`, {
+    WHERE posts.post_id = ANY(:postIdList) AND likes.liked = TRUE
+    GROUP BY posts.post_id`, {
         replacements: { postIdList },
         type: db.QueryTypes.SELECT
     });
@@ -40,7 +41,7 @@ module.exports.getPostLikedByUser = (postIdList, userId) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT posts.post_id
     FROM posts INNER JOIN likes ON posts.post_id = likes.post_id 
-    WHERE posts.post_id = ANY(:postIdList) AND likes.user_id = :userId`, {
+    WHERE posts.post_id = ANY(:postIdList) AND likes.user_id = :userId AND likes.liked = TRUE`, {
         replacements: {
             postIdList,
             userId
@@ -59,6 +60,19 @@ module.exports.getPostTags = (postIdList) => {
     });
 };
 
+module.exports.getPostLike = (postId, userId) => {
+    // language=POSTGRES-SQL
+    return db.query(`SELECT posts.post_id
+    FROM posts INNER JOIN likes ON posts.post_id = likes.post_id 
+    WHERE posts.post_id = :postId AND likes.user_id = :userId`, {
+        replacements: {
+            postId,
+            userId
+        },
+        type: db.QueryTypes.SELECT
+    });
+};
+
 module.exports.addPostLike = (postID, userID) => {
     // language=POSTGRES-SQL
     return db.query(`INSERT INTO likes (post_id, user_id) VALUES (:postID, :userID)`, {
@@ -70,10 +84,11 @@ module.exports.addPostLike = (postID, userID) => {
     });
 };
 
-module.exports.removePostLike = (postID, userID) => {
+module.exports.updatePostLike = (postID, userID, liked) => {
     // language=POSTGRES-SQL
-    return db.query(`DELETE FROM likes WHERE post_id = :postID AND user_id = :userID)`, {
+    return db.query(`DELETE FROM likes WHERE post_id = :postID AND user_id = :userID AND liked = :liked)`, {
         replacements: {
+            liked,
             postID,
             userID
         },

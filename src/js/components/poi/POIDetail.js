@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 import { GridLoader as Loader } from 'halogen';
 
+import Alerts from '../utils/Alerts';
 import Rater from '../utils/MyRater';
 import Carousel from '../utils/MyCarousel';
 import Timeline from '../utils/MyTimeline';
@@ -40,7 +41,7 @@ export default class POIDetail extends Component {
 
     fetchPOIInfo() {
         if (isNaN(parseInt(this.props.params.id, DECIMAL_BASE))) {
-            this.props.router.push('/not_found');
+            Alerts.createErrorAlert("Unable to find the point of interest.");
 
             return;
         }
@@ -59,7 +60,7 @@ export default class POIDetail extends Component {
             });
         }).
         catch(() => {
-            this.props.router.push('/not_found');
+            Alerts.createErrorAlert("Unable to find the point of interest.");
         });
     }
 

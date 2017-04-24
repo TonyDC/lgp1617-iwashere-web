@@ -52,21 +52,22 @@ export default class MyTimeline extends Component {
     }
 
     toggleLike(postId) {
-        let method = 'POST';
+        let post = null;
 
-        this.state.posts.forEach((post) => {
-            if (post.postId === postId && post.liked) {
-                method = 'DELETE';
+        this.state.posts.forEach((postTemp) => {
+            if (postTemp.postId === postId) {
+                post = postTemp;
             }
         });
 
         fetch(`${this.props.url}/like`, {
             body: JSON.stringify({
+                liked: post.liked,
                 postID: postId,
                 userID: this.props.user.uid
             }),
             headers: { 'Content-Type': 'application/json' },
-            method
+            method: 'POST'
         }).
         then((response) => {
             return response.json();
@@ -78,9 +79,9 @@ export default class MyTimeline extends Component {
 
             const { posts } = this.state.posts;
 
-            posts.forEach((post) => {
-                if (post.postId === postId) {
-                    post.liked = !post.liked;
+            posts.forEach((postTemp) => {
+                if (postTemp.postId === postId) {
+                    postTemp.liked = !postTemp.liked;
                 }
             });
 
@@ -103,9 +104,9 @@ export default class MyTimeline extends Component {
             }
 
             let postComponent = null;
-            if (postEntry.type === "IMG") {
+            if (postEntry.type === "image;imagem") {
                 postComponent = <img src={ postEntry.url }/>;
-            } else if (postEntry.type === "VID") {
+            } else if (postEntry.type === "video;vídeo") {
                 postComponent = <iframe src={ postEntry.url }/>;
             }
 

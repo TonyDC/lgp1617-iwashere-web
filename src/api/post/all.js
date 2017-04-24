@@ -15,6 +15,7 @@ const ZERO_INDEX = 0;
 const ONE_INDEX = 1;
 const TWO_INDEX = 1;
 const NO_ELEMENT_SIZE = 0;
+const ONE_SIZE = 2;
 const TWO_SIZE = 2;
 const THREE_SIZE = 2;
 
@@ -80,8 +81,8 @@ function handlePostRequest(req, res, next) {
                         }
 
                         post.likedByUser = postsLikedByUser.filter((like) => {
-                            return like.postId === post.postId;
-                        }).length > NO_ELEMENT_SIZE;
+                                return like.postId === post.postId;
+                            }).length > NO_ELEMENT_SIZE;
                     });
 
                     res.json(posts).end();
@@ -105,77 +106,42 @@ router.get('/poi_posts/:userID/:poiID/:offset/:limit', (req, res, next) => {
 });
 
 router.post('/like', (req, res, next) => {
-    const { userID, postID } = req.body;
+    const { userID, postID, liked } = req.body;
 
-    if (!postID || !userID || typeof userID !== 'string') {
+    if (!postID || !userID || typeof userID !== 'string' || typeof liked !== 'boolean') {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
 
-    const postIdList = utils.convertToString([postID]);
     const { postDB, userDB } = db;
-    Promise.all([userDB.getUserByUID(userID), postDB.getPostById(postID), postDB.getPostLikedByUser(postIdList, userID)]).
+    Promise.all([userDB.getUserByUID(userID), postDB.getPostById(postID)]).
     then((results) => {
 
-        if (results && results.length === THREE_SIZE &&
+        if (results && results.length === TWO_SIZE &&
             results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE &&
-            results[ONE_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE &&
-            results[TWO_INDEX] && results[ONE_INDEX].length === NO_ELEMENT_SIZE) {
+            results[ONE_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE) {
 
-            return postDB.addPostLike(postID, userID).
-            then(() => {
-                res.end();
+            postDB.getPostLike(postID, userID).
+            then((result) => {
+                if (result && result.length === ONE_SIZE &&
+                    results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE) {
+
+                    return postDB.updatePostLike(postID, userID, liked).
+                    then(() => {
+                        res.end();
+                    });
+                }
+
+                return postDB.addPostLike(postID, userID).
+                then(() => {
+                    res.end();
+                });
             });
         }
 
-        if (results[TWO_INDEX] && results[ONE_INDEX].length === NO_ELEMENT_SIZE) {
-            res.status(httpCodes.BAD_REQUEST).json({ message: '(userID, postID) already found in likes' }).
-            end();
-        } else {
-            res.status(httpCodes.BAD_REQUEST).json({ message: '(userID, postID) not found' }).
-            end();
-        }
-
-        return null;
-    }).
-    catch((error) => {
-        next(error);
-    });
-});
-
-router.delete('/like', (req, res, next) => {
-    const { userID, postID } = req.body;
-
-    if (!postID || !userID || typeof userID !== 'string') {
-        res.sendStatus(httpCodes.BAD_REQUEST).end();
-
-        return;
-    }
-
-    const postIdList = utils.convertToString([postID]);
-    const { postDB, userDB } = db;
-    Promise.all([userDB.getUserByUID(userID), postDB.getPostById(postID), postDB.getPostLikedByUser(postIdList, userID)]).
-    then((results) => {
-
-        if (results && results.length === THREE_SIZE &&
-            results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE &&
-            results[ONE_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE &&
-            results[TWO_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE) {
-
-            return postDB.removePostLike(postID, userID).
-            then(() => {
-                res.end();
-            });
-        }
-
-        if (results[TWO_INDEX] && results[ONE_INDEX].length === NO_ELEMENT_SIZE) {
-            res.status(httpCodes.BAD_REQUEST).json({ message: '(userID, postID) already not found in likes' }).
-            end();
-        } else {
-            res.status(httpCodes.BAD_REQUEST).json({ message: '(userID, postID) not found' }).
-            end();
-        }
+        res.status(httpCodes.BAD_REQUEST).json({ message: '(userID, postID) not found' }).
+        end();
 
         return null;
     }).

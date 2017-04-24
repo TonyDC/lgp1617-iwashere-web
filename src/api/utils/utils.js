@@ -1,3 +1,5 @@
+/* eslint guard-for-in: "off" */
+
 const ZERO_INDEX = 0;
 const ONE_INDEX = 1;
 
