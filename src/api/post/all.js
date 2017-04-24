@@ -81,8 +81,8 @@ function handlePostRequest(req, res, next) {
                         }
 
                         post.likedByUser = postsLikedByUser.filter((like) => {
-                                return like.postId === post.postId;
-                            }).length > NO_ELEMENT_SIZE;
+                            return like.postId === post.postId;
+                        }).length > NO_ELEMENT_SIZE;
                     });
 
                     res.json(posts).end();
