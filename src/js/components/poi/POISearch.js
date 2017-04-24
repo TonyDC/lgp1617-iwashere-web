@@ -106,7 +106,7 @@ export default class POIDetail extends Component {
             });
 
         }, () => {
-            Alerts.createInfoAlert('Error while retrieving current location');
+            Alerts.createInfoAlert('Error while retrieving current location. Trying to retrieve results without considering the current location...');
 
             this.setState({ inProgress: 'Searching...' });
             this.performSearch(search).
