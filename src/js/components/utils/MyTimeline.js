@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import { Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import Moment from 'moment';
+import { GridLoader as Loader } from 'halogen';
+import InfiniteScroll from 'react-infinite-scroller';
 
 import 'styles/timeline.scss';
 
-const LIMIT = 6;
+const LIMIT = 10;
 const EMPTY = 0;
 
 export default class MyTimeline extends Component {
@@ -14,21 +16,22 @@ export default class MyTimeline extends Component {
         super(props);
 
         this.state = {
-            media: [],
-            mediaOffset: 0
+            hasMoreItems: true,
+            posts: [],
+            postsOffset: 0
         };
     }
 
     componentDidMount() {
-        this.fetchMedia();
+        this.fetchPosts();
     }
 
-    fetchMedia() {
-        fetch(this.props.url, {
-            body: {
-                limit: LIMIT,
-                offset: this.state.userMediaOffset
-            },
+    fetchPosts() {
+        if (!this.state.hasMoreItems) {
+            return;
+        }
+
+        fetch(`${this.props.url}/poi_posts/${this.props.poiId}/${this.state.postsOffset}/${LIMIT}`, {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
         }).
@@ -36,43 +39,104 @@ export default class MyTimeline extends Component {
             return response.json();
         }).
         then((response) => {
-
-            const media = this.state.media.concat(this.getMedia(response));
-
-            const mediaOffset = this.state.mediaOffset + LIMIT;
+            const newPosts = this.getPosts(response);
+            const posts = this.state.posts.concat(newPosts);
+            const postsOffset = this.state.postsOffset + newPosts.length;
 
             this.setState({
-                media,
-                mediaOffset
+                hasMoreItems: newPosts.length === LIMIT,
+                posts,
+                postsOffset
             });
         });
     }
 
-    getMedia(media) {
-        const mediaList = [];
+    toggleLike(postId) {
+        let post = null;
+
+        this.state.posts.forEach((postTemp) => {
+            if (postTemp.postId === postId) {
+                post = postTemp;
+            }
+        });
+
+        fetch(`${this.props.url}/like`, {
+            body: JSON.stringify({
+                liked: post.liked,
+                postID: postId,
+                userID: this.props.user.uid
+            }),
+            headers: { 'Content-Type': 'application/json' },
+            method: 'POST'
+        }).
+        then((response) => {
+            return response.json();
+        }).
+        then((response) => {
+            if (!response.ok) {
+                return;
+            }
+
+            const { posts } = this.state.posts;
+
+            posts.forEach((postTemp) => {
+                if (postTemp.postId === postId) {
+                    postTemp.liked = !postTemp.liked;
+                }
+            });
+
+            this.setState({ posts });
+        });
+    }
+
+    getPosts(posts) {
+        const postsList = [];
 
         let itemClassInverted = false;
         let previousTimeStamp = null;
         let key = 0;
-        media.forEach((mediaEntry) => {
-            const date = new Date(mediaEntry.time);
+        posts.forEach((postEntry) => {
+            const date = new Date(postEntry.createdAt);
 
             if (date.getMonth() !== previousTimeStamp) {
                 previousTimeStamp = date.getMonth();
-                mediaList.push(<li key={key++}><div className="tldate">{ Moment(date).format("MMM") } { date.getFullYear()} </div></li>);
+                postsList.push(<li key={key++}><div className="tldate">{ Moment(date).format("MMM") } { date.getFullYear()} </div></li>);
             }
 
-            mediaList.push(
+            let postComponent = null;
+            if (postEntry.type === "image;imagem") {
+                postComponent = <img src={ postEntry.url }/>;
+            } else if (postEntry.type === "video;vídeo") {
+                postComponent = <iframe src={ postEntry.url }/>;
+            }
+
+            let tagList = null;
+            if (postEntry.tags.length) {
+                const tags = [];
+
+                postEntry.tags.forEach((tag) => {
+                    tags.push(` ${tag.name} `);
+                });
+
+                tagList = <p><small className="text-muted"><i className="glyphicon glyphicon-tag"/>{tags}</small></p>;
+            }
+
+            postsList.push(
                 <li className={`timeline${itemClassInverted
                     ? '-inverted'
                     : ''}`} key={key++}>
                     <div className="tl-circ" />
                     <div className="timeline-panel">
                         <div className="tl-heading">
-                            <p><small className="text-muted"><i className="glyphicon glyphicon-time"/> { mediaEntry.time }</small></p>
+                            <p><small className="text-muted pull-right"><i className="glyphicon glyphicon-time"/> { Moment(date).format('MMMM Do YYYY, h:mm') }</small></p>
+                            {tagList}
                         </div>
                         <div className="tl-body">
-                            <p><img src={ mediaEntry.url }/></p>
+                            {postComponent}
+
+                            <p>{postEntry.description}</p>
+
+                            <a className="pull-right">{postEntry.likes} <i className="glyphicon glyphicon-thumbs-up"/></a>
                         </div>
                     </div>
                 </li>
@@ -81,27 +145,40 @@ export default class MyTimeline extends Component {
             itemClassInverted = !itemClassInverted;
         });
 
-        return mediaList;
+        return postsList;
     }
 
     render() {
-        if (this.state.media.length === EMPTY) {
+        if (this.state.posts.length === EMPTY) {
             return (
                 <Col xs={12} mdOffset={2} md={8} lgOffset={2} lg={8}/>
             );
         }
 
+        const loader =
+            <div className="hor-align vert-align">
+                <Loader color="#012935" className="loader"/>
+            </div>;
+
         return (
             <Col xs={12} mdOffset={2} md={8} lgOffset={2} lg={8}>
-                <ul className="timeline">
-                    {this.state.media}
-                </ul>
+                <InfiniteScroll
+                    pageStart={0}
+                    loadMore={this.fetchPosts.bind(this)}
+                    hasMore={this.state.hasMoreItems}
+                    loader={loader}
+                >
+                    <ul className="timeline">
+                        {this.state.posts}
+                    </ul>
+                </InfiniteScroll>
             </Col>
         );
     }
 }
 
 MyTimeline.propTypes = {
+    poiId: PropTypes.any.isRequired,
     url: PropTypes.string.isRequired,
     user: PropTypes.any
 };

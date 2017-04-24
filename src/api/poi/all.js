@@ -171,13 +171,7 @@ router.post('/rating', (req, res, next) => {
             results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE &&
             results[ONE_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE) {
 
-            return poiDB.getPOIRatingByUser(poiID, userID).then((result) => {
-                if (result && result.length > NO_ELEMENT_SIZE) {
-                    return poiDB.updatePOIRating(poiID, userID, rating);
-                }
-
-                return poiDB.addPOIRating(poiID, userID, rating);
-            }).
+            return poiDB.addPOIRating(poiID, userID, rating).
             then(() => {
                 res.end();
             });
@@ -217,30 +211,6 @@ router.get('/range/:minLat/:maxLat/:minLng/:maxLng', (req, res, next) => {
     });
 });
 
-router.get('/posts/:id', (req, res, next) => {
-    const { id } = req.params;
-    const { limit, offset } = req.body;
-
-    if (!id || isNaN(parseInt(id, DECIMAL_BASE)) || !limit || isNaN(parseInt(limit, DECIMAL_BASE)) || !offset || isNaN(parseInt(offset, DECIMAL_BASE))) {
-        res.sendStatus(httpCodes.BAD_REQUEST).end();
-
-        return;
-    }
-
-    const { poiDB } = db;
-    poiDB.getPOIPosts(id, offset, limit).
-    then((poi) => {
-        if (poi && poi.length > NO_ELEMENT_SIZE) {
-            res.json(poi[ZERO_INDEX]).end();
-        } else {
-            res.sendStatus(httpCodes.NO_CONTENT).end();
-        }
-    }).
-    catch((error) => {
-        next(error);
-    });
-});
-
 router.get('/:id', (req, res, next) => {
     const { id } = req.params;
     if (!id || isNaN(parseInt(id, DECIMAL_BASE))) {
@@ -250,10 +220,17 @@ router.get('/:id', (req, res, next) => {
     }
 
     const { poiDB } = db;
-    poiDB.getPOIDetailByID(id).
-    then((poi) => {
-        if (poi && poi.length > NO_ELEMENT_SIZE) {
-            res.json(poi[ZERO_INDEX]).end();
+
+    Promise.all([poiDB.getPOIDetailByID(id), poiDB.getPOITags(id)]).
+    then((results) => {
+
+        if (results && results.length === TWO_SIZE &&
+            results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE) {
+
+            const poi = results[ZERO_INDEX][ZERO_INDEX];
+            poi.tags = results[ONE_INDEX];
+
+            res.json(poi).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
         }

@@ -4,27 +4,29 @@ const db = require('../index');
 
 module.exports.getPOIDetailByID = (id) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT * FROM pois WHERE poi_id = :id`, {
+    return db.query(`SELECT pois.*, poi_types.name AS type 
+    FROM pois INNER JOIN poi_types ON pois.poi_type_id = poi_types.poi_type_id 
+    WHERE pois.poi_id = :id`, {
         replacements: { id },
         type: db.QueryTypes.SELECT
     });
 };
 
-module.exports.getPOIPosts = (id, offset, limit) => {
+module.exports.getPOITags = (poiID) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT * FROM posts WHERE poi_id = :id ORDER BY createdAt LIMIT TO :limit OFFSET :offset`, {
-        replacements: {
-            id,
-            limit,
-            offset
-        },
+    return db.query(`SELECT tags.name, tags.tag_id 
+    FROM poi_tags INNER JOIN tags ON poi_tags.tag_id = tags.tag_id 
+    WHERE poi_tags.poi_id = :poiID`, {
+        replacements: { poiID },
         type: db.QueryTypes.SELECT
     });
 };
 
 module.exports.getPOIsWithin = (minLat, maxLat, minLng, maxLng) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT * FROM pois WHERE latitude >= :minLat AND latitude <= :maxLat AND longitude >= :minLng AND longitude <= :maxLng`, {
+    return db.query(`SELECT * 
+    FROM pois 
+    WHERE latitude >= :minLat AND latitude <= :maxLat AND longitude >= :minLng AND longitude <= :maxLng`, {
         replacements: {
             maxLat,
             maxLng,
@@ -37,10 +39,9 @@ module.exports.getPOIsWithin = (minLat, maxLat, minLng, maxLng) => {
 
 module.exports.getPOIMedia = (poiID) => {
     // language=POSTGRES-SQL
-    return db.query(`WITH poi_media AS (SELECT contents.id FROM contents INNER JOIN poi_content ON (contents.id = poi_content.content_id) WHERE poi_content.poi_id = :poiID)
-    (SELECT * FROM images INNER JOIN contents ON images.content_id=contents.id WHERE content_id IN (SELECT * FROM poi_media))
-    UNION 
-    (SELECT * FROM videos INNER JOIN contents ON videos.content_id=contents.id WHERE content_id IN (SELECT * FROM poi_media))`, {
+    return db.query(`SELECT *, name AS type 
+    FROM poi_contents INNER JOIN content_types ON poi_contents.content_type_id = content_types.content_type_id
+    WHERE poi_contents.poi_id = :poiID`, {
         replacements: { poiID },
         type: db.QueryTypes.SELECT
     });
@@ -48,7 +49,9 @@ module.exports.getPOIMedia = (poiID) => {
 
 module.exports.getPOIRating = (poiID) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT AVG(rating) AS rating, COUNT(*) AS ratings FROM poi_ratings WHERE poi_id = :poiID`, {
+    return db.query(`SELECT AVG(rating) AS rating, COUNT(*) AS ratings 
+    FROM (SELECT DISTINCT ON (user_id) * FROM poi_ratings WHERE poi_id = :poiID
+    ORDER BY user_id, created_at DESC) current_ratings`, {
         replacements: { poiID },
         type: db.QueryTypes.SELECT
     });
@@ -56,7 +59,9 @@ module.exports.getPOIRating = (poiID) => {
 
 module.exports.getPOIRatingByUser = (poiID, userID) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT rating FROM poi_ratings WHERE poi_id = :poiID AND user_id = :userID`, {
+    return db.query(`SELECT rating FROM poi_ratings 
+    WHERE poi_id = :poiID AND user_id = :userID 
+    ORDER BY created_at DESC LIMIT 1`, {
         replacements: {
             poiID,
             userID
@@ -74,18 +79,6 @@ module.exports.addPOIRating = (poiID, userID, rating) => {
             userID
         },
         type: db.QueryTypes.INSERT
-    });
-};
-
-module.exports.updatePOIRating = (poiID, userID, rating) => {
-    // language=POSTGRES-SQL
-    return db.query(`UPDATE poi_ratings SET rating = :rating WHERE poi_id = :poiID AND user_id = :userID`, {
-        replacements: {
-            poiID,
-            rating,
-            userID
-        },
-        type: db.QueryTypes.UPDATE
     });
 };
 
