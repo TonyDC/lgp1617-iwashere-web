@@ -36,6 +36,10 @@ export default class Alerts extends Component {
         return Alert.closeAll();
     }
 
+    static close(alertID) {
+        return Alert.close(alertID);
+    }
+
     constructor(props) {
         super(props);
         this.state = {};

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import GoogleMapReact from 'google-map-react';
 import Alerts from '../utils/Alerts';
+import httpCodes from 'http-status-codes';
 import { blue500 as POIColor, red500 as currentLocationColor } from 'material-ui/styles/colors';
 import { GOOGLE_MAPS_API_KEY } from '../../../../config';
 
@@ -51,6 +52,10 @@ export default class Map extends Component {
         super(props);
 
         this.state = { location: { present: false } };
+
+        this.isPOIsErrorsLaunched = false;
+        this.map = null;
+        this.maps = null;
     }
 
     handleLocation() {
@@ -60,7 +65,7 @@ export default class Map extends Component {
             timeout: 20000
         };
 
-        Alerts.createInfoAlert(`Retrieving location...`);
+        const locationInProgressAlert = Alerts.createInfoAlert(`Retrieving location...`);
         navigator.geolocation.getCurrentPosition((position) => {
             const { latitude, longitude } = position.coords;
             this.setState({
@@ -76,7 +81,7 @@ export default class Map extends Component {
                 lng: longitude
             });
 
-            Alerts.closeAll();
+            Alerts.close(locationInProgressAlert);
             Alerts.createInfoAlert(`Location found.`);
         }, () => {
             Alerts.closeAll();
@@ -114,7 +119,15 @@ export default class Map extends Component {
             }
         }
 
+        if (this.isPOIsErrorsLaunched) {
+            return;
+        }
+
         fetch(`/api/poi/range/${currentMinLat}/${currentMaxLat}/${currentMinLng}/${currentMaxLng}`).then((response) => {
+            if (response.status >= httpCodes.BAD_REQUEST) {
+                return Promise.reject(new Error(response.statusText));
+            }
+
             return response.json();
         }).
         then((response) => {
@@ -129,6 +142,12 @@ export default class Map extends Component {
                     content: response
                 }
             });
+        }).
+        catch(() => {
+            if (!this.isPOIsErrorsLaunched) {
+                Alerts.createErrorAlert('Error in retrieving points of interest. Please, try again later.');
+                this.isPOIsErrorsLaunched = true;
+            }
         });
     }
 
@@ -140,7 +159,7 @@ export default class Map extends Component {
             currentLocation = <UserLocationComponent lat={lat} lng={lng}/>;
         }
 
-        const poisInViewport = this.state.response
+        const poisInViewport = this.state.response && this.state.response.content
             ? this.state.response.content.map((element, index) => {
                 return <POIComponent lat={ element.latitude } lng={ element.longitude } key={ index }/>;
             })
