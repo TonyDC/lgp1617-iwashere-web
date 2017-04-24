@@ -2,11 +2,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import GoogleMapReact from 'google-map-react';
 import Alerts from '../utils/Alerts';
+import { blue500 as POIColor, red500 as currentLocationColor } from 'material-ui/styles/colors';
 
 import Pin from './Pin';
 
 import IconButton from 'material-ui/IconButton';
 import CommunicationLocationOn from 'material-ui/svg-icons/communication/location-on';
+import MapsMyLocation from 'material-ui/svg-icons/maps/my-location';
 
 import 'styles/utils.scss';
 import 'styles/map.scss';
@@ -16,7 +18,7 @@ export default class Map extends Component {
     constructor(props) {
         super(props);
 
-        this.state = { location: false };
+        this.state = { location: { present: false } };
     }
 
     handleLocation() {
@@ -29,11 +31,12 @@ export default class Map extends Component {
         Alerts.createInfoAlert(`Retrieving location...`);
         navigator.geolocation.getCurrentPosition((position) => {
             const { latitude, longitude } = position.coords;
-
             this.setState({
-                lat: latitude,
-                lng: longitude,
-                location: true
+                location: {
+                    lat: latitude,
+                    lng: longitude,
+                    present: true
+                }
             });
 
             this.map.setCenter({
@@ -41,9 +44,12 @@ export default class Map extends Component {
                 lng: longitude
             });
 
+            Alerts.closeAll();
         }, () => {
             Alerts.closeAll();
             Alerts.createErrorAlert('Error while retrieving current location.');
+
+            this.setState({ location: { present: false } });
         }, geoOptions);
 
     }
@@ -52,7 +58,7 @@ export default class Map extends Component {
         this.map = map;
         this.maps = maps;
 
-        map.addListener('dragend', () => {
+        map.addListener('tilesloaded', () => {
             this.fetchPoints(map.getBounds());
         });
 
@@ -61,46 +67,75 @@ export default class Map extends Component {
 
     fetchPoints(borders) {
         const { b, f } = borders;
+        const currentMaxLat = f.b,
+            currentMaxLng = b.f,
+            currentMinLat = f.f,
+            currentMinLng = b.b;
 
-        fetch(`/api/poi/range/${f.f}/${f.b}/${b.b}/${b.f}`).then((response) => {
+        if (typeof this.state.response === 'object') {
+            const { maxLat, maxLng, minLat, minLng } = this.state.response.area;
+
+            if (currentMinLat >= minLat && currentMaxLat <= maxLat && currentMinLng >= minLng && currentMaxLng <= maxLng) {
+                console.log('In cache');
+
+                return;
+            }
+        }
+
+        console.log('Fetching...');
+
+        fetch(`/api/poi/range/${currentMinLat}/${currentMaxLat}/${currentMinLng}/${currentMaxLng}`).then((response) => {
             return response.json();
         }).
         then((response) => {
-            this.setState({ response });
+            this.setState({
+                response: {
+                    area: {
+                        maxLat: currentMaxLat,
+                        maxLng: currentMaxLng,
+                        minLat: currentMinLat,
+                        minLng: currentMinLng
+                    },
+                    content: response
+                }
+            });
         });
     }
 
     render() {
-        const { lat, lng } = this.state;
+        const { lat, lng } = this.state.location;
 
         let currentLocation = null;
-        if (this.state.location) {
+        if (this.state.location.present) {
             currentLocation =
                 <Pin lat={lat} lng={lng}>
                     <div className="pin">
                         <IconButton>
-                            <CommunicationLocationOn/>
+                            <MapsMyLocation color={ currentLocationColor }/>
                         </IconButton>
                     </div>
                 </Pin>;
         }
 
+        const poisInViewport = this.state.response
+            ? this.state.response.content.map((element, index) => {
+                return <Pin lat={element.latitude} lng={element.longitude} key={index}>
+                    <div className="pin">
+                        <IconButton>
+                            <CommunicationLocationOn color={ POIColor }/>
+                        </IconButton>
+                    </div>
+                </Pin>;
+            })
+            : null;
+
         return (
             <GoogleMapReact defaultCenter={this.props.center}
                             defaultZoom={this.props.zoom}
                             bootstrapURLKeys={{key: "AIzaSyDifdID6peJ__zQ6cKA1KxPm0hSuevf6-w"}}
-                            onGoogleApiLoaded={ this.onGoogleAPILoaded.bind(this) }
-            >
+                            onGoogleApiLoaded={ this.onGoogleAPILoaded.bind(this) }>
                 { currentLocation }
-                { this.state.response? this.state.response.map((element) => {
-                    return <Pin lat={element.latitude} lng={element.longitude}>
-                        <div className="pin">
-                            <IconButton>
-                                <CommunicationLocationOn/>
-                            </IconButton>
-                        </div>
-                    </Pin>;
-                }) : null }
+                { poisInViewport }
             </GoogleMapReact>
         );
     }
@@ -111,7 +146,7 @@ Map.defaultProps = {
         lat: 41.14792237,
         lng: -8.61129427
     },
-    zoom: 8
+    zoom: 17
 };
 
 Map.propTypes = {
