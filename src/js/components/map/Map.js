@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import GoogleMapReact from 'google-map-react';
 import Alerts from '../utils/Alerts';
 import { blue500 as POIColor, red500 as currentLocationColor } from 'material-ui/styles/colors';
+import { GOOGLE_MAPS_API_KEY } from '../../../../config';
 
 import Pin from './Pin';
 
@@ -12,6 +13,37 @@ import MapsMyLocation from 'material-ui/svg-icons/maps/my-location';
 
 import 'styles/utils.scss';
 import 'styles/map.scss';
+
+const POIComponent = (props) => {
+    return <Pin lat={props.lat} lng={props.lng}>
+        <div className="pin">
+            <IconButton>
+                <CommunicationLocationOn color={ POIColor }/>
+            </IconButton>
+        </div>
+    </Pin>;
+};
+
+POIComponent.propTypes = {
+    lat: PropTypes.number.isRequired,
+    lng: PropTypes.number.isRequired
+};
+
+
+const UserLocationComponent = (props) => {
+    return <Pin lat={ props.lat } lng={ props.lng }>
+        <div className="pin">
+            <IconButton>
+                <MapsMyLocation color={ currentLocationColor }/>
+            </IconButton>
+        </div>
+    </Pin>;
+};
+
+UserLocationComponent.propTypes = {
+    lat: PropTypes.number.isRequired,
+    lng: PropTypes.number.isRequired
+};
 
 export default class Map extends Component {
 
@@ -45,6 +77,7 @@ export default class Map extends Component {
             });
 
             Alerts.closeAll();
+            Alerts.createInfoAlert(`Location found.`);
         }, () => {
             Alerts.closeAll();
             Alerts.createErrorAlert('Error while retrieving current location.');
@@ -66,23 +99,20 @@ export default class Map extends Component {
     }
 
     fetchPoints(borders) {
-        const { b, f } = borders;
-        const currentMaxLat = f.b,
-            currentMaxLng = b.f,
-            currentMinLat = f.f,
-            currentMinLng = b.b;
+        const latitudeRange = borders.f,
+            longitudeRange = borders.b;
+        const currentMaxLat = latitudeRange.b,
+            currentMaxLng = longitudeRange.f,
+            currentMinLat = latitudeRange.f,
+            currentMinLng = longitudeRange.b;
 
         if (typeof this.state.response === 'object') {
             const { maxLat, maxLng, minLat, minLng } = this.state.response.area;
 
             if (currentMinLat >= minLat && currentMaxLat <= maxLat && currentMinLng >= minLng && currentMaxLng <= maxLng) {
-                console.log('In cache');
-
                 return;
             }
         }
-
-        console.log('Fetching...');
 
         fetch(`/api/poi/range/${currentMinLat}/${currentMaxLat}/${currentMinLng}/${currentMaxLng}`).then((response) => {
             return response.json();
@@ -107,32 +137,19 @@ export default class Map extends Component {
 
         let currentLocation = null;
         if (this.state.location.present) {
-            currentLocation =
-                <Pin lat={lat} lng={lng}>
-                    <div className="pin">
-                        <IconButton>
-                            <MapsMyLocation color={ currentLocationColor }/>
-                        </IconButton>
-                    </div>
-                </Pin>;
+            currentLocation = <UserLocationComponent lat={lat} lng={lng}/>;
         }
 
         const poisInViewport = this.state.response
             ? this.state.response.content.map((element, index) => {
-                return <Pin lat={element.latitude} lng={element.longitude} key={index}>
-                    <div className="pin">
-                        <IconButton>
-                            <CommunicationLocationOn color={ POIColor }/>
-                        </IconButton>
-                    </div>
-                </Pin>;
+                return <POIComponent lat={ element.latitude } lng={ element.longitude } key={ index }/>;
             })
             : null;
 
         return (
             <GoogleMapReact defaultCenter={this.props.center}
                             defaultZoom={this.props.zoom}
-                            bootstrapURLKeys={{key: "AIzaSyDifdID6peJ__zQ6cKA1KxPm0hSuevf6-w"}}
+                            bootstrapURLKeys={{ key: GOOGLE_MAPS_API_KEY }}
                             onGoogleApiLoaded={ this.onGoogleAPILoaded.bind(this) }>
                 { currentLocation }
                 { poisInViewport }

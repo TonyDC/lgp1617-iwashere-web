@@ -22,7 +22,8 @@ module.exports = {
         messagingSenderId: "random_number",
         storageBucket: "iwashere-mobile.appspot.com"
     },
-    POSTGRESQL_CONN_STRING: 'postgres://user:password@location:5432/database'
+    POSTGRESQL_CONN_STRING: 'postgres://user:password@location:5432/database',
+    GOOGLE_MAPS_API_KEY: 'AIzaSyDifdID6peJ__zQ6cKA1KxPm0hSuevf6-w'
 };
 ```
 

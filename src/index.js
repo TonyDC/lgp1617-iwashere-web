@@ -20,15 +20,8 @@ import 'bootstrap-social';
 import './styles/index.scss';
 
 // Initialize Firebase
-const firebaseConfig = {
-    apiKey: "AIzaSyBBFDyYUUxcpXJLyqX0lzIi7EvMJ8Ygy3A",
-    authDomain: "iwashere-mobile.firebaseapp.com",
-    databaseURL: "https://iwashere-mobile.firebaseio.com",
-    messagingSenderId: "870991185151",
-    projectId: "iwashere-mobile",
-    storageBucket: "iwashere-mobile.appspot.com"
-};
-firebase.initializeApp(firebaseConfig);
+import { FIREBASE_CONFIG } from '../config';
+firebase.initializeApp(FIREBASE_CONFIG);
 
 // Material Design
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
