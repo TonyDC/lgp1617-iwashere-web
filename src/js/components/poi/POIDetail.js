@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet';
 import { GridLoader as Loader } from 'halogen';
 import POICard from './POICard';
 
-import Alerts from '../utils/Alerts';
+import Error from '../utils/Error';
 import Timeline from '../utils/MyTimeline';
 
 import 'styles/poi_card.scss';
@@ -41,7 +41,7 @@ export default class POIDetail extends Component {
 
     fetchPOIInfo() {
         if (isNaN(parseInt(this.props.params.id, DECIMAL_BASE))) {
-            Alerts.createErrorAlert("Unable to find the point of interest.");
+            this.setState({ error: true });
 
             return;
         }
@@ -54,17 +54,25 @@ export default class POIDetail extends Component {
             return response.json();
         }).
         then((response) => {
+
+            console.log(response);
             this.setState({
                 loadingPOIInfo: false,
                 poiInfo: response
             });
         }).
         catch(() => {
-            Alerts.createErrorAlert("Unable to find the point of interest.");
+            this.setState({ error: true });
         });
     }
 
     render() {
+        if (this.state.error) {
+            return (
+                <Error errorMessage="Error while retrieving information about the point of interest." />
+            );
+        }
+
         if (this.state.loadingPOIInfo) {
             return (
                 <div className="hor-align vert-align">

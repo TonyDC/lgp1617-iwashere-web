@@ -202,7 +202,7 @@ router.get('/range/:minLat/:maxLat/:minLng/:maxLng', (req, res, next) => {
     poiDB.getPOIsWithin(minLat, maxLat, minLng, maxLng).
     then((rows) => {
         if (rows) {
-            res.json(rows).end();
+            res.json(utils.convertObjectsToCamelCase(rows)).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
         }

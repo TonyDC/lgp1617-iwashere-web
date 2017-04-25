@@ -42,7 +42,7 @@ export default class POIPreview extends Component {
 
     fetchPOIInfo() {
         if (isNaN(parseInt(this.props.poiId, DECIMAL_BASE))) {
-            Alerts.createErrorAlert("Unable to find the point of interest.");
+            this.setState({ error: true });
 
             return;
         }
@@ -61,7 +61,7 @@ export default class POIPreview extends Component {
             });
         }).
         catch(() => {
-            Alerts.createErrorAlert("Unable to find the point of interest.");
+            this.setState({ error: true });
         });
     }
 
@@ -74,6 +74,19 @@ export default class POIPreview extends Component {
             );
         }
 
+        const closeButton =
+            <RaisedButton
+                className="poi-detail-button" backgroundColor="#39A8E0"
+                label="Close"
+                onTouchTap={this.props.onClose}
+            />;
+
+        if (this.state.error) {
+            return (
+                <Error errorMessage="Error while retrieving information about the point of interest." children={[closeButton]}/>
+            );
+        }
+
         const poiPreviewButtons =
             <div className="poi-detail-buttons">
                 <RaisedButton
@@ -82,11 +95,7 @@ export default class POIPreview extends Component {
                     onTouchTap={this.viewPoiDetail.bind(this)}
                 />
 
-                <RaisedButton
-                    className="poi-detail-button" backgroundColor="#39A8E0"
-                    label="Close"
-                    onTouchTap={this.props.onClose}
-                />
+                {closeButton}
             </div>;
 
         return (
