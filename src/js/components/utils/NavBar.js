@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Navbar, Nav, NavItem, MenuItem, NavDropdown } from 'react-bootstrap';
+import { Link } from 'react-router';
 import * as firebase from 'firebase';
 
 import logoCompact from 'img/logo-compact.png';
@@ -82,6 +83,24 @@ export default class NavBar extends Component {
                     </Navbar.Header>
                     <Navbar.Collapse>
                         <Nav pullRight>
+                            <NavItem>
+                                <Link to={'/'}
+                                      onlyActiveOnIndex={true}
+                                      className="link"
+                                      activeClassName="current-link">
+                                    Homepage
+                                </Link>
+                            </NavItem>
+
+                            <NavItem>
+                                <Link to={'/feed'}
+                                      onlyActiveOnIndex={false}
+                                      className="link"
+                                      activeClassName="current-link">
+                                    Feed
+                                </Link>
+                            </NavItem>
+
                             { signButton }
                         </Nav>
                     </Navbar.Collapse>

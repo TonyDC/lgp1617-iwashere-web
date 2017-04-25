@@ -26,3 +26,15 @@
 .navbar-container {
     z-index: 5;
 }
+
+.link {
+    color: #9d9d9d;
+    background-color: transparent;
+    text-decoration: none;
+}
+
+.link:hover, .link:focus, .current-link {
+    color: #fff;
+    background-color: transparent;
+    text-decoration: none;
+}
