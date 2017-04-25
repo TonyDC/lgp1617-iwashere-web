@@ -46,9 +46,11 @@ if (process.env.NODE_ENV !== 'production') {
 // Logger
 app.use(expressWinston.logger({
     transports: [
-        new winston.transports.Console({
+        new winston.transports.File({
             colorize: true,
-            json: true
+            filename: 'out.log',
+            json: true,
+            level: 'verbose'
         })
     ]
 }));
@@ -81,22 +83,26 @@ app.use('/public', publicPath);
 app.use('/api', APIMiddleware);
 
 // URL not found: server index.html
-app.use((_, res) => {
+app.use((req, res) => {
     res.sendFile(indexPath);
 });
 
 app.use(expressWinston.errorLogger({
     transports: [
-        new winston.transports.Console({
+        new winston.transports.File({
             colorize: true,
-            json: true
+            filename: 'err.log',
+            humanReadableUnhandledException: true,
+            json: true,
+            level: 'verbose'
         })
     ]
 }));
 
 // Error middleware handler
 app.use((err, req, res, next) => {
-    res.status(httpCodes.INTERNAL_SERVER_ERROR).send({ message: 'Something went wrong!' });
+    res.status(httpCodes.INTERNAL_SERVER_ERROR).send({ message: 'Something went wrong!' }).
+    end();
 });
 
 /* *********************************** */
