@@ -257,7 +257,7 @@
     "yield-star-spacing": "error",
     "yoda": "error",
     "react/display-name": 1,
-    "react/jsx-boolean-value": 1,
+    "react/jsx-boolean-value": 2,
     "react/jsx-no-undef": 1,
     "react/jsx-quotes": 0,
     "react/jsx-sort-prop-types": 0,

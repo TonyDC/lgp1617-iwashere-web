@@ -85,7 +85,7 @@ export default class NavBar extends Component {
                         <Nav pullRight>
                             <NavItem>
                                 <Link to={'/'}
-                                      onlyActiveOnIndex={true}
+                                      onlyActiveOnIndex
                                       className="link"
                                       activeClassName="current-link">
                                     Homepage
@@ -94,7 +94,6 @@ export default class NavBar extends Component {
 
                             <NavItem>
                                 <Link to={'/feed'}
-                                      onlyActiveOnIndex={false}
                                       className="link"
                                       activeClassName="current-link">
                                     Feed
