@@ -163,8 +163,8 @@ export default class Map extends Component {
 
         const poisInViewport = this.state.response && this.state.response.content
             ? this.state.response.content.map((element, index) => {
-            return <POIComponent lat={ element.latitude } lng={ element.longitude } key={ index }/>;
-        })
+                return <POIComponent lat={ element.latitude } lng={ element.longitude } key={ index }/>;
+            })
             : null;
 
         let poiPreview = null;
@@ -173,7 +173,7 @@ export default class Map extends Component {
         }
 
         return (
-            <div>
+            <div className="wrapper-fill">
                 {poiPreview}
                 <GoogleMapReact defaultCenter={this.props.center}
                                 defaultZoom={this.props.zoom}

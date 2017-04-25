@@ -1,4 +1,4 @@
-.side_container {
+.side-container {
     z-index: 0 !important;
     background-color: #012935 !important;
     padding: 15px;
@@ -20,4 +20,9 @@
 .poi-detail-buttons {
     text-align: right;
     margin-top: 15px;
+}
+
+.side-drawer {
+    position: relative;
+    z-index: 1;
 }
