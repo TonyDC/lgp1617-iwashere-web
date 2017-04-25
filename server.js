@@ -16,8 +16,9 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const httpCodes = require('http-status-codes');
 const firebaseAdmin = require("firebase-admin");
-const winston = require('winston');
+
 const expressWinston = require('express-winston');
+const windstonTransports = require('./windstonTransports');
 
 const APIMiddleware = require('./src/api/index');
 
@@ -44,16 +45,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // Logger
-app.use(expressWinston.logger({
-    transports: [
-        new winston.transports.File({
-            colorize: true,
-            filename: 'out.log',
-            json: true,
-            level: 'verbose'
-        })
-    ]
-}));
+app.use(expressWinston.logger({ transports: windstonTransports.transportLoggers }));
 
 // GZip compression
 app.use(require('compression')());
@@ -87,17 +79,7 @@ app.use((req, res) => {
     res.sendFile(indexPath);
 });
 
-app.use(expressWinston.errorLogger({
-    transports: [
-        new winston.transports.File({
-            colorize: true,
-            filename: 'err.log',
-            humanReadableUnhandledException: true,
-            json: true,
-            level: 'verbose'
-        })
-    ]
-}));
+app.use(expressWinston.errorLogger({ transports: windstonTransports.transportErrorLoggers }));
 
 // Error middleware handler
 app.use((err, req, res, next) => {
