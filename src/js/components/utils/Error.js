@@ -12,16 +12,18 @@ export default class Error extends Component {
         return (
             <div className="hor-align vert-align">
                 <div className="alert alert-danger error">
-                    <i className="glyphicon glyphicon-exclamation-sign" aria-hidden="true" />
-                    {` ${this.props.errorMessage}`}
+                    <p><i className="glyphicon glyphicon-exclamation-sign" aria-hidden="true" />
+                        {` ${this.props.errorMessage}`}
+                    </p>
+
+                    {this.props.children}
                 </div>
-                {this.props.children}
             </div>
         );
     }
 }
 
 Error.propTypes = {
-    children: PropTypes.object,
+    children: PropTypes.any,
     errorMessage: PropTypes.string.isRequired
 };

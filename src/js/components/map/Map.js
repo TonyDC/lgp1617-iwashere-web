@@ -157,7 +157,8 @@ export default class Map extends Component {
     }
 
     poiSelected(poiId) {
-        this.setState({ itemSelected: poiId });
+        this.setState({ selectedItem: poiId });
+        console.log('item selected', poiId);
     }
 
     render() {
@@ -170,14 +171,26 @@ export default class Map extends Component {
 
         const poisInViewport = this.state.response && this.state.response.content
             ? this.state.response.content.map((element, index) => {
-            console.log(element);
-                return <POIComponent lat={ element.latitude } lng={ element.longitude } clickHandler={ this.poiSelected(element.poiId)} key={ index }/>;
+                return <POIComponent
+                            lat={ element.latitude }
+                            lng={ element.longitude }
+                            clickHandler={ () => {
+                                this.poiSelected(element.poiId);
+                            }}
+                            key={ index }
+                        />;
             })
             : null;
 
         let poiPreview = null;
         if (this.state.selectedItem) {
-            poiPreview = <POISideBar poiId={this.state.selectedItem} router={this.props.router} />;
+            poiPreview = <POISideBar
+                            poiId={this.state.selectedItem}
+                            onClose={() => {
+                                this.poiSelected(null);
+                            }}
+                            router={this.props.router}
+                        />;
         }
 
         return (

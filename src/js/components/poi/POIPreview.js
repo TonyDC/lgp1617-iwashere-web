@@ -4,7 +4,7 @@ import { GridLoader as Loader } from 'halogen';
 import RaisedButton from 'material-ui/RaisedButton';
 import POICard from './POICard';
 
-import Alerts from '../utils/Alerts';
+import Error from '../utils/Error';
 
 import 'styles/utils.scss';
 import 'styles/poi_detail_side.scss';
@@ -66,24 +66,25 @@ export default class POIPreview extends Component {
     }
 
     render() {
-        if (this.state.loadingPOIInfo) {
-            return (
-                <div className="hor-align vert-align">
-                    <Loader color="#012935" className="loader"/>
-                </div>
-            );
-        }
-
         const closeButton =
             <RaisedButton
-                className="poi-detail-button" backgroundColor="#39A8E0"
+                className="poi-detail-button pull-right" backgroundColor="#39A8E0"
                 label="Close"
+                key="close"
                 onTouchTap={this.props.onClose}
             />;
 
         if (this.state.error) {
             return (
                 <Error errorMessage="Error while retrieving information about the point of interest." children={[closeButton]}/>
+            );
+        }
+
+        if (this.state.loadingPOIInfo) {
+            return (
+                <div className="hor-align vert-align">
+                    <Loader color="#012935" className="loader"/>
+                </div>
             );
         }
 

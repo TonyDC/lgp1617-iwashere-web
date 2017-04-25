@@ -43,6 +43,7 @@ export default class POISideBar extends Component {
 
     closePoiPreview() {
         this.setState({ open: false });
+        this.props.onClose();
     }
 
     render() {
@@ -62,6 +63,7 @@ export default class POISideBar extends Component {
 }
 
 POISideBar.propTypes = {
+    onClose: PropTypes.any.isRequired,
     poiId: PropTypes.string.isRequired,
     router: PropTypes.object.isRequired
 };
