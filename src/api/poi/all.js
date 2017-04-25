@@ -90,7 +90,7 @@ router.get('/media/:poiID', (req, res, next) => {
     poiDB.getPOIMedia(poiID).
     then((media) => {
         if (media) {
-            res.json(media).end();
+            res.json(utils.convertObjectsToCamelCase(media)).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
         }
