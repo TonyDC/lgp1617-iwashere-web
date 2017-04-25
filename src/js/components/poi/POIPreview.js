@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { GridLoader as Loader } from 'halogen';
 import RaisedButton from 'material-ui/RaisedButton';
-import POICard from '../utils/POICard';
+import POICard from './POICard';
 
 import Alerts from '../utils/Alerts';
 

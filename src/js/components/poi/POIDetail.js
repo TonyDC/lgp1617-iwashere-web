@@ -3,7 +3,7 @@ import { Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 import { GridLoader as Loader } from 'halogen';
-import POICard from '../utils/POICard';
+import POICard from './POICard';
 
 import Alerts from '../utils/Alerts';
 import Timeline from '../utils/MyTimeline';

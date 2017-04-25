@@ -11,6 +11,11 @@ module.exports = {
                 description: 'This is a post',
                 poi_id: 1,
                 user_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2'
+            },
+            {
+                description: 'This is a post',
+                poi_id: 1,
+                user_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2'
             }
         ], {});
     }

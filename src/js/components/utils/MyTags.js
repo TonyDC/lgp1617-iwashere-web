@@ -62,7 +62,7 @@ export default class MyTags extends Component {
         return (
             <Chip
                 labelColor="white"
-                key={tag.tagId}
+                key={`tag#${tag.tagId}`}
                 className="tag-look"
             >
                 {tag.name}
@@ -72,7 +72,7 @@ export default class MyTags extends Component {
 
     render() {
         return (
-            <div className="tags-wrapper">
+            <div className={`tags-wrapper ${this.props.class}`}>
                 {this.props.tags.map(this.renderTag, this)}
             </div>
         );
@@ -81,11 +81,13 @@ export default class MyTags extends Component {
 
 
 MyTags.defaultProps = {
+    class: '',
     readOnly: false,
     tags: []
 };
 
 MyTags.propTypes = {
+    class: PropTypes.string,
     readOnly: PropTypes.any.isRequired,
     tags: PropTypes.any.isRequired
 };
