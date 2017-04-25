@@ -54,8 +54,6 @@ export default class POIDetail extends Component {
             return response.json();
         }).
         then((response) => {
-
-            console.log(response);
             this.setState({
                 loadingPOIInfo: false,
                 poiInfo: response
