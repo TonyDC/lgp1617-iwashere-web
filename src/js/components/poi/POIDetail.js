@@ -82,7 +82,7 @@ export default class POIDetail extends Component {
 
                 if (this.state.poiInfo.type === PLACE_TYPE) {
                     userMediaTimeline =
-                        <Timeline url={`/api/post/`} poiId={this.props.params.id} user={this.state.user}/>;
+                        <Timeline url={`/api/post`} poiId={this.props.params.id} user={this.state.user}/>;
                 }
             }
         }

@@ -52,7 +52,10 @@ export default class Map extends Component {
     constructor(props) {
         super(props);
 
-        this.state = { location: { present: false } };
+        this.state = {
+            location: { present: false },
+            selectedItem: null
+        };
 
         this.isPOIsErrorsLaunched = false;
         this.map = null;
@@ -146,7 +149,7 @@ export default class Map extends Component {
         }).
         catch(() => {
             if (!this.isPOIsErrorsLaunched) {
-                Alerts.createErrorAlert('Error in retrieving points of interest. Please, try again later.');
+                Alerts.createErrorAlert('Error while retrieving points of interest. Please, try again later.');
                 this.isPOIsErrorsLaunched = true;
             }
         });
@@ -154,7 +157,6 @@ export default class Map extends Component {
 
     render() {
         const { lat, lng } = this.state.location;
-        const id = '1';
 
         let currentLocation = null;
         if (this.state.location.present) {
@@ -168,8 +170,8 @@ export default class Map extends Component {
             : null;
 
         let poiPreview = null;
-        if (id) {
-            poiPreview = <POISideBar poiId={id} router={this.props.router} />;
+        if (this.state.selectedItem) {
+            poiPreview = <POISideBar poiId={this.state.selectedItem} router={this.props.router} />;
         }
 
         return (

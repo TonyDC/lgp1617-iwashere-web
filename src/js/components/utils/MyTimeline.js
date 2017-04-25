@@ -96,10 +96,15 @@ export default class MyTimeline extends Component {
     getPosts(posts) {
         const postsList = [];
 
+        if (!posts || !posts.length) {
+            return postsList;
+        }
+
         let { lastKey } = this.state;
         let itemClassInverted = false;
         posts.forEach((postEntry) => {
             const date = new Date(postEntry.postDate);
+            console.log(postEntry);
 
             let mediaComponent = null;
             if (postEntry.type === "image;imagem") {
