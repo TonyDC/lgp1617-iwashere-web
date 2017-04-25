@@ -6,12 +6,39 @@ import POIPreview from '../poi/POIPreview';
 import 'styles/utils.scss';
 import 'styles/poi_detail_side.scss';
 
+const MINIMUM_WINDOW_SIZE = 700;
+
 export default class POISideBar extends Component {
 
     constructor(props) {
         super(props);
 
-        this.state = { open: true };
+        this.state = {
+            open: true,
+            size: '30%'
+        };
+    }
+
+    componentWillMount() {
+        this.updateDimensions();
+    }
+
+    componentDidMount() {
+        window.addEventListener("resize", this.updateDimensions.bind(this));
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.updateDimensions.bind(this));
+    }
+
+    updateDimensions() {
+        let size = '30%';
+
+        if (window.innerWidth < MINIMUM_WINDOW_SIZE) {
+            size = '100%';
+        }
+
+        this.setState({ size });
     }
 
     closePoiPreview() {
@@ -27,7 +54,7 @@ export default class POISideBar extends Component {
         }
 
         return (
-            <Drawer open={this.state.open} containerClassName="side_container">
+            <Drawer open={this.state.open} containerClassName="side_container" width={this.state.size}>
                 {poiPreview}
             </Drawer>
         );
