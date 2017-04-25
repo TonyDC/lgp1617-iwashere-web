@@ -72,7 +72,7 @@ export default class NavBar extends Component {
          The <div> tags is required so that the navbar collapse menu is properly rendered
          */
         return (
-            <div>
+            <div style={{zIndex: 5}}>
                 <Navbar inverse collapseOnSelect className="navbar">
                     <Navbar.Header>
                         <Navbar.Brand>

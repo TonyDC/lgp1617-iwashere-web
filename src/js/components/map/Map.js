@@ -173,7 +173,7 @@ export default class Map extends Component {
         }
 
         return (
-            <div>
+            <div className="wrapper-fill">
                 {poiPreview}
                 <GoogleMapReact defaultCenter={this.props.center}
                                 defaultZoom={this.props.zoom}
