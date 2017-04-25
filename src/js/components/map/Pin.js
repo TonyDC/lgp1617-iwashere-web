@@ -5,7 +5,7 @@ export default class Pin extends Component {
 
     render() {
         return (
-            <div>
+            <div {...this.props}>
                 <div>{this.props.children}</div>
             </div>
         );
