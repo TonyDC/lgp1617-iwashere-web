@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import GoogleMapReact from 'google-map-react';
 import Alerts from '../utils/Alerts';
 import { blue500 as POIColor, red500 as currentLocationColor } from 'material-ui/styles/colors';
+import POISideBar from '../poi/POISideBar';
 
 import Pin from './Pin';
 
@@ -104,6 +105,7 @@ export default class Map extends Component {
 
     render() {
         const { lat, lng } = this.state.location;
+        const id = '1';
 
         let currentLocation = null;
         if (this.state.location.present) {
@@ -119,24 +121,32 @@ export default class Map extends Component {
 
         const poisInViewport = this.state.response
             ? this.state.response.content.map((element, index) => {
-                return <Pin lat={element.latitude} lng={element.longitude} key={index}>
-                    <div className="pin">
-                        <IconButton>
-                            <CommunicationLocationOn color={ POIColor }/>
-                        </IconButton>
-                    </div>
-                </Pin>;
-            })
+            return <Pin lat={element.latitude} lng={element.longitude} key={index}>
+                <div className="pin">
+                    <IconButton>
+                        <CommunicationLocationOn color={ POIColor }/>
+                    </IconButton>
+                </div>
+            </Pin>;
+        })
             : null;
 
+        let poiPreview = null;
+        if (id) {
+            poiPreview = <POISideBar poiId={id} router={this.props.router}></POISideBar>
+        }
+
         return (
-            <GoogleMapReact defaultCenter={this.props.center}
-                            defaultZoom={this.props.zoom}
-                            bootstrapURLKeys={{key: "AIzaSyDifdID6peJ__zQ6cKA1KxPm0hSuevf6-w"}}
-                            onGoogleApiLoaded={ this.onGoogleAPILoaded.bind(this) }>
-                { currentLocation }
-                { poisInViewport }
-            </GoogleMapReact>
+            <div>
+                {poiPreview}
+                <GoogleMapReact defaultCenter={this.props.center}
+                                defaultZoom={this.props.zoom}
+                                bootstrapURLKeys={{key: "AIzaSyDifdID6peJ__zQ6cKA1KxPm0hSuevf6-w"}}
+                                onGoogleApiLoaded={ this.onGoogleAPILoaded.bind(this) }>
+                    { currentLocation }
+                    { poisInViewport }
+                </GoogleMapReact>
+            </div>
         );
     }
 }
@@ -154,5 +164,6 @@ Map.propTypes = {
         lat: PropTypes.number,
         lng: PropTypes.number
     }),
+    router: PropTypes.object,
     zoom: PropTypes.number
 };
