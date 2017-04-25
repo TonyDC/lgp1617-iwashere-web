@@ -17,7 +17,7 @@ import 'styles/utils.scss';
 import 'styles/map.scss';
 
 const POIComponent = (props) => {
-    return <Pin lat={props.lat} lng={props.lng}>
+    return <Pin lat={props.lat} lng={props.lng} onClick={props.clickHandler}>
         <div className="pin">
             <IconButton>
                 <CommunicationLocationOn color={ POIColor }/>
@@ -27,6 +27,7 @@ const POIComponent = (props) => {
 };
 
 POIComponent.propTypes = {
+    clickHandler: PropTypes.any.isRequired,
     lat: PropTypes.number.isRequired,
     lng: PropTypes.number.isRequired
 };
@@ -155,6 +156,10 @@ export default class Map extends Component {
         });
     }
 
+    poiSelected(poiId) {
+        this.setState({ itemSelected: poiId});
+    }
+
     render() {
         const { lat, lng } = this.state.location;
 
@@ -165,7 +170,8 @@ export default class Map extends Component {
 
         const poisInViewport = this.state.response && this.state.response.content
             ? this.state.response.content.map((element, index) => {
-                return <POIComponent lat={ element.latitude } lng={ element.longitude } key={ index }/>;
+            console.log(element);
+                return <POIComponent lat={ element.latitude } lng={ element.longitude } clickHandler={ this.poiSelected(element.poiId)} key={ index }/>;
             })
             : null;
 
