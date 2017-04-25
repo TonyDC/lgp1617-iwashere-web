@@ -158,7 +158,6 @@ export default class Map extends Component {
 
     poiSelected(poiId) {
         this.setState({ selectedItem: poiId });
-        console.log('item selected', poiId);
     }
 
     render() {
