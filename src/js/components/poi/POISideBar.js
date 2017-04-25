@@ -54,7 +54,7 @@ export default class POISideBar extends Component {
         }
 
         return (
-            <Drawer style={{position: 'relative', zIndex: 1}} open={this.state.open} containerClassName="side_container" width={this.state.size}>
+            <Drawer className="side-drawer" open={this.state.open} containerClassName="side-container" width={this.state.size}>
                 {poiPreview}
             </Drawer>
         );

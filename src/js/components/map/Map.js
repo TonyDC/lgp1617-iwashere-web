@@ -163,8 +163,8 @@ export default class Map extends Component {
 
         const poisInViewport = this.state.response && this.state.response.content
             ? this.state.response.content.map((element, index) => {
-            return <POIComponent lat={ element.latitude } lng={ element.longitude } key={ index }/>;
-        })
+                return <POIComponent lat={ element.latitude } lng={ element.longitude } key={ index }/>;
+            })
             : null;
 
         let poiPreview = null;
