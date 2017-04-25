@@ -4,7 +4,7 @@ const db = require('../index');
 
 module.exports.getPOIPosts = (id, offset, limit) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT *, name AS type 
+    return db.query(`SELECT *, name AS type, posts.createdAt as postDate 
     FROM posts LEFT JOIN post_contents ON post_contents.post_id = posts.post_id LEFT JOIN content_types ON post_contents.content_type_id = content_types.content_type_id
     WHERE poi_id = :id ORDER BY posts.created_at LIMIT :limit OFFSET :offset`, {
         replacements: {
@@ -18,7 +18,7 @@ module.exports.getPOIPosts = (id, offset, limit) => {
 
 module.exports.getPostById = (id) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT *, name AS type 
+    return db.query(`SELECT *, name AS type, posts.createdAt as postDate
     FROM posts LEFT JOIN post_contents ON post_contents.post_id = posts.post_id LEFT JOIN content_types ON post_contents.content_type_id = content_types.content_type_id
     WHERE posts.post_id = :id`, {
         replacements: { id },

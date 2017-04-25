@@ -99,7 +99,7 @@ export default class MyTimeline extends Component {
         let { lastKey } = this.state;
         let itemClassInverted = false;
         posts.forEach((postEntry) => {
-            const date = new Date(postEntry.createdAt);
+            const date = new Date(postEntry.postDate);
 
             let mediaComponent = null;
             if (postEntry.type === "image;imagem") {
