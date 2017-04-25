@@ -2,11 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { GridLoader as Loader } from 'halogen';
 import RaisedButton from 'material-ui/RaisedButton';
+import POICard from '../utils/POICard';
 
 import Alerts from '../utils/Alerts';
-import Rater from '../utils/MyRater';
-import Carousel from '../utils/MyCarousel';
-import Tags from '../utils/MyTags';
 
 import 'styles/utils.scss';
 import 'styles/poi_detail_side.scss';
@@ -40,10 +38,6 @@ export default class POIPreview extends Component {
 
     viewPoiDetail() {
         this.props.router.push(`/poi/${this.props.poiId}`);
-    }
-
-    closePoiPreview() {
-        this.props.onClose();
     }
 
     fetchPOIInfo() {
@@ -80,47 +74,23 @@ export default class POIPreview extends Component {
             );
         }
 
-        let poiMediaSlider = null;
-        let poiTagsPanel = null;
-        let ratingPanel = null;
-        if (this.props.poiId) {
-            poiMediaSlider = <Carousel url={`/api/poi/media/${this.props.poiId}`} />;
-            ratingPanel = <Rater url="/api/poi/rating" poiId={this.props.poiId} user={this.state.user}/>;
+        const poiPreviewButtons =
+            <div className="poi-detail-buttons">
+                <RaisedButton
+                    className="poi-detail-button" backgroundColor="#39A8E0"
+                    label="View more"
+                    onTouchTap={this.viewPoiDetail.bind(this)}
+                />
 
-            if (this.state.poiInfo) {
-                poiTagsPanel = <Tags readOnly tags={this.state.poiInfo.tags} />;
-            }
-        }
+                <RaisedButton
+                    className="poi-detail-button" backgroundColor="#39A8E0"
+                    label="Close"
+                    onTouchTap={this.props.onClose}
+                />
+            </div>;
 
         return (
-            <div className="wrapper-fill">
-                <div className="thumbnail">
-                    { poiMediaSlider }
-
-                    <div className="caption-full">
-                        <h4>{this.state.poiInfo.name}</h4>
-                        {poiTagsPanel}
-                        <h5>{this.state.poiInfo.address}</h5>
-                        <p>{this.state.poiInfo.description}</p>
-                    </div>
-                    {ratingPanel}
-
-                    <div className="poi-detail-buttons">
-                        <RaisedButton
-                            className="poi-detail-button" backgroundColor="#39A8E0"
-                            label="View more"
-                            onTouchTap={this.viewPoiDetail.bind(this)}
-                        />
-
-                        <RaisedButton
-                            className="poi-detail-button" backgroundColor="#39A8E0"
-                            label="Close"
-                            onTouchTap={this.props.onClose}
-                        />
-                    </div>
-                </div>
-
-            </div>
+            <POICard poiInfo={this.state.poiInfo} user={this.state.user} additionalElements={poiPreviewButtons} />
         );
     }
 }

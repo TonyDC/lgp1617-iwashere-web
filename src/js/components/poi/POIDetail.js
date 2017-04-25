@@ -3,13 +3,12 @@ import { Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 import { GridLoader as Loader } from 'halogen';
+import POICard from '../utils/POICard';
 
 import Alerts from '../utils/Alerts';
-import Rater from '../utils/MyRater';
-import Carousel from '../utils/MyCarousel';
 import Timeline from '../utils/MyTimeline';
-import Tags from '../utils/MyTags';
 
+import 'styles/poi_card.scss';
 import 'styles/utils.scss';
 
 const DECIMAL_BASE = 10;
@@ -74,21 +73,17 @@ export default class POIDetail extends Component {
             );
         }
 
-        let poiMediaSlider = null;
-        let poiTagsPanel = null;
-        let ratingPanel = null;
+        let poiCard = null;
         let userMediaTimeline = null;
         if (this.props.params.id) {
-            poiMediaSlider = <Carousel url={`/api/poi/media/${this.props.params.id}`} />;
-            ratingPanel = <Rater url="/api/poi/rating" poiId={this.props.params.id} user={this.state.user}/>;
-
-            if (this.state.poiInfo && this.state.poiInfo.type === PLACE_TYPE) {
-                userMediaTimeline =
-                    <Timeline url={`/api/post/`} poiId={this.props.params.id} user={this.state.user}/>;
-            }
 
             if (this.state.poiInfo) {
-                poiTagsPanel = <Tags readOnly tags={this.state.poiInfo.tags} />;
+                poiCard = <POICard poiInfo={this.state.poiInfo} user={this.state.user} />;
+
+                if (this.state.poiInfo.type === PLACE_TYPE) {
+                    userMediaTimeline =
+                        <Timeline url={`/api/post/`} poiId={this.props.params.id} user={this.state.user}/>;
+                }
             }
         }
 
@@ -102,17 +97,7 @@ export default class POIDetail extends Component {
                     <Row className="show-grid">
 
                         <Col xs={12} mdOffset={1} md={10} lgOffset={1} lg={10}>
-                            <div className="thumbnail">
-                                { poiMediaSlider }
-
-                                <div className="caption-full">
-                                    <h4>{this.state.poiInfo.name}</h4>
-                                    {poiTagsPanel}
-                                    <h5>{this.state.poiInfo.address}</h5>
-                                    <p>{this.state.poiInfo.description}</p>
-                                </div>
-                                {ratingPanel}
-                            </div>
+                            {poiCard}
                         </Col>
 
                         {userMediaTimeline}

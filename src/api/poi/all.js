@@ -228,7 +228,7 @@ router.get('/:id', (req, res, next) => {
         if (results && results.length === TWO_SIZE &&
             results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE) {
 
-            const poi = results[ZERO_INDEX][ZERO_INDEX];
+            const poi = utils.convertObjectToCamelCase(results[ZERO_INDEX][ZERO_INDEX]);
             poi.tags = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
 
             res.json(poi).end();

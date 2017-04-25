@@ -173,14 +173,16 @@ export default class Map extends Component {
         }
 
         return (
-            <GoogleMapReact defaultCenter={this.props.center}
-                            defaultZoom={this.props.zoom}
-                            bootstrapURLKeys={{ key: GOOGLE_MAPS_API_KEY }}
-                            onGoogleApiLoaded={ this.onGoogleAPILoaded.bind(this) }>
-                { currentLocation }
-                { poisInViewport }
-            </GoogleMapReact>
-
+            <div>
+                {poiPreview}
+                <GoogleMapReact defaultCenter={this.props.center}
+                                defaultZoom={this.props.zoom}
+                                bootstrapURLKeys={{ key: GOOGLE_MAPS_API_KEY }}
+                                onGoogleApiLoaded={ this.onGoogleAPILoaded.bind(this) }>
+                    { currentLocation }
+                    { poisInViewport }
+                </GoogleMapReact>
+            </div>
         );
     }
 }
