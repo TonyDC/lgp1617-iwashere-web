@@ -1,7 +1,3 @@
-/**
- * Firebase authentication stub function
- * @returns {object} {{onAuthStateChanged: onAuthStateChanged}}
- */
 const config = {
         FIREBASE_ADMIN_SDK_PATH: './config/iwashere-mobile-firebase-adminsdk-fuch3-2a1e5fef6f.json',
         FIREBASE_CONFIG: {
@@ -29,4 +25,4 @@ const config = {
         GOOGLE_MAPS_API_KEY: 'AIzaSyDifdID6peJ__zQ6cKA1KxPm0hSuevf6-w'
 };
 
-export { config };
+export default config;
