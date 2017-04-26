@@ -4,27 +4,32 @@ import PropTypes from 'prop-types';
 import Moment from 'moment';
 import { GridLoader as Loader } from 'halogen';
 import InfiniteScroll from 'react-infinite-scroller';
-import Tags from './MyTags';
+import Tags from '../utils/MyTags';
+import httpCodes from 'http-status-codes';
 
 import 'styles/timeline.scss';
 
+const NO_ELEMENT_SIZE = 0;
+const NOT_FOUND = -1;
 const LIMIT = 10;
 const EMPTY = 0;
 
-export default class MyTimeline extends Component {
+export default class POIPosts extends Component {
 
     constructor(props) {
         super(props);
 
         this.state = {
             hasMoreItems: true,
-            lastKey: 0,
             posts: [],
-            postsOffset: 0
+            postsOffset: 0,
+            tagsFilter: []
         };
     }
 
     componentDidMount() {
+        this.componentIsMounted = true;
+
         this.fetchPosts();
     }
 
@@ -38,13 +43,24 @@ export default class MyTimeline extends Component {
             method: 'GET'
         }).
         then((response) => {
+            if (response.status >= httpCodes.BAD_REQUEST) {
+                return Promise.reject(new Error(response.statusText));
+            }
+
             return response.json();
         }).
-        then((response) => {
-            const newPosts = this.getPosts(response);
-            let posts = this.state.posts.slice();
-            posts.pop();
-            posts = posts.concat(newPosts);
+        then((newPosts) => {
+            const posts = this.state.posts.slice();
+            const postIds = this.state.posts.map((post) => {
+                return post.postId;
+            });
+
+            newPosts.forEach((post) => {
+                if (postIds.indexOf(post.postId) === NOT_FOUND) {
+                    posts.push(post);
+                }
+            });
+
             const postsOffset = this.state.postsOffset + newPosts.length;
 
             this.setState({
@@ -74,6 +90,10 @@ export default class MyTimeline extends Component {
             method: 'POST'
         }).
         then((response) => {
+            if (response.status >= httpCodes.BAD_REQUEST) {
+                return Promise.reject(new Error(response.statusText));
+            }
+
             return response.json();
         }).
         then((response) => {
@@ -100,7 +120,6 @@ export default class MyTimeline extends Component {
             return postsList;
         }
 
-        let { lastKey } = this.state;
         let itemClassInverted = false;
         posts.forEach((postEntry) => {
             const date = new Date(postEntry.postDate);
@@ -120,7 +139,7 @@ export default class MyTimeline extends Component {
             postsList.push(
                 <li id={`post#${postEntry.postId}`} className={`${itemClassInverted
                     ? 'timeline-inverted'
-                    : ''}`} key={lastKey++}>
+                    : ''}`} key={postEntry.postId}>
                     <div className="timeline-badge primary" />
 
                     <div className="timeline-panel">
@@ -144,16 +163,33 @@ export default class MyTimeline extends Component {
             itemClassInverted = !itemClassInverted;
         });
 
-        const terminator = <li key={lastKey++} className="clearfix" style={{ 'float': 'none' }} />;
+        const terminator = <li key="timeline-terminator" className="clearfix" style={{ 'float': 'none' }} />;
         postsList.push(terminator);
-
-        this.setState({ lastKey });
 
         return postsList;
     }
 
+    addTagFilter(tagName) {
+        if (!this.componentIsMounted) {
+            return;
+        }
+
+        const { tagsFilter } = this.state;
+        tagsFilter.push(tagName);
+
+        this.setState({ tagsFilter });
+    }
+
     render() {
-        if (this.state.posts.length === EMPTY) {
+        const filteredPosts = this.state.posts.filter((post) => {
+            const postTagsInFilter = post.tags.filter((postTag) => {
+                return this.state.tagsFilter.indexOf(postTag.name) !== NOT_FOUND;
+            });
+
+            return postTagsInFilter.length === NO_ELEMENT_SIZE;
+        });
+
+        if (filteredPosts === EMPTY) {
             return (
                 <Col xs={12} mdOffset={2} md={8} lgOffset={2} lg={8}/>
             );
@@ -164,8 +200,17 @@ export default class MyTimeline extends Component {
                 <Loader color="#012935" className="loader"/>
             </div>;
 
+        const tagFilter = <Tags
+            readOnly
+            tags={this.state.tagsFilter}
+            onAddTag={(tagName) => {
+                this.addTagFilter(tagName);
+            }}
+        />;
+
         return (
             <Col xs={12} mdOffset={1} md={10} lgOffset={1} lg={10}>
+                {tagFilter}
                 <InfiniteScroll
                     pageStart={0}
                     loadMore={this.fetchPosts.bind(this)}
@@ -173,7 +218,7 @@ export default class MyTimeline extends Component {
                     loader={loader}
                 >
                     <ul className="timeline timeline-container">
-                        {this.state.posts}
+                        {this.getPosts(filteredPosts)}
                     </ul>
                 </InfiniteScroll>
             </Col>
@@ -181,7 +226,7 @@ export default class MyTimeline extends Component {
     }
 }
 
-MyTimeline.propTypes = {
+POIPosts.propTypes = {
     poiId: PropTypes.any.isRequired,
     url: PropTypes.string.isRequired,
     user: PropTypes.any

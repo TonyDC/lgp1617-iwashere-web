@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Chip from 'material-ui/Chip';
+import httpCodes from 'http-status-codes';
+import AutoComplete from 'material-ui/AutoComplete';
 
 import 'styles/my_tags.scss';
 
@@ -19,7 +21,7 @@ export default class MyTags extends Component {
 
     componentDidMount() {
         if (!this.props.readOnly) {
-            // this.fetchAllTags();
+            this.fetchAllTags();
         }
     }
 
@@ -40,9 +42,17 @@ export default class MyTags extends Component {
             method: 'GET'
         }).
         then((response) => {
+            if (response.status >= httpCodes.BAD_REQUEST) {
+                return Promise.reject(new Error(response.statusText));
+            }
+
             return response.json();
         }).
         then((tagList) => {
+            if (!this.componentIsMounted) {
+                return;
+            }
+
             const allTags = this.parseTags(tagList);
             this.setState({ allTags });
         });
@@ -71,9 +81,24 @@ export default class MyTags extends Component {
     }
 
     render() {
+        let input = null;
+
+        if (!this.props.readOnly) {
+            input =
+                <AutoComplete
+                    hintText="Filter by tag..."
+                    dataSource={this.state.allTags}
+                    onUpdateInput={this.handleUpdateInput}
+                    floatingLabelText="Enter a tag name"
+                />;
+        }
+
         return (
-            <div className={`tags-wrapper ${this.props.class}`}>
-                {this.props.tags.map(this.renderTag, this)}
+            <div>
+                <div className={`tags-wrapper ${this.props.class}`}>
+                    {this.props.tags.map(this.renderTag, this)}
+                </div>
+                {input}
             </div>
         );
     }
@@ -88,6 +113,7 @@ MyTags.defaultProps = {
 
 MyTags.propTypes = {
     class: PropTypes.string,
+    onAddTag: PropTypes.func,
     readOnly: PropTypes.bool.isRequired,
-    tags: PropTypes.any.isRequired
+    tags: PropTypes.array
 };
