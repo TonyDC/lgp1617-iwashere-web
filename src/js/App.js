@@ -15,7 +15,7 @@ import Register from './components/user/Register';
 import PasswordReset from './components/user/PasswordReset';
 import POIDetail from './components/poi/POIDetail';
 import POISearch from './components/poi/POISearch';
-import POISuggestions from './components/poi/POISuggestions';
+import Feed from './components/feed/Feed';
 
 import UnauthRoutes from './routes/UnauthRoutes';
 import POIRoutes from './routes/POIRoutes';
@@ -67,7 +67,7 @@ export default class App extends Component {
                 <Route path="/" component={ MainRoutes }>
                     <IndexRoute component={ Map } />
 
-                    <Route path="feed" component={ POISuggestions }/>
+                    <Route path="feed" component={ Feed }/>
 
                     <Route path="poi" component={ POIRoutes }>
                         <Route path="search" component={ POISearch } />

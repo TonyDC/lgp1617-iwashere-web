@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { GridList } from 'material-ui/GridList';
+import { Card } from 'material-ui/Card';
 import Alerts from '../utils/Alerts';
 import POIMosaic from './POIMosaic';
 
-import 'styles/timeline.scss';
+import 'styles/suggestions.scss';
 
 const httpCodes = require('http-status-codes');
 const API_POI_SUGGESTIONS_URL = 'api/poi/suggestions';
@@ -111,7 +112,6 @@ export default class POISuggestions extends Component {
     }
 
     updateSuggestions() {
-        console.log('suggestions updated');
         const { suggestions, previousSuggestions } = this.state;
 
         if (suggestions.length < MOSAIC_SIZE) {
@@ -157,9 +157,6 @@ export default class POISuggestions extends Component {
             return;
         }
 
-        console.log(previousSuggestions);
-    console.log(suggestions);
-
         this.setState({
             previousSuggestions,
             suggestions
@@ -197,9 +194,11 @@ export default class POISuggestions extends Component {
         const poiSuggestions = this.getPoiMosaics();
 
         return (
-            <GridList cols={MOSAIC_SIZE / TWO} rows={MOSAIC_SIZE / TWO} style={this.props.style}>
-                {poiSuggestions}
-            </GridList>
+            <Card className="suggestions-card" style={this.props.style}>
+                <GridList key="gridList" cols={MOSAIC_SIZE / TWO} rows={MOSAIC_SIZE / TWO} style={this.props.style}>
+                    {poiSuggestions}
+                </GridList>
+            </Card>
         );
     }
 }

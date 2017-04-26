@@ -34,6 +34,14 @@ export default class POIMosaic extends Component {
             poiMedia = <img src={poi.media[ZERO_INDEX].url} />;
         }
 
+        let dismissButton = null;
+        if (this.props.dismissible) {
+            dismissButton =
+                <IconButton tooltipPosition="top-left" tooltip={REMOVE_MESSAGE}>
+                    <RemoveIcon color="white" />
+                </IconButton>;
+        }
+
         return (
             <GridTile
                 className="clickable"
@@ -46,10 +54,7 @@ export default class POIMosaic extends Component {
                 }}
                 title={poi.name}
                 subtitle={<div className="vert-align"><span>{poi.rating.toFixed(RATING_PRECISION)}/{MAX_RATING_SCALE}</span> <StarBorder color="white" className="rating-star" /></div>}
-                actionIcon={<IconButton tooltipPosition="top-left"
-                                        tooltip={REMOVE_MESSAGE}>
-                                <RemoveIcon color="white" />
-                            </IconButton>}
+                actionIcon={dismissButton}
             >
                 {poiMedia}
             </GridTile>
@@ -57,8 +62,11 @@ export default class POIMosaic extends Component {
     }
 }
 
+POIMosaic.defaultProps = { dismissible: true };
+
 POIMosaic.propTypes = {
-    onDismiss: PropTypes.any,
-    onSelect: PropTypes.any,
+    dismissible: PropTypes.bool,
+    onDismiss: PropTypes.func,
+    onSelect: PropTypes.func,
     poi: PropTypes.object
 };
