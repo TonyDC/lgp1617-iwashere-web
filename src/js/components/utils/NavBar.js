@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Navbar, Nav, NavItem, MenuItem, NavDropdown } from 'react-bootstrap';
+import { Link } from 'react-router';
 import * as firebase from 'firebase';
 
 import logoCompact from 'img/logo-compact.png';
@@ -72,7 +73,7 @@ export default class NavBar extends Component {
          The <div> tags is required so that the navbar collapse menu is properly rendered
          */
         return (
-            <div>
+            <div className="navbar-container">
                 <Navbar inverse collapseOnSelect className="navbar">
                     <Navbar.Header>
                         <Navbar.Brand>
@@ -82,6 +83,23 @@ export default class NavBar extends Component {
                     </Navbar.Header>
                     <Navbar.Collapse>
                         <Nav pullRight>
+                            <NavItem>
+                                <Link to={'/'}
+                                      onlyActiveOnIndex
+                                      className="link"
+                                      activeClassName="current-link">
+                                    Homepage
+                                </Link>
+                            </NavItem>
+
+                            <NavItem>
+                                <Link to={'/feed'}
+                                      className="link"
+                                      activeClassName="current-link">
+                                    Feed
+                                </Link>
+                            </NavItem>
+
                             { signButton }
                         </Nav>
                     </Navbar.Collapse>

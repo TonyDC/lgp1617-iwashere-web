@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import Moment from 'moment';
 import { GridLoader as Loader } from 'halogen';
 import InfiniteScroll from 'react-infinite-scroller';
+import Tags from './MyTags';
 
 import 'styles/timeline.scss';
 
@@ -17,6 +18,7 @@ export default class MyTimeline extends Component {
 
         this.state = {
             hasMoreItems: true,
+            lastKey: 0,
             posts: [],
             postsOffset: 0
         };
@@ -40,7 +42,9 @@ export default class MyTimeline extends Component {
         }).
         then((response) => {
             const newPosts = this.getPosts(response);
-            const posts = this.state.posts.concat(newPosts);
+            let posts = this.state.posts.slice();
+            posts.pop();
+            posts = posts.concat(newPosts);
             const postsOffset = this.state.postsOffset + newPosts.length;
 
             this.setState({
@@ -54,50 +58,45 @@ export default class MyTimeline extends Component {
     getPosts(posts) {
         const postsList = [];
 
+        if (!posts || !posts.length) {
+            return postsList;
+        }
+
+        let { lastKey } = this.state;
         let itemClassInverted = false;
-        let previousTimeStamp = null;
-        let key = 0;
         posts.forEach((postEntry) => {
-            const date = new Date(postEntry.createdAt);
+            const date = new Date(postEntry.postDate);
 
-            if (date.getMonth() !== previousTimeStamp) {
-                previousTimeStamp = date.getMonth();
-                postsList.push(<li key={key++}><div className="tldate">{ Moment(date).format("MMM") } { date.getFullYear()} </div></li>);
-            }
-
-            let postComponent = null;
+            let mediaComponent = null;
             if (postEntry.type === "image;imagem") {
-                postComponent = <img src={ postEntry.url }/>;
+                mediaComponent = <img src={ postEntry.url }/>;
             } else if (postEntry.type === "video;vídeo") {
-                postComponent = <iframe src={ postEntry.url }/>;
+                mediaComponent = <iframe src={ postEntry.url }/>;
             }
 
             let tagList = null;
             if (postEntry.tags.length) {
-                const tags = [];
-
-                postEntry.tags.forEach((tag) => {
-                    tags.push(` ${tag.name} `);
-                });
-
-                tagList = <p><small className="text-muted"><i className="glyphicon glyphicon-tag"/>{tags}</small></p>;
+                tagList = <Tags readOnly tags={postEntry.tags} class="post-tags"/>;
             }
 
             postsList.push(
-                <li className={`timeline${itemClassInverted
-                    ? '-inverted'
-                    : ''}`} key={key++}>
-                    <div className="tl-circ" />
+                <li id={`post#${postEntry.postId}`} className={`${itemClassInverted
+                    ? 'timeline-inverted'
+                    : ''}`} key={lastKey++}>
+                    <div className="timeline-badge primary" />
+
                     <div className="timeline-panel">
-                        <div className="tl-heading">
-                            <p><small className="text-muted pull-right"><i className="glyphicon glyphicon-time"/> { Moment(date).format('MMMM Do YYYY, h:mm') }</small></p>
-                            {tagList}
+                        <div className="timeline-heading">
+                            {mediaComponent}
                         </div>
-                        <div className="tl-body">
-                            {postComponent}
 
+                        <div className="timeline-body">
                             <p>{postEntry.description}</p>
+                        </div>
 
+                        <div className="timeline-footer">
+                            {tagList}
+                            <small className="text-muted"><i className="glyphicon glyphicon-time"/> { Moment(date).format('MMMM Do YYYY, h:mm') }</small>
                             <a className="pull-right">{postEntry.likes} <i className="glyphicon glyphicon-thumbs-up"/></a>
                         </div>
                     </div>
@@ -106,6 +105,11 @@ export default class MyTimeline extends Component {
 
             itemClassInverted = !itemClassInverted;
         });
+
+        const terminator = <li key={lastKey++} className="clearfix" style={{ 'float': 'none' }} />;
+        postsList.push(terminator);
+
+        this.setState({ lastKey });
 
         return postsList;
     }
@@ -123,14 +127,14 @@ export default class MyTimeline extends Component {
             </div>;
 
         return (
-            <Col xs={12} mdOffset={2} md={8} lgOffset={2} lg={8}>
+            <Col xs={12} mdOffset={1} md={10} lgOffset={1} lg={10}>
                 <InfiniteScroll
                     pageStart={0}
                     loadMore={this.fetchPosts.bind(this)}
                     hasMore={this.state.hasMoreItems}
                     loader={loader}
                 >
-                    <ul className="timeline">
+                    <ul className="timeline timeline-container">
                         {this.state.posts}
                     </ul>
                 </InfiniteScroll>

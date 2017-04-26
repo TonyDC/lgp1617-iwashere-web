@@ -1,10 +1,10 @@
-import { Component } from 'react';
-// import React, { Component } from 'react';
-// import { Col } from 'react-bootstrap';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-// import TagsInput from 'react-tagsinput';
+import Chip from 'material-ui/Chip';
 
-import 'react-tagsinput/react-tagsinput.css';
+import 'styles/my_tags.scss';
+
+const ZERO_INDEX = 0;
 
 export default class MyTags extends Component {
 
@@ -19,11 +19,22 @@ export default class MyTags extends Component {
 
     componentDidMount() {
         if (!this.props.readOnly) {
-            this.fetchTags();
+            // this.fetchAllTags();
         }
     }
 
-    fetchTags() {
+    parseTags(tagList) {
+        const newTagList = tagList.slice();
+
+        let key = ZERO_INDEX;
+        newTagList.forEach((tag) => {
+            tag.key = key++;
+        });
+
+        return newTagList;
+    }
+
+    fetchAllTags() {
         fetch('/api/tags/', {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
@@ -31,27 +42,52 @@ export default class MyTags extends Component {
         then((response) => {
             return response.json();
         }).
-        then((allTags) => {
+        then((tagList) => {
+            const allTags = this.parseTags(tagList);
             this.setState({ allTags });
         });
     }
 
-    /*
-    handleChange(tags) {
-        this.setState({tags});
-    } */
+    handleTagDelete(key) {
+        const tags = this.state.tags.slice();
+
+        tags.filter((tag) => {
+            return tag.key !== key;
+        });
+
+        this.props.tags = tags;
+    }
+
+    renderTag(tag) {
+        return (
+            <Chip
+                labelColor="white"
+                key={`tag#${tag.tagId}`}
+                className="tag-look"
+            >
+                {tag.name}
+            </Chip>
+        );
+    }
 
     render() {
-        return null;
-
-        // return <TagsInput value={this.state.tags} onChange={this.handleChange} />;
+        return (
+            <div className={`tags-wrapper ${this.props.class}`}>
+                {this.props.tags.map(this.renderTag, this)}
+            </div>
+        );
     }
 }
 
 
-MyTags.defaultProps = { readOnly: false };
+MyTags.defaultProps = {
+    class: '',
+    readOnly: false,
+    tags: []
+};
 
 MyTags.propTypes = {
-    readOnly: PropTypes.any.isRequired,
+    class: PropTypes.string,
+    readOnly: PropTypes.bool.isRequired,
     tags: PropTypes.any.isRequired
 };

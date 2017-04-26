@@ -16,8 +16,9 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const httpCodes = require('http-status-codes');
 const firebaseAdmin = require("firebase-admin");
-const winston = require('winston');
+
 const expressWinston = require('express-winston');
+const windstonTransports = require('./windstonTransports');
 
 const APIMiddleware = require('./src/api/index');
 
@@ -44,14 +45,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // Logger
-app.use(expressWinston.logger({
-    transports: [
-        new winston.transports.Console({
-            colorize: true,
-            json: true
-        })
-    ]
-}));
+app.use(expressWinston.logger({ transports: windstonTransports.transportLoggers }));
 
 // GZip compression
 app.use(require('compression')());
@@ -81,22 +75,16 @@ app.use('/public', publicPath);
 app.use('/api', APIMiddleware);
 
 // URL not found: server index.html
-app.use((_, res) => {
+app.use((req, res) => {
     res.sendFile(indexPath);
 });
 
-app.use(expressWinston.errorLogger({
-    transports: [
-        new winston.transports.Console({
-            colorize: true,
-            json: true
-        })
-    ]
-}));
+app.use(expressWinston.errorLogger({ transports: windstonTransports.transportErrorLoggers }));
 
 // Error middleware handler
 app.use((err, req, res, next) => {
-    res.status(httpCodes.INTERNAL_SERVER_ERROR).send({ message: 'Something went wrong!' });
+    res.status(httpCodes.INTERNAL_SERVER_ERROR).send({ message: 'Something went wrong!' }).
+    end();
 });
 
 /* *********************************** */

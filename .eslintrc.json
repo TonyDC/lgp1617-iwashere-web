@@ -38,10 +38,7 @@
     "brace-style": "error",
     "callback-return": "error",
     "camelcase": "warn",
-    "capitalized-comments": [
-      "warn",
-      "always"
-    ],
+    "capitalized-comments": "off",
     "class-methods-use-this": "off",
     "comma-dangle": "error",
     "comma-spacing": [
@@ -257,7 +254,7 @@
     "yield-star-spacing": "error",
     "yoda": "error",
     "react/display-name": 1,
-    "react/jsx-boolean-value": 1,
+    "react/jsx-boolean-value": 2,
     "react/jsx-no-undef": 1,
     "react/jsx-quotes": 0,
     "react/jsx-sort-prop-types": 0,
@@ -273,6 +270,6 @@
     "import/extensions": [2, "never", { "jpeg": "always", "jpg": "always", "png": "always", "svg": "always", "scss": "always" }],
     "react/self-closing-comp": 2,
     "react/sort-comp": 2,
-    "react/jsx-wrap-multilines": 1
+    "react/jsx-wrap-multilines": 0
   }
 }
