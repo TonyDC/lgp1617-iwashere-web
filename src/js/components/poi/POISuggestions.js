@@ -9,7 +9,7 @@ const MOSAIC_SIZE = 4;
 const LIMIT = 20;
 const NO_ELEMENT_SIZE = 0;
 
-export default class POIMosaic extends Component {
+export default class POISuggestions extends Component {
 
     constructor(props) {
         super(props);
@@ -41,6 +41,8 @@ export default class POIMosaic extends Component {
                     lat: latitude,
                     lng: longitude
                 }
+            }, () => {
+                this.fetchSuggestions();
             });
 
             Alerts.close(locationInProgressAlert);
@@ -125,7 +127,7 @@ export default class POIMosaic extends Component {
 
         while (mosaics.length < MOSAIC_SIZE && suggestions.length > NO_ELEMENT_SIZE) {
             const poi = suggestions.shift();
-            mosaics.push(<POIMosaic
+            mosaics.push(<POISuggestions
                             poi={poi}
                             onSelect={() => {
                                 this.selectMosaic(poi.poiId);
@@ -137,7 +139,7 @@ export default class POIMosaic extends Component {
         }
 
         while (mosaics.length < MOSAIC_SIZE) {
-            mosaics.push(<POIMosaic/>);
+            mosaics.push(<POISuggestions/>);
         }
 
         return mosaics;
@@ -154,7 +156,7 @@ export default class POIMosaic extends Component {
     }
 }
 
-POIMosaic.propTypes = {
+POISuggestions.propTypes = {
     poiId: PropTypes.any.isRequired,
     router: PropTypes.object,
     url: PropTypes.string.isRequired,

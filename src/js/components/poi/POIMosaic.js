@@ -27,7 +27,7 @@ export default class POIMosaic extends Component {
                 key={poi.poiId}
                 title={poi.name}
                 subtitle={<span>{poi.rating.toFixed(RATING_PRECISION)}/{MAX_RATING_SCALE} <StarBorder color="white" /></span>}
-                actionIcon={<IconButton></IconButton>}
+                actionIcon={<IconButton></IconButton>} // TODO add dismiss button
             >
                 <img src={poi.url}/>
             </GridTile>
