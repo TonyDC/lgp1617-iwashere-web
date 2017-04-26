@@ -3,7 +3,7 @@
 // Note regarding 'parseInt' function: Javascript supports 53bit mantissa (http://2ality.com/2012/07/large-integers.html)
 
 const httpCodes = require('http-status-codes');
-const utils = require('../utils/camelCase');
+const utils = require('../utils/misc');
 
 const express = require('express');
 const router = express.Router();

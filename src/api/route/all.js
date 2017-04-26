@@ -3,7 +3,7 @@
 // Note regarding 'parseInt' function: Javascript supports 53bit mantissa
 
 const httpCodes = require('http-status-codes');
-const utils = require('../utils/camelCase');
+const utils = require('../utils/misc');
 
 const express = require('express');
 const router = express.Router();

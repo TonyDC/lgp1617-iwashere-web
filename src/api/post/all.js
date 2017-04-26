@@ -1,6 +1,6 @@
 'use strict';
 
-const utils = require('../utils/camelCase');
+const utils = require('../utils/misc');
 
 const httpCodes = require('http-status-codes');
 
