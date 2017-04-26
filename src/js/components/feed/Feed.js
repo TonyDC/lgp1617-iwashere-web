@@ -1,3 +1,5 @@
+/* eslint no-underscore-dangle: "off" */
+
 import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';

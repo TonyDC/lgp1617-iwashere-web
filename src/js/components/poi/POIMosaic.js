@@ -21,7 +21,7 @@ export default class POIMosaic extends Component {
 
         if (!poi) {
             return (
-                <GridTile titleStyle={this.props.style}>
+                <GridTile>
                     <div className="hor-align vert-align">
                         <Loader color="#012935" className="loader"/>
                     </div>
@@ -44,7 +44,6 @@ export default class POIMosaic extends Component {
 
         return (
             <GridTile
-                titleStyle={this.props.style}
                 className="clickable"
                 onTouchTap={(event) => {
                     if (event._targetInst._tag === 'svg' || event._targetInst._tag === 'path') {
@@ -63,9 +62,7 @@ export default class POIMosaic extends Component {
     }
 }
 
-POIMosaic.defaultProps = {
-    dismissible: true,
-};
+POIMosaic.defaultProps = { dismissible: true };
 
 POIMosaic.propTypes = {
     dismissible: PropTypes.bool,
