@@ -7,6 +7,7 @@ import StarBorder from 'material-ui/svg-icons/toggle/star-border';
 
 import 'styles/timeline.scss';
 
+const ZERO_INDEX = 0;
 const MAX_RATING_SCALE = 5;
 const RATING_PRECISION = 1;
 
@@ -18,13 +19,17 @@ export default class POIMosaic extends Component {
         if (!poi) {
             return (
                 <GridTile key={this.props.key}>
-
+                    <div className="hor-align vert-align">
+                        <Loader color="#012935" className="loader"/>
+                    </div>
                 </GridTile>
             );
         }
-        /*<div className="hor-align vert-align">
-            <Loader color="#012935" className="loader"/>
-        </div>*/
+
+        let poiMedia = null;
+        if (poi.media.length) {
+            poiMedia = <img src={poi.media[ZERO_INDEX].url}></img>;
+        }
 
         return (
             <GridTile
@@ -33,7 +38,7 @@ export default class POIMosaic extends Component {
                 subtitle={<span>{poi.rating.toFixed(RATING_PRECISION)}/{MAX_RATING_SCALE} <StarBorder color="white" /></span>}
                 actionIcon={<IconButton><StarBorder color="white" /></IconButton>} // TODO add dismiss button
             >
-                <img src={poi.url}/>
+                {poiMedia}
             </GridTile>
         );
     }

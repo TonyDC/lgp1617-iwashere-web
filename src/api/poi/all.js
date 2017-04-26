@@ -273,6 +273,12 @@ function handleSuggestionsResults(results, res) {
             poi.media = mediaList.filter((mediaItem) => {
                 return mediaItem.poiId === poi.poiId;
             });
+
+            if (poi.rating >= ZERO_RATING) {
+                poi.rating = parseFloat(poi.rating);
+            } else {
+                poi.rating = ZERO_RATING;
+            }
         });
 
         res.json(poisList).end();

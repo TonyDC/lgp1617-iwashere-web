@@ -71,7 +71,7 @@ export default class App extends Component {
 
                     <Route path="poi" component={ POIRoutes }>
                         <Route path="search" component={ POISearch } />
-                        <Route path=":id" component={ POISuggestions } /> /* TODO change this */
+                        <Route path=":id" component={ POIDetail } />
                     </Route>
 
                     <Route path="user" component={ UnauthRoutes } onEnter={ this.redirectIfLoggedIn.bind(this) }>
