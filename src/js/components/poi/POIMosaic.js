@@ -37,18 +37,17 @@ export default class POIMosaic extends Component {
         return (
             <GridTile
                 className="clickable"
-                onTouchTap={() => {
-                    this.props.onSelect();
+                onTouchTap={(event) => {
+                    if (event._targetInst._tag === 'svg' || event._targetInst._tag === 'path') {
+                        this.props.onDismiss();
+                    } else {
+                        this.props.onSelect();
+                    }
                 }}
                 title={poi.name}
                 subtitle={<div className="vert-align"><span>{poi.rating.toFixed(RATING_PRECISION)}/{MAX_RATING_SCALE}</span> <StarBorder color="white" className="rating-star" /></div>}
                 actionIcon={<IconButton tooltipPosition="top-left"
-                                        tooltip={REMOVE_MESSAGE}
-                                        onTouchTap={() => {
-                                            this.props.onDismiss();
-                                        }}
-                                        className="action-icon"
-                            >
+                                        tooltip={REMOVE_MESSAGE}>
                                 <RemoveIcon color="white" />
                             </IconButton>}
             >

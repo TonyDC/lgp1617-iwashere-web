@@ -119,7 +119,7 @@ export default class POISuggestions extends Component {
                 this.fetchSuggestions();
             } else {
                 while (suggestions.length < MOSAIC_SIZE && previousSuggestions.length > NO_ELEMENT_SIZE) {
-                    const newSuggestion = suggestions.shift();
+                    const newSuggestion = previousSuggestions.shift();
                     suggestions.push(newSuggestion);
                 }
 
@@ -150,8 +150,15 @@ export default class POISuggestions extends Component {
         });
 
         suggestions = suggestions.filter((poi) => {
-            return poi.poiId === poiId;
+            return poi.poiId !== poiId;
         });
+
+        if (!this.componentIsMounted) {
+            return;
+        }
+
+        console.log(previousSuggestions);
+    console.log(suggestions);
 
         this.setState({
             previousSuggestions,
