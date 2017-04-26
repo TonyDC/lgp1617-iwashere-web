@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { GridLoader as Loader } from 'halogen';
+import { GridTile } from 'material-ui/GridList';
+import IconButton from 'material-ui/IconButton';
+import StarBorder from 'material-ui/svg-icons/toggle/star-border';
 
 import 'styles/timeline.scss';
 
@@ -14,20 +17,21 @@ export default class POIMosaic extends Component {
 
         if (!poi) {
             return (
-                <GridTile>
-                    <div className="hor-align vert-align">
-                        <Loader color="#012935" className="loader"/>
-                    </div>
+                <GridTile key={this.props.key}>
+
                 </GridTile>
             );
         }
+        /*<div className="hor-align vert-align">
+            <Loader color="#012935" className="loader"/>
+        </div>*/
 
         return (
             <GridTile
-                key={poi.poiId}
+                key={this.props.key}
                 title={poi.name}
                 subtitle={<span>{poi.rating.toFixed(RATING_PRECISION)}/{MAX_RATING_SCALE} <StarBorder color="white" /></span>}
-                actionIcon={<IconButton></IconButton>} // TODO add dismiss button
+                actionIcon={<IconButton><StarBorder color="white" /></IconButton>} // TODO add dismiss button
             >
                 <img src={poi.url}/>
             </GridTile>
@@ -36,6 +40,7 @@ export default class POIMosaic extends Component {
 }
 
 POIMosaic.propTypes = {
+    key: PropTypes.string.isRequired,
     onDismiss: PropTypes.any,
     onSelect: PropTypes.any,
     poi: PropTypes.object
