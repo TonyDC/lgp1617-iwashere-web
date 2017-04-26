@@ -291,7 +291,7 @@ function handleSuggestionsResults(results, res) {
 function getLocationBasedSuggestions(req, res, next) {
     const { lat, lng, limit } = req.params;
 
-    if (!lat || lng || isNaN(parseFloat(lat)) || isNaN(parseFloat(lng)) ||
+    if (!lat || !lng || isNaN(parseFloat(lat)) || isNaN(parseFloat(lng)) ||
         !limit || isNaN(parseInt(limit, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
@@ -317,7 +317,7 @@ function getLocationBasedSuggestions(req, res, next) {
  *
  * @return {void}
  */
-router.get('/suggestions/:limit/:lat/:lgn', (req, res, next) => {
+router.get('/suggestions/:limit/:lat/:lng', (req, res, next) => {
     getLocationBasedSuggestions(req, res, next);
 });
 
@@ -329,7 +329,7 @@ router.get('/suggestions/:limit/:lat/:lgn', (req, res, next) => {
  *
  * @return {void}
  */
-router.get('/suggestions/:limit/:lat/:lgn/:userID', (req, res, next) => {
+router.get('/suggestions/:limit/:lat/:lng/:userID', (req, res, next) => {
     getLocationBasedSuggestions(req, res, next);
 });
 
