@@ -2,22 +2,18 @@ import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
+import ReactDOM from "react-dom";
 import POISuggestions from '../poi/POISuggestions';
 
 import 'styles/utils.scss';
 
-const MINIMUM_WINDOW_SIZE = 700;
-
-export default class FeedSideBar extends Component {
+export default class Feed extends Component {
 
     constructor(props, context) {
         super(props);
 
         const reduxState = context.store.getState();
-        this.state = {
-            poisStyle: {},
-            user: reduxState.userStatus.userInfo
-        };
+        this.state = { user: reduxState.userStatus.userInfo };
     }
 
     componentWillMount() {
@@ -36,8 +32,10 @@ export default class FeedSideBar extends Component {
             this.setState({ user: reduxState.userStatus.userInfo });
         });
 
+        // The same function object must be used when binding and unbinding the event listener
         this.resizeHandler = this.updateDimensions.bind(this);
         window.addEventListener("resize", this.resizeHandler);
+        this.updateDimensions();
     }
 
     componentWillUnmount() {
@@ -47,43 +45,53 @@ export default class FeedSideBar extends Component {
     }
 
     updateDimensions() {
-        let size = '30%';
-
-        if (window.innerWidth < MINIMUM_WINDOW_SIZE) {
-            size = '100%';
-        }
-
-        if (!this.componentIsMounted) {
+        if (!this.componentIsMounted || !this.feedContainer) {
             return;
         }
 
-        this.setState({ size });
+        this.setState({
+            feedHeight: ReactDOM.findDOMNode(this.feedContainer).offsetHeight,
+            feedWidth: ReactDOM.findDOMNode(this.feedContainer).offsetWidth
+        });
     }
 
     render() {
-        return (
-        <div className="wrapper-fill">
-            <Helmet>
-                <title>#iwashere - Feed</title>
-            </Helmet>
 
-            <div className="container">
-                <Row className="show-grid">
-                    <Col xs={12} mdOffset={1} md={10} lgOffset={1} lg={10}>
-                        <POISuggestions user={this.state.user} router={this.props.router}/>
-                    </Col>
-                </Row>
+        const feedStyle = {};
+        if (this.state.feedWidth && this.state.feedHeight) {
+            feedStyle.width = this.state.feedWidth;
+            feedStyle.height = this.state.feedHeight;
+        }
+
+        return (
+            <div className="wrapper-fill">
+                <Helmet>
+                    <title>#iwashere - Feed</title>
+                </Helmet>
+
+                <div className="container">
+                    <Row className="show-grid">
+                        <Col xs={12} mdOffset={3} md={6} lgOffset={3} lg={6}>
+                            <POISuggestions user={this.state.user} router={this.props.router} style={feedStyle}
+                                            ref={(node) => {
+                                                if (node !== null) {
+                                                    this.feedContainer = node;
+                                                }
+                                            }}
+                            />
+                        </Col>
+                    </Row>
+                </div>
             </div>
-        </div>
         );
     }
 }
 
-FeedSideBar.propTypes = {
+Feed.propTypes = {
     history: PropTypes.object,
     params: PropTypes.object,
     router: PropTypes.object
 };
 
 // To access Redux store
-FeedSideBar.contextTypes = { store: PropTypes.object };
+Feed.contextTypes = { store: PropTypes.object };

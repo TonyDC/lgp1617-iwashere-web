@@ -1,17 +1,30 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { GridList } from 'material-ui/GridList';
-import { Card } from 'material-ui/Card';
-import Alerts from '../utils/Alerts';
-import POIMosaic from './POIMosaic';
-
-import 'styles/suggestions.scss';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { GridList } from "material-ui/GridList";
+import { Card, CardTitle } from "material-ui/Card";
+import Alerts from "../utils/Alerts";
+import POIMosaic from "./POIMosaic";
+import IconButton from "material-ui/IconButton";
+import { red500 as currentLocationColor } from "material-ui/styles/colors";
+import MapsMyLocation from "material-ui/svg-icons/maps/my-location";
+import "styles/suggestions.scss";
 
 const httpCodes = require('http-status-codes');
 const API_POI_SUGGESTIONS_URL = 'api/poi/suggestions';
 const MOSAIC_SIZE = 4;
 const TWO = 2;
+const THREE = 3;
 const NO_ELEMENT_SIZE = 0;
+const POI_SUGGESTION_TITLE = 'Points of interest';
+const USING_LOCATION_TOOLTIP = 'Using your location';
+const DEFAULT_SPACING = 2;
+
+const DEFAULT_STYLE = {
+    height: 500,
+    overflowX: 'auto',
+    overflowY: 'auto',
+    width: 500
+};
 
 export default class POISuggestions extends Component {
 
@@ -190,12 +203,45 @@ export default class POISuggestions extends Component {
         return mosaics;
     }
 
+    overrideStyle(originalStyle, newStyle) {
+        const newObject = {};
+
+        for (const attribute in originalStyle) {
+            if (attribute in newStyle) {
+                newObject[attribute] = newStyle[attribute];
+            } else {
+                newObject[attribute] = originalStyle[attribute];
+            }
+        }
+
+        return newObject;
+    }
+
     render() {
+        let gridStyle = DEFAULT_STYLE;
+        if (this.props.style) {
+            gridStyle = this.overrideStyle(gridStyle, this.props.style);
+        }
+
+        gridStyle.width -= THREE * DEFAULT_SPACING;
+        gridStyle.height -= THREE * DEFAULT_SPACING;
+        const cellHeight = gridStyle.width / (MOSAIC_SIZE / TWO);
+
         const poiSuggestions = this.getPoiMosaics();
 
+        let locationIcon = null;
+        if (this.state.location) {
+            locationIcon =
+                <IconButton className="location-icon" tooltipPosition="top-left" tooltip={USING_LOCATION_TOOLTIP}>
+                    <MapsMyLocation color={ currentLocationColor }/>
+                </IconButton>;
+        }
+
         return (
-            <Card className="suggestions-card" style={this.props.style}>
-                <GridList key="gridList" cols={MOSAIC_SIZE / TWO} rows={MOSAIC_SIZE / TWO} style={this.props.style}>
+            <Card className="suggestions-card">
+                {locationIcon}
+                <CardTitle title={POI_SUGGESTION_TITLE}/>
+                <GridList cols={MOSAIC_SIZE / TWO} rows={MOSAIC_SIZE / TWO} style={gridStyle} cellHeight={cellHeight}>
                     {poiSuggestions}
                 </GridList>
             </Card>
@@ -203,13 +249,7 @@ export default class POISuggestions extends Component {
     }
 }
 
-POISuggestions.defaultProps = {
-    style: {
-        height: 450,
-        overflowY: 'auto',
-        width: 500
-    }
-};
+POISuggestions.defaultProps = { style: DEFAULT_STYLE };
 
 POISuggestions.propTypes = {
     router: PropTypes.object,
