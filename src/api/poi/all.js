@@ -1,9 +1,9 @@
 'use strict';
 
-// Note regarding 'parseInt' function: Javascript supports 53bit mantissa
+// Note regarding 'parseInt' function: Javascript supports 53bit mantissa (http://2ality.com/2012/07/large-integers.html)
 
 const httpCodes = require('http-status-codes');
-const utils = require('../utils/utils');
+const utils = require('../utils/misc');
 
 const express = require('express');
 const router = express.Router();
@@ -171,7 +171,6 @@ router.post('/rating', (req, res, next) => {
     const { poiDB, userDB } = db;
     Promise.all([userDB.getUserByUID(userID), poiDB.getPOIDetailByID(poiID)]).
     then((results) => {
-
         if (results && results.length === TWO_SIZE &&
             results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE &&
             results[ONE_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE) {
@@ -228,7 +227,6 @@ router.get('/:id', (req, res, next) => {
 
     Promise.all([poiDB.getPOIDetailByID(id), poiDB.getPOITags(id)]).
     then((results) => {
-
         if (results && results.length === TWO_SIZE &&
             results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE) {
 
