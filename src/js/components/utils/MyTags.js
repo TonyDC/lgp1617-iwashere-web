@@ -3,10 +3,12 @@ import PropTypes from 'prop-types';
 import Chip from 'material-ui/Chip';
 import httpCodes from 'http-status-codes';
 import AutoComplete from 'material-ui/AutoComplete';
+import RaisedButton from 'material-ui/RaisedButton';
+import ActionSearch from 'material-ui/svg-icons/content/add-circle';
 
 import 'styles/my_tags.scss';
 
-const ZERO_INDEX = 0;
+const NOT_FOUND = -1;
 
 export default class MyTags extends Component {
 
@@ -15,29 +17,24 @@ export default class MyTags extends Component {
 
         this.state = {
             allTags: [],
+            filterInput: '',
             tags: []
         };
     }
 
     componentDidMount() {
+        this.componentIsMounted = true;
         if (!this.props.readOnly) {
             this.fetchAllTags();
         }
     }
 
-    parseTags(tagList) {
-        const newTagList = tagList.slice();
-
-        let key = ZERO_INDEX;
-        newTagList.forEach((tag) => {
-            tag.key = key++;
-        });
-
-        return newTagList;
+    componentWillUnmount() {
+        this.componentIsMounted = false;
     }
 
     fetchAllTags() {
-        fetch('/api/tags/', {
+        fetch('/api/tag/', {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
         }).
@@ -48,48 +45,84 @@ export default class MyTags extends Component {
 
             return response.json();
         }).
-        then((tagList) => {
+        then((allTags) => {
             if (!this.componentIsMounted) {
                 return;
             }
 
-            const allTags = this.parseTags(tagList);
             this.setState({ allTags });
         });
     }
 
-    handleTagDelete(key) {
-        const tags = this.state.tags.slice();
-
-        tags.filter((tag) => {
-            return tag.key !== key;
-        });
-
-        this.props.tags = tags;
+    renderTag(tag) {
+        if (this.props.onRemveTag) {
+            return (
+                <Chip
+                    onRequestDelete={() => {
+                        this.props.onRemoveTag(tag.name);
+                    }}
+                    labelColor="white"
+                    key={`tag#${tag.tagId}`}
+                    className="tag-look"
+                >
+                    {tag.name}
+                </Chip>
+            );
+        } else {
+            return (
+                <Chip
+                    labelColor="white"
+                    key={`tag#${tag.tagId}`}
+                    className="tag-look"
+                >
+                    {tag.name}
+                </Chip>
+            );
+        }
     }
 
-    renderTag(tag) {
-        return (
-            <Chip
-                labelColor="white"
-                key={`tag#${tag.tagId}`}
-                className="tag-look"
-            >
-                {tag.name}
-            </Chip>
-        );
+    handleUpdateInput(filterInput) {
+        if (!this.componentIsMounted) {
+            return;
+        }
+
+        this.setState({ filterInput });
+    }
+
+    addTag(tagName) {
+        if (!this.componentIsMounted) {
+            return;
+        }
+
+        const allTags = this.state.allTags.map((tag) => {
+            return tag.name;
+        });
+        if (allTags.indexOf(tagName) === NOT_FOUND) {
+            return;
+        }
+
+        this.setState({ filterInput: '' });
+        this.props.onAddTag(tagName);
     }
 
     render() {
         let input = null;
 
         if (!this.props.readOnly) {
+            const allTags = this.state.allTags.map((tag) => {
+                return tag.name;
+            });
+
             input =
                 <AutoComplete
+                    searchText={this.state.filterInput}
                     hintText="Filter by tag..."
-                    dataSource={this.state.allTags}
-                    onUpdateInput={this.handleUpdateInput}
-                    floatingLabelText="Enter a tag name"
+                    dataSource={allTags}
+                    onUpdateInput={this.handleUpdateInput.bind(this)}
+                    floatingLabelText="Filter by tag..."
+                    onNewRequest={ (tag) => {
+                        this.addTag(tag);
+                    }}
                 />;
         }
 
@@ -114,6 +147,7 @@ MyTags.defaultProps = {
 MyTags.propTypes = {
     class: PropTypes.string,
     onAddTag: PropTypes.func,
+    onRemvoTag: PropTypes.func,
     readOnly: PropTypes.bool.isRequired,
     tags: PropTypes.array
 };

@@ -17,6 +17,9 @@ router.use('/poi', require('./poi'));
 // Post-related endpoints
 router.use('/post', require('./post'));
 
+// Tag-related endpoints
+router.use('/tag', require('./tag'));
+
 // No API endpoint found
 router.use((req, res) => {
     res.sendStatus(httpCode.NOT_IMPLEMENTED).end();

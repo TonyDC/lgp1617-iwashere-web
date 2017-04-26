@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Col } from 'react-bootstrap';
+import Paper from 'material-ui/Paper';
 import PropTypes from 'prop-types';
 import Moment from 'moment';
 import { GridLoader as Loader } from 'halogen';
@@ -31,6 +32,10 @@ export default class POIPosts extends Component {
         this.componentIsMounted = true;
 
         this.fetchPosts();
+    }
+
+    componentWillUnmount() {
+        this.componentIsMounted = false;
     }
 
     fetchPosts() {
@@ -170,24 +175,48 @@ export default class POIPosts extends Component {
     }
 
     addTagFilter(tagName) {
+        console.log('added', tagName);
+
         if (!this.componentIsMounted) {
             return;
         }
 
-        const { tagsFilter } = this.state;
+        const tagsFilter = this.state.tagsFilter.slice();
+        if (tagsFilter.indexOf(tagName) !== NOT_FOUND) {
+            return;
+        }
+
         tagsFilter.push(tagName);
 
         this.setState({ tagsFilter });
     }
 
-    render() {
-        const filteredPosts = this.state.posts.filter((post) => {
-            const postTagsInFilter = post.tags.filter((postTag) => {
-                return this.state.tagsFilter.indexOf(postTag.name) !== NOT_FOUND;
-            });
+    removeTagFilter(tagName) {
+        console.log(tagName);
+        if (!this.componentIsMounted || !tagName) {
+            return;
+        }
 
-            return postTagsInFilter.length === NO_ELEMENT_SIZE;
+        let { tagsFilter } = this.state;
+        tagsFilter = tagsFilter.filter((tag) => {
+            return tag !== tagName;
         });
+
+        this.setState({ tagsFilter });
+    }
+
+    render() {
+        let filteredPosts = this.state.posts.slice();
+
+        if (this.state.tagsFilter.length) {
+            filteredPosts = filteredPosts.filter((post) => {
+                const postTagsInFilter = post.tags.filter((postTag) => {
+                    return this.state.tagsFilter.indexOf(postTag.name) !== NOT_FOUND;
+                });
+
+                return postTagsInFilter.length > NO_ELEMENT_SIZE;
+            });
+        }
 
         if (filteredPosts === EMPTY) {
             return (
@@ -200,17 +229,25 @@ export default class POIPosts extends Component {
                 <Loader color="#012935" className="loader"/>
             </div>;
 
-        const tagFilter = <Tags
-            readOnly
-            tags={this.state.tagsFilter}
-            onAddTag={(tagName) => {
-                this.addTagFilter(tagName);
-            }}
-        />;
+        const tagFilter = <Tags className="tag-input"
+                                tags={this.state.tagsFilter}
+                                onAddTag={(tagName) => {
+                                    this.addTagFilter(tagName);
+                                }}
+                                onRemoveTag={(tagName) => {
+                                    this.removeTagFilter(tagName);
+                                }}
+                            />;
 
         return (
             <Col xs={12} mdOffset={1} md={10} lgOffset={1} lg={10}>
-                {tagFilter}
+                <div className="vert-align hor-align filter-container">
+                    <Paper className="paper-min-width" zDepth={5}>
+                        <div className="filter-content">
+                            {tagFilter}
+                        </div>
+                    </Paper>
+                </div>
                 <InfiniteScroll
                     pageStart={0}
                     loadMore={this.fetchPosts.bind(this)}
