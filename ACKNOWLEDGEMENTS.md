@@ -19,4 +19,6 @@
 - http://stackoverflow.com/questions/30371000/react-bootstrap-using-webpack
 - https://certbot.eff.org/#ubuntuxenial-nginx
 - http://tobiasahlin.com/spinkit/
+- http://realfavicongenerator.net/
+
 
