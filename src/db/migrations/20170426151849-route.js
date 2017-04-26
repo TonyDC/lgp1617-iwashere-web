@@ -12,7 +12,8 @@ module.exports = {
     up: (queryInterface) => {
         return queryInterface.sequelize.query(`
             CREATE TABLE routes (
-                route_id BIGINT PRIMARY KEY,
+                route_id BIGSERIAL PRIMARY KEY,
+                content_editor_id TEXT NOT NULL REFERENCES content_editors(uid),
                 description TEXT NOT NULL,
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP

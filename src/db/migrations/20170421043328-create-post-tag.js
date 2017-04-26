@@ -3,10 +3,10 @@
 // language=POSTGRES-PSQL
 module.exports = {
     down: (queryInterface) => {
-        return queryInterface.sequelize.query(`DROP TRIGGER timestamp_post_tags_trigger ON post_tags`).
-        then(() => {
-            queryInterface.dropTable('post_tags');
-        });
+        return queryInterface.sequelize.query(`
+            DROP TRIGGER timestamp_post_tags_trigger ON post_tags;
+            DROP TABLE post_tags;
+        `);
     },
     up: (queryInterface) => {
         return queryInterface.sequelize.query(`
