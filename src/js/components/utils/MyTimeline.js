@@ -51,44 +51,6 @@ export default class MyTimeline extends Component {
         });
     }
 
-    toggleLike(postId) {
-        let post = null;
-
-        this.state.posts.forEach((postTemp) => {
-            if (postTemp.postId === postId) {
-                post = postTemp;
-            }
-        });
-
-        fetch(`${this.props.url}/like`, {
-            body: JSON.stringify({
-                liked: post.liked,
-                postID: postId,
-                userID: this.props.user.uid
-            }),
-            headers: { 'Content-Type': 'application/json' },
-            method: 'POST'
-        }).
-        then((response) => {
-            return response.json();
-        }).
-        then((response) => {
-            if (!response.ok) {
-                return;
-            }
-
-            const { posts } = this.state.posts;
-
-            posts.forEach((postTemp) => {
-                if (postTemp.postId === postId) {
-                    postTemp.liked = !postTemp.liked;
-                }
-            });
-
-            this.setState({ posts });
-        });
-    }
-
     getPosts(posts) {
         const postsList = [];
 

@@ -3,6 +3,7 @@
 // Note regarding 'parseInt' function: Javascript supports 53bit mantissa
 
 const httpCodes = require('http-status-codes');
+const utils = require('../utils/utils');
 
 const express = require('express');
 const router = express.Router();
@@ -86,10 +87,10 @@ router.get('/media/:poiID', (req, res, next) => {
 
     const { poiDB } = db;
 
-    poiDB.getPOIMedia(poiID).
+    poiDB.getPOIAllMedia(poiID).
     then((media) => {
         if (media) {
-            res.json(media).end();
+            res.json(utils.convertObjectsToCamelCase(media)).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
         }
@@ -201,7 +202,7 @@ router.get('/range/:minLat/:maxLat/:minLng/:maxLng', (req, res, next) => {
     poiDB.getPOIsWithin(minLat, maxLat, minLng, maxLng).
     then((rows) => {
         if (rows) {
-            res.json(rows).end();
+            res.json(utils.convertObjectsToCamelCase(rows)).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
         }
@@ -227,13 +228,133 @@ router.get('/:id', (req, res, next) => {
         if (results && results.length === TWO_SIZE &&
             results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE) {
 
-            const poi = results[ZERO_INDEX][ZERO_INDEX];
-            poi.tags = results[ONE_INDEX];
+            const poi = utils.convertObjectToCamelCase(results[ZERO_INDEX][ZERO_INDEX]);
+            poi.tags = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
 
             res.json(poi).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
         }
+    }).
+    catch((error) => {
+        next(error);
+    });
+});
+
+/**
+ * Send POI suggestions.
+ * @param {Object[]} results
+ * @param {Object} res
+ *
+ * @return {void}
+ */
+function handleSuggestionsResults(results, res) {
+    const poisList = utils.convertObjectsToCamelCase(results);
+    const poiIds = [];
+    poisList.forEach((poi) => {
+        if (!poi.rating) {
+            poi.rating = 0;
+        }
+        poiIds.push(poi.poiId);
+    });
+
+    if (poiIds.length === NO_ELEMENT_SIZE) {
+        res.sendStatus(httpCodes.NO_CONTENT).end();
+
+        return;
+    }
+
+    const { poiDB } = db;
+    poiDB.getPOIMedia(utils.convertArrayToString(poiIds)).
+    then((media) => {
+        const mediaList = utils.convertObjectsToCamelCase(media);
+
+        poisList.forEach((poi) => {
+            poi.media = mediaList.filter((mediaItem) => {
+                return mediaItem.poiId === poi.poiId;
+            });
+        });
+
+        res.json(poisList).end();
+    });
+}
+
+/**
+ * Handle GET request for POI suggestions.
+ * In the future, userID should be used to improve the results.
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Object} next
+ *
+ * @return {void}
+ */
+function getLocationBasedSuggestions(req, res, next) {
+    const { lat, lng, limit } = req.params;
+
+    if (!lat || lng || isNaN(parseFloat(lat)) || isNaN(parseFloat(lng)) ||
+        !limit || isNaN(parseInt(limit, DECIMAL_BASE))) {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    const { poiDB } = db;
+    poiDB.getNearbyPOIs(lat, lng, limit).
+    then((results) => {
+        handleSuggestionsResults(results, res);
+    }).
+    catch((error) => {
+        next(error);
+    });
+}
+
+/**
+ * Handle GET request for POI suggestions with location information.
+ * In the future, userID should be used to improve the results.
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Object} next
+ *
+ * @return {void}
+ */
+router.get('/suggestions/:limit/:lat/:lgn', (req, res, next) => {
+    getLocationBasedSuggestions(req, res, next);
+});
+
+/**
+ * Handle GET request for POI suggestions with location and user information.
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Object} next
+ *
+ * @return {void}
+ */
+router.get('/suggestions/:limit/:lat/:lgn/:userID', (req, res, next) => {
+    getLocationBasedSuggestions(req, res, next);
+});
+
+/**
+ * Handle GET request for POI suggestions without location information.
+ * In the future, userID should be used to improve the results.
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Object} next
+ *
+ * @return {void}
+ */
+router.get('/suggestions/:limit', (req, res, next) => {
+    const { limit } = req.params;
+
+    if (!limit || isNaN(parseInt(limit, DECIMAL_BASE))) {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    const { poiDB } = db;
+    poiDB.getTopRatedPOIs(limit).
+    then((results) => {
+        handleSuggestionsResults(results, res);
     }).
     catch((error) => {
         next(error);
