@@ -34,10 +34,20 @@ export default class POIDetail extends Component {
         if (!this.geolocationSupport) {
             Alerts.createWarningAlert('The browser does not support geo location. Queries will not consider the current location');
         }
+
+        this.componentIsMounted = true;
+    }
+
+    componentWillUnmount() {
+        this.componentIsMounted = false;
     }
 
     handleText(event) {
         event.preventDefault();
+
+        if (!this.componentIsMounted) {
+            return;
+        }
 
         this.setState({ search: event.target.value });
     }
@@ -57,7 +67,7 @@ export default class POIDetail extends Component {
         }).
         then((response) => {
             if (response.status >= httpCodes.BAD_REQUEST) {
-                return Promise.reject(new Error(response));
+                return Promise.reject(new Error(response.statusText));
             }
 
             return response.json();
@@ -66,6 +76,10 @@ export default class POIDetail extends Component {
 
     submitSearch(event) {
         event.preventDefault();
+
+        if (!this.componentIsMounted) {
+            return;
+        }
 
         this.setState({ inProgress: 'Searching current location...' });
 
@@ -95,28 +109,48 @@ export default class POIDetail extends Component {
             this.setState({ inProgress: 'Searching...' });
             this.performSearch(search, latitude, longitude).
             then((json) => {
+                if (!this.componentIsMounted) {
+                    return;
+                }
+
                 this.setState({
                     inProgress: false,
                     results: json.results
                 });
             }).
             catch(() => {
+                if (!this.componentIsMounted) {
+                    return;
+                }
+
                 this.setState({ inProgress: false });
                 Alerts.createErrorAlert('Error while searching for POIs');
             });
 
         }, () => {
-            Alerts.createInfoAlert('Error while retrieving current location');
+            if (!this.componentIsMounted) {
+                return;
+            }
+
+            Alerts.createInfoAlert('Error while retrieving current location. Trying to retrieve results without considering the current location...');
 
             this.setState({ inProgress: 'Searching...' });
             this.performSearch(search).
             then((json) => {
+                if (!this.componentIsMounted) {
+                    return;
+                }
+
                 this.setState({
                     inProgress: false,
                     results: json.results
                 });
             }).
             catch(() => {
+                if (!this.componentIsMounted) {
+                    return;
+                }
+
                 this.setState({ inProgress: false });
                 Alerts.createErrorAlert('Error while searching for POIs');
             });

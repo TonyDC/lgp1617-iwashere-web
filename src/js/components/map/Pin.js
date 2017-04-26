@@ -5,8 +5,7 @@ export default class Pin extends Component {
 
     render() {
         return (
-            <div>
-                <div>{this.props.text}</div>
+            <div onClick={this.props.onClick}>
                 <div>{this.props.children}</div>
             </div>
         );
@@ -17,5 +16,6 @@ Pin.propTypes = {
     children: PropTypes.any,
     lat: PropTypes.number,
     lng: PropTypes.number,
+    onClick: PropTypes.func,
     text: PropTypes.string
 };

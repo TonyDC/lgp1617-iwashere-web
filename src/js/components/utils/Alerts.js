@@ -32,6 +32,14 @@ export default class Alerts extends Component {
         });
     }
 
+    static closeAll() {
+        return Alert.closeAll();
+    }
+
+    static close(alertID) {
+        return Alert.close(alertID);
+    }
+
     constructor(props) {
         super(props);
         this.state = {};
@@ -64,7 +72,7 @@ export default class Alerts extends Component {
 
     render() {
         return (
-            <Alert stack={{ limit: 30 }} />
+            <Alert stack={{ limit: 5 }} />
         );
     }
 }

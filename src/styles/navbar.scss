@@ -3,10 +3,18 @@
 }
 
 .navbar {
+    width: 100% !important;
+    position: fixed !important;
+    z-index: 2;
     border-radius: 0 !important;
     background-color: #012935 !important;
     color: #012935 !important;
     margin-bottom: 0 !important;
+}
+
+.navbar-inverse {
+    border: none !important;
+    box-shadow: rgba(0, 0, 0, 0.156863) 0px 3px 10px, rgba(0, 0, 0, 0.227451) 0px 3px 10px;
 }
 
 .navbar-default .navbar-nav > li > a {
@@ -15,4 +23,20 @@
 
 .app-logo {
     padding: 6px 30px !important;
+}
+
+.navbar-container {
+    z-index: 5;
+}
+
+.link {
+    color: #9d9d9d;
+    background-color: transparent;
+    text-decoration: none;
+}
+
+.link:hover, .link:focus, .current-link {
+    color: #fff;
+    background-color: transparent;
+    text-decoration: none;
 }

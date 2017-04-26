@@ -29,14 +29,23 @@ export default class Login extends Component {
         };
     }
 
+    componentDidMount() {
+        this.componentIsMounted = true;
+    }
+
     componentWillUnmount() {
         this.closePreviousErrors();
+        this.componentIsMounted = false;
     }
 
     closePreviousErrors() {
         this.state.errors.forEach((error) => {
             Alert.close(error);
         });
+
+        if (!this.componentIsMounted) {
+            return;
+        }
 
         this.setState({ errors: [] });
     }
@@ -45,6 +54,10 @@ export default class Login extends Component {
         const { message } = error;
 
         this.closePreviousErrors();
+
+        if (!this.componentIsMounted) {
+            return;
+        }
 
         const currentError = Alerts.createErrorAlert(message);
         this.setState({
@@ -55,6 +68,10 @@ export default class Login extends Component {
 
     loginPopup(provider) {
         if (this.state.inProgress) {
+            return;
+        }
+
+        if (!this.componentIsMounted) {
             return;
         }
 
@@ -70,6 +87,10 @@ export default class Login extends Component {
                 method: 'POST'
             }).
             then((response) => {
+                if (!this.componentIsMounted) {
+                    return null;
+                }
+
                 const { status } = response;
                 if (status >= httpStatus.BAD_REQUEST) {
                     Alerts.createWarningAlert('Failure in registering user in database. Available features are limited. Please, try to login again later.');
@@ -79,6 +100,10 @@ export default class Login extends Component {
             });
         }).
         then(() => {
+            if (!this.componentIsMounted) {
+                return;
+            }
+
             this.setState({ inProgress: false });
             this.props.router.push('/');
         }).
@@ -90,7 +115,7 @@ export default class Login extends Component {
     loginUser(event) {
         event.preventDefault();
 
-        if (this.state.inProgress || !this.checkForm()) {
+        if (this.state.inProgress || !this.checkForm() || !this.componentIsMounted) {
             return;
         }
 

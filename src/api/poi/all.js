@@ -3,6 +3,7 @@
 // Note regarding 'parseInt' function: Javascript supports 53bit mantissa
 
 const httpCodes = require('http-status-codes');
+const utils = require('../utils/utils');
 
 const express = require('express');
 const router = express.Router();
@@ -89,7 +90,7 @@ router.get('/media/:poiID', (req, res, next) => {
     poiDB.getPOIMedia(poiID).
     then((media) => {
         if (media) {
-            res.json(media).end();
+            res.json(utils.convertObjectsToCamelCase(media)).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
         }
@@ -201,7 +202,7 @@ router.get('/range/:minLat/:maxLat/:minLng/:maxLng', (req, res, next) => {
     poiDB.getPOIsWithin(minLat, maxLat, minLng, maxLng).
     then((rows) => {
         if (rows) {
-            res.json(rows).end();
+            res.json(utils.convertObjectsToCamelCase(rows)).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
         }
@@ -227,8 +228,8 @@ router.get('/:id', (req, res, next) => {
         if (results && results.length === TWO_SIZE &&
             results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE) {
 
-            const poi = results[ZERO_INDEX][ZERO_INDEX];
-            poi.tags = results[ONE_INDEX];
+            const poi = utils.convertObjectToCamelCase(results[ZERO_INDEX][ZERO_INDEX]);
+            poi.tags = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
 
             res.json(poi).end();
         } else {

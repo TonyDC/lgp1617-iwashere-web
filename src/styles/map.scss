@@ -1,0 +1,20 @@
+$icon-margin: 18px;
+$icon-size: 40px;
+
+$top-offset: 10px;
+$left-offset: 12px;
+
+.pin button {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: $icon-size !important;
+    height: $icon-size !important;
+
+    top: (-$icon-size - $icon-margin + $top-offset) / 2;
+    left: (-$icon-size - $icon-margin + $left-offset) / 2;
+}
+
+.pin svg {
+    width: $icon-size !important;
+    height: $icon-size !important;
+}

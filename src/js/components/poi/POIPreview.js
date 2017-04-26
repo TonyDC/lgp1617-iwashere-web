@@ -1,21 +1,18 @@
 import React, { Component } from 'react';
-import { Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { Helmet } from 'react-helmet';
 import { GridLoader as Loader } from 'halogen';
+import RaisedButton from 'material-ui/RaisedButton';
 import httpCodes from 'http-status-codes';
 
 import POICard from './POICard';
 import Error from '../utils/Error';
-import Timeline from '../utils/MyTimeline';
 
-import 'styles/poi_card.scss';
 import 'styles/utils.scss';
+import 'styles/poi_detail_side.scss';
 
 const DECIMAL_BASE = 10;
-const PLACE_TYPE = 'place;lugar';
 
-export default class POIDetail extends Component {
+export default class POIPreview extends Component {
 
     constructor(props, context) {
         super(props);
@@ -47,8 +44,12 @@ export default class POIDetail extends Component {
         this.componentIsMounted = false;
     }
 
+    viewPoiDetail() {
+        this.props.router.push(`/poi/${this.props.poiId}`);
+    }
+
     fetchPOIInfo() {
-        if (isNaN(parseInt(this.props.params.id, DECIMAL_BASE))) {
+        if (isNaN(parseInt(this.props.poiId, DECIMAL_BASE))) {
             if (!this.componentIsMounted) {
                 return;
             }
@@ -58,7 +59,7 @@ export default class POIDetail extends Component {
             return;
         }
 
-        fetch(`/api/poi/${this.props.params.id}`, {
+        fetch(`/api/poi/${this.props.poiId}`, {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
         }).
@@ -89,13 +90,23 @@ export default class POIDetail extends Component {
     }
 
     render() {
+        const closeButton =
+            <RaisedButton
+                className="poi-detail-button pull-right" backgroundColor="#39A8E0"
+                label="Close"
+                key="close"
+                onTouchTap={this.props.onClose}
+            />;
+
         if (this.state.error) {
             return (
-                <Error errorMessage="Error while retrieving information about the point of interest." />
+                <Error errorMessage="Error while retrieving information about the point of interest.">
+                    { closeButton }
+                </Error>
             );
         }
 
-        if (this.state.loadingPOIInfo) {
+        if (typeof this.state.poiInfo === 'undefined' || typeof this.state.user === 'undefined' || this.state.loadingPOIInfo) {
             return (
                 <div className="hor-align vert-align">
                     <Loader color="#012935" className="loader"/>
@@ -103,46 +114,30 @@ export default class POIDetail extends Component {
             );
         }
 
-        let poiCard = null;
-        let userMediaTimeline = null;
-        if (this.props.params.id) {
-
-            if (this.state.poiInfo) {
-                poiCard = <POICard poiInfo={this.state.poiInfo} user={this.state.user} />;
-
-                if (this.state.poiInfo.type === PLACE_TYPE) {
-                    userMediaTimeline =
-                        <Timeline url={`/api/post`} poiId={this.props.params.id} user={this.state.user}/>;
-                }
-            }
-        }
+        const poiPreviewButtons =
+            <div className="poi-detail-buttons">
+                <RaisedButton
+                    className="poi-detail-button" backgroundColor="#39A8E0"
+                    label="View more"
+                    onTouchTap={this.viewPoiDetail.bind(this)}
+                />
+                { closeButton }
+            </div>;
 
         return (
-            <div className="wrapper-fill">
-                <Helmet>
-                    <title>#iwashere</title>
-                </Helmet>
-
-                <div className="container">
-                    <Row className="show-grid">
-
-                        <Col xs={12} mdOffset={1} md={10} lgOffset={1} lg={10}>
-                            {poiCard}
-                        </Col>
-
-                        {userMediaTimeline}
-                    </Row>
-                </div>
-            </div>
+            <POICard poiInfo={this.state.poiInfo} user={this.state.user}>
+                { poiPreviewButtons }
+            </POICard>
         );
     }
 }
 
-POIDetail.propTypes = {
+POIPreview.propTypes = {
     history: PropTypes.object,
-    params: PropTypes.object,
-    router: PropTypes.object
+    onClose: PropTypes.any,
+    poiId: PropTypes.string.isRequired,
+    router: PropTypes.object.isRequired
 };
 
 // To access Redux store
-POIDetail.contextTypes = { store: PropTypes.object };
+POIPreview.contextTypes = { store: PropTypes.object };

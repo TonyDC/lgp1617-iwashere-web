@@ -31,8 +31,13 @@ export default class Register extends Component {
         };
     }
 
+    componentDidMount() {
+        this.componentIsMounted = true;
+    }
+
     componentWillUnmount() {
         this.closePreviousErrors();
+        this.componentIsMounted = false;
     }
 
     closePreviousErrors() {
@@ -71,6 +76,10 @@ export default class Register extends Component {
     handleError(error) {
         const { message } = error;
 
+        if (!this.componentIsMounted) {
+            return;
+        }
+
         this.closePreviousErrors();
 
         const currentError = Alerts.createErrorAlert(message);
@@ -96,6 +105,10 @@ export default class Register extends Component {
         const { email, password } = this.state;
         firebase.auth().signInWithEmailAndPassword(email, password).
         then(() => {
+            if (!this.componentIsMounted) {
+                return;
+            }
+
             this.sendEmailVerification();
 
             this.setState({
@@ -115,7 +128,7 @@ export default class Register extends Component {
 
         this.closePreviousErrors();
 
-        if (this.state.inProgress || !this.checkForm()) {
+        if (this.state.inProgress || !this.checkForm() || !this.componentIsMounted) {
             return;
         }
 
