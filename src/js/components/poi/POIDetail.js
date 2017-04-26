@@ -29,18 +29,29 @@ export default class POIDetail extends Component {
     componentDidMount() {
         this.reduxListenerUnsubscribe = this.context.store.subscribe(() => {
             const reduxState = this.context.store.getState();
+            if (!this.componentIsMounted) {
+                return;
+            }
+
             this.setState({ user: reduxState.userStatus.userInfo });
         });
 
         this.fetchPOIInfo();
+
+        this.componentIsMounted = true;
     }
 
     componentWillUnmount() {
         this.reduxListenerUnsubscribe();
+        this.componentIsMounted = false;
     }
 
     fetchPOIInfo() {
         if (isNaN(parseInt(this.props.params.id, DECIMAL_BASE))) {
+            if (!this.componentIsMounted) {
+                return;
+            }
+
             this.setState({ error: true });
 
             return;
@@ -54,12 +65,20 @@ export default class POIDetail extends Component {
             return response.json();
         }).
         then((response) => {
+            if (!this.componentIsMounted) {
+                return;
+            }
+
             this.setState({
                 loadingPOIInfo: false,
                 poiInfo: response
             });
         }).
         catch(() => {
+            if (!this.componentIsMounted) {
+                return;
+            }
+
             this.setState({ error: true });
         });
     }

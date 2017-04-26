@@ -63,6 +63,14 @@ export default class Map extends Component {
         this.maps = null;
     }
 
+    componentDidMount() {
+        this.componentIsMounted = true;
+    }
+
+    componentWillUnmount() {
+        this.componentIsMounted = false;
+    }
+
     handleLocation() {
         const geoOptions = {
             enableHighAccuracy: true,
@@ -73,6 +81,10 @@ export default class Map extends Component {
         const locationInProgressAlert = Alerts.createInfoAlert(`Retrieving location...`);
         navigator.geolocation.getCurrentPosition((position) => {
             const { latitude, longitude } = position.coords;
+            if (!this.componentIsMounted) {
+                return;
+            }
+
             this.setState({
                 location: {
                     lat: latitude,
@@ -89,6 +101,10 @@ export default class Map extends Component {
             Alerts.close(locationInProgressAlert);
             Alerts.createInfoAlert(`Location found.`);
         }, () => {
+            if (!this.componentIsMounted) {
+                return;
+            }
+
             Alerts.closeAll();
             Alerts.createErrorAlert('Error while retrieving current location.');
 
@@ -136,6 +152,10 @@ export default class Map extends Component {
             return response.json();
         }).
         then((response) => {
+            if (!this.componentIsMounted) {
+                return;
+            }
+
             this.setState({
                 response: {
                     area: {
@@ -157,6 +177,10 @@ export default class Map extends Component {
     }
 
     poiSelected(poiId) {
+        if (!this.componentIsMounted) {
+            return;
+        }
+
         this.setState({ selectedItem: poiId });
     }
 
@@ -171,25 +195,25 @@ export default class Map extends Component {
         const poisInViewport = this.state.response && this.state.response.content
             ? this.state.response.content.map((element, index) => {
                 return <POIComponent
-                            lat={ element.latitude }
-                            lng={ element.longitude }
-                            clickHandler={ () => {
-                                this.poiSelected(element.poiId);
-                            }}
-                            key={ index }
-                        />;
+                    lat={ element.latitude }
+                    lng={ element.longitude }
+                    clickHandler={ () => {
+                        this.poiSelected(element.poiId);
+                    }}
+                    key={ index }
+                />;
             })
             : null;
 
         let poiPreview = null;
         if (this.state.selectedItem) {
             poiPreview = <POISideBar
-                            poiId={this.state.selectedItem}
-                            onClose={() => {
-                                this.poiSelected(null);
-                            }}
-                            router={this.props.router}
-                        />;
+                poiId={this.state.selectedItem}
+                onClose={() => {
+                    this.poiSelected(null);
+                }}
+                router={this.props.router}
+            />;
         }
 
         return (

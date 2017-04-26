@@ -24,11 +24,16 @@ export default class POISideBar extends Component {
     }
 
     componentDidMount() {
-        window.addEventListener("resize", this.updateDimensions.bind(this));
+        // The same function object must be used when binding and unbinding the event listener
+        this.resizeHandler = this.updateDimensions.bind(this);
+        window.addEventListener("resize", this.resizeHandler);
+        this.componentIsMounted = true;
     }
 
     componentWillUnmount() {
-        window.removeEventListener("resize", this.updateDimensions.bind(this));
+        window.removeEventListener("resize", this.resizeHandler);
+        this.resizeHandler = null;
+        this.componentIsMounted = false;
     }
 
     updateDimensions() {
@@ -38,10 +43,18 @@ export default class POISideBar extends Component {
             size = '100%';
         }
 
+        if (!this.componentIsMounted) {
+            return;
+        }
+
         this.setState({ size });
     }
 
     closePoiPreview() {
+        if (!this.componentIsMounted) {
+            return;
+        }
+        
         this.setState({ open: false });
         this.props.onClose();
     }
@@ -63,7 +76,7 @@ export default class POISideBar extends Component {
 }
 
 POISideBar.propTypes = {
-    onClose: PropTypes.any.isRequired,
+    onClose: PropTypes.func.isRequired,
     poiId: PropTypes.string.isRequired,
     router: PropTypes.object.isRequired
 };

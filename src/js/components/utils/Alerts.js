@@ -72,7 +72,7 @@ export default class Alerts extends Component {
 
     render() {
         return (
-            <Alert stack={{ limit: 30 }} />
+            <Alert stack={{ limit: 5 }} />
         );
     }
 }

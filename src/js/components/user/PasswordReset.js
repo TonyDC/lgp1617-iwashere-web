@@ -25,8 +25,13 @@ export default class PasswordReset extends Component {
         };
     }
 
+    componentDidMount() {
+        this.componentIsMounted = true;
+    }
+
     componentWillUnmount() {
         this.closePreviousErrors();
+        this.componentIsMounted = false;
     }
 
     closePreviousErrors() {
@@ -41,6 +46,10 @@ export default class PasswordReset extends Component {
         const { message } = error;
 
         this.closePreviousErrors();
+
+        if (!this.componentIsMounted) {
+            return;
+        }
 
         const currentError = Alerts.createErrorAlert(message);
         this.setState({
@@ -73,6 +82,10 @@ export default class PasswordReset extends Component {
         const { email } = this.state;
         firebase.auth().sendPasswordResetEmail(email).
         then(() => {
+            if (!this.componentIsMounted) {
+                return;
+            }
+
             Alerts.createInfoAlert(`An email with a token has been sent to ${email}.`);
             this.props.router.push('/user/login');
         }).
