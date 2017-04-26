@@ -24,10 +24,11 @@ export default class POISideBar extends Component {
     }
 
     componentDidMount() {
+        this.componentIsMounted = true;
+        
         // The same function object must be used when binding and unbinding the event listener
         this.resizeHandler = this.updateDimensions.bind(this);
         window.addEventListener("resize", this.resizeHandler);
-        this.componentIsMounted = true;
     }
 
     componentWillUnmount() {
@@ -54,7 +55,7 @@ export default class POISideBar extends Component {
         if (!this.componentIsMounted) {
             return;
         }
-        
+
         this.setState({ open: false });
         this.props.onClose();
     }
