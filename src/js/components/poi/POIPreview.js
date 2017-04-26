@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { GridLoader as Loader } from 'halogen';
 import RaisedButton from 'material-ui/RaisedButton';
-import POICard from './POICard';
+import httpCodes from 'http-status-codes';
 
+import POICard from './POICard';
 import Error from '../utils/Error';
 
 import 'styles/utils.scss';
@@ -63,6 +64,10 @@ export default class POIPreview extends Component {
             method: 'GET'
         }).
         then((response) => {
+            if (response.status >= httpCodes.BAD_REQUEST) {
+                return Promise.reject(new Error(response.statusText));
+            }
+
             return response.json();
         }).
         then((response) => {

@@ -3,8 +3,9 @@ import { Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 import { GridLoader as Loader } from 'halogen';
-import POICard from './POICard';
+import httpCodes from 'http-status-codes';
 
+import POICard from './POICard';
 import Error from '../utils/Error';
 import Timeline from '../utils/MyTimeline';
 
@@ -62,6 +63,10 @@ export default class POIDetail extends Component {
             method: 'GET'
         }).
         then((response) => {
+            if (response.status >= httpCodes.BAD_REQUEST) {
+                return Promise.reject(new Error(response.statusText));
+            }
+
             return response.json();
         }).
         then((response) => {

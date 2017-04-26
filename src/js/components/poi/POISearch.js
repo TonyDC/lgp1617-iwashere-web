@@ -67,7 +67,7 @@ export default class POIDetail extends Component {
         }).
         then((response) => {
             if (response.status >= httpCodes.BAD_REQUEST) {
-                return Promise.reject(new Error(response));
+                return Promise.reject(new Error(response.statusText));
             }
 
             return response.json();
