@@ -15,7 +15,9 @@ export default class Error extends Component {
                     <p><i className="glyphicon glyphicon-exclamation-sign" aria-hidden="true" />
                         {` ${this.props.errorMessage}`}
                     </p>
-                    {this.props.children}
+                    <div className="error-content">
+                        {this.props.children}
+                    </div>
                 </div>
             </div>
         );

@@ -100,11 +100,13 @@ export default class POIPreview extends Component {
 
         if (this.state.error) {
             return (
-                <Error errorMessage="Error while retrieving information about the point of interest." children={[closeButton]}/>
+                <Error errorMessage="Error while retrieving information about the point of interest.">
+                    { closeButton }
+                </Error>
             );
         }
 
-        if (this.state.loadingPOIInfo) {
+        if (typeof this.state.poiInfo === 'undefined' || typeof this.state.user === 'undefined' || this.state.loadingPOIInfo) {
             return (
                 <div className="hor-align vert-align">
                     <Loader color="#012935" className="loader"/>
@@ -119,12 +121,13 @@ export default class POIPreview extends Component {
                     label="View more"
                     onTouchTap={this.viewPoiDetail.bind(this)}
                 />
-
-                {closeButton}
+                { closeButton }
             </div>;
 
         return (
-            <POICard poiInfo={this.state.poiInfo} user={this.state.user} additionalElements={poiPreviewButtons} />
+            <POICard poiInfo={this.state.poiInfo} user={this.state.user}>
+                { poiPreviewButtons }
+            </POICard>
         );
     }
 }

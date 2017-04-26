@@ -41,8 +41,7 @@ export default class POICard extends Component {
                 <div className="poi-rating">
                     {ratingPanel}
                 </div>
-
-                {this.props.additionalElements}
+                { this.props.children }
             </Card>
 
         );
@@ -50,7 +49,13 @@ export default class POICard extends Component {
 }
 
 POICard.propTypes = {
-    additionalElements: PropTypes.any,
-    poiInfo: PropTypes.object.isRequired,
+    children: PropTypes.any,
+    poiInfo: PropTypes.shape({
+        address: PropTypes.string.isRequired,
+        description: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        poiId: PropTypes.number.isRequired,
+        tags: PropTypes.object.isRequired
+    }).isRequired,
     user: PropTypes.object
 };

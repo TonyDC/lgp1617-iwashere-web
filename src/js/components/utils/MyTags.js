@@ -88,6 +88,6 @@ MyTags.defaultProps = {
 
 MyTags.propTypes = {
     class: PropTypes.string,
-    readOnly: PropTypes.any.isRequired,
+    readOnly: PropTypes.bool.isRequired,
     tags: PropTypes.any.isRequired
 };
