@@ -3,3 +3,11 @@
     width: 20px !important;
     margin: 2px;
 }
+
+.clickable:hover, .clickable:focus {
+    cursor: pointer;
+}
+
+.action-icon {
+    z-index: 1000;
+}

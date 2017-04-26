@@ -41,7 +41,7 @@ module.exports.getPOIAllMedia = (poiId) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT *, name AS type 
     FROM poi_contents INNER JOIN content_types ON poi_contents.content_type_id = content_types.content_type_id
-    WHERE poi_contents.poi_id = poiId)`, {
+    WHERE poi_contents.poi_id = :poiId`, {
         replacements: { poiId },
         type: db.QueryTypes.SELECT
     });

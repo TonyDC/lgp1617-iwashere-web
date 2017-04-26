@@ -136,15 +136,10 @@ export default class POISuggestions extends Component {
     }
 
     selectMosaic(poiId) {
-        console.log('selected',poiId);
-        return;
         this.props.router.push(`/poi/${poiId}`);
     }
 
     dismissMosaic(poiId) {
-        console.log('dismissed', poiId);
-        return;
-
         const { previousSuggestions } = this.state;
         let { suggestions } = this.state;
 
