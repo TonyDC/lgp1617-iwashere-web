@@ -6,6 +6,7 @@ import { GridLoader as Loader } from 'halogen';
 import httpCodes from 'http-status-codes';
 
 import RouteCard from './RouteCard';
+import RoutePois from './RoutePOIs';
 import Error from '../utils/Error';
 
 import 'styles/utils.scss';
@@ -35,6 +36,7 @@ export default class RouteDetail extends Component {
         });
 
         this.fetchRouteInfo();
+        this.fetchRoutePois();
 
         this.componentIsMounted = true;
     }
@@ -85,6 +87,47 @@ export default class RouteDetail extends Component {
         });
     }
 
+    fetchRoutePois() {
+        if (isNaN(parseInt(this.props.params.id, DECIMAL_BASE))) {
+            if (!this.componentIsMounted) {
+                return;
+            }
+
+            this.setState({ error: true });
+
+            return;
+        }
+
+        fetch(`/api/route/pois/${this.props.params.id}`, {
+            headers: { 'Content-Type': 'application/json' },
+            method: 'GET'
+        }).
+        then((response) => {
+            if (response.status >= httpCodes.BAD_REQUEST) {
+                return Promise.reject(new Error(response.statusText));
+            }
+
+            return response.json();
+        }).
+        then((response) => {
+            if (!this.componentIsMounted) {
+                return;
+            }
+
+            this.setState({
+                loadingRouteInfo: false,
+                routePois: response
+            });
+        }).
+        catch(() => {
+            if (!this.componentIsMounted) {
+                return;
+            }
+
+            this.setState({ error: true });
+        });
+    }
+
     render() {
         if (this.state.error) {
             return (
@@ -101,10 +144,12 @@ export default class RouteDetail extends Component {
         }
 
         let routeCard = null;
+        let routePois = null;
         if (this.props.params.id) {
 
             if (this.state.routeInfo) {
                 routeCard = <RouteCard poiInfo={this.state.routeInfo} user={this.state.user} />;
+                routePois = <RoutePois poisList={this.state.poiList} router={this.props.router} />;
             }
         }
 
@@ -119,6 +164,8 @@ export default class RouteDetail extends Component {
 
                         <Col xs={12} mdOffset={1} md={10} lgOffset={1} lg={10}>
                             {routeCard}
+
+                            {routePois}
                         </Col>
 
                     </Row>
