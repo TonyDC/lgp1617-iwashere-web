@@ -79,32 +79,30 @@ router.get('/rating/:routeID', (req, res, next) => {
     });
 });
 
-// TODO
 router.post('/rating', (req, res, next) => {
-    const { userID, poiID, rating } = req.body;
+    const { userID, routeID, rating } = req.body;
 
-    if (!poiID || !userID || typeof userID !== 'string' || !rating || RATING_VALUES.indexOf(rating) === VALUE_NOT_FOUND ||
-        isNaN(parseInt(poiID, DECIMAL_BASE))) {
+    if (!routeID || !userID || typeof userID !== 'string' || !rating || RATING_VALUES.indexOf(rating) === VALUE_NOT_FOUND ||
+        isNaN(parseInt(routeID, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
 
-    const { poiDB, userDB } = db;
-    Promise.all([userDB.getUserByUID(userID), poiDB.getPOIDetailByID(poiID)]).
+    const { routeDB, userDB } = db;
+    Promise.all([userDB.getUserByUID(userID), routeDB.getRouteDetailByID(routeID)]).
     then((results) => {
-
         if (results && results.length === TWO_SIZE &&
             results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE &&
             results[ONE_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE) {
 
-            return poiDB.addPOIRating(poiID, userID, rating).
+            return routeDB.addRouteRating(routeID, userID, rating).
             then(() => {
                 res.end();
             });
         }
 
-        res.status(httpCodes.BAD_REQUEST).json({ message: '(userID, poiID) not found' }).
+        res.status(httpCodes.BAD_REQUEST).json({ message: '(userID, routeID) not found' }).
         end();
 
         return null;

@@ -47,3 +47,15 @@ module.exports.getRatingByUserID = (routeID, userID) => {
         type: db.QueryTypes.SELECT
     });
 };
+
+module.exports.addRouteRating = (routeID, userID, rating) => {
+    // language=POSTGRES-SQL
+    return db.query(`INSERT INTO route_ratings(user_id, route_id, rating) VALUES (:userID, :routeID, :rating)`, {
+        replacements: {
+            rating,
+            routeID,
+            userID
+        },
+        type: db.QueryTypes.INSERT
+    });
+};
