@@ -48,7 +48,9 @@ router.get('/search', (req, res, next) => {
         then((results) => {
             if (results) {
                 const response = {
-                    results,
+                    results: results.map((entry) => {
+                        return utils.convertObjectToCamelCase(entry);
+                    }),
                     type: 'distance'
                 };
                 res.json(response).end();
@@ -63,7 +65,9 @@ router.get('/search', (req, res, next) => {
         poiDB.searchPOI(query).then((results) => {
             if (results) {
                 const response = {
-                    results,
+                    results: results.map((entry) => {
+                        return utils.convertObjectToCamelCase(entry);
+                    }),
                     type: 'name'
                 };
                 res.json(response).end();
