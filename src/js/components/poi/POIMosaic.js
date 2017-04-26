@@ -4,12 +4,15 @@ import { GridLoader as Loader } from 'halogen';
 import { GridTile } from 'material-ui/GridList';
 import IconButton from 'material-ui/IconButton';
 import StarBorder from 'material-ui/svg-icons/toggle/star-border';
+import RemoveIcon from 'material-ui/svg-icons/av/shuffle';
 
-import 'styles/timeline.scss';
+import 'styles/poi_mosaic.scss';
+import 'styles/utils.scss';
 
 const ZERO_INDEX = 0;
 const MAX_RATING_SCALE = 5;
 const RATING_PRECISION = 1;
+const REMOVE_MESSAGE = 'Dismiss and replace';
 
 export default class POIMosaic extends Component {
 
@@ -18,7 +21,7 @@ export default class POIMosaic extends Component {
 
         if (!poi) {
             return (
-                <GridTile key={this.props.key}>
+                <GridTile>
                     <div className="hor-align vert-align">
                         <Loader color="#012935" className="loader"/>
                     </div>
@@ -28,15 +31,21 @@ export default class POIMosaic extends Component {
 
         let poiMedia = null;
         if (poi.media.length) {
-            poiMedia = <img src={poi.media[ZERO_INDEX].url}></img>;
+            poiMedia = <img src={poi.media[ZERO_INDEX].url} />;
         }
 
         return (
             <GridTile
-                key={this.props.key}
                 title={poi.name}
-                subtitle={<span>{poi.rating.toFixed(RATING_PRECISION)}/{MAX_RATING_SCALE} <StarBorder color="white" /></span>}
-                actionIcon={<IconButton><StarBorder color="white" /></IconButton>} // TODO add dismiss button
+                subtitle={<div className="vert-align"><span>{poi.rating.toFixed(RATING_PRECISION)}/{MAX_RATING_SCALE}</span> <StarBorder color="white" className="rating-star" /></div>}
+                actionIcon={<IconButton tooltipPosition="top-left"
+                                        tooltip={REMOVE_MESSAGE}
+                                        onTouchTap={() => {
+                                            this.props.onDismiss();
+                                        }}
+                            >
+                                <RemoveIcon color="white" />
+                            </IconButton>}
             >
                 {poiMedia}
             </GridTile>
@@ -45,7 +54,6 @@ export default class POIMosaic extends Component {
 }
 
 POIMosaic.propTypes = {
-    key: PropTypes.string.isRequired,
     onDismiss: PropTypes.any,
     onSelect: PropTypes.any,
     poi: PropTypes.object

@@ -6,23 +6,11 @@ import POIMosaic from './POIMosaic';
 
 import 'styles/timeline.scss';
 
+const httpCodes = require('http-status-codes');
 const API_POI_SUGGESTIONS_URL = 'api/poi/suggestions';
 const MOSAIC_SIZE = 4;
-const DOUBLE = 2;
+const TWO = 2;
 const NO_ELEMENT_SIZE = 0;
-
-const styles = {
-    root: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'space-around',
-    },
-    gridList: {
-        width: 500,
-        height: 450,
-        overflowY: 'auto',
-    },
-};
 
 export default class POISuggestions extends Component {
 
@@ -38,6 +26,8 @@ export default class POISuggestions extends Component {
     }
 
     componentDidMount() {
+        this.componentIsMounted = true;
+
         this.getCurrentLocation();
     }
 
@@ -50,7 +40,12 @@ export default class POISuggestions extends Component {
 
         const locationInProgressAlert = Alerts.createInfoAlert(`Retrieving location...`);
         navigator.geolocation.getCurrentPosition((position) => {
+            if (!this.componentIsMounted) {
+                return;
+            }
+
             const { latitude, longitude } = position.coords;
+
             this.setState({
                 location: {
                     lat: latitude,
@@ -81,21 +76,29 @@ export default class POISuggestions extends Component {
         }
 
         /**
-        if (this.state.user) {
+         if (this.state.user) {
             url += `/${this.state.user.uid}`;
         }
-        */
+         */
 
         fetch(url, {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
         }).
         then((response) => {
+            if (response.status >= httpCodes.BAD_REQUEST) {
+                return Promise.reject(new Error(response.statusText));
+            }
+
             return response.json();
         }).
         then((response) => {
+            if (!this.componentIsMounted) {
+                return;
+            }
+
             const suggestions = this.state.suggestions.concat(response);
-            const limitSuggestions = suggestions.length * DOUBLE;
+            const limitSuggestions = suggestions.length * TWO;
 
             this.setState({
                 hasMoreSuggestions: suggestions.length === this.state.limitSuggestions,
@@ -119,15 +122,29 @@ export default class POISuggestions extends Component {
                     const newSuggestion = suggestions.shift();
                     suggestions.push(newSuggestion);
                 }
+
+                if (!this.componentIsMounted) {
+                    return;
+                }
+
+                this.setState({
+                    previousSuggestions,
+                    suggestions
+                });
             }
         }
     }
 
     selectMosaic(poiId) {
+        console.log('selected',poiId);
+        return;
         this.props.router.push(`/poi/${poiId}`);
     }
 
     dismissMosaic(poiId) {
+        console.log('dismissed', poiId);
+        return;
+
         const { previousSuggestions } = this.state;
         let { suggestions } = this.state;
 
@@ -178,16 +195,23 @@ export default class POISuggestions extends Component {
         const poiSuggestions = this.getPoiMosaics();
 
         return (
-            <div style={styles.root}>
-                <GridList cellHeight={180} style={styles.gridList}>
-                    {poiSuggestions}
-                </GridList>
-            </div>
+            <GridList cols={MOSAIC_SIZE / TWO} rows={MOSAIC_SIZE / TWO} style={this.props.style}>
+                {poiSuggestions}
+            </GridList>
         );
     }
 }
 
+POISuggestions.defaultProps = {
+    style: {
+        height: 450,
+        overflowY: 'auto',
+        width: 500
+    }
+};
+
 POISuggestions.propTypes = {
     router: PropTypes.object,
+    style: PropTypes.object,
     user: PropTypes.any
 };
