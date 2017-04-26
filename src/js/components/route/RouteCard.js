@@ -3,42 +3,39 @@ import PropTypes from 'prop-types';
 import { Card, CardMedia, CardTitle, CardText } from 'material-ui/Card';
 
 import Rater from '../utils/MyRater';
-import Carousel from '../utils/MyCarousel';
 import Tags from '../utils/MyTags';
 
-import 'styles/poi_card.scss';
+import 'styles/route_card.scss';
 import 'styles/utils.scss';
 
-const API_POI_MEDIA_URL = '/api/poi/media/';
-const API_POI_RATING_URL = '/api/poi/rating';
+const API_ROUTE_RATING_URL = '/api/poi/rating';
 
-export default class POICard extends Component {
+export default class RouteCard extends Component {
 
     render() {
-        let poiMediaSlider = null;
-        let poiTagsPanel = null;
+        const routeMap = null;
+        let routeTagsPanel = null;
         let ratingPanel = null;
 
         if (this.props.routeInfo) {
-            poiMediaSlider = <Carousel url={`${API_POI_MEDIA_URL}${this.props.routeInfo.poiId}`} />;
-            poiTagsPanel = <Tags readOnly tags={this.props.routeInfo.tags} />;
-            ratingPanel = <Rater url={API_POI_RATING_URL} poiId={this.props.routeInfo.poiId} user={this.props.user}/>;
+            routeTagsPanel = <Tags readOnly tags={this.props.routeInfo.tags} />;
+            ratingPanel = <Rater url={API_ROUTE_RATING_URL} poiId={this.props.routeInfo.routeId} user={this.props.user}/>;
         }
 
         return (
-            <Card className="poi-card">
+            <Card className="route-card">
                 <CardMedia>
-                    { poiMediaSlider }
+                    { routeMap }
                 </CardMedia>
-                <CardTitle title={this.props.routeInfo.name} subtitle={this.props.routeInfo.address} />
+                <CardTitle title={this.props.routeInfo.name} />
 
-                {poiTagsPanel}
+                {routeTagsPanel}
 
                 <CardText>
                     {this.props.routeInfo.description}
                 </CardText>
 
-                <div className="poi-rating">
+                <div className="route-rating">
                     {ratingPanel}
                 </div>
                 { this.props.children }
@@ -48,13 +45,12 @@ export default class POICard extends Component {
     }
 }
 
-POICard.propTypes = {
+RouteCard.propTypes = {
     children: PropTypes.any,
-    poiInfo: PropTypes.shape({
-        address: PropTypes.string.isRequired,
+    routeInfo: PropTypes.shape({
         description: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
-        poiId: PropTypes.number.isRequired,
+        routeId: PropTypes.number.isRequired,
         tags: PropTypes.object.isRequired
     }).isRequired,
     user: PropTypes.object

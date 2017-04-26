@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-export default class POIRoutes extends Component {
+export default class RouteRoutes extends Component {
 
     render() {
         return (
@@ -12,4 +12,4 @@ export default class POIRoutes extends Component {
     }
 }
 
-POIRoutes.propTypes = { children: PropTypes.object.isRequired };
+RouteRoutes.propTypes = { children: PropTypes.object.isRequired };

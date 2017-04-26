@@ -19,10 +19,10 @@ export default class POICard extends Component {
         let poiTagsPanel = null;
         let ratingPanel = null;
 
-        if (this.props.poiInfo) {
-            poiMediaSlider = <Carousel url={`${API_POI_MEDIA_URL}${this.props.poiInfo.poiId}`} />;
-            poiTagsPanel = <Tags readOnly tags={this.props.poiInfo.tags} />;
-            ratingPanel = <Rater url={API_POI_RATING_URL} poiId={this.props.poiInfo.poiId} user={this.props.user}/>;
+        if (this.props.routeInfo) {
+            poiMediaSlider = <Carousel url={`${API_POI_MEDIA_URL}${this.props.routeInfo.poiId}`} />;
+            poiTagsPanel = <Tags readOnly tags={this.props.routeInfo.tags} />;
+            ratingPanel = <Rater url={API_POI_RATING_URL} poiId={this.props.routeInfo.poiId} user={this.props.user}/>;
         }
 
         return (
@@ -30,12 +30,12 @@ export default class POICard extends Component {
                 <CardMedia>
                     { poiMediaSlider }
                 </CardMedia>
-                <CardTitle title={this.props.poiInfo.name} subtitle={this.props.poiInfo.address} />
+                <CardTitle title={this.props.routeInfo.name} subtitle={this.props.routeInfo.address} />
 
                 {poiTagsPanel}
 
                 <CardText>
-                    {this.props.poiInfo.description}
+                    {this.props.routeInfo.description}
                 </CardText>
 
                 <div className="poi-rating">

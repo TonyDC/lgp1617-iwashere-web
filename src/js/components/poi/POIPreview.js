@@ -106,7 +106,7 @@ export default class POIPreview extends Component {
             );
         }
 
-        if (typeof this.state.poiInfo === 'undefined' || typeof this.state.user === 'undefined' || this.state.loadingPOIInfo) {
+        if (typeof this.state.routeInfo === 'undefined' || typeof this.state.user === 'undefined' || this.state.loadingRouteInfo) {
             return (
                 <div className="hor-align vert-align">
                     <Loader color="#012935" className="loader"/>
@@ -125,7 +125,7 @@ export default class POIPreview extends Component {
             </div>;
 
         return (
-            <POICard poiInfo={this.state.poiInfo} user={this.state.user}>
+            <POICard poiInfo={this.state.routeInfo} user={this.state.user}>
                 { poiPreviewButtons }
             </POICard>
         );

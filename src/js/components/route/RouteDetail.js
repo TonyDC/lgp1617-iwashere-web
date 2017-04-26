@@ -5,24 +5,21 @@ import { Helmet } from 'react-helmet';
 import { GridLoader as Loader } from 'halogen';
 import httpCodes from 'http-status-codes';
 
-import POICard from './POICard';
+import RouteCard from './RouteCard';
 import Error from '../utils/Error';
-import Timeline from '../utils/MyTimeline';
 
-import 'styles/poi_card.scss';
 import 'styles/utils.scss';
 
 const DECIMAL_BASE = 10;
-const PLACE_TYPE = 'place;lugar';
 
-export default class POIDetail extends Component {
+export default class RouteDetail extends Component {
 
     constructor(props, context) {
         super(props);
 
         const reduxState = context.store.getState();
         this.state = {
-            loadingPOIInfo: true,
+            loadingRouteInfo: true,
             user: reduxState.userStatus.userInfo
         };
     }
@@ -37,7 +34,7 @@ export default class POIDetail extends Component {
             this.setState({ user: reduxState.userStatus.userInfo });
         });
 
-        this.fetchPOIInfo();
+        this.fetchRouteInfo();
 
         this.componentIsMounted = true;
     }
@@ -47,7 +44,7 @@ export default class POIDetail extends Component {
         this.componentIsMounted = false;
     }
 
-    fetchPOIInfo() {
+    fetchRouteInfo() {
         if (isNaN(parseInt(this.props.params.id, DECIMAL_BASE))) {
             if (!this.componentIsMounted) {
                 return;
@@ -58,7 +55,7 @@ export default class POIDetail extends Component {
             return;
         }
 
-        fetch(`/api/poi/${this.props.params.id}`, {
+        fetch(`/api/route/${this.props.params.id}`, {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
         }).
@@ -75,8 +72,8 @@ export default class POIDetail extends Component {
             }
 
             this.setState({
-                loadingPOIInfo: false,
-                poiInfo: response
+                loadingRouteInfo: false,
+                routeInfo: response
             });
         }).
         catch(() => {
@@ -91,11 +88,11 @@ export default class POIDetail extends Component {
     render() {
         if (this.state.error) {
             return (
-                <Error errorMessage="Error while retrieving information about the point of interest." />
+                <Error errorMessage="Error while retrieving information about the route." />
             );
         }
 
-        if (this.state.loadingPOIInfo) {
+        if (this.state.loadingRouteInfo) {
             return (
                 <div className="hor-align vert-align">
                     <Loader color="#012935" className="loader"/>
@@ -103,17 +100,11 @@ export default class POIDetail extends Component {
             );
         }
 
-        let poiCard = null;
-        let userMediaTimeline = null;
+        let routeCard = null;
         if (this.props.params.id) {
 
-            if (this.state.poiInfo) {
-                poiCard = <POICard poiInfo={this.state.poiInfo} user={this.state.user} />;
-
-                if (this.state.poiInfo.type === PLACE_TYPE) {
-                    userMediaTimeline =
-                        <Timeline url={`/api/post`} poiId={this.props.params.id} user={this.state.user}/>;
-                }
+            if (this.state.routeInfo) {
+                routeCard = <RouteCard poiInfo={this.state.routeInfo} user={this.state.user} />;
             }
         }
 
@@ -127,10 +118,9 @@ export default class POIDetail extends Component {
                     <Row className="show-grid">
 
                         <Col xs={12} mdOffset={1} md={10} lgOffset={1} lg={10}>
-                            {poiCard}
+                            {routeCard}
                         </Col>
 
-                        {userMediaTimeline}
                     </Row>
                 </div>
             </div>
@@ -138,11 +128,11 @@ export default class POIDetail extends Component {
     }
 }
 
-POIDetail.propTypes = {
+RouteDetail.propTypes = {
     history: PropTypes.object,
     params: PropTypes.object,
     router: PropTypes.object
 };
 
 // To access Redux store
-POIDetail.contextTypes = { store: PropTypes.object };
+RouteDetail.contextTypes = { store: PropTypes.object };

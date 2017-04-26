@@ -9,7 +9,6 @@ import POICard from './POICard';
 import Error from '../utils/Error';
 import Timeline from '../utils/MyTimeline';
 
-import 'styles/poi_card.scss';
 import 'styles/utils.scss';
 
 const DECIMAL_BASE = 10;
@@ -95,7 +94,7 @@ export default class POIDetail extends Component {
             );
         }
 
-        if (this.state.loadingPOIInfo) {
+        if (this.state.loadingRouteInfo) {
             return (
                 <div className="hor-align vert-align">
                     <Loader color="#012935" className="loader"/>
@@ -107,10 +106,10 @@ export default class POIDetail extends Component {
         let userMediaTimeline = null;
         if (this.props.params.id) {
 
-            if (this.state.poiInfo) {
-                poiCard = <POICard poiInfo={this.state.poiInfo} user={this.state.user} />;
+            if (this.state.routeInfo) {
+                poiCard = <POICard poiInfo={this.state.routeInfo} user={this.state.user} />;
 
-                if (this.state.poiInfo.type === PLACE_TYPE) {
+                if (this.state.routeInfo.type === PLACE_TYPE) {
                     userMediaTimeline =
                         <Timeline url={`/api/post`} poiId={this.props.params.id} user={this.state.user}/>;
                 }
