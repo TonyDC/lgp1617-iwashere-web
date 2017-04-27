@@ -3,7 +3,7 @@
 // Note regarding 'parseInt' function: Javascript supports 53bit mantissa
 
 const httpCodes = require('http-status-codes');
-const utils = require('../utils/utils');
+const utils = require('../utils/misc');
 const aux = require('./poi_aux');
 
 const express = require('express');
@@ -49,7 +49,9 @@ router.get('/search', (req, res, next) => {
         then((results) => {
             if (results) {
                 const response = {
-                    results,
+                    results: results.map((entry) => {
+                        return utils.convertObjectToCamelCase(entry);
+                    }),
                     type: 'distance'
                 };
                 res.json(response).end();
@@ -64,7 +66,9 @@ router.get('/search', (req, res, next) => {
         poiDB.searchPOI(query).then((results) => {
             if (results) {
                 const response = {
-                    results,
+                    results: results.map((entry) => {
+                        return utils.convertObjectToCamelCase(entry);
+                    }),
                     type: 'name'
                 };
                 res.json(response).end();
@@ -168,7 +172,6 @@ router.post('/rating', (req, res, next) => {
     const { poiDB, userDB } = db;
     Promise.all([userDB.getUserByUID(userID), poiDB.getPOIDetailByID(poiID)]).
     then((results) => {
-
         if (results && results.length === TWO_SIZE &&
             results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE &&
             results[ONE_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE) {
@@ -225,10 +228,8 @@ router.get('/:id', (req, res, next) => {
 
     Promise.all([poiDB.getPOIDetailByID(id), poiDB.getPOITags(id)]).
     then((results) => {
-
         if (results && results.length === TWO_SIZE &&
             results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE) {
-
             const poi = utils.convertObjectToCamelCase(results[ZERO_INDEX][ZERO_INDEX]);
             poi.tags = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
 
@@ -265,7 +266,6 @@ router.get('/suggestions/:limit/:lat/:lng', (req, res, next) => {
     then((results) => {
         aux.handleSuggestionsResults(results).
         then((suggestions) => {
-
             if (suggestions.length === NO_ELEMENT_SIZE) {
                 res.sendStatus(httpCodes.NO_CONTENT).end();
             } else {
@@ -301,7 +301,6 @@ router.get('/suggestions/:limit', (req, res, next) => {
     then((results) => {
         aux.handleSuggestionsResults(results).
         then((suggestions) => {
-
             if (suggestions.length === NO_ELEMENT_SIZE) {
                 res.sendStatus(httpCodes.NO_CONTENT).end();
             } else {
