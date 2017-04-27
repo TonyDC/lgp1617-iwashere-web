@@ -19,13 +19,12 @@ export default class RouteDetail extends Component {
         super(props);
 
         const reduxState = context.store.getState();
-        this.state = {
-            loadingRouteInfo: true,
-            user: reduxState.userStatus.userInfo
-        };
+        this.state = { user: reduxState.userStatus.userInfo };
     }
 
     componentDidMount() {
+        this.componentIsMounted = true;
+
         this.reduxListenerUnsubscribe = this.context.store.subscribe(() => {
             const reduxState = this.context.store.getState();
             if (!this.componentIsMounted) {
@@ -37,8 +36,6 @@ export default class RouteDetail extends Component {
 
         this.fetchRouteInfo();
         this.fetchRoutePois();
-
-        this.componentIsMounted = true;
     }
 
     componentWillUnmount() {
@@ -66,17 +63,18 @@ export default class RouteDetail extends Component {
                 return Promise.reject(new Error(response.statusText));
             }
 
+            if (response.status >= httpCodes.NO_CONTENT) {
+                return Promise.reject(new Error(response.statusText));
+            }
+
             return response.json();
         }).
-        then((response) => {
+        then((routeInfo) => {
             if (!this.componentIsMounted) {
                 return;
             }
 
-            this.setState({
-                loadingRouteInfo: false,
-                routeInfo: response
-            });
+            this.setState({ routeInfo });
         }).
         catch(() => {
             if (!this.componentIsMounted) {
@@ -114,17 +112,7 @@ export default class RouteDetail extends Component {
                 return;
             }
 
-            this.setState({
-                loadingRouteInfo: false,
-                routePois: response
-            });
-        }).
-        catch(() => {
-            if (!this.componentIsMounted) {
-                return;
-            }
-
-            this.setState({ error: true });
+            this.setState({ routePois: response });
         });
     }
 
@@ -135,7 +123,7 @@ export default class RouteDetail extends Component {
             );
         }
 
-        if (this.state.loadingRouteInfo) {
+        if (!this.state.routeInfo) {
             return (
                 <div className="hor-align vert-align">
                     <Loader color="#012935" className="loader"/>
@@ -146,9 +134,8 @@ export default class RouteDetail extends Component {
         let routeCard = null;
         let routePois = null;
         if (this.props.params.id) {
-
             if (this.state.routeInfo) {
-                routeCard = <RouteCard poiInfo={this.state.routeInfo} user={this.state.user} />;
+                routeCard = <RouteCard routeInfo={this.state.routeInfo} user={this.state.user} />;
                 routePois = <RoutePois poisList={this.state.poiList} router={this.props.router} />;
             }
         }
@@ -161,13 +148,10 @@ export default class RouteDetail extends Component {
 
                 <div className="container">
                     <Row className="show-grid">
-
                         <Col xs={12} mdOffset={1} md={10} lgOffset={1} lg={10}>
                             {routeCard}
-
                             {routePois}
                         </Col>
-
                     </Row>
                 </div>
             </div>

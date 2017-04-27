@@ -1,8 +1,11 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import { GridLoader as Loader } from 'halogen';
 import { GridList } from "material-ui/GridList";
 import { Card, CardTitle } from "material-ui/Card";
 import POIMosaic from "../poi/POIMosaic";
+
+import 'styles/route_pois.scss';
 
 const POI_LIST_TITLE = 'Points of interest';
 
@@ -43,7 +46,7 @@ export default class RoutePOIs extends Component {
         }
 
         return (
-            <Card>
+            <Card className="route-pois">
                 <CardTitle title={POI_LIST_TITLE}/>
                 {poiList}
             </Card>

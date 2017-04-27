@@ -12,7 +12,9 @@ module.exports.getRouteDetailByID = (id) => {
 
 module.exports.getPOIsByRouteID = (id) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT * FROM route_pois WHERE route_id = :id`, {
+    return db.query(`SELECT * 
+    FROM route_pois INNER JOIN pois ON route_pois.poi_id = pois.poi_id
+    WHERE route_id = :id`, {
         replacements: { id },
         type: db.QueryTypes.SELECT
     });
