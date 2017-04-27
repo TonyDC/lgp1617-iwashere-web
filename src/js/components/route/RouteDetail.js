@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 import { GridLoader as Loader } from 'halogen';
 import httpCodes from 'http-status-codes';
+import POISideBar from '../poi/POISideBar';
 
 import RouteCard from './RouteCard';
 import RouteMap from './RouteMap';
