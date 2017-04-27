@@ -1,4 +1,4 @@
-const utils = require('../utils/utils');
+const utils = require('../utils/misc');
 const db = root_require('src/db/query');
 
 const NO_ELEMENT_SIZE = 0;

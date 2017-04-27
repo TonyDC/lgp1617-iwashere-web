@@ -57,9 +57,7 @@ export default class POISuggestions extends Component {
             if (!this.componentIsMounted) {
                 return;
             }
-
             const { latitude, longitude } = position.coords;
-
             this.setState({
                 location: {
                     lat: latitude,
