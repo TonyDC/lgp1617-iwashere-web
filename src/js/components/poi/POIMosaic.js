@@ -1,3 +1,5 @@
+/* eslint no-underscore-dangle: "off" */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { GridLoader as Loader } from 'halogen';

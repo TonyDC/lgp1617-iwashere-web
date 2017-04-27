@@ -243,14 +243,6 @@ router.get('/:id', (req, res, next) => {
     });
 });
 
-/**
- * Handle GET request for POI suggestions with location information.
- * @param {Object} req
- * @param {Object} res
- * @param {Object} next
- *
- * @return {void}
- */
 router.get('/suggestions/:limit/:lat/:lng', (req, res, next) => {
     const { limit, lat, lng } = req.params;
 
@@ -278,15 +270,6 @@ router.get('/suggestions/:limit/:lat/:lng', (req, res, next) => {
     });
 });
 
-/**
- * Handle GET request for POI suggestions without location information.
- * In the future, userID should be used to improve the results.
- * @param {Object} req
- * @param {Object} res
- * @param {Object} next
- *
- * @return {void}
- */
 router.get('/suggestions/:limit', (req, res, next) => {
     const { limit } = req.params;
 
