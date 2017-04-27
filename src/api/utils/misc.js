@@ -68,7 +68,7 @@ module.exports.convertObjectsToCamelCase = (objects) => {
  *
  * @return {string} array in string form
  */
-module.exports.convertToString = (objects) => {
+module.exports.convertArrayToString = (objects) => {
     let arrayString = '{';
 
     if (objects && objects.length) {

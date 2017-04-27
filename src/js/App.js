@@ -16,6 +16,7 @@ import PasswordReset from './components/user/PasswordReset';
 import POIDetail from './components/poi/POIDetail';
 import RouteDetail from './components/route/RouteDetail';
 import POISearch from './components/poi/POISearch';
+import Feed from './components/feed/Feed';
 
 import UnauthRoutes from './routes/UnauthRoutes';
 import POIRoutes from './routes/POIRoutes';
@@ -67,16 +68,14 @@ export default class App extends Component {
             <Router history={ browserHistory }>
                 <Route path="/" component={ MainRoutes }>
                     <IndexRoute component={ Map } />
-
+                    <Route path="feed" component={ Feed }/>
                     <Route path="poi" component={ POIRoutes }>
                         <Route path="search" component={ POISearch } />
                         <Route path=":id" component={ POIDetail } />
                     </Route>
-
                     <Route path="route" component={ RouteRoutes }>
                         <Route path=":id" component={ RouteDetail } />
                     </Route>
-
                     <Route path="user" component={ UnauthRoutes } onEnter={ this.redirectIfLoggedIn.bind(this) }>
                         <Route path="login" component={ Login }/>
                         <Route path="register" component={ Register }/>

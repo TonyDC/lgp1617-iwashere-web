@@ -54,8 +54,8 @@ POICard.propTypes = {
         address: PropTypes.string.isRequired,
         description: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
-        poiId: PropTypes.number.isRequired,
-        tags: PropTypes.object.isRequired
+        poiId: PropTypes.string.isRequired,
+        tags: PropTypes.array.isRequired
     }).isRequired,
     user: PropTypes.object
 };

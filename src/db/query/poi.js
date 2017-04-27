@@ -37,12 +37,23 @@ module.exports.getPOIsWithin = (minLat, maxLat, minLng, maxLng) => {
     });
 };
 
-module.exports.getPOIMedia = (poiID) => {
+module.exports.getPOIAllMedia = (poiId) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT *, name AS type 
     FROM poi_contents INNER JOIN content_types ON poi_contents.content_type_id = content_types.content_type_id
-    WHERE poi_contents.poi_id = :poiID`, {
-        replacements: { poiID },
+    WHERE poi_contents.poi_id = :poiId`, {
+        replacements: { poiId },
+        type: db.QueryTypes.SELECT
+    });
+};
+
+module.exports.getPOIMedia = (poiIdList) => {
+    // language=POSTGRES-SQL
+    return db.query(`SELECT *, name AS type 
+    FROM poi_contents INNER JOIN content_types ON poi_contents.content_type_id = content_types.content_type_id
+    WHERE content_types.content_type_id = '1' AND poi_contents.poi_id = ANY(:poiIdList) 
+    ORDER BY poi_contents.created_at DESC LIMIT 1`, {
+        replacements: { poiIdList },
         type: db.QueryTypes.SELECT
     });
 };
@@ -98,6 +109,40 @@ module.exports.searchNearbyPOI = (query, lat, lng) => {
             lng,
             query
         },
+        type: db.QueryTypes.SELECT
+    });
+};
+
+module.exports.getNearbyPOIs = (lat, lng, limit) => {
+    // language=POSTGRES-SQL
+    return db.query(`WITH poi_ratings AS 
+    (SELECT AVG(rating) AS rating, poi_id
+    FROM (SELECT DISTINCT ON (user_id) poi_id, rating FROM poi_ratings
+    ORDER BY user_id, created_at DESC) current_ratings
+    GROUP BY poi_id)
+    SELECT *, get_distance_function(latitude::real, longitude::real, :lat::real, :lng::real) as distance 
+    FROM pois LEFT JOIN poi_ratings ON pois.poi_id = poi_ratings.poi_id
+    ORDER BY rating NULLS LAST, distance DESC LIMIT :limit`, {
+        replacements: {
+            lat,
+            limit,
+            lng
+        },
+        type: db.QueryTypes.SELECT
+    });
+};
+
+module.exports.getTopRatedPOIs = (limit) => {
+    // language=POSTGRES-SQL
+    return db.query(`WITH poi_ratings AS 
+    (SELECT AVG(rating) AS rating, poi_id
+    FROM (SELECT DISTINCT ON (user_id) poi_id, rating FROM poi_ratings
+    ORDER BY user_id, created_at DESC) current_ratings
+    GROUP BY poi_id)
+    SELECT *
+    FROM pois LEFT JOIN poi_ratings ON pois.poi_id = poi_ratings.poi_id
+    ORDER BY rating NULLS LAST LIMIT :limit`, {
+        replacements: { limit },
         type: db.QueryTypes.SELECT
     });
 };
