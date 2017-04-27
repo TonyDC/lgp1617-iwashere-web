@@ -32,7 +32,6 @@ function convertObjectToCamelCase(object) {
     const newObject = {};
 
     for (const attribute in object) {
-
         if (!(toCamelCase(attribute) in newObject && newObject[toCamelCase(attribute)] !== null)) {
             newObject[toCamelCase(attribute)] = object[attribute];
         }

@@ -33,7 +33,6 @@ export default class POIPosts extends Component {
 
     componentDidMount() {
         this.componentIsMounted = true;
-
         this.fetchPosts();
     }
 

@@ -12,11 +12,9 @@ const db = root_require('src/db/query');
 const NO_ELEMENT_SIZE = 0;
 
 router.get('/', (req, res, next) => {
-
     const { tagDB } = db;
     tagDB.getAllTags().
     then((results) => {
-
         if (results && results.length > NO_ELEMENT_SIZE) {
             res.json(utils.convertObjectsToCamelCase(results)).end();
         } else {
