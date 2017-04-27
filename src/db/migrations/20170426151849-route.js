@@ -14,6 +14,7 @@ module.exports = {
             CREATE TABLE routes (
                 route_id BIGSERIAL PRIMARY KEY,
                 content_editor_id TEXT NOT NULL REFERENCES content_editors(uid),
+                name TEXT NOT NULL,
                 description TEXT NOT NULL,
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP

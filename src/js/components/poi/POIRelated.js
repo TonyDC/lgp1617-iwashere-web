@@ -3,11 +3,11 @@ import PropTypes from "prop-types";
 import { GridLoader as Loader } from 'halogen';
 import { GridList } from "material-ui/GridList";
 import { Card, CardTitle } from "material-ui/Card";
-import POIMosaic from "../poi/POIMosaic";
+import POIMosaic from "./POIMosaic";
 
 import 'styles/route_pois.scss';
 
-const POI_LIST_TITLE = 'Points of interest';
+const POI_LIST_TITLE = 'Related points of interest';
 
 export default class RoutePOIs extends Component {
 

@@ -55,18 +55,12 @@ export default class RouteMap extends Component {
     onGoogleAPILoaded({ map, maps }) {
         this.map = map;
         this.maps = maps;
-    }
 
-    poiSelected(poiId) {
-        if (!this.componentIsMounted) {
-            return;
-        }
-
-        this.setState({ selectedItem: poiId });
+        console.log('000');
     }
 
     render() {
-        if (!this.props.poiList || !this.map) {
+        if (!this.map) {
             return (
                 <div className="hor-align vert-align">
                     <Loader color="#012935" className="loader"/>
@@ -74,36 +68,28 @@ export default class RouteMap extends Component {
             );
         }
 
-        const poisInViewport = this.props.poiList.map((element, index) => {
-            return <POIComponent
-                lat={ element.latitude }
-                lng={ element.longitude }
-                clickHandler={ () => {
-                    this.poiSelected(element.poiId);
-                }}
-                key={ index }
-            />;
-        });
-
-        let poiPreview = null;
-        if (this.state.selectedItem) {
-            poiPreview = <POISideBar
-                poiId={this.state.selectedItem}
-                onClose={() => {
-                    this.poiSelected(null);
-                }}
-                router={this.props.router}
-            />;
+        let poisList = this.props.poiList;
+        if (!poisList) {
+            poisList = [];
         }
+        const poisInViewport = poisList.map((element, index) => {
+            return <POIComponent lat={ element.latitude }
+                                 lng={ element.longitude }
+                                 clickHandler={ () => {
+                                     this.props.onPoiSelected(element.poiId);
+                                 }}
+                                 key={ index }
+                    />;
+        });
 
         return (
             <div className="wrapper-fill">
-                {poiPreview}
                 <GoogleMapReact defaultCenter={this.props.center}
                                 defaultZoom={this.props.zoom}
                                 bootstrapURLKeys={{ key: GOOGLE_MAPS_API_KEY }}
-                                onGoogleApiLoaded={ this.onGoogleAPILoaded.bind(this) }>
-                    { poisInViewport }
+                                onGoogleApiLoaded={ this.onGoogleAPILoaded.bind(this) }
+                >
+                    {poisInViewport}
                 </GoogleMapReact>
             </div>
         );
@@ -115,6 +101,7 @@ RouteMap.defaultProps = {
         lat: 41.14792237,
         lng: -8.61129427
     },
+    poiList: [],
     zoom: 17
 };
 
@@ -123,7 +110,8 @@ RouteMap.propTypes = {
         lat: PropTypes.number,
         lng: PropTypes.number
     }),
+    onPoiSelected: PropTypes.func.isRequired,
     poiList: PropTypes.array,
-    router: PropTypes.object,
+    router: PropTypes.object.isRequired,
     zoom: PropTypes.number
 };

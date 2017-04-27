@@ -141,7 +141,7 @@ router.get('/:id', (req, res, next) => {
     });
 });
 
-router.get('pois/:id', (req, res, next) => {
+router.get('/pois/:id', (req, res, next) => {
     const { id } = req.params;
     if (!id || isNaN(parseInt(id, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();

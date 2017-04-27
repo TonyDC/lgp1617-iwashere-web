@@ -19,12 +19,13 @@ export default class POIPreview extends Component {
 
         const reduxState = context.store.getState();
         this.state = {
-            loadingPOIInfo: true,
+            loadingPoiInfo: true,
             user: reduxState.userStatus.userInfo
         };
     }
 
     componentDidMount() {
+        this.componentIsMounted = true;
         this.reduxListenerUnsubscribe = this.context.store.subscribe(() => {
             const reduxState = this.context.store.getState();
             if (!this.componentIsMounted) {
@@ -34,9 +35,7 @@ export default class POIPreview extends Component {
             this.setState({ user: reduxState.userStatus.userInfo });
         });
 
-        this.fetchPOIInfo();
-
-        this.componentIsMounted = true;
+        this.fetchPoiInfo();
     }
 
     componentWillUnmount() {
@@ -48,7 +47,7 @@ export default class POIPreview extends Component {
         this.props.router.push(`/poi/${this.props.poiId}`);
     }
 
-    fetchPOIInfo() {
+    fetchPoiInfo() {
         if (isNaN(parseInt(this.props.poiId, DECIMAL_BASE))) {
             if (!this.componentIsMounted) {
                 return;
@@ -76,7 +75,7 @@ export default class POIPreview extends Component {
             }
 
             this.setState({
-                loadingPOIInfo: false,
+                loadingPoiInfo: false,
                 poiInfo: response
             });
         }).
@@ -106,7 +105,8 @@ export default class POIPreview extends Component {
             );
         }
 
-        if (typeof this.state.routeInfo === 'undefined' || typeof this.state.user === 'undefined' || this.state.loadingRouteInfo) {
+
+        if (typeof this.state.poiInfo === 'undefined' || typeof this.state.user === 'undefined' || this.state.loadingPoiInfo) {
             return (
                 <div className="hor-align vert-align">
                     <Loader color="#012935" className="loader"/>
@@ -125,7 +125,7 @@ export default class POIPreview extends Component {
             </div>;
 
         return (
-            <POICard poiInfo={this.state.routeInfo} user={this.state.user}>
+            <POICard poiInfo={this.state.poiInfo} user={this.state.user}>
                 { poiPreviewButtons }
             </POICard>
         );

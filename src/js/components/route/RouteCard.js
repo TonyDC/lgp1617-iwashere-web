@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Card, CardMedia, CardTitle, CardText } from 'material-ui/Card';
-
-import RouteMap from './RouteMap';
 import Rater from '../utils/MyRater';
 import Tags from '../utils/MyTags';
 
@@ -14,13 +12,8 @@ const API_ROUTE_RATING_URL = '/api/poi/rating';
 export default class RouteCard extends Component {
 
     render() {
-        let routeMap = null;
         let routeTagsPanel = null;
         let ratingPanel = null;
-
-        if (this.props.poisList) {
-            routeMap = <RouteMap poiList={this.props.poisList}/>;
-        }
 
         if (this.props.routeInfo) {
             routeTagsPanel = <Tags readOnly tags={this.props.routeInfo.tags} />;
@@ -30,12 +23,10 @@ export default class RouteCard extends Component {
         return (
             <Card className="route-card">
                 <CardMedia>
-                    { routeMap }
+                    { this.props.routeMap }
                 </CardMedia>
                 <CardTitle title={this.props.routeInfo.name} />
-
                 {routeTagsPanel}
-
                 <CardText>
                     {this.props.routeInfo.description}
                 </CardText>
@@ -52,12 +43,12 @@ export default class RouteCard extends Component {
 
 RouteCard.propTypes = {
     children: PropTypes.any,
-    poisList: PropTypes.array,
     routeInfo: PropTypes.shape({
         description: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
-        routeId: PropTypes.number.isRequired,
-        tags: PropTypes.object.isRequired
+        routeId: PropTypes.string.isRequired,
+        tags: PropTypes.array.isRequired
     }).isRequired,
+    routeMap: PropTypes.any,
     user: PropTypes.object
 };

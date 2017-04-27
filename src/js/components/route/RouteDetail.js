@@ -6,7 +6,7 @@ import { GridLoader as Loader } from 'halogen';
 import httpCodes from 'http-status-codes';
 
 import RouteCard from './RouteCard';
-import RoutePois from './RoutePOIs';
+import RouteMap from './RouteMap';
 import Error from '../utils/Error';
 
 import 'styles/utils.scss';
@@ -105,15 +105,34 @@ export default class RouteDetail extends Component {
                 return Promise.reject(new Error(response.statusText));
             }
 
+            if (response.status >= httpCodes.NO_CONTENT) {
+                if (!this.componentIsMounted) {
+                    return Promise.reject(new Error(response.statusText));
+                }
+
+                this.setState({ routePois: [] });
+
+                return Promise.reject(new Error(response.statusText));
+            }
+
             return response.json();
         }).
-        then((response) => {
+        then((routePois) => {
             if (!this.componentIsMounted) {
                 return;
             }
 
-            this.setState({ routePois: response });
+            this.setState({ routePois });
         });
+    }
+
+    poiSelected(poiId) {
+        console.log(poiId);
+        if (!this.componentIsMounted) {
+            return;
+        }
+
+        this.setState({ selectedItem: poiId });
     }
 
     render() {
@@ -131,13 +150,33 @@ export default class RouteDetail extends Component {
             );
         }
 
+        let routeMap = null;
+        if (this.state.routePois) {
+            routeMap = <RouteMap onPoiSelected={this.poiSelected.bind(this)}
+                                 poiList={this.state.routePois}
+                                 router={this.props.router}
+
+            />;
+        }
+
         let routeCard = null;
-        let routePois = null;
         if (this.props.params.id) {
             if (this.state.routeInfo) {
-                routeCard = <RouteCard routeInfo={this.state.routeInfo} user={this.state.user} />;
-                routePois = <RoutePois poisList={this.state.poiList} router={this.props.router} />;
+                routeCard = <RouteCard routeInfo={this.state.routeInfo}
+                                       routeMap={routeMap}
+                                       user={this.state.user}
+                />;
             }
+        }
+
+        let poiPreview = null;
+        if (this.state.selectedItem) {
+            poiPreview = <POISideBar poiId={this.state.selectedItem}
+                                     onClose={() => {
+                                         this.poiSelected(null);
+                                     }}
+                                     router={this.props.router}
+            />;
         }
 
         return (
@@ -149,8 +188,8 @@ export default class RouteDetail extends Component {
                 <div className="container">
                     <Row className="show-grid">
                         <Col xs={12} mdOffset={1} md={10} lgOffset={1} lg={10}>
+                            {poiPreview}
                             {routeCard}
-                            {routePois}
                         </Col>
                     </Row>
                 </div>
