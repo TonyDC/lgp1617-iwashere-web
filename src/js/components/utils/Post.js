@@ -52,7 +52,7 @@ export default class Post extends Component {
 }
 
 Post.propTypes = {
+    inverted: PropTypes.bool.isRequired,
     onLike: PropTypes.any,
-    post: PropTypes.object.isRequired,
-    inverted: PropTypes.bool.isRequired
+    post: PropTypes.object.isRequired
 };

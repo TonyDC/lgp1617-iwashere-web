@@ -67,6 +67,7 @@ export default class MyTags extends Component {
                 </Chip>
             );
         }
+        
         return (
             <Chip
                 labelColor="white"
