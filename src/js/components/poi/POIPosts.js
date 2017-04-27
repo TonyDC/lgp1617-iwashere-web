@@ -1,19 +1,21 @@
 import React, { Component } from 'react';
 import { Col } from 'react-bootstrap';
+import httpCodes from 'http-status-codes';
 import Paper from 'material-ui/Paper';
 import PropTypes from 'prop-types';
 import Moment from 'moment';
 import { GridLoader as Loader } from 'halogen';
 import InfiniteScroll from 'react-infinite-scroller';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import MoreIcon from "material-ui/svg-icons/navigation/more-vert";
+import CancelIcon from "material-ui/svg-icons/navigation/close";
 import Tags from '../utils/MyTags';
-import httpCodes from 'http-status-codes';
 
 import 'styles/timeline.scss';
 
 const NO_ELEMENT_SIZE = 0;
 const NOT_FOUND = -1;
 const LIMIT = 10;
-const EMPTY = 0;
 
 export default class POIPosts extends Component {
 
@@ -21,6 +23,7 @@ export default class POIPosts extends Component {
         super(props);
 
         this.state = {
+            filtering: false,
             hasMoreItems: true,
             posts: [],
             postsOffset: 0,
@@ -49,6 +52,14 @@ export default class POIPosts extends Component {
         }).
         then((response) => {
             if (response.status >= httpCodes.BAD_REQUEST) {
+                return Promise.reject(new Error(response.statusText));
+            }
+
+            if (response.status >= httpCodes.NO_CONTENT) {
+                if (this.state.componentIsMounted) {
+                    this.setState({ hasMoreItems: false });
+                }
+
                 return Promise.reject(new Error(response.statusText));
             }
 
@@ -192,8 +203,7 @@ export default class POIPosts extends Component {
     }
 
     removeTagFilter(tagName) {
-        console.log(tagName);
-        if (!this.componentIsMounted || !tagName) {
+        if (!this.componentIsMounted) {
             return;
         }
 
@@ -202,7 +212,25 @@ export default class POIPosts extends Component {
             return tag !== tagName;
         });
 
-        this.setState({ tagsFilter });
+        this.setState({
+            filtering: tagsFilter.length > NO_ELEMENT_SIZE,
+            tagsFilter
+        });
+    }
+
+    toggleFiltering() {
+        if (!this.componentIsMounted) {
+            return;
+        }
+
+        if (this.state.filtering) {
+            this.setState({
+                filtering: false,
+                tagsFilter: []
+            });
+        } else {
+            this.setState({ filtering: true });
+        }
     }
 
     render() {
@@ -210,7 +238,7 @@ export default class POIPosts extends Component {
 
         if (this.state.tagsFilter.length) {
             filteredPosts = filteredPosts.filter((post) => {
-                const postTagsInFilter = post.tags.filter((postTag) => {
+                const postTagsInFilter = post.tags.toggleFiltering((postTag) => {
                     return this.state.tagsFilter.indexOf(postTag.name) !== NOT_FOUND;
                 });
 
@@ -218,36 +246,57 @@ export default class POIPosts extends Component {
             });
         }
 
-        if (filteredPosts === EMPTY) {
-            return (
-                <Col xs={12} mdOffset={2} md={8} lgOffset={2} lg={8}/>
-            );
-        }
+        const filterIcon = this.state.filtering ? <CancelIcon/> : <MoreIcon/>;
+        const toggleTagFilterButton =
+            <div className="filter-button-container">
+                <FloatingActionButton backgroundColor="#012935"
+                                      onTouchTap={this.toggleFiltering.bind(this)}>
+                    {filterIcon}
+                </FloatingActionButton>
+            </div>;
 
         const loader =
             <div className="hor-align vert-align">
                 <Loader color="#012935" className="loader"/>
             </div>;
 
-        const tagFilter = <Tags className="tag-input"
-                                tags={this.state.tagsFilter}
-                                onAddTag={(tagName) => {
-                                    this.addTagFilter(tagName);
-                                }}
-                                onRemoveTag={(tagName) => {
-                                    this.removeTagFilter(tagName);
-                                }}
-                            />;
+        let tagFilter =
+            <div className="filter-container">
+                <Paper className="paper-min-width" zDepth={4}>
+                    <div className="filter-content">
+                        <Tags className="tag-input"
+                              tags={this.state.tagsFilter}
+                              onAddTag={(tagName) => {
+                                  this.addTagFilter(tagName);
+                              }}
+                              onRemoveTag={(tagName) => {
+                                  this.removeTagFilter(tagName);
+                              }}
+                        />
+                    </div>
+                </Paper>
+            </div>;
+
+        if (!this.state.filtering) {
+            tagFilter = null;
+        }
+
+        if (filteredPosts.length === NO_ELEMENT_SIZE) {
+            if (this.state.tagsFilter.length === NO_ELEMENT_SIZE) {
+                tagFilter = null;
+            }
+
+            return (
+                <Col xs={12} mdOffset={2} md={8} lgOffset={2} lg={8}>
+                    {tagFilter}
+                </Col>
+            );
+        }
 
         return (
             <Col xs={12} mdOffset={1} md={10} lgOffset={1} lg={10}>
-                <div className="vert-align hor-align filter-container">
-                    <Paper className="paper-min-width" zDepth={5}>
-                        <div className="filter-content">
-                            {tagFilter}
-                        </div>
-                    </Paper>
-                </div>
+                {toggleTagFilterButton}
+                {tagFilter}
                 <InfiniteScroll
                     pageStart={0}
                     loadMore={this.fetchPosts.bind(this)}
