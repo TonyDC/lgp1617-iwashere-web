@@ -7,7 +7,7 @@ import httpCodes from 'http-status-codes';
 
 import POICard from './POICard';
 import Error from '../utils/Error';
-import Timeline from '../utils/MyTimeline';
+import POIPosts from './POIPosts';
 
 import 'styles/utils.scss';
 
@@ -111,7 +111,7 @@ export default class POIDetail extends Component {
 
                 if (this.state.poiInfo.type === PLACE_TYPE) {
                     userMediaTimeline =
-                        <Timeline url={`/api/post`} poiId={this.props.params.id} user={this.state.user}/>;
+                        <POIPosts url={`/api/post`} poiId={this.props.params.id} user={this.state.user}/>;
                 }
             }
         }

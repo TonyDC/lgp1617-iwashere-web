@@ -7,6 +7,7 @@ import POIMosaic from "./POIMosaic";
 import IconButton from "material-ui/IconButton";
 import { red500 as currentLocationColor } from "material-ui/styles/colors";
 import MapsMyLocation from "material-ui/svg-icons/maps/my-location";
+import NoLocation from "material-ui/svg-icons/device/gps-off";
 
 import "styles/suggestions.scss";
 
@@ -226,6 +227,11 @@ export default class POISuggestions extends Component {
             locationIcon =
                 <IconButton className="location-icon" tooltipPosition="top-left" tooltip={USING_LOCATION_TOOLTIP}>
                     <MapsMyLocation color={ currentLocationColor }/>
+                </IconButton>;
+        } else {
+            locationIcon =
+                <IconButton className="location-icon" tooltipPosition="top-left" tooltip={USING_LOCATION_TOOLTIP}>
+                    <NoLocation/>
                 </IconButton>;
         }
 

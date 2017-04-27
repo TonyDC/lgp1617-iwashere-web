@@ -39,7 +39,6 @@ function handlePostRequest(req, res, next) {
     const { postDB } = db;
     postDB.getPOIPosts(poiID, offset, limit).
     then((postsList) => {
-
         const posts = utils.convertObjectsToCamelCase(postsList);
 
         if (posts && posts.length > NO_ELEMENT_SIZE) {

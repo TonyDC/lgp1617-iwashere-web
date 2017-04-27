@@ -70,7 +70,7 @@ export default class NavBar extends Component {
         }
 
         /*
-         The <div> tags is required so that the navbar collapse menu is properly rendered
+         The <div> tag is required so that the navbar collapse menu is properly rendered
          */
         return (
             <div className="navbar-container">
