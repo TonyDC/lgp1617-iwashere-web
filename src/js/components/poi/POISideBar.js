@@ -14,8 +14,8 @@ export default class POISideBar extends Component {
         super(props);
 
         this.state = {
-            poiId: null,
             open: true,
+            poiId: null,
             size: '30%'
         };
     }
@@ -100,7 +100,7 @@ export default class POISideBar extends Component {
 POISideBar.propTypes = {
     onClose: PropTypes.func.isRequired,
     poiId: PropTypes.string.isRequired,
-    router: PropTypes.object.isRequired,
+    router: PropTypes.object.isRequired
 };
 
 // To access Redux store

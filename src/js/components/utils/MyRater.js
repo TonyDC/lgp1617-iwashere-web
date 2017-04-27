@@ -145,10 +145,7 @@ export default class MyRater extends Component {
         let userRating = null;
         if (this.props.user) {
 
-            if (!(this.state.ratingInfo.userRating >= NO_RATING)) {
-                this.getUserRating();
-            } else {
-
+            if (this.state.ratingInfo.userRating >= NO_RATING) {
                 userRating =
                     <Col xs={12} md={12} lg={12}>
                         <Rater total={MAX_RATING_SCALE} rating={this.state.ratingInfo.userRating}
@@ -157,6 +154,8 @@ export default class MyRater extends Component {
                             className="rating-description"> {this.state.ratingInfo.userRating}/{MAX_RATING_SCALE}</span>
                         <span className="rating-description"><small>Your evaluation</small></span>
                     </Col>;
+            } else {
+                this.getUserRating();
             }
         }
 
