@@ -6,7 +6,7 @@ import POIPreview from '../poi/POIPreview';
 import 'styles/utils.scss';
 import 'styles/poi_detail_side.scss';
 
-const MINIMUM_WINDOW_SIZE = 700;
+const MINIMUM_WINDOW_SIZE = 400;
 
 export default class POISideBar extends Component {
 
@@ -24,10 +24,12 @@ export default class POISideBar extends Component {
     }
 
     componentDidMount() {
+        this.componentIsMounted = true;
+
         // The same function object must be used when binding and unbinding the event listener
         this.resizeHandler = this.updateDimensions.bind(this);
         window.addEventListener("resize", this.resizeHandler);
-        this.componentIsMounted = true;
+        this.updateDimensions();
     }
 
     componentWillUnmount() {
@@ -54,7 +56,7 @@ export default class POISideBar extends Component {
         if (!this.componentIsMounted) {
             return;
         }
-        
+
         this.setState({ open: false });
         this.props.onClose();
     }

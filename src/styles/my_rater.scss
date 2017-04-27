@@ -13,7 +13,7 @@
     cursor: pointer;
     color: #ccc !important;
     position: relative;
-    text-decoration: none !important;
+    text-decoration: none;
 }
 .react-rater a.will-be-active {
     color: #ffdd99 !important;
@@ -24,7 +24,7 @@
 }
 
 .react-rater a.is-active-half:before {
-    color: #fc6 !important;
+    color: #fc6;
     content: '\2605';
     position: absolute;
     left: 0;
@@ -33,6 +33,6 @@
 }
 
 .react-rater a.is-disabled {
-    cursor: default !important;
-    text-decoration: none !important;
+    cursor: default;
+    text-decoration: none;
 }

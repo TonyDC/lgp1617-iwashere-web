@@ -1,9 +1,10 @@
 'use strict';
 
-// Note regarding 'parseInt' function: Javascript supports 53bit mantissa (http://2ality.com/2012/07/large-integers.html)
+// Note regarding 'parseInt' function: Javascript supports 53bit mantissa
 
 const httpCodes = require('http-status-codes');
 const utils = require('../utils/misc');
+const aux = require('./poi_aux');
 
 const express = require('express');
 const router = express.Router();
@@ -91,7 +92,7 @@ router.get('/media/:poiID', (req, res, next) => {
 
     const { poiDB } = db;
 
-    poiDB.getPOIMedia(poiID).
+    poiDB.getPOIAllMedia(poiID).
     then((media) => {
         if (media) {
             res.json(utils.convertObjectsToCamelCase(media)).end();
@@ -229,7 +230,6 @@ router.get('/:id', (req, res, next) => {
     then((results) => {
         if (results && results.length === TWO_SIZE &&
             results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE) {
-
             const poi = utils.convertObjectToCamelCase(results[ZERO_INDEX][ZERO_INDEX]);
             poi.tags = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
 
@@ -237,6 +237,59 @@ router.get('/:id', (req, res, next) => {
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
         }
+    }).
+    catch((error) => {
+        next(error);
+    });
+});
+
+router.get('/suggestions/:limit/:lat/:lng', (req, res, next) => {
+    const { limit, lat, lng } = req.params;
+
+    if (!limit || isNaN(parseInt(limit, DECIMAL_BASE)) || !lat || !lng ||
+        isNaN(parseFloat(lat)) || isNaN(parseFloat(lng))) {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    const { poiDB } = db;
+    poiDB.getNearbyPOIs(lat, lng, limit).
+    then((results) => {
+        aux.handleSuggestionsResults(results).
+        then((suggestions) => {
+            if (suggestions.length === NO_ELEMENT_SIZE) {
+                res.sendStatus(httpCodes.NO_CONTENT).end();
+            } else {
+                res.json(suggestions).end();
+            }
+        });
+    }).
+    catch((error) => {
+        next(error);
+    });
+});
+
+router.get('/suggestions/:limit', (req, res, next) => {
+    const { limit } = req.params;
+
+    if (!limit || isNaN(parseInt(limit, DECIMAL_BASE))) {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    const { poiDB } = db;
+    poiDB.getTopRatedPOIs(limit).
+    then((results) => {
+        aux.handleSuggestionsResults(results).
+        then((suggestions) => {
+            if (suggestions.length === NO_ELEMENT_SIZE) {
+                res.sendStatus(httpCodes.NO_CONTENT).end();
+            } else {
+                res.json(suggestions).end();
+            }
+        });
     }).
     catch((error) => {
         next(error);
