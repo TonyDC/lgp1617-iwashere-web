@@ -95,3 +95,16 @@ module.exports.updatePostLike = (postID, userID, liked) => {
         type: db.QueryTypes.DELETE
     });
 };
+
+module.exports.createPost = (description, poiID, userID) => {
+    // language=POSTGRES-SQL
+    return db.query(`INSERT INT posts(description, poi_id, user_id VALUES(:description, :poiID, :userID`, {
+        replacements: {
+            description,
+            poiID,
+            userID
+        },
+        type: db.QueryTypes.INSERT
+    });
+
+}

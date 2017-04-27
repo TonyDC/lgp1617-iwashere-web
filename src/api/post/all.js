@@ -105,7 +105,16 @@ router.get('/poi_posts/:userID/:poiID/:offset/:limit', (req, res, next) => {
 });
 
 router.post('/post', (req, res, next) => {
+    const { userID, postID, description } = req.body;
 
+    if (!postID || !userID || typeof userID !== 'string' || typeof description !== 'string') {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    const { postDB, userDB } = db;
+    Promise.all()
 })
 
 router.post('/like', (req, res, next) => {
