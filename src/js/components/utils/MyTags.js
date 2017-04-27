@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import Chip from 'material-ui/Chip';
 import httpCodes from 'http-status-codes';
 import AutoComplete from 'material-ui/AutoComplete';
-import RaisedButton from 'material-ui/RaisedButton';
-import ActionSearch from 'material-ui/svg-icons/content/add-circle';
 
 import 'styles/my_tags.scss';
 
@@ -68,17 +66,16 @@ export default class MyTags extends Component {
                     {tag.name}
                 </Chip>
             );
-        } else {
-            return (
-                <Chip
-                    labelColor="white"
-                    key={`tag#${tag.tagId}`}
-                    className="tag-look"
-                >
-                    {tag.name}
-                </Chip>
-            );
         }
+        return (
+            <Chip
+                labelColor="white"
+                key={`tag#${tag.tagId}`}
+                className="tag-look"
+            >
+                {tag.name}
+            </Chip>
+        );
     }
 
     handleUpdateInput(filterInput) {

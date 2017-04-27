@@ -3,13 +3,13 @@ import { Col } from 'react-bootstrap';
 import httpCodes from 'http-status-codes';
 import Paper from 'material-ui/Paper';
 import PropTypes from 'prop-types';
-import Moment from 'moment';
 import { GridLoader as Loader } from 'halogen';
 import InfiniteScroll from 'react-infinite-scroller';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import MoreIcon from "material-ui/svg-icons/image/style";
 import CancelIcon from "material-ui/svg-icons/navigation/close";
 import Tags from '../utils/MyTags';
+import Post from '../utils/Post';
 
 import 'styles/timeline.scss';
 
@@ -118,7 +118,6 @@ export default class POIPosts extends Component {
             }
 
             const { posts } = this.state.posts;
-
             posts.forEach((postTemp) => {
                 if (postTemp.postId === postId) {
                     postTemp.liked = !postTemp.liked;
@@ -138,42 +137,12 @@ export default class POIPosts extends Component {
 
         let itemClassInverted = false;
         posts.forEach((postEntry) => {
-            const date = new Date(postEntry.postDate);
-
-            let mediaComponent = null;
-            if (postEntry.type === "image;imagem") {
-                mediaComponent = <img src={ postEntry.url }/>;
-            } else if (postEntry.type === "video;vídeo") {
-                mediaComponent = <iframe src={ postEntry.url }/>;
-            }
-
-            let tagList = null;
-            if (postEntry.tags.length) {
-                tagList = <Tags readOnly tags={postEntry.tags} class="post-tags"/>;
-            }
-
             postsList.push(
-                <li id={`post#${postEntry.postId}`} className={`${itemClassInverted
-                    ? 'timeline-inverted'
-                    : ''}`} key={postEntry.postId}>
-                    <div className="timeline-badge primary" />
-
-                    <div className="timeline-panel">
-                        <div className="timeline-heading">
-                            {mediaComponent}
-                        </div>
-
-                        <div className="timeline-body">
-                            <p>{postEntry.description}</p>
-                        </div>
-
-                        <div className="timeline-footer">
-                            {tagList}
-                            <small className="text-muted"><i className="glyphicon glyphicon-time"/> { Moment(date).format('MMMM Do YYYY, h:mm') }</small>
-                            <a className="pull-right">{postEntry.likes} <i className="glyphicon glyphicon-thumbs-up"/></a>
-                        </div>
-                    </div>
-                </li>
+                <Post post={postEntry}
+                      inverted={itemClassInverted}
+                      onLike={() => {
+                          this.toggleLike(postEntry.postId);
+                      }}/>
             );
 
             itemClassInverted = !itemClassInverted;
