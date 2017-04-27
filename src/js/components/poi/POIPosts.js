@@ -55,7 +55,7 @@ export default class POIPosts extends Component {
             }
 
             if (response.status >= httpCodes.NO_CONTENT) {
-                if (this.state.componentIsMounted) {
+                if (this.componentIsMounted) {
                     this.setState({ hasMoreItems: false });
                 }
 
@@ -65,8 +65,12 @@ export default class POIPosts extends Component {
             return response.json();
         }).
         then((newPosts) => {
+            if (!this.componentIsMounted) {
+                return;
+            }
+
             const posts = this.state.posts.slice();
-            const postIds = this.state.posts.map((post) => {
+            const postIds = posts.map((post) => {
                 return post.postId;
             });
 
@@ -141,7 +145,8 @@ export default class POIPosts extends Component {
                       inverted={itemClassInverted}
                       onLike={() => {
                           this.toggleLike(postEntry.postId);
-                      }}/>
+                      }}
+                      key={postEntry.postId}/>
             );
 
             itemClassInverted = !itemClassInverted;

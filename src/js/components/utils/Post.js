@@ -28,7 +28,7 @@ export default class Post extends Component {
         return (
             <li id={`post#${this.props.post.postId}`} className={`${this.props.inverted
                 ? 'timeline-inverted'
-                : ''}`} key={this.props.post.postId}>
+                : ''}`}>
                 <div className="timeline-badge primary" />
 
                 <div className="timeline-panel">
