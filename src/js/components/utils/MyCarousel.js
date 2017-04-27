@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { GridLoader as Loader } from 'halogen';
-
+import httpCodes from 'http-status-codes';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.css';
 
@@ -17,6 +17,7 @@ export default class MyCarousel extends Component {
     }
 
     componentDidMount() {
+        this.componentIsMounted = true;
         this.fetchMedia();
     }
 
@@ -26,9 +27,18 @@ export default class MyCarousel extends Component {
             method: 'GET'
         }).
         then((response) => {
+            if (response.status >= httpCodes.BAD_REQUEST ||
+                response.status >= httpCodes.NO_CONTENT) {
+                return Promise.reject(new Error(response.statusText));
+            }
+
             return response.json();
         }).
         then((response) => {
+            if (!this.componentIsMounted) {
+                return;
+            }
+
             const media = this.getMedia(response);
             this.setState({ media });
         });

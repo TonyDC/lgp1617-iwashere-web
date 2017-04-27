@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { GridLoader as Loader } from 'halogen';
 import GoogleMapReact from 'google-map-react';
 import { blue500 as POIColor } from 'material-ui/styles/colors';
 import { GOOGLE_MAPS_API_KEY } from '../../../../config';
-import POISideBar from '../poi/POISideBar';
 
 import Pin from '../map/Pin';
 
@@ -42,6 +40,7 @@ export default class RouteMap extends Component {
 
         this.map = null;
         this.maps = null;
+        this.bounds = null;
     }
 
     componentDidMount() {
@@ -56,22 +55,41 @@ export default class RouteMap extends Component {
         this.map = map;
         this.maps = maps;
 
-        console.log('000');
+        if (this.bounds) {
+            this.map.fitBounds(this.bounds);
+        } else {
+            this.onPropsUpdated();
+        }
+    }
+
+    onPropsUpdated() {
+        if (!this.maps || !this.map) {
+            return;
+        }
+
+        this.propsUpdated = true;
+        const bounds = new this.maps.LatLngBounds();
+        this.props.poiList.forEach((poi) => {
+            bounds.extend({
+                lat: poi.latitude,
+                lng: poi.longitude
+            });
+        });
+
+        this.map.fitBounds(bounds);
     }
 
     render() {
-        if (!this.map) {
-            return (
-                <div className="hor-align vert-align">
-                    <Loader color="#012935" className="loader"/>
-                </div>
-            );
+
+        if (!this.propsUpdated && this.props.poiList.length) {
+            this.onPropsUpdated();
         }
 
         let poisList = this.props.poiList;
         if (!poisList) {
             poisList = [];
         }
+
         const poisInViewport = poisList.map((element, index) => {
             return <POIComponent lat={ element.latitude }
                                  lng={ element.longitude }
@@ -83,7 +101,7 @@ export default class RouteMap extends Component {
         });
 
         return (
-            <div className="wrapper-fill">
+            <div className="route-map wrapper-fill">
                 <GoogleMapReact defaultCenter={this.props.center}
                                 defaultZoom={this.props.zoom}
                                 bootstrapURLKeys={{ key: GOOGLE_MAPS_API_KEY }}
