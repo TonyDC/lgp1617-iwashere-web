@@ -7,6 +7,7 @@ import POIMosaic from "./POIMosaic";
 import IconButton from "material-ui/IconButton";
 import { red500 as currentLocationColor } from "material-ui/styles/colors";
 import MapsMyLocation from "material-ui/svg-icons/maps/my-location";
+
 import "styles/suggestions.scss";
 
 const httpCodes = require('http-status-codes');
@@ -41,7 +42,6 @@ export default class POISuggestions extends Component {
 
     componentDidMount() {
         this.componentIsMounted = true;
-
         this.getCurrentLocation();
     }
 
@@ -88,12 +88,6 @@ export default class POISuggestions extends Component {
         if (this.state.location) {
             url += `/${this.state.location.lat}/${this.state.location.lng}`;
         }
-
-        /**
-         if (this.state.user) {
-            url += `/${this.state.user.uid}`;
-        }
-         */
 
         fetch(url, {
             headers: { 'Content-Type': 'application/json' },

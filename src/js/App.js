@@ -66,14 +66,11 @@ export default class App extends Component {
             <Router history={ browserHistory }>
                 <Route path="/" component={ MainRoutes }>
                     <IndexRoute component={ Map } />
-
                     <Route path="feed" component={ Feed }/>
-
                     <Route path="poi" component={ POIRoutes }>
                         <Route path="search" component={ POISearch } />
                         <Route path=":id" component={ POIDetail } />
                     </Route>
-
                     <Route path="user" component={ UnauthRoutes } onEnter={ this.redirectIfLoggedIn.bind(this) }>
                         <Route path="login" component={ Login }/>
                         <Route path="register" component={ Register }/>
