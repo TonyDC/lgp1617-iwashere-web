@@ -55,7 +55,7 @@ export default class MyTags extends Component {
     }
 
     renderTag(tag) {
-        if (this.props.onRemveTag) {
+        if ('onRemveTag' in this.props) {
             return (
                 <Chip
                     onRequestDelete={() => {
@@ -128,10 +128,10 @@ export default class MyTags extends Component {
 
         return (
             <div>
+                {input}
                 <div className={`tags-wrapper ${this.props.class}`}>
                     {this.props.tags.map(this.renderTag, this)}
                 </div>
-                {input}
             </div>
         );
     }
@@ -147,7 +147,7 @@ MyTags.defaultProps = {
 MyTags.propTypes = {
     class: PropTypes.string,
     onAddTag: PropTypes.func,
-    onRemvoTag: PropTypes.func,
+    onRemoveTag: PropTypes.func,
     readOnly: PropTypes.bool.isRequired,
     tags: PropTypes.array
 };

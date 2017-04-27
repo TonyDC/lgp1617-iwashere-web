@@ -7,7 +7,7 @@ import Moment from 'moment';
 import { GridLoader as Loader } from 'halogen';
 import InfiniteScroll from 'react-infinite-scroller';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
-import MoreIcon from "material-ui/svg-icons/navigation/more-vert";
+import MoreIcon from "material-ui/svg-icons/image/style";
 import CancelIcon from "material-ui/svg-icons/navigation/close";
 import Tags from '../utils/MyTags';
 
@@ -186,8 +186,6 @@ export default class POIPosts extends Component {
     }
 
     addTagFilter(tagName) {
-        console.log('added', tagName);
-
         if (!this.componentIsMounted) {
             return;
         }
@@ -238,7 +236,7 @@ export default class POIPosts extends Component {
 
         if (this.state.tagsFilter.length) {
             filteredPosts = filteredPosts.filter((post) => {
-                const postTagsInFilter = post.tags.toggleFiltering((postTag) => {
+                const postTagsInFilter = post.tags.filter((postTag) => {
                     return this.state.tagsFilter.indexOf(postTag.name) !== NOT_FOUND;
                 });
 
@@ -246,7 +244,9 @@ export default class POIPosts extends Component {
             });
         }
 
-        const filterIcon = this.state.filtering ? <CancelIcon/> : <MoreIcon/>;
+        const filterIcon = this.state.filtering
+                            ? <CancelIcon/>
+                            : <MoreIcon/>;
         const toggleTagFilterButton =
             <div className="filter-button-container">
                 <FloatingActionButton backgroundColor="#012935"
