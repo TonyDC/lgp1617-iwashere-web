@@ -20,6 +20,9 @@ router.use('/post', require('./post'));
 // Route-related endpoints
 router.use('/route', require('./route'));
 
+// Tag-related endpoints
+router.use('/tag', require('./tag'));
+
 // No API endpoint found
 router.use((req, res) => {
     res.sendStatus(httpCode.NOT_IMPLEMENTED).end();

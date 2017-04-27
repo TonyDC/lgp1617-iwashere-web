@@ -26,7 +26,9 @@ export default class Post extends Component {
         }
 
         return (
-            <li id={`post#${this.props.post.postId}`}>
+            <li id={`post#${this.props.post.postId}`} className={`${this.props.inverted
+                ? 'timeline-inverted'
+                : ''}`} key={this.props.post.postId}>
                 <div className="timeline-badge primary" />
 
                 <div className="timeline-panel">
@@ -50,6 +52,7 @@ export default class Post extends Component {
 }
 
 Post.propTypes = {
+    inverted: PropTypes.bool.isRequired,
     onLike: PropTypes.any,
     post: PropTypes.object.isRequired
 };
