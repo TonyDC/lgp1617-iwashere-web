@@ -104,6 +104,10 @@ router.get('/poi_posts/:userID/:poiID/:offset/:limit', (req, res, next) => {
     handlePostRequest(req, res, next);
 });
 
+router.post('/post', (req, res, next) => {
+
+})
+
 router.post('/like', (req, res, next) => {
     const { userID, postID, liked } = req.body;
 
@@ -148,5 +152,7 @@ router.post('/like', (req, res, next) => {
         next(error);
     });
 });
+
+
 
 module.exports = router;

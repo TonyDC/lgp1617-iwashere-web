@@ -16,6 +16,7 @@ import PasswordReset from './components/user/PasswordReset';
 import POIDetail from './components/poi/POIDetail';
 import POISearch from './components/poi/POISearch';
 import Feed from './components/feed/Feed';
+import POICreatePost from './components/poi/POICreatePost';
 
 import UnauthRoutes from './routes/UnauthRoutes';
 import POIRoutes from './routes/POIRoutes';
@@ -70,6 +71,7 @@ export default class App extends Component {
                     <Route path="poi" component={ POIRoutes }>
                         <Route path="search" component={ POISearch } />
                         <Route path=":id" component={ POIDetail } />
+                        <Route path="post" component={ POICreatePost } />
                     </Route>
                     <Route path="user" component={ UnauthRoutes } onEnter={ this.redirectIfLoggedIn.bind(this) }>
                         <Route path="login" component={ Login }/>

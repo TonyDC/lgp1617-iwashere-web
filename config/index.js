@@ -10,18 +10,18 @@ if (process.env.NODE_ENV === 'test') {
             storageBucket: " "
         },
         POSTGRESQL_CONFIG: {
-            DATABASE: ' ',
-            USERNAME: ' ',
-            PASSWORD: ' ',
+            DATABASE: 'lgp',
+            PASSWORD: '123',
             CONN_CONFIG: {
-                host: ' ',
-                dialect: ' ',
+                host: '127.0.0.1',
+                dialect: 'postgres',
                 pool: {
                     max: 0,
                     min: 0,
                     idle: 0
                 },
-            }
+            },
+            USERNAME: 'luiscosta'
         },
         GOOGLE_MAPS_API_KEY: ' '
     };
