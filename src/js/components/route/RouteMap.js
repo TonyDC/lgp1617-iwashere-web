@@ -1,13 +1,15 @@
+import { GOOGLE_MAPS_API_KEY } from '../../../../config';
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import GoogleMapReact from 'google-map-react';
-import { blue500 as POIColor } from 'material-ui/styles/colors';
-import { GOOGLE_MAPS_API_KEY } from '../../../../config';
+import IconButton from 'material-ui/IconButton';
 
 import Pin from '../map/Pin';
 
-import IconButton from 'material-ui/IconButton';
 import CommunicationLocationOn from 'material-ui/svg-icons/communication/location-on';
+
+import { blue500 as POIColor } from 'material-ui/styles/colors';
 
 import 'styles/utils.scss';
 import 'styles/map.scss';

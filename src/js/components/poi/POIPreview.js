@@ -19,7 +19,7 @@ export default class POIPreview extends Component {
 
         const reduxState = context.store.getState();
         this.state = {
-            loadingPoiInfo: true,
+            loadingPOIInfo: true,
             user: reduxState.userStatus.userInfo
         };
     }
@@ -75,7 +75,7 @@ export default class POIPreview extends Component {
             }
 
             this.setState({
-                loadingPoiInfo: false,
+                loadingPOIInfo: false,
                 poiInfo: response
             });
         }).
@@ -106,7 +106,7 @@ export default class POIPreview extends Component {
         }
 
 
-        if (typeof this.state.poiInfo === 'undefined' || typeof this.state.user === 'undefined' || this.state.loadingPoiInfo) {
+        if (typeof this.state.poiInfo === 'undefined' || typeof this.state.user === 'undefined' || this.state.loadingPOIInfo) {
             return (
                 <div className="hor-align vert-align">
                     <Loader color="#012935" className="loader"/>

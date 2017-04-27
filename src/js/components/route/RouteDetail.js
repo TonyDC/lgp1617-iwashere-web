@@ -59,11 +59,8 @@ export default class RouteDetail extends Component {
             method: 'GET'
         }).
         then((response) => {
-            if (response.status >= httpCodes.BAD_REQUEST) {
-                return Promise.reject(new Error(response.statusText));
-            }
-
-            if (response.status >= httpCodes.NO_CONTENT) {
+            if (response.status >= httpCodes.BAD_REQUEST ||
+                response.status === httpCodes.NO_CONTENT) {
                 return Promise.reject(new Error(response.statusText));
             }
 
@@ -105,7 +102,7 @@ export default class RouteDetail extends Component {
                 return Promise.reject(new Error(response.statusText));
             }
 
-            if (response.status >= httpCodes.NO_CONTENT) {
+            if (response.status === httpCodes.NO_CONTENT) {
                 if (!this.componentIsMounted) {
                     return Promise.reject(new Error(response.statusText));
                 }

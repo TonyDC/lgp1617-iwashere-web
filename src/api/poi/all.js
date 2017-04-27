@@ -4,7 +4,7 @@
 
 const httpCodes = require('http-status-codes');
 const utils = require('../utils/misc');
-const aux = require('./../utils/poi_aux');
+const aux = require('../utils/poi_aux');
 
 const express = require('express');
 const router = express.Router();

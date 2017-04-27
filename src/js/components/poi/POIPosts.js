@@ -54,7 +54,7 @@ export default class POIPosts extends Component {
                 return Promise.reject(new Error(response.statusText));
             }
 
-            if (response.status >= httpCodes.NO_CONTENT) {
+            if (response.status === httpCodes.NO_CONTENT) {
                 if (this.componentIsMounted) {
                     this.setState({ hasMoreItems: false });
                 }
