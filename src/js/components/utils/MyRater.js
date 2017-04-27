@@ -148,16 +148,17 @@ export default class MyRater extends Component {
 
             if (!(this.state.ratingInfo.userRating >= NO_RATING)) {
                 this.getUserRating();
+            } else {
+
+                userRating =
+                    <Col xs={12} md={12} lg={12}>
+                        <Rater total={MAX_RATING_SCALE} rating={this.state.ratingInfo.userRating}
+                               onRate={this.updateRating.bind(this)}/>
+                        <span
+                            className="rating-description"> {this.state.ratingInfo.userRating}/{MAX_RATING_SCALE}</span>
+                        <span className="rating-description"><small>Your evaluation</small></span>
+                    </Col>;
             }
-
-            console.log(this.state.ratingInfo.userRating);
-
-            userRating =
-                <Col xs={12} md={12} lg={12}>
-                    <Rater total={MAX_RATING_SCALE} rating={this.state.ratingInfo.userRating} onRate={this.updateRating.bind(this)}/>
-                    <span className="rating-description"> {this.state.ratingInfo.userRating}/{MAX_RATING_SCALE}</span>
-                    <span className="rating-description"><small>Your evaluation</small></span>
-                </Col>;
         }
 
         return (
