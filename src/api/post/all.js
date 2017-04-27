@@ -1,6 +1,6 @@
 'use strict';
 
-const utils = require('../utils/utils');
+const utils = require('../utils/misc');
 
 const httpCodes = require('http-status-codes');
 
@@ -47,8 +47,8 @@ function handlePostRequest(req, res, next) {
                 return post.postId;
             });
 
-            const additionalPostInfo = [postDB.getPostTags(utils.convertToString(postsIds)),
-                postDB.getPostLikes(utils.convertToString(postsIds))];
+            const additionalPostInfo = [postDB.getPostTags(utils.convertArrayToString(postsIds)),
+                postDB.getPostLikes(utils.convertArrayToString(postsIds))];
 
             if (userID) {
                 additionalPostInfo.push(postDB.getPostLikedByUser(postsIds, userID));
