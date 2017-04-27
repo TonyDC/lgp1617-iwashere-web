@@ -134,7 +134,6 @@ export default class MyRater extends Component {
     }
 
     render() {
-        console.log(this.state.ratingInfo);
         if (!this.state.ratingInfo) {
             return (
                 <div className="hor-align vert-align">

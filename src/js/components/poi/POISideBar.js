@@ -14,6 +14,7 @@ export default class POISideBar extends Component {
         super(props);
 
         this.state = {
+            poiId: null,
             open: true,
             size: '30%'
         };
@@ -32,10 +33,16 @@ export default class POISideBar extends Component {
         this.updateDimensions();
     }
 
+    componentDidUpdate() {
+        if (this.props.poiId !== this.state.poiId) {
+            this.updatePoiPreview();
+        }
+    }
+
     componentWillUnmount() {
+        this.componentIsMounted = false;
         window.removeEventListener("resize", this.resizeHandler);
         this.resizeHandler = null;
-        this.componentIsMounted = false;
     }
 
     updateDimensions() {
@@ -61,12 +68,25 @@ export default class POISideBar extends Component {
         this.props.onClose();
     }
 
+    updatePoiPreview() {
+        if (!this.componentIsMounted) {
+            return;
+        }
+
+        if (this.props.poiId !== this.state.poiId) {
+            this.setState({ poiId: this.props.poiId });
+        }
+    }
+
     render() {
+
+
         let poiPreview = null;
-        if (this.props.poiId) {
-            poiPreview = <POIPreview poiId={this.props.poiId}
+        if (this.props.poiId === this.state.poiId) {
+            poiPreview = <POIPreview poiId={this.state.poiId}
                                      router={this.props.router}
-                                     onClose={this.closePoiPreview.bind(this)}/>;
+                                     onClose={this.closePoiPreview.bind(this)}
+                         />;
         }
 
         return (
@@ -80,7 +100,7 @@ export default class POISideBar extends Component {
 POISideBar.propTypes = {
     onClose: PropTypes.func.isRequired,
     poiId: PropTypes.string.isRequired,
-    router: PropTypes.object.isRequired
+    router: PropTypes.object.isRequired,
 };
 
 // To access Redux store

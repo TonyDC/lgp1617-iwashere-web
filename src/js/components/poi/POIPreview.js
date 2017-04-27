@@ -132,10 +132,13 @@ export default class POIPreview extends Component {
     }
 }
 
+POIPreview.defaultProps = { reload: false };
+
 POIPreview.propTypes = {
     history: PropTypes.object,
     onClose: PropTypes.any,
     poiId: PropTypes.string.isRequired,
+    reload: PropTypes.bool,
     router: PropTypes.object.isRequired
 };
 

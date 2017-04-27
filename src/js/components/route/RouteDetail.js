@@ -25,7 +25,6 @@ export default class RouteDetail extends Component {
 
     componentDidMount() {
         this.componentIsMounted = true;
-
         this.reduxListenerUnsubscribe = this.context.store.subscribe(() => {
             const reduxState = this.context.store.getState();
             if (!this.componentIsMounted) {
@@ -128,7 +127,6 @@ export default class RouteDetail extends Component {
     }
 
     poiSelected(poiId) {
-        console.log(poiId);
         if (!this.componentIsMounted) {
             return;
         }
@@ -155,9 +153,7 @@ export default class RouteDetail extends Component {
         if (this.state.routePois) {
             routeMap = <RouteMap onPoiSelected={this.poiSelected.bind(this)}
                                  poiList={this.state.routePois}
-                                 router={this.props.router}
-
-            />;
+                                 router={this.props.router}/>;
         }
 
         let routeCard = null;
@@ -165,19 +161,17 @@ export default class RouteDetail extends Component {
             if (this.state.routeInfo) {
                 routeCard = <RouteCard routeInfo={this.state.routeInfo}
                                        routeMap={routeMap}
-                                       user={this.state.user}
-                />;
+                                       user={this.state.user}/>;
             }
         }
 
-        let poiPreview = null;
+        let poiSideBar = null;
         if (this.state.selectedItem) {
-            poiPreview = <POISideBar poiId={this.state.selectedItem}
+            poiSideBar = <POISideBar poiId={this.state.selectedItem}
                                      onClose={() => {
                                          this.poiSelected(null);
                                      }}
-                                     router={this.props.router}
-            />;
+                                     router={this.props.router}/>;
         }
 
         return (
@@ -189,7 +183,7 @@ export default class RouteDetail extends Component {
                 <div className="container">
                     <Row className="show-grid">
                         <Col xs={12} mdOffset={1} md={10} lgOffset={1} lg={10}>
-                            {poiPreview}
+                            {poiSideBar}
                             {routeCard}
                         </Col>
                     </Row>
