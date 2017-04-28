@@ -140,7 +140,7 @@ export default class POIPosts extends Component {
             });
 
             if (this.componentIsMounted) {
-                this.setState({posts});
+                this.setState({ posts });
             }
         });
     }
