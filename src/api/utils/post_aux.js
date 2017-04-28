@@ -39,10 +39,7 @@ module.exports.handleGetPOIPostsRequest = (params) => {
 
                 Promise.all(additionalPostInfo).then((results) => {
 
-                    console.error(results);
-
                     if (results && (results.length === TWO_SIZE || results.length === THREE_SIZE)) {
-
                         const postTags = utils.convertObjectsToCamelCase(results[ZERO_INDEX]);
                         const postLikes = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
                         let postsLikedByUser = [];
