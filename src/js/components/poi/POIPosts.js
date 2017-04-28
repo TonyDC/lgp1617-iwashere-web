@@ -35,12 +35,19 @@ export default class POIPosts extends Component {
 
     componentDidMount() {
         this.componentIsMounted = true;
-        firebase.auth().onAuthStateChanged((user) => {
+        /*firebase.auth().onAuthStateChanged((user) => {
             if (this.componentIsMounted) {
                 this.setState({ user }, () => {
                     this.fetchPosts();
                 });
             }
+         });*/
+
+        const currentState = this.context.store.getState();
+        // { pathname: '/', state: <anyState> }
+        const localStorageProperty = `firebase:authUser:${firebase.app().options.apiKey}:[DEFAULT]`;
+        this.setState({ user: localStorage[localStorageProperty] }, () => {
+            this.fetchPosts();
         });
     }
 
@@ -296,3 +303,6 @@ POIPosts.propTypes = {
     url: PropTypes.string.isRequired,
     user: PropTypes.object
 };
+
+// To access Redux store
+POIPosts.contextTypes = { store: PropTypes.object };
