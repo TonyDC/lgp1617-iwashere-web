@@ -98,7 +98,7 @@ module.exports.updatePostLike = (postID, userID, liked) => {
 
 module.exports.createPost = (description, poiID, userID) => {
     // language=POSTGRES-SQL
-    return db.query(`INSERT INT posts(description, poi_id, user_id VALUES(:description, :poiID, :userID`, {
+    return db.query(`INSERT INTO posts(description, poi_id, user_id) VALUES(:description, :poiID, :userID`, {
         replacements: {
             description,
             poiID,

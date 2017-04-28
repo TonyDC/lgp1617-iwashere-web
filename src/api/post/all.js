@@ -80,8 +80,8 @@ function handlePostRequest(req, res, next) {
                         }
 
                         post.likedByUser = postsLikedByUser.filter((like) => {
-                            return like.postId === post.postId;
-                        }).length > NO_ELEMENT_SIZE;
+                                return like.postId === post.postId;
+                            }).length > NO_ELEMENT_SIZE;
                     });
 
                     res.json(posts).end();
@@ -105,17 +105,37 @@ router.get('/poi_posts/:userID/:poiID/:offset/:limit', (req, res, next) => {
 });
 
 router.post('/post', (req, res, next) => {
-    const { userID, postID, description } = req.body;
+    const { userID, poiID, description } = req.body;
 
-    if (!postID || !userID || typeof userID !== 'string' || typeof description !== 'string') {
+    if (!poiID || !userID || typeof userID !== 'string' || typeof description !== 'string') {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
 
-    const { postDB, userDB } = db;
-    Promise.all()
-})
+    const { postDB, userDB, poiDB } = db;
+    Promise.all([userDB.getUserByUID(userID), poiDB.getPOIDetailByID(poiID)]).
+    then((results) => {
+
+        if (results && results.length === TWO_SIZE &&
+            results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE &&
+            results[ONE_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE) {
+
+            return postDB.createPost(description, poiID, userID).
+            then(() => {
+                res.end();
+            });
+        }
+
+        res.status(httpCodes.BAD_REQUEST).json({ message: '(userID, postID) not found' }).
+        end();
+
+        return null;
+    }).
+    catch((error) => {
+        next(error);
+    });
+});
 
 router.post('/like', (req, res, next) => {
     const { userID, postID, liked } = req.body;
