@@ -1,8 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Navbar, Nav, NavItem, MenuItem, NavDropdown } from 'react-bootstrap';
 import { Link } from 'react-router';
 import * as firebase from 'firebase';
+import IconMenu from 'material-ui/IconMenu';
+import IconButton from 'material-ui/IconButton';
+import FontIcon from 'material-ui/FontIcon';
+import NavigationExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more';
+import MenuItem from 'material-ui/MenuItem';
+import DropDownMenu from 'material-ui/DropDownMenu';
+import RaisedButton from 'material-ui/RaisedButton';
+import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
 
 import logoCompact from 'img/logo-compact.png';
 
@@ -42,6 +49,7 @@ export default class NavBar extends Component {
     }
 
     render() {
+        /*
         let signButton = <NavItem className="logButton" eventKey={1} onClick={ this.toggleUserStatus.bind(this) }>Sign in</NavItem>;
 
         if (this.state.userStatus && this.state.userStatus.isLogged) {
@@ -55,55 +63,38 @@ export default class NavBar extends Component {
             let userPicture = null;
             if (userInfo.photoURL) {
                 userPicture =
-                <NavItem>
-                    <img src={userInfo.photoURL} alt="user-profile-picture" className="img-circle"/>
-                </NavItem>;
+                    <NavItem>
+                        <img src={userInfo.photoURL} alt="user-profile-picture" className="img-circle"/>
+                    </NavItem>;
             }
 
             signButton =
-            <NavDropdown eventKey={3} title={user} id="basic-nav-dropdown">
-                {userPicture}
-                <MenuItem eventKey={3.1}>Profile</MenuItem>
-                <MenuItem divider/>
-                <MenuItem onClick={ this.toggleUserStatus.bind(this) }><div className="logButton">Sign out</div></MenuItem>
-            </NavDropdown>;
+                <NavDropdown eventKey={3} title={user} id="basic-nav-dropdown">
+                    {userPicture}
+                    <MenuItem eventKey={3.1}>Profile</MenuItem>
+                    <MenuItem divider/>
+                    <MenuItem onClick={ this.toggleUserStatus.bind(this) }><div className="logButton">Sign out</div></MenuItem>
+                </NavDropdown>;
         }
+        */
 
         /*
          The <div> tag is required so that the navbar collapse menu is properly rendered
          */
         return (
             <div className="navbar-container">
-                <Navbar inverse collapseOnSelect className="navbar">
-                    <Navbar.Header>
-                        <Navbar.Brand>
-                            <img src={logoCompact} alt="#iwashere" className="app-logo"/>
-                        </Navbar.Brand>
-                        <Navbar.Toggle/>
-                    </Navbar.Header>
-                    <Navbar.Collapse>
-                        <Nav pullRight>
-                            <NavItem>
-                                <Link to={'/'}
-                                      onlyActiveOnIndex
-                                      className="link"
-                                      activeClassName="current-link">
-                                    Homepage
-                                </Link>
-                            </NavItem>
-
-                            <NavItem>
-                                <Link to={'/feed'}
-                                      className="link"
-                                      activeClassName="current-link">
-                                    Feed
-                                </Link>
-                            </NavItem>
-
-                            { signButton }
-                        </Nav>
-                    </Navbar.Collapse>
-                </Navbar>
+                <Toolbar>
+                    <ToolbarTitle text="Options">
+                        <img src={logoCompact}/>
+                    </ToolbarTitle>
+                    <ToolbarGroup>
+                        <RaisedButton label="Create Broadcast" primary/>
+                        <RaisedButton label="Create Broadcast" primary/>
+                        <FontIcon className="muidocs-icon-custom-sort"/>
+                        <ToolbarSeparator />
+                        <RaisedButton label="Create Broadcast" primary/>
+                    </ToolbarGroup>
+                </Toolbar>
             </div>
         );
     }
