@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Col } from 'react-bootstrap';
 import httpCodes from 'http-status-codes';
+import * as firebase from 'firebase';
 import Paper from 'material-ui/Paper';
 import PropTypes from 'prop-types';
 import { GridLoader as Loader } from 'halogen';
@@ -27,13 +28,19 @@ export default class POIPosts extends Component {
             hasMoreItems: true,
             posts: [],
             postsOffset: 0,
-            tagsFilter: []
+            tagsFilter: [],
+            user: null
         };
     }
 
     componentDidMount() {
         this.componentIsMounted = true;
-        this.fetchPosts();
+
+        firebase.auth().onAuthStateChanged((user) => {
+            this.setState({ user }, () => {
+                this.fetchPosts();
+            });
+        });
     }
 
     componentWillUnmount() {
@@ -45,11 +52,18 @@ export default class POIPosts extends Component {
             return;
         }
 
-        fetch(`${this.props.url}/poi_posts/${this.props.poiId}/${this.state.postsOffset}/${LIMIT}`, {
+        let url = `${this.props.url}/poi_posts/`;
+        if (this.state.user) {
+            url += `${this.state.user.uid}/`;
+        }
+        url += `${this.props.poiId}/${this.state.postsOffset}/${LIMIT}`;
+        console.log(url);
+        fetch(url, {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
         }).
         then((response) => {
+            console.log(response);
             if (response.status >= httpCodes.BAD_REQUEST) {
                 return Promise.reject(new Error(response.statusText));
             }
@@ -65,6 +79,7 @@ export default class POIPosts extends Component {
             return response.json();
         }).
         then((newPosts) => {
+            console.log(newPosts);
             if (!this.componentIsMounted) {
                 return;
             }
@@ -91,8 +106,11 @@ export default class POIPosts extends Component {
     }
 
     toggleLike(postId) {
-        let post = null;
+        if (!this.state.user) {
+            return;
+        }
 
+        let post = null;
         this.state.posts.forEach((postTemp) => {
             if (postTemp.postId === postId) {
                 post = postTemp;
@@ -101,29 +119,27 @@ export default class POIPosts extends Component {
 
         fetch(`${this.props.url}/like`, {
             body: JSON.stringify({
-                liked: post.liked,
+                liked: !post.likedByUser,
                 postID: postId,
-                userID: this.props.user.uid
+                userID: this.state.user.uid
             }),
             headers: { 'Content-Type': 'application/json' },
             method: 'POST'
         }).
         then((response) => {
-            if (response.status >= httpCodes.BAD_REQUEST) {
+            if (response.status >= httpCodes.BAD_REQUEST ||
+                response.status === httpCodes.NO_CONTENT) {
                 return Promise.reject(new Error(response.statusText));
             }
 
             return response.json();
         }).
         then((response) => {
-            if (!response.ok) {
-                return;
-            }
-
-            const { posts } = this.state.posts;
+            const { posts } = this.state;
             posts.forEach((postTemp) => {
                 if (postTemp.postId === postId) {
-                    postTemp.liked = !postTemp.liked;
+                    postTemp.likedByUser = !postTemp.likedByUser;
+                    postTemp.likes = response.likes;
                 }
             });
 
@@ -288,5 +304,5 @@ export default class POIPosts extends Component {
 POIPosts.propTypes = {
     poiId: PropTypes.any.isRequired,
     url: PropTypes.string.isRequired,
-    user: PropTypes.any
+    user: PropTypes.object
 };
