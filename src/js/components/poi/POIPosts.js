@@ -35,11 +35,12 @@ export default class POIPosts extends Component {
 
     componentDidMount() {
         this.componentIsMounted = true;
-
         firebase.auth().onAuthStateChanged((user) => {
-            this.setState({ user }, () => {
-                this.fetchPosts();
-            });
+            if (this.componentIsMounted) {
+                this.setState({ user }, () => {
+                    this.fetchPosts();
+                });
+            }
         });
     }
 
@@ -57,13 +58,12 @@ export default class POIPosts extends Component {
             url += `${this.state.user.uid}/`;
         }
         url += `${this.props.poiId}/${this.state.postsOffset}/${LIMIT}`;
-        console.log(url);
+
         fetch(url, {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
         }).
         then((response) => {
-            console.log(response);
             if (response.status >= httpCodes.BAD_REQUEST) {
                 return Promise.reject(new Error(response.statusText));
             }
@@ -79,11 +79,6 @@ export default class POIPosts extends Component {
             return response.json();
         }).
         then((newPosts) => {
-            console.log(newPosts);
-            if (!this.componentIsMounted) {
-                return;
-            }
-
             const posts = this.state.posts.slice();
             const postIds = posts.map((post) => {
                 return post.postId;
@@ -94,14 +89,15 @@ export default class POIPosts extends Component {
                     posts.push(post);
                 }
             });
-
             const postsOffset = this.state.postsOffset + newPosts.length;
 
-            this.setState({
-                hasMoreItems: newPosts.length === LIMIT,
-                posts,
-                postsOffset
-            });
+            if (this.componentIsMounted) {
+                this.setState({
+                    hasMoreItems: newPosts.length === LIMIT,
+                    posts,
+                    postsOffset
+                });
+            }
         });
     }
 
@@ -143,7 +139,9 @@ export default class POIPosts extends Component {
                 }
             });
 
-            this.setState({ posts });
+            if (this.componentIsMounted) {
+                this.setState({posts});
+            }
         });
     }
 
@@ -164,12 +162,10 @@ export default class POIPosts extends Component {
                       }}
                       key={postEntry.postId}/>
             );
-
             itemClassInverted = !itemClassInverted;
         });
 
-        const terminator = <li key="timeline-terminator" className="clearfix" style={{ 'float': 'none' }} />;
-        postsList.push(terminator);
+        postsList.push(<li key="timeline-terminator" className="clearfix" style={{ 'float': 'none' }} />);
 
         return postsList;
     }
@@ -190,26 +186,22 @@ export default class POIPosts extends Component {
     }
 
     removeTagFilter(tagName) {
-        if (!this.componentIsMounted) {
-            return;
-        }
-
         let { tagsFilter } = this.state;
         tagsFilter = tagsFilter.filter((tag) => {
             return tag !== tagName;
         });
-
-        this.setState({
-            filtering: tagsFilter.length > NO_ELEMENT_SIZE,
-            tagsFilter
-        });
+        if (this.componentIsMounted) {
+            this.setState({
+                filtering: tagsFilter.length > NO_ELEMENT_SIZE,
+                tagsFilter
+            });
+        }
     }
 
     toggleFiltering() {
         if (!this.componentIsMounted) {
             return;
         }
-
         if (this.state.filtering) {
             this.setState({
                 filtering: false,
@@ -276,9 +268,7 @@ export default class POIPosts extends Component {
             }
 
             return (
-                <Col xs={12} mdOffset={2} md={8} lgOffset={2} lg={8}>
-                    {tagFilter}
-                </Col>
+                <Col xs={12} mdOffset={2} md={8} lgOffset={2} lg={8}> {tagFilter} </Col>
             );
         }
 
