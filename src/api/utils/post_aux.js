@@ -17,7 +17,6 @@ const THREE_SIZE = 3;
  * @return {Object} promise of results
  */
 module.exports.handleGetPOIPostsRequest = (params) => {
-
     return new Promise((fulfill, reject) => {
         const { poiID, offset, limit, userID } = params;
 
@@ -37,8 +36,8 @@ module.exports.handleGetPOIPostsRequest = (params) => {
                     additionalPostInfo.push(postDB.getPostLikedByUser(utils.convertArrayToString(postIds), userID));
                 }
 
-                Promise.all(additionalPostInfo).then((results) => {
-
+                Promise.all(additionalPostInfo).
+                then((results) => {
                     if (results && (results.length === TWO_SIZE || results.length === THREE_SIZE)) {
                         const postTags = utils.convertObjectsToCamelCase(results[ZERO_INDEX]);
                         const postLikes = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
@@ -63,8 +62,8 @@ module.exports.handleGetPOIPostsRequest = (params) => {
                             }
 
                             post.likedByUser = (postsLikedByUser.filter((like) => {
-                                return like.postId === post.postId;
-                            })).length > NO_ELEMENT_SIZE;
+                                    return like.postId === post.postId;
+                                })).length > NO_ELEMENT_SIZE;
                         });
 
                         fulfill(posts);

@@ -292,7 +292,7 @@ export default class POIPosts extends Component {
 }
 
 POIPosts.propTypes = {
-    poiId: PropTypes.any.isRequired,
+    poiId: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired,
     user: PropTypes.object
 };
