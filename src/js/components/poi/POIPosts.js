@@ -123,8 +123,7 @@ export default class POIPosts extends Component {
             method: 'POST'
         }).
         then((response) => {
-            if (response.status >= httpCodes.BAD_REQUEST ||
-                response.status === httpCodes.NO_CONTENT) {
+            if (response.status >= httpCodes.BAD_REQUEST || response.status === httpCodes.NO_CONTENT) {
                 return Promise.reject(new Error(response.statusText));
             }
 
@@ -280,8 +279,7 @@ export default class POIPosts extends Component {
                     pageStart={0}
                     loadMore={this.fetchPosts.bind(this)}
                     hasMore={this.state.hasMoreItems}
-                    loader={loader}
-                >
+                    loader={loader}>
                     <ul className="timeline timeline-container">
                         {this.getPosts(filteredPosts)}
                     </ul>
