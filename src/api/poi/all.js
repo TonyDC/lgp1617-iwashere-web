@@ -121,7 +121,7 @@ router.get('/rating/:poiID/:userID', (req, res, next) => {
         if (result && result.length > NO_ELEMENT_SIZE) {
             res.json(result[ZERO_INDEX]).end();
         } else {
-            res.sendStatus(httpCodes.NO_CONTENT).end();
+            res.status(httpCodes.NO_CONTENT).json({ rating: 0 }).end();
         }
     }).
     catch((error) => {
@@ -151,7 +151,12 @@ router.get('/rating/:poiID', (req, res, next) => {
             }
             res.json(poiRating).end();
         } else {
-            res.sendStatus(httpCodes.NO_CONTENT).end();
+            res.status(httpCodes.NO_CONTENT).
+            json({
+                rating: 0,
+                ratings: 0
+            }).
+            end();
         }
     }).
     catch((error) => {
@@ -275,6 +280,7 @@ router.get('/suggestions/:limit', (req, res, next) => {
 
     if (!limit || isNaN(parseInt(limit, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
+
 
         return;
     }
