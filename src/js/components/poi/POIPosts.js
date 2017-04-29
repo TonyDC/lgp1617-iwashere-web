@@ -41,7 +41,7 @@ export default class POIPosts extends Component {
                     this.fetchPosts();
                 });
             }
-         });
+        });
     }
 
     componentWillUnmount() {
