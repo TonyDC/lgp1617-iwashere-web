@@ -1,19 +1,24 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router';
 import * as firebase from 'firebase';
-import IconMenu from 'material-ui/IconMenu';
 import IconButton from 'material-ui/IconButton';
-import FontIcon from 'material-ui/FontIcon';
-import NavigationExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more';
-import MenuItem from 'material-ui/MenuItem';
-import DropDownMenu from 'material-ui/DropDownMenu';
-import RaisedButton from 'material-ui/RaisedButton';
-import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
+import { Toolbar, ToolbarGroup, ToolbarSeparator } from 'material-ui/Toolbar';
+
+import ActionHome from 'material-ui/svg-icons/action/home';
+import CommunicationFeed from 'material-ui/svg-icons/communication/rss-feed';
+import SocialPerson from 'material-ui/svg-icons/social/person';
+import ActionExitToApp from 'material-ui/svg-icons/action/exit-to-app';
 
 import logoCompact from 'img/logo-compact.png';
 
+import { grey100 } from 'material-ui/styles/colors';
+
 import 'styles/navbar.scss';
+
+const styles = {
+    buttons: { color: '#a3a3a3' },
+    hoveredButtons: { color: '#333' }
+};
 
 export default class NavBar extends Component {
 
@@ -48,51 +53,46 @@ export default class NavBar extends Component {
         }
     }
 
-    render() {
-        /*
-        let signButton = <NavItem className="logButton" eventKey={1} onClick={ this.toggleUserStatus.bind(this) }>Sign in</NavItem>;
-
-        if (this.state.userStatus && this.state.userStatus.isLogged) {
-            const { userInfo } = this.state.userStatus;
-
-            let user = userInfo.displayName;
-            if (!user) {
-                user = userInfo.email;
-            }
-
-            let userPicture = null;
-            if (userInfo.photoURL) {
-                userPicture =
-                    <NavItem>
-                        <img src={userInfo.photoURL} alt="user-profile-picture" className="img-circle"/>
-                    </NavItem>;
-            }
-
-            signButton =
-                <NavDropdown eventKey={3} title={user} id="basic-nav-dropdown">
-                    {userPicture}
-                    <MenuItem eventKey={3.1}>Profile</MenuItem>
-                    <MenuItem divider/>
-                    <MenuItem onClick={ this.toggleUserStatus.bind(this) }><div className="logButton">Sign out</div></MenuItem>
-                </NavDropdown>;
+    goToPage(url) {
+        if (typeof url !== 'string' || this.props.router.getCurrentLocation().pathname === url) {
+            return;
         }
-        */
+
+        this.props.router.push(url);
+    }
+
+    render() {
+        let userActionButton =
+            <IconButton iconStyle={styles.buttons} onTouchTap={this.toggleUserStatus.bind(this)} tooltip={<div>Log in</div>}>
+                <SocialPerson hoverColor={grey100}/>
+            </IconButton>;
+        if (this.state.userStatus && this.state.userStatus.isLogged) {
+            userActionButton =
+                <IconButton iconStyle={styles.buttons} onTouchTap={this.toggleUserStatus.bind(this)} tooltip={<div>Log out</div>}>
+                    <ActionExitToApp hoverColor={grey100}/>
+                </IconButton>;
+        }
 
         /*
          The <div> tag is required so that the navbar collapse menu is properly rendered
          */
+
+        /*
+        Add a <div> tag at the bottom, if one wants a submenu, for responsive submenu
+         */
         return (
             <div className="navbar-container">
-                <Toolbar>
-                    <ToolbarTitle text="Options">
-                        <img src={logoCompact}/>
-                    </ToolbarTitle>
+                <Toolbar className="toolbar-custom-style">
+                    <img src={logoCompact} className="app-logo"/>
                     <ToolbarGroup>
-                        <RaisedButton label="Create Broadcast" primary/>
-                        <RaisedButton label="Create Broadcast" primary/>
-                        <FontIcon className="muidocs-icon-custom-sort"/>
-                        <ToolbarSeparator />
-                        <RaisedButton label="Create Broadcast" primary/>
+                        <IconButton iconStyle={styles.buttons} onTouchTap={this.goToPage.bind(this, '/')} tooltip={<div>Home</div>}>
+                            <ActionHome hoverColor={grey100}/>
+                        </IconButton>
+                        <IconButton iconStyle={styles.buttons} onTouchTap={this.goToPage.bind(this, '/feed')} tooltip={<div>Feed</div>}>
+                            <CommunicationFeed hoverColor={grey100}/>
+                        </IconButton>
+                        <ToolbarSeparator className="toolbar-separator-custom-style"/>
+                        { userActionButton }
                     </ToolbarGroup>
                 </Toolbar>
             </div>
