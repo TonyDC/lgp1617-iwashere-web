@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { GridLoader as Loader } from 'halogen';
 import TextField from 'material-ui/TextField';
 import Paper from 'material-ui/Paper';
@@ -184,6 +185,9 @@ export default class POIDetail extends Component {
                                         <p>{ element.description }</p>
                                     }
                                     secondaryTextLines={2}
+                                    onTouchTap={() => {
+                                        this.props.router.push(`/poi/${element.poiId}`);
+                                    }}
                                 />
                                 <Divider inset/>
                             </div>
@@ -229,3 +233,5 @@ export default class POIDetail extends Component {
         );
     }
 }
+
+POIDetail.propTypes = { router: PropTypes.object.isRequired };
