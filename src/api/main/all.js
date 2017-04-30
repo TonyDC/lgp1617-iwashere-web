@@ -1,5 +1,7 @@
 'use strict';
 
+const utils = require('../utils/misc');
+
 const httpCodes = require('http-status-codes');
 
 const express = require('express');
@@ -29,9 +31,9 @@ router.get('/search', (req, res, next) => {
     then((results) => {
         if (results && results.length === THREE_SIZE) {
             res.json({
-                poi: results[ZERO_INDEX],
-                route: results[ONE_INDEX],
-                tag: results[TWO_INDEX]
+                poi: utils.convertObjectsToCamelCase(results[ZERO_INDEX]),
+                route: utils.convertObjectsToCamelCase(results[ONE_INDEX]),
+                tag: utils.convertObjectsToCamelCase(results[TWO_INDEX])
             }).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
