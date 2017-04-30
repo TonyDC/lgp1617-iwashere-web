@@ -26,7 +26,7 @@ export default class POICard extends Component {
             poiMediaSlider = <Carousel url={`${API_POI_MEDIA_URL}${this.props.poiInfo.poiId}`} />;
             poiTagsPanel = <Tags readOnly tags={this.props.poiInfo.tags} />;
             ratingPanel = <Rater url={API_POI_RATING_URL} poiId={this.props.poiInfo.poiId} user={this.props.user}/>;
-            poiPost = <Dialog open="true" url={API_POI_POST_URL} poiId={this.props.poiInfo.poiId} user={this.props.user}/>;
+            poiPost = <Dialog url={API_POI_POST_URL} poiId={this.props.poiInfo.poiId} user={this.props.user}/>;
         }
 
         return (
