@@ -91,7 +91,6 @@ router.get('/media/:poiID', (req, res, next) => {
     }
 
     const { poiDB } = db;
-
     poiDB.getPOIAllMedia(poiID).
     then((media) => {
         if (media) {
@@ -103,7 +102,6 @@ router.get('/media/:poiID', (req, res, next) => {
     catch((error) => {
         next(error);
     });
-
 });
 
 router.get('/rating/:poiID/:userID', (req, res, next) => {
@@ -121,7 +119,9 @@ router.get('/rating/:poiID/:userID', (req, res, next) => {
         if (result && result.length > NO_ELEMENT_SIZE) {
             res.json(result[ZERO_INDEX]).end();
         } else {
-            res.status(httpCodes.NO_CONTENT).json({ rating: 0 }).end();
+            res.status(httpCodes.NO_CONTENT).
+                json({ rating: 0 }).
+                end();
         }
     }).
     catch((error) => {
@@ -230,7 +230,6 @@ router.get('/:id', (req, res, next) => {
     }
 
     const { poiDB } = db;
-
     Promise.all([poiDB.getPOIDetailByID(id), poiDB.getPOITags(id)]).
     then((results) => {
         if (results && results.length === TWO_SIZE &&
@@ -250,7 +249,6 @@ router.get('/:id', (req, res, next) => {
 
 router.get('/suggestions/:limit/:lat/:lng', (req, res, next) => {
     const { limit, lat, lng } = req.params;
-
     if (!limit || isNaN(parseInt(limit, DECIMAL_BASE)) || !lat || !lng ||
         isNaN(parseFloat(lat)) || isNaN(parseFloat(lng))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
@@ -277,14 +275,11 @@ router.get('/suggestions/:limit/:lat/:lng', (req, res, next) => {
 
 router.get('/suggestions/:limit', (req, res, next) => {
     const { limit } = req.params;
-
     if (!limit || isNaN(parseInt(limit, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
-
         return;
     }
-
     const { poiDB } = db;
     poiDB.getTopRatedPOIs(limit).
     then((results) => {
