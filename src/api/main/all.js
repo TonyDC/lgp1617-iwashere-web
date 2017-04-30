@@ -34,7 +34,8 @@ router.get('/search', (req, res, next) => {
                 tag: results[TWO_INDEX]
             }).end();
         } else {
-            res.sendStatus(httpCodes.NO_CONTENT).end();
+            res.status(httpCodes.NO_CONTENT).json({}).
+            end();
         }
     }).
     catch((error) => {
