@@ -4,7 +4,7 @@
 
 const httpCodes = require('http-status-codes');
 const utils = require('../utils/misc');
-const aux = require('./poi_aux');
+const aux = require('../utils/poi_aux');
 
 const express = require('express');
 const router = express.Router();
@@ -289,7 +289,7 @@ router.get('/suggestions/:limit/:lat/:lng', (req, res, next) => {
     const { poiDB } = db;
     poiDB.getNearbyPOIs(lat, lng, limit).
     then((results) => {
-        aux.handleSuggestionsResults(results).
+        aux.handlePOIResults(results).
         then((suggestions) => {
             if (suggestions.length === NO_ELEMENT_SIZE) {
                 res.sendStatus(httpCodes.NO_CONTENT).end();
@@ -315,7 +315,7 @@ router.get('/suggestions/:limit', (req, res, next) => {
     const { poiDB } = db;
     poiDB.getTopRatedPOIs(limit).
     then((results) => {
-        aux.handleSuggestionsResults(results).
+        aux.handlePOIResults(results).
         then((suggestions) => {
             if (suggestions.length === NO_ELEMENT_SIZE) {
                 res.sendStatus(httpCodes.NO_CONTENT).end();

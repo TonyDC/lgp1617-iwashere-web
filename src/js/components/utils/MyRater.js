@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { GridLoader as Loader } from 'halogen';
-
+import httpCodes from 'http-status-codes';
 import Rater from 'react-rater';
+
 import 'react-rater/lib/react-rater.css';
 import 'styles/my_rater.scss';
 
@@ -17,12 +18,16 @@ export default class MyRater extends Component {
 
     constructor(props) {
         super(props);
-
         this.state = { };
     }
 
     componentDidMount() {
+        this.componentIsMounted = true;
         this.getRating();
+    }
+
+    componentWillUnmount() {
+        this.componentIsMounted = false;
     }
 
     getRating() {
@@ -39,9 +44,17 @@ export default class MyRater extends Component {
             method: 'GET'
         }).
         then((response) => {
+            if (response.status >= httpCodes.BAD_REQUEST) {
+                return Promise.reject(new Error(response.statusText));
+            }
+
             return response.json();
         }).
         then((response) => {
+            if (!this.componentIsMounted) {
+                return;
+            }
+
             const ratingInfo = {};
             ratingInfo.rating = parseFloat(response.rating);
             ratingInfo.ratings = parseInt(response.ratings, DECIMAL_BASE);
@@ -64,14 +77,26 @@ export default class MyRater extends Component {
             method: 'GET'
         }).
         then((response) => {
+            if (response.status >= httpCodes.BAD_REQUEST) {
+                return Promise.reject(new Error(response.statusText));
+            }
+
             return response.json();
         }).
         then((response) => {
+            if (!this.componentIsMounted) {
+                return;
+            }
+
             const { ratingInfo } = this.state;
             ratingInfo.userRating = parseInt(response.rating, DECIMAL_BASE);
             this.setState({ ratingInfo });
         }).
         catch(() => {
+            if (!this.componentIsMounted) {
+                return;
+            }
+
             const { ratingInfo } = this.state;
             ratingInfo.userRating = NO_RATING;
             this.setState({ ratingInfo });
@@ -79,7 +104,6 @@ export default class MyRater extends Component {
     }
 
     updateRating(ratingEvent) {
-
         if (ratingEvent.lastRating >= NO_RATING) {
             fetch(this.props.url, {
                 body: JSON.stringify({
@@ -98,6 +122,10 @@ export default class MyRater extends Component {
                 this.getRating();
             }).
             catch(() => {
+                if (!this.componentIsMounted) {
+                    return;
+                }
+
                 const { ratingInfo } = this.state;
                 ratingInfo.userRating = ratingEvent.lastRating;
                 this.setState({ ratingInfo });
@@ -117,16 +145,18 @@ export default class MyRater extends Component {
         let userRating = null;
         if (this.props.user) {
 
-            if (!(this.state.ratingInfo.userRating >= NO_RATING)) {
+            if (this.state.ratingInfo.userRating >= NO_RATING) {
+                userRating =
+                    <Col xs={12} md={12} lg={12}>
+                        <Rater total={MAX_RATING_SCALE} rating={this.state.ratingInfo.userRating}
+                               onRate={this.updateRating.bind(this)}/>
+                        <span
+                            className="rating-description"> {this.state.ratingInfo.userRating}/{MAX_RATING_SCALE}</span>
+                        <span className="rating-description"><small>Your evaluation</small></span>
+                    </Col>;
+            } else {
                 this.getUserRating();
             }
-
-            userRating =
-                <Col xs={12} md={12} lg={12}>
-                    <Rater total={MAX_RATING_SCALE} rating={this.state.ratingInfo.userRating} onRate={this.updateRating.bind(this)}/>
-                    <span className="rating-description"> {this.state.ratingInfo.userRating}/{MAX_RATING_SCALE}</span>
-                    <span className="rating-description"><small>Your evaluation</small></span>
-                </Col>;
         }
 
         return (
