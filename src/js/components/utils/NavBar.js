@@ -1,12 +1,24 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Navbar, Nav, NavItem, MenuItem, NavDropdown } from 'react-bootstrap';
-import { Link } from 'react-router';
 import * as firebase from 'firebase';
+import IconButton from 'material-ui/IconButton';
+import { Toolbar, ToolbarGroup, ToolbarSeparator } from 'material-ui/Toolbar';
+
+import ActionHome from 'material-ui/svg-icons/action/home';
+import CommunicationFeed from 'material-ui/svg-icons/communication/rss-feed';
+import SocialPerson from 'material-ui/svg-icons/social/person';
+import ActionExitToApp from 'material-ui/svg-icons/action/exit-to-app';
 
 import logoCompact from 'img/logo-compact.png';
 
+import { grey100 } from 'material-ui/styles/colors';
+
 import 'styles/navbar.scss';
+
+const styles = {
+    buttons: { color: '#a3a3a3' },
+    hoveredButtons: { color: '#333' }
+};
 
 export default class NavBar extends Component {
 
@@ -41,69 +53,48 @@ export default class NavBar extends Component {
         }
     }
 
+    goToPage(url) {
+        if (typeof url !== 'string' || this.props.router.getCurrentLocation().pathname === url) {
+            return;
+        }
+
+        this.props.router.push(url);
+    }
+
     render() {
-        let signButton = <NavItem className="logButton" eventKey={1} onClick={ this.toggleUserStatus.bind(this) }>Sign in</NavItem>;
-
+        let userActionButton =
+            <IconButton iconStyle={styles.buttons} onTouchTap={this.toggleUserStatus.bind(this)} tooltip={<div>Log in</div>}>
+                <SocialPerson hoverColor={grey100}/>
+            </IconButton>;
         if (this.state.userStatus && this.state.userStatus.isLogged) {
-            const { userInfo } = this.state.userStatus;
-
-            let user = userInfo.displayName;
-            if (!user) {
-                user = userInfo.email;
-            }
-
-            let userPicture = null;
-            if (userInfo.photoURL) {
-                userPicture =
-                <NavItem>
-                    <img src={userInfo.photoURL} alt="user-profile-picture" className="img-circle"/>
-                </NavItem>;
-            }
-
-            signButton =
-            <NavDropdown eventKey={3} title={user} id="basic-nav-dropdown">
-                {userPicture}
-                <MenuItem eventKey={3.1}>Profile</MenuItem>
-                <MenuItem divider/>
-                <MenuItem onClick={ this.toggleUserStatus.bind(this) }><div className="logButton">Sign out</div></MenuItem>
-            </NavDropdown>;
+            userActionButton =
+                <IconButton iconStyle={styles.buttons} onTouchTap={this.toggleUserStatus.bind(this)} tooltip={<div>Log out</div>}>
+                    <ActionExitToApp hoverColor={grey100}/>
+                </IconButton>;
         }
 
         /*
          The <div> tag is required so that the navbar collapse menu is properly rendered
          */
+
+        /*
+        Add a <div> tag at the bottom, if one wants a submenu, for responsive submenu
+         */
         return (
             <div className="navbar-container">
-                <Navbar inverse collapseOnSelect className="navbar">
-                    <Navbar.Header>
-                        <Navbar.Brand>
-                            <img src={logoCompact} alt="#iwashere" className="app-logo"/>
-                        </Navbar.Brand>
-                        <Navbar.Toggle/>
-                    </Navbar.Header>
-                    <Navbar.Collapse>
-                        <Nav pullRight>
-                            <NavItem>
-                                <Link to={'/'}
-                                      onlyActiveOnIndex
-                                      className="link"
-                                      activeClassName="current-link">
-                                    Homepage
-                                </Link>
-                            </NavItem>
-
-                            <NavItem>
-                                <Link to={'/feed'}
-                                      className="link"
-                                      activeClassName="current-link">
-                                    Feed
-                                </Link>
-                            </NavItem>
-
-                            { signButton }
-                        </Nav>
-                    </Navbar.Collapse>
-                </Navbar>
+                <Toolbar className="toolbar-custom-style">
+                    <img src={logoCompact} className="app-logo"/>
+                    <ToolbarGroup>
+                        <IconButton iconStyle={styles.buttons} onTouchTap={this.goToPage.bind(this, '/')} tooltip={<div>Home</div>}>
+                            <ActionHome hoverColor={grey100}/>
+                        </IconButton>
+                        <IconButton iconStyle={styles.buttons} onTouchTap={this.goToPage.bind(this, '/feed')} tooltip={<div>Feed</div>}>
+                            <CommunicationFeed hoverColor={grey100}/>
+                        </IconButton>
+                        <ToolbarSeparator className="toolbar-separator-custom-style"/>
+                        { userActionButton }
+                    </ToolbarGroup>
+                </Toolbar>
             </div>
         );
     }

@@ -23,6 +23,9 @@ router.use('/route', require('./route'));
 // Tag-related endpoints
 router.use('/tag', require('./tag'));
 
+// General-purpose endpoints
+router.use('/', require('./main'));
+
 // No API endpoint found
 router.use((req, res) => {
     res.sendStatus(httpCode.NOT_IMPLEMENTED).end();

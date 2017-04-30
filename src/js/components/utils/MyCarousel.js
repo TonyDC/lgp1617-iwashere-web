@@ -22,6 +22,10 @@ export default class MyCarousel extends Component {
         this.fetchMedia();
     }
 
+    componentWillUnmount() {
+        this.componentIsMounted = false;
+    }
+
     fetchMedia() {
         fetch(this.props.url, {
             headers: { 'Content-Type': 'application/json' },

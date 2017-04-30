@@ -46,6 +46,10 @@ export default class POISuggestions extends Component {
         this.getCurrentLocation();
     }
 
+    componentWillUnmount() {
+        this.componentIsMounted = false;
+    }
+
     getCurrentLocation() {
         const geoOptions = {
             enableHighAccuracy: true,
