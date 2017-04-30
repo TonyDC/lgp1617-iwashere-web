@@ -56,3 +56,5 @@ router.post('/rating', (req, res, next) => {
         next(error);
     });
 });
+
+module.exports = router;
