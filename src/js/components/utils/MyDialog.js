@@ -5,15 +5,92 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import PropTypes from 'prop-types';
 
+
 export default class MyDialog extends Component {
 
     constructor(props) {
         super(props);
 
-        this.state = { open: false };
+        this.state = {
+            inProgress: false,
+            open: false
+        };
 
         this.handleOpen = this.handleOpen.bind(this);
         this.handleClose = this.handleClose.bind(this);
+    }
+
+    componentDidMount() {
+        this.componentIsMounted = true;
+        this.getRating();
+    }
+
+    componentWillUnmount() {
+        this.componentIsMounted = false;
+    }
+
+    handleText(event) {
+        event.preventDefault();
+
+        if (!this.componentIsMounted) {
+            return;
+        }
+
+        this.setState({ comment: event.target.value });
+    }
+
+    createPost(post) {
+        if (!post || typeof post !== 'string') {
+            throw new Error('Bad post parameter');
+        }
+
+
+        return fetch(this.props.url, {
+            body: JSON.stringify({
+                description: post,
+                poiID: this.props.poiId,
+                userID: this.props.user.uid
+            }),
+            headers: { 'Content-Type': 'application/json' },
+            method: 'POST'
+        }).then((response) => {
+            if (!response.ok) {
+                throw new Error();
+            }
+        }).
+        catch(() => {
+            if (!this.componentIsMounted) {
+                return;
+            }
+
+            const { postInfo } = this.state;
+        });
+    }
+
+    submitPost(event) {
+        event.preventDefault();
+
+        if (!this.componentIsMounted) {
+            return;
+        }
+
+        this.setState({ inProgress: 'Creating new post...' });
+
+        let { post } = this.state;
+
+        if (typeof post !== 'string') {
+            this.setState({ inProgress: false });
+
+            return;
+        }
+
+        this.setState({ post });
+        if (!post) {
+            this.setState({ inProgress: false });
+
+            return;
+        }
+
     }
 
     handleOpen() {
@@ -51,8 +128,14 @@ export default class MyDialog extends Component {
                     open={this.state.open}
                     onRequestClose={this.handleClose}
                 >
-                    <TextField hintText="Hint Text"
-                               />
+                    <form onSubmit={ this.state.inProgress
+                        ? null
+                        : this.submitPost.bind(this) } >
+                        <TextField hintText="New Post"
+                                   floatingLabelText="Create Comment"
+                                   fullWidth
+                        />
+                    </form>
                 </Dialog>
             </div>
         );
