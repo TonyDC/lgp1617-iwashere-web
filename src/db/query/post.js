@@ -28,24 +28,11 @@ module.exports.getPostById = (id) => {
 
 module.exports.getPostLikes = (postIdList) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT posts.post_id, COUNT(*) as likes 
-    FROM posts INNER JOIN likes ON posts.post_id = likes.post_id 
-    WHERE posts.post_id = ANY(:postIdList) AND likes.liked = TRUE
+    return db.query(`SELECT posts.post_id, SUM(CASE WHEN liked = TRUE THEN 1 ELSE 0 END) AS likes
+    FROM posts LEFT JOIN likes ON posts.post_id = likes.post_id
+    WHERE posts.post_id = ANY(:postIdList)
     GROUP BY posts.post_id`, {
         replacements: { postIdList },
-        type: db.QueryTypes.SELECT
-    });
-};
-
-module.exports.getPostLikedByUser = (postIdList, userId) => {
-    // language=POSTGRES-SQL
-    return db.query(`SELECT posts.post_id
-    FROM posts INNER JOIN likes ON posts.post_id = likes.post_id 
-    WHERE posts.post_id = ANY(:postIdList) AND likes.user_id = :userId AND likes.liked = TRUE`, {
-        replacements: {
-            postIdList,
-            userId
-        },
         type: db.QueryTypes.SELECT
     });
 };
@@ -60,11 +47,24 @@ module.exports.getPostTags = (postIdList) => {
     });
 };
 
+module.exports.getPostLikedByUser = (postIdList, userId) => {
+    // language=POSTGRES-SQL
+    return db.query(`SELECT post_id
+    FROM likes 
+    WHERE post_id = ANY(:postIdList) AND user_id = :userId AND liked = TRUE`, {
+        replacements: {
+            postIdList,
+            userId
+        },
+        type: db.QueryTypes.SELECT
+    });
+};
+
 module.exports.getPostLike = (postId, userId) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT posts.post_id
-    FROM posts INNER JOIN likes ON posts.post_id = likes.post_id 
-    WHERE posts.post_id = :postId AND likes.user_id = :userId`, {
+    return db.query(`SELECT post_id
+    FROM likes 
+    WHERE post_id = :postId AND user_id = :userId`, {
         replacements: {
             postId,
             userId
@@ -75,7 +75,7 @@ module.exports.getPostLike = (postId, userId) => {
 
 module.exports.addPostLike = (postID, userID) => {
     // language=POSTGRES-SQL
-    return db.query(`INSERT INTO likes (post_id, user_id) VALUES (:postID, :userID)`, {
+    return db.query(`INSERT INTO likes (post_id, user_id, liked) VALUES (:postID, :userID, TRUE)`, {
         replacements: {
             postID,
             userID
@@ -86,7 +86,7 @@ module.exports.addPostLike = (postID, userID) => {
 
 module.exports.updatePostLike = (postID, userID, liked) => {
     // language=POSTGRES-SQL
-    return db.query(`DELETE FROM likes WHERE post_id = :postID AND user_id = :userID AND liked = :liked)`, {
+    return db.query(`UPDATE likes SET liked = :liked WHERE post_id = :postID AND user_id = :userID`, {
         replacements: {
             liked,
             postID,

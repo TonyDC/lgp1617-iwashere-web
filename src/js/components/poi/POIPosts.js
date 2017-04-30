@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Col } from 'react-bootstrap';
 import httpCodes from 'http-status-codes';
+import * as firebase from 'firebase';
 import Paper from 'material-ui/Paper';
 import PropTypes from 'prop-types';
 import { GridLoader as Loader } from 'halogen';
@@ -27,13 +28,20 @@ export default class POIPosts extends Component {
             hasMoreItems: true,
             posts: [],
             postsOffset: 0,
-            tagsFilter: []
+            tagsFilter: [],
+            user: null
         };
     }
 
     componentDidMount() {
         this.componentIsMounted = true;
-        this.fetchPosts();
+        firebase.auth().onAuthStateChanged((user) => {
+            if (this.componentIsMounted) {
+                this.setState({ user }, () => {
+                    this.fetchPosts();
+                });
+            }
+        });
     }
 
     componentWillUnmount() {
@@ -45,7 +53,13 @@ export default class POIPosts extends Component {
             return;
         }
 
-        fetch(`${this.props.url}/poi_posts/${this.props.poiId}/${this.state.postsOffset}/${LIMIT}`, {
+        let url = `${this.props.url}/poi_posts/`;
+        if (this.state.user) {
+            url += `${this.state.user.uid}/`;
+        }
+        url += `${this.props.poiId}/${this.state.postsOffset}/${LIMIT}`;
+
+        fetch(url, {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
         }).
@@ -65,10 +79,6 @@ export default class POIPosts extends Component {
             return response.json();
         }).
         then((newPosts) => {
-            if (!this.componentIsMounted) {
-                return;
-            }
-
             const posts = this.state.posts.slice();
             const postIds = posts.map((post) => {
                 return post.postId;
@@ -79,20 +89,24 @@ export default class POIPosts extends Component {
                     posts.push(post);
                 }
             });
-
             const postsOffset = this.state.postsOffset + newPosts.length;
 
-            this.setState({
-                hasMoreItems: newPosts.length === LIMIT,
-                posts,
-                postsOffset
-            });
+            if (this.componentIsMounted) {
+                this.setState({
+                    hasMoreItems: newPosts.length === LIMIT,
+                    posts,
+                    postsOffset
+                });
+            }
         });
     }
 
     toggleLike(postId) {
-        let post = null;
+        if (!this.state.user) {
+            return;
+        }
 
+        let post = null;
         this.state.posts.forEach((postTemp) => {
             if (postTemp.postId === postId) {
                 post = postTemp;
@@ -101,33 +115,32 @@ export default class POIPosts extends Component {
 
         fetch(`${this.props.url}/like`, {
             body: JSON.stringify({
-                liked: post.liked,
+                liked: !post.likedByUser,
                 postID: postId,
-                userID: this.props.user.uid
+                userID: this.state.user.uid
             }),
             headers: { 'Content-Type': 'application/json' },
             method: 'POST'
         }).
         then((response) => {
-            if (response.status >= httpCodes.BAD_REQUEST) {
+            if (response.status >= httpCodes.BAD_REQUEST || response.status === httpCodes.NO_CONTENT) {
                 return Promise.reject(new Error(response.statusText));
             }
 
             return response.json();
         }).
         then((response) => {
-            if (!response.ok) {
-                return;
-            }
-
-            const { posts } = this.state.posts;
+            const { posts } = this.state;
             posts.forEach((postTemp) => {
                 if (postTemp.postId === postId) {
-                    postTemp.liked = !postTemp.liked;
+                    postTemp.likedByUser = !postTemp.likedByUser;
+                    postTemp.likes = response.likes;
                 }
             });
 
-            this.setState({ posts });
+            if (this.componentIsMounted) {
+                this.setState({ posts });
+            }
         });
     }
 
@@ -148,12 +161,10 @@ export default class POIPosts extends Component {
                       }}
                       key={postEntry.postId}/>
             );
-
             itemClassInverted = !itemClassInverted;
         });
 
-        const terminator = <li key="timeline-terminator" className="clearfix" style={{ 'float': 'none' }} />;
-        postsList.push(terminator);
+        postsList.push(<li key="timeline-terminator" className="clearfix" style={{ 'float': 'none' }} />);
 
         return postsList;
     }
@@ -174,26 +185,22 @@ export default class POIPosts extends Component {
     }
 
     removeTagFilter(tagName) {
-        if (!this.componentIsMounted) {
-            return;
-        }
-
         let { tagsFilter } = this.state;
         tagsFilter = tagsFilter.filter((tag) => {
             return tag !== tagName;
         });
-
-        this.setState({
-            filtering: tagsFilter.length > NO_ELEMENT_SIZE,
-            tagsFilter
-        });
+        if (this.componentIsMounted) {
+            this.setState({
+                filtering: tagsFilter.length > NO_ELEMENT_SIZE,
+                tagsFilter
+            });
+        }
     }
 
     toggleFiltering() {
         if (!this.componentIsMounted) {
             return;
         }
-
         if (this.state.filtering) {
             this.setState({
                 filtering: false,
@@ -260,9 +267,7 @@ export default class POIPosts extends Component {
             }
 
             return (
-                <Col xs={12} mdOffset={2} md={8} lgOffset={2} lg={8}>
-                    {tagFilter}
-                </Col>
+                <Col xs={12} mdOffset={2} md={8} lgOffset={2} lg={8}> {tagFilter} </Col>
             );
         }
 
@@ -274,8 +279,7 @@ export default class POIPosts extends Component {
                     pageStart={0}
                     loadMore={this.fetchPosts.bind(this)}
                     hasMore={this.state.hasMoreItems}
-                    loader={loader}
-                >
+                    loader={loader}>
                     <ul className="timeline timeline-container">
                         {this.getPosts(filteredPosts)}
                     </ul>
@@ -286,7 +290,10 @@ export default class POIPosts extends Component {
 }
 
 POIPosts.propTypes = {
-    poiId: PropTypes.any.isRequired,
+    poiId: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired,
-    user: PropTypes.any
+    user: PropTypes.object
 };
+
+// To access Redux store
+POIPosts.contextTypes = { store: PropTypes.object };
