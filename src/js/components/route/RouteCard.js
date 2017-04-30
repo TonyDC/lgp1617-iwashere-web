@@ -7,7 +7,7 @@ import Tags from '../utils/MyTags';
 import 'styles/route_card.scss';
 import 'styles/utils.scss';
 
-const API_ROUTE_RATING_URL = '/api/poi/rating';
+const API_ROUTE_RATING_URL = '/api/route/auth/rating';
 
 export default class RouteCard extends Component {
 

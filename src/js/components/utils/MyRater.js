@@ -3,6 +3,7 @@ import { Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { GridLoader as Loader } from 'halogen';
 import httpCodes from 'http-status-codes';
+import * as firebase from 'firebase';
 import Rater from 'react-rater';
 
 import 'react-rater/lib/react-rater.css';
@@ -105,15 +106,19 @@ export default class MyRater extends Component {
 
     updateRating(ratingEvent) {
         if (ratingEvent.lastRating >= NO_RATING) {
-            fetch(this.props.url, {
-                body: JSON.stringify({
-                    poiID: this.props.poiId,
-                    rating: ratingEvent.rating,
-                    routeID: this.props.routeId,
-                    userID: this.props.user.uid
-                }),
-                headers: { 'Content-Type': 'application/json' },
-                method: 'POST'
+            firebase.auth().currentUser.getToken(true).then((token) => {
+                return fetch(this.props.url, {
+                    body: JSON.stringify({
+                        poiID: this.props.poiId,
+                        rating: ratingEvent.rating,
+                        routeID: this.props.routeId
+                    }),
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    method: 'POST'
+                });
             }).
             then((response) => {
                 if (!response.ok) {
@@ -166,8 +171,8 @@ export default class MyRater extends Component {
                         <Rater interactive={false} total={MAX_RATING_SCALE} rating={this.state.ratingInfo.rating} />
                         <span className="rating-description"> {this.state.ratingInfo.rating.toFixed(RATING_PRECISION)}/{MAX_RATING_SCALE}</span>
                         <span className="rating-description"><small>{this.state.ratingInfo.ratings} evaluation{ this.state.ratingInfo.ratings === ONE_RATING
-                                                                                                                ? ''
-                                                                                                                : 's'} </small></span>
+                            ? ''
+                            : 's'} </small></span>
                     </Col>
                     {userRating}
                 </Row>

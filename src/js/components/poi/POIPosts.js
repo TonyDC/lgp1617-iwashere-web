@@ -37,7 +37,6 @@ export default class POIPosts extends Component {
     componentDidMount() {
         this.componentIsMounted = true;
         firebase.auth().onAuthStateChanged((user) => {
-            console.log(user);
             if (this.componentIsMounted) {
                 this.setState({ user }, () => {
                     this.fetchPosts();
@@ -124,7 +123,6 @@ export default class POIPosts extends Component {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
-
                 },
                 method: 'POST'
             });
@@ -150,7 +148,7 @@ export default class POIPosts extends Component {
             }
         }).
         catch(() => {
-            Alerts.createErrorAlert('Error submitting the like');
+            Alerts.createErrorAlert('Error submitting the like.');
         });
     }
 

@@ -10,7 +10,7 @@ import 'styles/poi_card.scss';
 import 'styles/utils.scss';
 
 const API_POI_MEDIA_URL = '/api/poi/media/';
-const API_POI_RATING_URL = '/api/poi/rating';
+const API_POI_RATING_URL = '/api/poi/auth/rating';
 
 export default class POICard extends Component {
 
