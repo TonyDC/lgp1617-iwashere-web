@@ -5,12 +5,14 @@ import { Card, CardMedia, CardTitle, CardText } from 'material-ui/Card';
 import Rater from '../utils/MyRater';
 import Carousel from '../utils/MyCarousel';
 import Tags from '../utils/MyTags';
+import Dialog from '../utils/MyDialog';
 
 import 'styles/poi_card.scss';
 import 'styles/utils.scss';
 
 const API_POI_MEDIA_URL = '/api/poi/media/';
 const API_POI_RATING_URL = '/api/poi/rating';
+const API_POI_POST_URL = 'api/poi/post';
 
 export default class POICard extends Component {
 
@@ -18,11 +20,13 @@ export default class POICard extends Component {
         let poiMediaSlider = null;
         let poiTagsPanel = null;
         let ratingPanel = null;
+        let poiPost = null;
 
         if (this.props.poiInfo) {
             poiMediaSlider = <Carousel url={`${API_POI_MEDIA_URL}${this.props.poiInfo.poiId}`} />;
             poiTagsPanel = <Tags readOnly tags={this.props.poiInfo.tags} />;
             ratingPanel = <Rater url={API_POI_RATING_URL} poiId={this.props.poiInfo.poiId} user={this.props.user}/>;
+            poiPost = <Dialog open="true" url={API_POI_POST_URL} poiId={this.props.poiInfo.poiId} user={this.props.user}/>;
         }
 
         return (
@@ -40,6 +44,9 @@ export default class POICard extends Component {
 
                 <div className="poi-rating">
                     {ratingPanel}
+                </div>
+                <div className="poi-post">
+                    {poiPost}
                 </div>
                 { this.props.children }
             </Card>
