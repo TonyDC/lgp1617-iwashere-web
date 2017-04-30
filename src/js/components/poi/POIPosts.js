@@ -11,6 +11,7 @@ import MoreIcon from "material-ui/svg-icons/image/style";
 import CancelIcon from "material-ui/svg-icons/navigation/close";
 import Tags from '../utils/MyTags';
 import Post from '../utils/Post';
+import Alerts from '../utils/Alerts';
 
 import 'styles/timeline.scss';
 
@@ -36,6 +37,7 @@ export default class POIPosts extends Component {
     componentDidMount() {
         this.componentIsMounted = true;
         firebase.auth().onAuthStateChanged((user) => {
+            console.log(user);
             if (this.componentIsMounted) {
                 this.setState({ user }, () => {
                     this.fetchPosts();
@@ -113,14 +115,19 @@ export default class POIPosts extends Component {
             }
         });
 
-        fetch(`${this.props.url}/like`, {
-            body: JSON.stringify({
-                liked: !post.likedByUser,
-                postID: postId,
-                userID: this.state.user.uid
-            }),
-            headers: { 'Content-Type': 'application/json' },
-            method: 'POST'
+        firebase.auth().currentUser.getToken(true).then((token) => {
+            return fetch(`${this.props.url}/auth/like`, {
+                body: JSON.stringify({
+                    liked: !post.likedByUser,
+                    postID: postId
+                }),
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+
+                },
+                method: 'POST'
+            });
         }).
         then((response) => {
             if (response.status >= httpCodes.BAD_REQUEST || response.status === httpCodes.NO_CONTENT) {
@@ -141,6 +148,9 @@ export default class POIPosts extends Component {
             if (this.componentIsMounted) {
                 this.setState({ posts });
             }
+        }).
+        catch(() => {
+            Alerts.createErrorAlert('Error submitting the like');
         });
     }
 
@@ -225,8 +235,8 @@ export default class POIPosts extends Component {
         }
 
         const filterIcon = this.state.filtering
-                            ? <CancelIcon/>
-                            : <MoreIcon/>;
+            ? <CancelIcon/>
+            : <MoreIcon/>;
         const toggleTagFilterButton =
             <div className="filter-button-container">
                 <FloatingActionButton backgroundColor="#012935"
