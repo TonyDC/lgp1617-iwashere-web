@@ -1,4 +1,4 @@
-const utils = require('../utils/misc');
+const utils = require('./misc');
 const db = root_require('src/db/query');
 
 const NO_ELEMENT_SIZE = 0;
@@ -10,7 +10,7 @@ const ZERO_RATING = 0;
  *
  * @return {Object}
  */
-module.exports.handleSuggestionsResults = (results) => {
+module.exports.handlePOIResults = (results) => {
 
     return new Promise((fulfill, reject) => {
         const poisList = utils.convertObjectsToCamelCase(results);

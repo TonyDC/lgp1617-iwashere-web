@@ -1,6 +1,7 @@
 'use strict';
 
 const utils = require('../utils/misc');
+const aux = require('../utils/post_aux');
 
 const httpCodes = require('http-status-codes');
 
@@ -13,22 +14,13 @@ const DECIMAL_BASE = 10;
 
 const ZERO_INDEX = 0;
 const ONE_INDEX = 1;
-const TWO_INDEX = 1;
+const TWO_INDEX = 2;
 const NO_ELEMENT_SIZE = 0;
-const ONE_SIZE = 2;
 const TWO_SIZE = 2;
-const THREE_SIZE = 2;
+const THREE_SIZE = 3;
 
-/**
- * Handle GET request for posts.
- * @param {Object} req
- * @param {Object} res
- * @param {Object} next
- *
- * @return {void}
- */
-function handlePostRequest(req, res, next) {
-    const { poiID, offset, limit, userID } = req.params;
+router.get('/poi_posts/:poiID/:offset/:limit', (req, res, next) => {
+    const { poiID, offset, limit } = req.params;
 
     if (!poiID || isNaN(parseInt(poiID, DECIMAL_BASE)) || !limit || !offset || isNaN(parseInt(offset, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
@@ -36,72 +28,40 @@ function handlePostRequest(req, res, next) {
         return;
     }
 
-    const { postDB } = db;
-    postDB.getPOIPosts(poiID, offset, limit).
-    then((postsList) => {
-        const posts = utils.convertObjectsToCamelCase(postsList);
-
-        if (posts && posts.length > NO_ELEMENT_SIZE) {
-            const postsIds = posts.map((post) => {
-                return post.postId;
-            });
-
-            const additionalPostInfo = [postDB.getPostTags(utils.convertArrayToString(postsIds)),
-                postDB.getPostLikes(utils.convertArrayToString(postsIds))];
-
-            if (userID) {
-                additionalPostInfo.push(postDB.getPostLikedByUser(postsIds, userID));
-            }
-
-            Promise.all(additionalPostInfo).
-            then((results) => {
-                if (results && (results.length === TWO_SIZE || results.length === THREE_SIZE)) {
-
-                    const postTags = utils.convertObjectsToCamelCase(results[ZERO_INDEX]);
-                    const postLikes = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
-                    let postsLikedByUser = [];
-                    if (userID) {
-                        postsLikedByUser = utils.convertObjectsToCamelCase(results[TWO_INDEX]);
-                    }
-
-                    posts.forEach((post) => {
-                        post.tags = postTags.filter((tag) => {
-                            return tag.postId === post.postId;
-                        });
-
-                        post.likes = postLikes.filter((like) => {
-                            return like.postId === post.postId;
-                        });
-
-                        if (post.likes.length > NO_ELEMENT_SIZE) {
-                            post.likes = post.likes[ZERO_INDEX].likes;
-                        } else {
-                            post.likes = NO_ELEMENT_SIZE;
-                        }
-
-                        post.likedByUser = postsLikedByUser.filter((like) => {
-                                return like.postId === post.postId;
-                            }).length > NO_ELEMENT_SIZE;
-                    });
-
-                    res.json(posts).end();
-                }
-            });
-        } else {
+    aux.handleGetPOIPostsRequest(req.params).
+    then((posts) => {
+        if (posts.length === NO_ELEMENT_SIZE) {
             res.sendStatus(httpCodes.NO_CONTENT).end();
+        } else {
+            res.json(posts).end();
         }
     }).
     catch((error) => {
         next(error);
     });
-}
-
-router.get('/poi_posts/:poiID/:offset/:limit', (req, res, next) => {
-    handlePostRequest(req, res, next);
 });
 
 router.get('/poi_posts/:userID/:poiID/:offset/:limit', (req, res, next) => {
-    handlePostRequest(req, res, next);
+    const { poiID, offset, limit, userID } = req.params;
+
+    if (!poiID || isNaN(parseInt(poiID, DECIMAL_BASE)) || !limit || !offset ||
+        isNaN(parseInt(offset, DECIMAL_BASE)) || !userID || typeof userID !== 'string') {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    aux.handleGetPOIPostsRequest(req.params).
+    then((posts) => {
+        if (posts.length === NO_ELEMENT_SIZE) {
+            res.sendStatus(httpCodes.NO_CONTENT).end();
+        } else {
+            res.json(posts).end();
+        }
+    }).
+    catch((error) => {
+        next(error);
+    });
 });
 
 router.post('/post', (req, res, next) => {
@@ -147,27 +107,27 @@ router.post('/like', (req, res, next) => {
     }
 
     const { postDB, userDB } = db;
-    Promise.all([userDB.getUserByUID(userID), postDB.getPostById(postID)]).
+    Promise.all([userDB.getUserByUID(userID), postDB.getPostById(postID), postDB.getPostLike(postID, userID)]).
     then((results) => {
 
-        if (results && results.length === TWO_SIZE &&
+        if (results && results.length === THREE_SIZE &&
             results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE &&
             results[ONE_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE) {
 
-            postDB.getPostLike(postID, userID).
-            then((result) => {
-                if (result && result.length === ONE_SIZE &&
-                    results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE) {
+            if (results[TWO_INDEX] && results[TWO_INDEX].length > NO_ELEMENT_SIZE) {
 
-                    return postDB.updatePostLike(postID, userID, liked).
-                    then(() => {
-                        res.end();
+                return postDB.updatePostLike(postID, userID, liked).then(() => {
+                    return postDB.getPostLikes(utils.convertArrayToString([postID])).
+                    then((postLikes) => {
+                        res.json(utils.convertObjectToCamelCase(postLikes[ZERO_INDEX])).end();
                     });
-                }
+                });
+            }
 
-                return postDB.addPostLike(postID, userID).
-                then(() => {
-                    res.end();
+            return postDB.addPostLike(postID, userID).then(() => {
+                return postDB.getPostLikes(utils.convertArrayToString([postID])).
+                then((postLikes) => {
+                    res.json(utils.convertObjectToCamelCase(postLikes[ZERO_INDEX])).end();
                 });
             });
         }
@@ -181,7 +141,5 @@ router.post('/like', (req, res, next) => {
         next(error);
     });
 });
-
-
 
 module.exports = router;

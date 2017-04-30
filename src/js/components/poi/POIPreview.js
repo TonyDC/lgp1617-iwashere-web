@@ -25,6 +25,7 @@ export default class POIPreview extends Component {
     }
 
     componentDidMount() {
+        this.componentIsMounted = true;
         this.reduxListenerUnsubscribe = this.context.store.subscribe(() => {
             const reduxState = this.context.store.getState();
             if (!this.componentIsMounted) {
@@ -34,9 +35,7 @@ export default class POIPreview extends Component {
             this.setState({ user: reduxState.userStatus.userInfo });
         });
 
-        this.fetchPOIInfo();
-
-        this.componentIsMounted = true;
+        this.fetchPoiInfo();
     }
 
     componentWillUnmount() {
@@ -48,7 +47,7 @@ export default class POIPreview extends Component {
         this.props.router.push(`/poi/${this.props.poiId}`);
     }
 
-    fetchPOIInfo() {
+    fetchPoiInfo() {
         if (isNaN(parseInt(this.props.poiId, DECIMAL_BASE))) {
             if (!this.componentIsMounted) {
                 return;
@@ -106,6 +105,7 @@ export default class POIPreview extends Component {
             );
         }
 
+
         if (typeof this.state.poiInfo === 'undefined' || typeof this.state.user === 'undefined' || this.state.loadingPOIInfo) {
             return (
                 <div className="hor-align vert-align">
@@ -132,10 +132,13 @@ export default class POIPreview extends Component {
     }
 }
 
+POIPreview.defaultProps = { reload: false };
+
 POIPreview.propTypes = {
     history: PropTypes.object,
     onClose: PropTypes.any,
     poiId: PropTypes.string.isRequired,
+    reload: PropTypes.bool,
     router: PropTypes.object.isRequired
 };
 

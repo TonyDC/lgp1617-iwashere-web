@@ -9,7 +9,6 @@ import POICard from './POICard';
 import Error from '../utils/Error';
 import POIPosts from './POIPosts';
 
-import 'styles/poi_card.scss';
 import 'styles/utils.scss';
 
 const DECIMAL_BASE = 10;
@@ -95,7 +94,7 @@ export default class POIDetail extends Component {
             );
         }
 
-        if (this.state.loadingPOIInfo) {
+        if (this.state.loadingPoiInfo) {
             return (
                 <div className="hor-align vert-align">
                     <Loader color="#012935" className="loader"/>
