@@ -11,6 +11,9 @@ export default class MyDialog extends Component {
         super(props);
 
         this.state = { open: false };
+
+        this.handleOpen = this.handleOpen.bind(this);
+        this.handleClose = this.handleClose.bind(this);
     }
 
     handleOpen() {
@@ -37,10 +40,12 @@ export default class MyDialog extends Component {
         ];
 
         return (
-            <div>
-                <RaisedButton label="Dialog" onTouchTap={this.handleOpen} />
+            <div className="poi-detail-buttons">
+                <RaisedButton
+                    className="poi-detail-button" backgroundColor="#39A8E0"
+                    label="Comment" onTouchTap={this.handleOpen} />
                 <Dialog
-                    title="Dialog With Actions"
+                    title="Create a new comment"
                     actions={actions}
                     modal={false}
                     open={this.state.open}
