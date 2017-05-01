@@ -245,11 +245,12 @@ export default class POIPosts extends Component {
                 <Paper className="paper-min-width" zDepth={4}>
                     <div className="filter-content">
                         <Tags className="tag-input"
+                              title="Filter by tag..."
                               tags={this.state.tagsFilter}
-                              onAddTag={(tagName) => {
+                              onAddTag={(tagId, tagName) => {
                                   this.addTagFilter(tagName);
                               }}
-                              onRemoveTag={(tagName) => {
+                              onRemoveTag={(tagId, tagName) => {
                                   this.removeTagFilter(tagName);
                               }}
                         />

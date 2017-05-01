@@ -67,7 +67,7 @@ export default class MyTags extends Component {
                 </Chip>
             );
         }
-        
+
         return (
             <Chip
                 labelColor="white"
@@ -92,15 +92,19 @@ export default class MyTags extends Component {
             return;
         }
 
-        const allTags = this.state.allTags.map((tag) => {
-            return tag.name;
+        let tagId = NOT_FOUND;
+        this.state.allTags.forEach((tag) => {
+            if (tag.tagName === tag.name) {
+                tagId = tag.tagId;
+            }
         });
-        if (allTags.indexOf(tagName) === NOT_FOUND) {
+
+        if (tagId < NOT_FOUND) {
             return;
         }
 
         this.setState({ filterInput: '' });
-        this.props.onAddTag(tagName);
+        this.props.onAddTag(tagName, tagId);
     }
 
     render() {
@@ -114,10 +118,10 @@ export default class MyTags extends Component {
             input =
                 <AutoComplete
                     searchText={this.state.filterInput}
-                    hintText="Filter by tag..."
+                    hintText={this.props.title}
                     dataSource={allTags}
                     onUpdateInput={this.handleUpdateInput.bind(this)}
-                    floatingLabelText="Filter by tag..."
+                    floatingLabelText={this.props.title}
                     onNewRequest={ (tag) => {
                         this.addTag(tag);
                     }}
@@ -147,5 +151,6 @@ MyTags.propTypes = {
     onAddTag: PropTypes.func,
     onRemoveTag: PropTypes.func,
     readOnly: PropTypes.bool.isRequired,
-    tags: PropTypes.array
+    tags: PropTypes.array,
+    title: PropTypes.string
 };

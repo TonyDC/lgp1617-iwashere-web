@@ -4,6 +4,7 @@ import httpCodes from 'http-status-codes';
 import * as firebase from 'firebase';
 import Dialog from 'material-ui/Dialog';
 import Alerts from '../utils/Alerts';
+import Tags from '../utils/MyTags';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -69,7 +70,9 @@ export default class CreatePostDialog extends Component {
 
 
     handleOpen() {
-        this.setState({ open: true });
+        if (this.componentIsMounted) {
+            this.setState({open: true});
+        }
     }
 
     handleClose(clearData) {
@@ -79,7 +82,9 @@ export default class CreatePostDialog extends Component {
             newState.post = null;
         }
 
-        this.setState(newState);
+        if (this.componentIsMounted) {
+            this.setState(newState);
+        }
     }
 
     handleDescription(event) {
@@ -87,7 +92,17 @@ export default class CreatePostDialog extends Component {
 
         const { post } = this.state;
         post.description = event.target.value
-        this.setState({ post });
+        if (this.componentIsMounted) {
+            this.setState({post});
+        }
+    }
+
+    addTagToPost(tagId) {
+        // TODO add tagId in this.state.tags
+    }
+
+    removeTagFromPost(tagId) {
+        // TODO remove tagId in this.state.tags
     }
 
     render() {
@@ -124,6 +139,16 @@ export default class CreatePostDialog extends Component {
                     }}
                 >
                     <form>
+                        <Tags className="tag-input"
+                              title="Add tag..."
+                              tags={this.state.post.tags}
+                              onAddTag={(tagId) => {
+                                  this.addTagToPost(tagId);
+                              }}
+                              onRemoveTag={(tagId) => {
+                                  this.removeTagFromPost(tagId);
+                              }}
+                        />
                         <TextField hintText="Enter a description"
                                    floatingLabelText="Description"
                                    onChange={ this.handleDescription.bind(this) }
