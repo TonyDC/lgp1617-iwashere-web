@@ -98,7 +98,8 @@ module.exports.updatePostLike = (postID, userID, liked) => {
 
 module.exports.createPost = (description, poiID, userID) => {
     // language=POSTGRES-SQL
-    return db.query(`INSERT INTO posts(description, poi_id, user_id) VALUES(:description, :poiID, :userID`, {
+    return db.query(`INSERT INTO posts(description, poi_id, user_id) 
+    VALUES(:description, :poiID, :userID) RETURNING postId`, {
         replacements: {
             description,
             poiID,
@@ -108,12 +109,15 @@ module.exports.createPost = (description, poiID, userID) => {
     });
 };
 
-module.exports.setPostTags = (postId, tagIdList) => {
+module.exports.addPostTags = (postId, tagIdList) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT * 
-    FROM post_tags INNER JOIN tags ON tags.tag_id=post_tags.tag_id 
-    WHERE post_tags.post_id = ANY(:tagIdList)`, {
-        replacements: { postId, tagIdList },
+    return db.query(` 
+    INSERT INTO post_tags(tag_id, post_id)
+    VALUES (:postId, unnset(:tagIdList))`, {
+        replacements: {
+            postId,
+            tagIdList
+        },
         type: db.QueryTypes.SELECT
     });
 };

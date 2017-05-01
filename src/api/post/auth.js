@@ -33,7 +33,7 @@ router.post('/', (req, res, next) => {
             results[ONE_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE) {
 
             return Promise.all([postDB.createPost(description, poiID, userID),
-                postDB.setPostTags[utils.convertArrayToString(tags)]]).
+                postDB.addPostTags[utils.convertArrayToString(tags)]]).
             then(() => {
                 res.end();
             });
