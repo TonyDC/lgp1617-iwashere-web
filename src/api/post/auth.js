@@ -14,7 +14,7 @@ const NO_ELEMENT_SIZE = 0;
 const TWO_SIZE = 2;
 
 router.post('/', (req, res, next) => {
-    const { poiID, description, tags} = req.body;
+    const { poiID, description, tags } = req.body;
 
     if (!poiID || typeof description !== 'string' || !tags) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
@@ -33,7 +33,7 @@ router.post('/', (req, res, next) => {
             results[ONE_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE) {
 
             return Promise.all([postDB.createPost(description, poiID, userID),
-                postDB.addPostTags[utils.convertArrayToString(tags)]]).
+                postDB.addPostTags[utils.convertListToArray(tags)]]).
             then(() => {
                 res.end();
             });

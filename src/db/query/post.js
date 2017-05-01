@@ -109,15 +109,15 @@ module.exports.createPost = (description, poiID, userID) => {
     });
 };
 
-module.exports.addPostTags = (postId, tagIdList) => {
+module.exports.addPostTags = (postID, tagIdList) => {
     // language=POSTGRES-SQL
     return db.query(` 
     INSERT INTO post_tags(tag_id, post_id)
-    VALUES (:postId, unnset(:tagIdList))`, {
+    VALUES (:postID, :tagIdList)`, {
         replacements: {
-            postId,
+            postID,
             tagIdList
         },
-        type: db.QueryTypes.SELECT
+        type: db.QueryTypes.INSERT
     });
 };
