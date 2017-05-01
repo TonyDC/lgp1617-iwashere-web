@@ -15,7 +15,8 @@ export default class CreatePostDialog extends Component {
 
         this.state = {
             inProgress: false,
-            open: false
+            open: false,
+            post: {}
         };
 
         this.handleOpen = this.handleOpen.bind(this);
@@ -31,6 +32,7 @@ export default class CreatePostDialog extends Component {
     }
 
     createPost() {
+        console.log(this.state.post);
 
         firebase.auth().currentUser.getToken(true).then((token) => {
             return fetch(this.props.url, {
@@ -52,6 +54,9 @@ export default class CreatePostDialog extends Component {
             }
 
             return response.json();
+        }).
+        then((newPost) => {
+           // TODO update list of posts
         }).
         catch(() => {
             if (!this.componentIsMounted) {
@@ -98,6 +103,9 @@ export default class CreatePostDialog extends Component {
                 label="Submit"
                 primary
                 keyboardFocused
+                onTouchTap={() => {
+                    this.createPost();
+                }}
             />
         ];
 
