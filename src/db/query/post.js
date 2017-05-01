@@ -113,11 +113,37 @@ module.exports.addPostTags = (postID, tagIdList) => {
     // language=POSTGRES-SQL
     return db.query(` 
     INSERT INTO post_tags(tag_id, post_id)
-    VALUES (:postID, :tagIdList)`, {
+    VALUES (:postID, :tagIdList) ON CONFLICT DO NOTHING`, {
         replacements: {
             postID,
             tagIdList
         },
         type: db.QueryTypes.INSERT
+    });
+};
+
+module.exports.getUserPost = (userID, postID) => {
+    // language=POSTGRES-SQL
+    return db.query(`SELECT *
+    FROM posts
+    WHERE post_id = :postID AND user_id = :userID`, {
+        replacements: {
+            postID,
+            userID
+        },
+        type: db.QueryTypes.SELECT
+    });
+};
+
+module.exports.setPostDeleted = (userID, postID) => {
+    // language=POSTGRES-SQL
+    return db.query(`UPDATE ON posts
+    SET deleted = TRUE
+    WHERE post_id = :postID AND user_id = :userID`, {
+        replacements: {
+            postID,
+            userID
+        },
+        type: db.QueryTypes.UPDATE
     });
 };

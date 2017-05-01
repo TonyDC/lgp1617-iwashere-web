@@ -13,6 +13,7 @@ module.exports = {
             CREATE TABLE posts (
                 post_id BIGSERIAL PRIMARY KEY,
                 description TEXT NOT NULL,
+                deleted BOOL NOT NULL DEFAULT FALSE,
                 poi_id BIGINT NOT NULL REFERENCES pois(poi_id) ON DELETE RESTRICT,
                 user_id TEXT NOT NULL REFERENCES users(uid) ON DELETE RESTRICT,
                 created_at TIMESTAMP NOT NULL,

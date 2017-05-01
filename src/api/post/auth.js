@@ -11,6 +11,7 @@ const db = root_require('src/db/query');
 const ZERO_INDEX = 0;
 const ONE_INDEX = 1;
 const NO_ELEMENT_SIZE = 0;
+const ONE_SIZE = 1;
 const TWO_SIZE = 2;
 
 router.post('/', (req, res, next) => {
@@ -40,6 +41,40 @@ router.post('/', (req, res, next) => {
         }
 
         res.status(httpCodes.BAD_REQUEST).json({ message: '(userID, poiID) not found' }).
+        end();
+
+        return null;
+    }).
+    catch((error) => {
+        next(error);
+    });
+});
+
+router.put('/', (req, res, next) => {
+    const { postID } = req.body;
+
+    if (!postID) {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    const userID = req.auth.token.uid;
+
+    const { postDB } = db;
+    postDB.getUserPost(userID, postID).
+    then((results) => {
+
+        if (results && results.length === ONE_SIZE &&
+            results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE) {
+
+            return postDB.setPostDeleted(userID, postID).
+            then(() => {
+                res.end();
+            });
+        }
+
+        res.status(httpCodes.BAD_REQUEST).json({ message: '(userID, postID) not found' }).
         end();
 
         return null;
