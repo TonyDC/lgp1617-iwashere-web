@@ -5,6 +5,7 @@ module.exports = {
     down: (queryInterface) => {
         return queryInterface.sequelize.query(`
             DROP TRIGGER timestamp_tags_trigger ON tags;
+            DROP INDEX tags_name_index;
             DROP TABLE tags;
         `);
     },
@@ -16,6 +17,8 @@ module.exports = {
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP
             );
+            
+            CREATE INDEX tags_name_index ON tags USING GIN (to_tsvector('portuguese', name));
         
             CREATE TRIGGER timestamp_tags_trigger
                 BEFORE INSERT OR UPDATE ON tags

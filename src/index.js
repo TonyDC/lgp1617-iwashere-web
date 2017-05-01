@@ -25,6 +25,7 @@ firebase.initializeApp(FIREBASE_CONFIG);
 
 // Material Design
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
 // Inject onTouchTap event
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -37,7 +38,7 @@ injectTapEventPlugin();
 const store = createStore(reducers);
 
 render(
-    <MuiThemeProvider>
+    <MuiThemeProvider muiTheme={getMuiTheme()}>
     <Provider store={store}>
         <App/>
     </Provider>

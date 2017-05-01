@@ -22,7 +22,8 @@
 }
 
 .app-logo {
-    padding: 6px 30px !important;
+    object-fit: contain;
+    width: 40px;
 }
 
 .navbar-container {
@@ -39,4 +40,12 @@
     color: #fff;
     background-color: transparent;
     text-decoration: none;
+}
+
+.toolbar-custom-style {
+    background-color: #012935 !important;
+}
+
+.toolbar-separator-custom-style {
+    background-color: #a3a3a3 !important;
 }

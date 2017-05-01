@@ -26,5 +26,9 @@ if (process.env.NODE_ENV === 'test') {
         GOOGLE_MAPS_API_KEY: ' '
     };
 } else {
-    module.exports = process.env.NODE_ENV === 'production' ? require('./config') : require('./my-config');
+    let importedModule = require('./my-config.js');
+    if (process.env.NODE_ENV === 'production') {
+        importedModule = require('./config.js');
+    }
+    module.exports = importedModule;
 }

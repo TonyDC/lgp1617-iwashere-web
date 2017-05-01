@@ -91,4 +91,8 @@ export default class App extends Component {
 }
 
 // To access Redux store
-App.contextTypes = { store: PropTypes.object };
+// Also, to 'pull' context from Jest tests
+App.contextTypes = {
+    muiTheme: PropTypes.object,
+    store: PropTypes.object
+};

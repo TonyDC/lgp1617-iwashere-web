@@ -62,6 +62,8 @@ __Example of db-config.js__
 #### `config.js`
 
 __Example of config.js__
+
+```
 module.exports = {
     FIREBASE_ADMIN_SDK_PATH: './config/iwashere-mobile-firebase-adminsdk-fuch3-2a1e5fef6f.json',
     FIREBASE_CONFIG: {
@@ -88,7 +90,7 @@ module.exports = {
         }
     }
 };
-
+```
 
 ### Production mode
 

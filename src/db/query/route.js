@@ -61,3 +61,11 @@ module.exports.addRouteRating = (routeID, userID, rating) => {
         type: db.QueryTypes.INSERT
     });
 };
+
+module.exports.searchRoute = (query) => {
+    // language=POSTGRES-SQL
+    return db.query(`SELECT * FROM routes WHERE text @@ to_tsquery(:query) `, {
+        replacements: { query },
+        type: db.QueryTypes.SELECT
+    });
+};

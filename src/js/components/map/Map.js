@@ -222,7 +222,9 @@ export default class Map extends Component {
                 <GoogleMapReact defaultCenter={this.props.center}
                                 defaultZoom={this.props.zoom}
                                 bootstrapURLKeys={{ key: GOOGLE_MAPS_API_KEY }}
-                                onGoogleApiLoaded={ this.onGoogleAPILoaded.bind(this) }>
+                                onGoogleApiLoaded={ this.onGoogleAPILoaded.bind(this) }
+                                yesIWantToUseGoogleMapApiInternals
+                >
                     { currentLocation }
                     { poisInViewport }
                 </GoogleMapReact>
