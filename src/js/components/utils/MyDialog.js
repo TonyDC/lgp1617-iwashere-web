@@ -36,6 +36,8 @@ export default class MyDialog extends Component {
             throw new Error('Bad post parameter');
         }
 
+        return;
+
         return fetch(this.props.url, {
             body: JSON.stringify({
                 description: post,
@@ -54,7 +56,7 @@ export default class MyDialog extends Component {
                 return;
             }
             this.setState({ inProgress: false });
-            Alerts.createErrorAlert('Error while creating a post');
+            Alerts.createErrorAlert('Error while creating the post.');
         });
     }
 
@@ -86,9 +88,9 @@ export default class MyDialog extends Component {
             <div className="poi-detail-buttons">
                 <RaisedButton
                     className="poi-detail-button" backgroundColor="#39A8E0"
-                    label="Comment" onTouchTap={this.handleOpen} />
+                    label="Post" onTouchTap={this.handleOpen} />
                 <Dialog
-                    title="Create a new comment"
+                    title="Create a new post"
                     actions={actions}
                     modal={false}
                     open={this.state.open}
@@ -97,8 +99,8 @@ export default class MyDialog extends Component {
                     <form onSubmit={ this.state.inProgress
                         ? null
                         : this.createPost.bind(this) } >
-                        <TextField hintText="New Post"
-                                   floatingLabelText="Create Comment"
+                        <TextField hintText="Enter a description"
+                                   floatingLabelText="Description"
                                    fullWidth
                         />
                     </form>

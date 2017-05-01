@@ -5,7 +5,7 @@ import { Card, CardMedia, CardTitle, CardText } from 'material-ui/Card';
 import Rater from '../utils/MyRater';
 import Carousel from '../utils/MyCarousel';
 import Tags from '../utils/MyTags';
-import Dialog from '../utils/MyDialog';
+import PostDialog from '../utils/MyDialog';
 
 import 'styles/poi_card.scss';
 import 'styles/utils.scss';
@@ -26,7 +26,10 @@ export default class POICard extends Component {
             poiMediaSlider = <Carousel url={`${API_POI_MEDIA_URL}${this.props.poiInfo.poiId}`} />;
             poiTagsPanel = <Tags readOnly tags={this.props.poiInfo.tags} />;
             ratingPanel = <Rater url={API_POI_RATING_URL} poiId={this.props.poiInfo.poiId} user={this.props.user}/>;
-            poiPost = <Dialog open url={API_POI_POST_URL} poiId={this.props.poiInfo.poiId} user={this.props.user}/>;
+
+            if (this.props.showPostButton) {
+                poiPost = <PostDialog open url={API_POI_POST_URL} poiId={this.props.poiInfo.poiId} user={this.props.user}/>;
+            }
         }
 
         return (
@@ -55,6 +58,8 @@ export default class POICard extends Component {
     }
 }
 
+POICard.defaultProps = { showPostButton: false };
+
 POICard.propTypes = {
     children: PropTypes.any,
     poiInfo: PropTypes.shape({
@@ -64,5 +69,6 @@ POICard.propTypes = {
         poiId: PropTypes.string.isRequired,
         tags: PropTypes.array.isRequired
     }).isRequired,
+    showPostButton: PropTypes.bool,
     user: PropTypes.object
 };
