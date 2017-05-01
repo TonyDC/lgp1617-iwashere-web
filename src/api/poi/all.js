@@ -182,7 +182,7 @@ router.post('/post', (req, res, next) => {
             });
         }
 
-        res.status(httpCodes.BAD_REQUEST).json({ message: '(userID, postID) not found' }).
+        res.status(httpCodes.BAD_REQUEST).json({ message: '(userID, poiID) not found' }).
         end();
 
         return null;

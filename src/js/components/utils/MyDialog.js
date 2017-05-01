@@ -5,6 +5,8 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import PropTypes from 'prop-types';
 
+import Alerts from '../utils/Alerts';
+
 
 export default class MyDialog extends Component {
 
@@ -22,28 +24,17 @@ export default class MyDialog extends Component {
 
     componentDidMount() {
         this.componentIsMounted = true;
-        this.getRating();
     }
 
     componentWillUnmount() {
         this.componentIsMounted = false;
     }
 
-    handleText(event) {
-        event.preventDefault();
-
-        if (!this.componentIsMounted) {
-            return;
-        }
-
-        this.setState({ comment: event.target.value });
-    }
-
     createPost(post) {
+        console.log(post);
         if (!post || typeof post !== 'string') {
             throw new Error('Bad post parameter');
         }
-
 
         return fetch(this.props.url, {
             body: JSON.stringify({
@@ -62,36 +53,11 @@ export default class MyDialog extends Component {
             if (!this.componentIsMounted) {
                 return;
             }
-
-            const { postInfo } = this.state;
+            this.setState({ inProgress: false });
+            Alerts.createErrorAlert('Error while creating a post');
         });
     }
 
-    submitPost(event) {
-        event.preventDefault();
-
-        if (!this.componentIsMounted) {
-            return;
-        }
-
-        this.setState({ inProgress: 'Creating new post...' });
-
-        let { post } = this.state;
-
-        if (typeof post !== 'string') {
-            this.setState({ inProgress: false });
-
-            return;
-        }
-
-        this.setState({ post });
-        if (!post) {
-            this.setState({ inProgress: false });
-
-            return;
-        }
-
-    }
 
     handleOpen() {
         this.setState({ open: true });
@@ -130,7 +96,7 @@ export default class MyDialog extends Component {
                 >
                     <form onSubmit={ this.state.inProgress
                         ? null
-                        : this.submitPost.bind(this) } >
+                        : this.createPost.bind(this) } >
                         <TextField hintText="New Post"
                                    floatingLabelText="Create Comment"
                                    fullWidth
