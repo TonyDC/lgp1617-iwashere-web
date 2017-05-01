@@ -5,14 +5,14 @@ import { Card, CardMedia, CardTitle, CardText } from 'material-ui/Card';
 import Rater from '../utils/MyRater';
 import Carousel from '../utils/MyCarousel';
 import Tags from '../utils/MyTags';
-import PostDialog from '../utils/MyDialog';
+import CreatePostDialog from '../utils/CreatePostDialog';
 
 import 'styles/poi_card.scss';
 import 'styles/utils.scss';
 
 const API_POI_MEDIA_URL = '/api/poi/media/';
 const API_POI_RATING_URL = '/api/poi/rating';
-const API_POI_POST_URL = 'api/poi/post';
+const API_POI_POST_URL = 'api/post';
 
 export default class POICard extends Component {
 
@@ -27,8 +27,8 @@ export default class POICard extends Component {
             poiTagsPanel = <Tags readOnly tags={this.props.poiInfo.tags} />;
             ratingPanel = <Rater url={API_POI_RATING_URL} poiId={this.props.poiInfo.poiId} user={this.props.user}/>;
 
-            if (this.props.showPostButton) {
-                poiPost = <PostDialog open url={API_POI_POST_URL} poiId={this.props.poiInfo.poiId} user={this.props.user}/>;
+            if (this.props.showPostButton && this.props.user) {
+                poiPost = <CreatePostDialog open url={API_POI_POST_URL} poiId={this.props.poiInfo.poiId} user={this.props.user}/>;
             }
         }
 

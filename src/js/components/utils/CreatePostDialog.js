@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import httpCodes from 'http-status-codes';
+import * as firebase from 'firebase';
 import Dialog from 'material-ui/Dialog';
+import Alerts from '../utils/Alerts';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import PropTypes from 'prop-types';
 
-import Alerts from '../utils/Alerts';
-
-
-export default class MyDialog extends Component {
+export default class CreatePostDialog extends Component {
 
     constructor(props) {
         super(props);
@@ -30,26 +30,28 @@ export default class MyDialog extends Component {
         this.componentIsMounted = false;
     }
 
-    createPost(post) {
-        console.log(post);
-        if (!post || typeof post !== 'string') {
-            throw new Error('Bad post parameter');
-        }
+    createPost() {
 
-        return;
-
-        return fetch(this.props.url, {
-            body: JSON.stringify({
-                description: post,
-                poiID: this.props.poiId,
-                userID: this.props.user.uid
-            }),
-            headers: { 'Content-Type': 'application/json' },
-            method: 'POST'
-        }).then((response) => {
-            if (!response.ok) {
-                throw new Error();
+        firebase.auth().currentUser.getToken(true).then((token) => {
+            return fetch(this.props.url, {
+                body: JSON.stringify({
+                    description: this.state.post.description,
+                    poiID: this.props.poiId,
+                    userID: this.props.user.uid
+                }),
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                method: 'POST'
+            });
+        }).
+        then((response) => {
+            if (response.status >= httpCodes.BAD_REQUEST || response.status === httpCodes.NO_CONTENT) {
+                return Promise.reject(new Error(response.statusText));
             }
+
+            return response.json();
         }).
         catch(() => {
             if (!this.componentIsMounted) {
@@ -65,8 +67,22 @@ export default class MyDialog extends Component {
         this.setState({ open: true });
     }
 
-    handleClose() {
-        this.setState({ open: false });
+    handleClose(clearData) {
+        const newState = { open: false };
+
+        if (clearData) {
+            newState.post = null;
+        }
+
+        this.setState(newState);
+    }
+
+    handleDescription(event) {
+        event.preventDefault();
+
+        const { post } = this.state;
+        post.description = event.target.value
+        this.setState({ post });
     }
 
     render() {
@@ -74,13 +90,14 @@ export default class MyDialog extends Component {
             <FlatButton
                 label="Cancel"
                 primary
-                onTouchTap={this.handleClose}
+                onTouchTap={() => {
+                    this.handleClose(true);
+                }}
             />,
             <FlatButton
                 label="Submit"
                 primary
                 keyboardFocused
-                onTouchTap={this.handleClose}
             />
         ];
 
@@ -88,19 +105,20 @@ export default class MyDialog extends Component {
             <div className="poi-detail-buttons">
                 <RaisedButton
                     className="poi-detail-button" backgroundColor="#39A8E0"
-                    label="Post" onTouchTap={this.handleOpen} />
+                    label="New Post" onTouchTap={this.handleOpen} />
                 <Dialog
                     title="Create a new post"
                     actions={actions}
                     modal={false}
                     open={this.state.open}
-                    onRequestClose={this.handleClose}
+                    onRequestClose={() => {
+                        this.handleClose(true);
+                    }}
                 >
-                    <form onSubmit={ this.state.inProgress
-                        ? null
-                        : this.createPost.bind(this) } >
+                    <form>
                         <TextField hintText="Enter a description"
                                    floatingLabelText="Description"
+                                   onChange={ this.handleDescription.bind(this) }
                                    fullWidth
                         />
                     </form>
@@ -110,7 +128,7 @@ export default class MyDialog extends Component {
     }
 }
 
-MyDialog.propTypes = {
+CreatePostDialog.propTypes = {
     open: PropTypes.bool.isRequired,
     poiId: PropTypes.string,
     url: PropTypes.string.isRequired,

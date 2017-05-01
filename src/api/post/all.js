@@ -16,7 +16,6 @@ const ZERO_INDEX = 0;
 const ONE_INDEX = 1;
 const TWO_INDEX = 2;
 const NO_ELEMENT_SIZE = 0;
-const TWO_SIZE = 2;
 const THREE_SIZE = 3;
 
 router.get('/poi_posts/:poiID/:offset/:limit', (req, res, next) => {
@@ -63,7 +62,6 @@ router.get('/poi_posts/:userID/:poiID/:offset/:limit', (req, res, next) => {
         next(error);
     });
 });
-
 
 router.post('/like', (req, res, next) => {
     const { userID, postID, liked } = req.body;

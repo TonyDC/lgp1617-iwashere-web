@@ -106,5 +106,14 @@ module.exports.createPost = (description, poiID, userID) => {
         },
         type: db.QueryTypes.INSERT
     });
+};
 
-}
+module.exports.setPostTags = (postId, tagIdList) => {
+    // language=POSTGRES-SQL
+    return db.query(`SELECT * 
+    FROM post_tags INNER JOIN tags ON tags.tag_id=post_tags.tag_id 
+    WHERE post_tags.post_id = ANY(:tagIdList)`, {
+        replacements: { postId, tagIdList },
+        type: db.QueryTypes.SELECT
+    });
+};

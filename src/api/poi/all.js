@@ -162,39 +162,6 @@ router.get('/rating/:poiID', (req, res, next) => {
     });
 });
 
-router.post('/post', (req, res, next) => {
-    const { userID, poiID, description } = req.body;
-
-    if (!poiID || !userID || typeof userID !== 'string' || typeof description !== 'string') {
-        res.sendStatus(httpCodes.BAD_REQUEST).end();
-
-        return;
-    }
-
-    const { postDB, userDB, poiDB } = db;
-    Promise.all([userDB.getUserByUID(userID), poiDB.getPOIDetailByID(poiID)]).
-    then((results) => {
-
-        if (results && results.length === TWO_SIZE &&
-            results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE &&
-            results[ONE_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE) {
-
-            return postDB.createPost(description, poiID, userID).
-            then(() => {
-                res.end();
-            });
-        }
-
-        res.status(httpCodes.BAD_REQUEST).json({ message: '(userID, poiID) not found' }).
-        end();
-
-        return null;
-    }).
-    catch((error) => {
-        next(error);
-    });
-});
-
 router.post('/rating', (req, res, next) => {
     const { userID, poiID, rating } = req.body;
     if (!poiID || !userID || typeof userID !== 'string' || !rating || RATING_VALUES.indexOf(rating) === VALUE_NOT_FOUND ||
