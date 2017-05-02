@@ -11,6 +11,7 @@ import 'styles/utils.scss';
 
 const API_POI_MEDIA_URL = '/api/poi/media/';
 const API_POI_RATING_URL = '/api/poi/rating';
+const API_POI_AUTH_RATING_URL = '/api/poi/auth/rating';
 
 export default class POICard extends Component {
 
@@ -22,7 +23,10 @@ export default class POICard extends Component {
         if (this.props.poiInfo) {
             poiMediaSlider = <Carousel url={`${API_POI_MEDIA_URL}${this.props.poiInfo.poiId}`} />;
             poiTagsPanel = <Tags readOnly tags={this.props.poiInfo.tags} />;
-            ratingPanel = <Rater url={API_POI_RATING_URL} poiId={this.props.poiInfo.poiId} user={this.props.user}/>;
+            ratingPanel = <Rater url={API_POI_RATING_URL}
+                                 authUrl={API_POI_AUTH_RATING_URL}
+                                 poiId={this.props.poiInfo.poiId}
+                                 user={this.props.user}/>;
         }
 
         return (

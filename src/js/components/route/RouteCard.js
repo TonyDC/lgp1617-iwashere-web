@@ -7,7 +7,8 @@ import Tags from '../utils/MyTags';
 import 'styles/route_card.scss';
 import 'styles/utils.scss';
 
-const API_ROUTE_RATING_URL = '/api/poi/rating';
+const API_ROUTE_RATING_URL = '/api/route/rating';
+const API_ROUTE_AUTH_RATING_URL = '/api/route/auth/rating';
 
 export default class RouteCard extends Component {
 
@@ -17,7 +18,10 @@ export default class RouteCard extends Component {
 
         if (this.props.routeInfo) {
             routeTagsPanel = <Tags readOnly tags={this.props.routeInfo.tags} />;
-            ratingPanel = <Rater url={API_ROUTE_RATING_URL} poiId={this.props.routeInfo.routeId} user={this.props.user}/>;
+            ratingPanel = <Rater url={API_ROUTE_RATING_URL}
+                                 authUrl={API_ROUTE_AUTH_RATING_URL}
+                                 poiId={this.props.routeInfo.routeId}
+                                 user={this.props.user}/>;
         }
 
         return (
