@@ -9,6 +9,7 @@ import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 
+const API_POI_POST_URL = 'api/post/auth/';
 const ONE_ELEMENT = 1;
 const NOT_FOUND = -1;
 
@@ -40,7 +41,7 @@ export default class CreatePostDialog extends Component {
         console.log(this.state.post);
 
         firebase.auth().currentUser.getToken(true).then((token) => {
-            return fetch(this.props.url, {
+            return fetch(API_POI_POST_URL, {
                 body: JSON.stringify({
                     description: this.state.post.description,
                     poiID: this.props.poiId,
@@ -54,6 +55,7 @@ export default class CreatePostDialog extends Component {
             });
         }).
         then((response) => {
+            console.log(response);
             if (response.status >= httpCodes.BAD_REQUEST || response.status === httpCodes.NO_CONTENT) {
                 return Promise.reject(new Error(response.statusText));
             }
@@ -69,7 +71,8 @@ export default class CreatePostDialog extends Component {
                 this.setState({ open: false });
             }
         }).
-        catch(() => {
+        catch((error) => {
+            console.log(error);
             if (!this.componentIsMounted) {
                 return;
             }
@@ -77,7 +80,6 @@ export default class CreatePostDialog extends Component {
             Alerts.createErrorAlert('Error while creating the post.');
         });
     }
-
 
     handleOpen() {
         if (this.componentIsMounted) {
@@ -189,6 +191,5 @@ export default class CreatePostDialog extends Component {
 CreatePostDialog.propTypes = {
     onNewPost: PropTypes.func,
     poiId: PropTypes.string,
-    url: PropTypes.string.isRequired,
     user: PropTypes.any
 };

@@ -12,7 +12,6 @@ import 'styles/utils.scss';
 
 const API_POI_MEDIA_URL = '/api/poi/media/';
 const API_POI_RATING_URL = '/api/poi/rating';
-const API_POI_POST_URL = 'api/auth/post';
 const API_POI_AUTH_RATING_URL = '/api/poi/auth/rating';
 
 export default class POICard extends Component {
@@ -32,8 +31,7 @@ export default class POICard extends Component {
                                  user={this.props.user}/>;
 
             if (this.props.showPostButton && this.props.user) {
-                poiPost = <CreatePostDialog url={API_POI_POST_URL}
-                                            poiId={this.props.poiInfo.poiId}
+                poiPost = <CreatePostDialog poiId={this.props.poiInfo.poiId}
                                             user={this.props.user}/>;
             }
         }

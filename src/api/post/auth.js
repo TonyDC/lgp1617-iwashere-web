@@ -31,15 +31,20 @@ router.post('/', (req, res, next) => {
     const { postDB, userDB, poiDB } = db;
     Promise.all([userDB.getUserByUID(userID), poiDB.getPOIDetailByID(poiID)]).
     then((results) => {
-
         if (results && results.length === TWO_SIZE &&
             results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE &&
             results[ONE_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE) {
 
             return Promise.all([postDB.createPost(description, poiID, userID),
                 postDB.addPostTags[utils.convertListToArray(tags)]]).
-            then(() => {
-                res.end();
+            then((creationResults) => {
+                if (results && results.length === TWO_SIZE &&
+                    results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE) {
+                    res.json(utils.convertObjectToCamelCase(creationResults[ZERO_INDEX])).end();
+                } else {
+                    res.status(httpCodes.BAD_REQUEST).json({ message: 'unknown error' }).
+                    end();
+                }
             });
         }
 
