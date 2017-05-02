@@ -18,6 +18,8 @@ import RouteDetail from './components/route/RouteDetail';
 import POISearch from './components/poi/POISearch';
 import Feed from './components/feed/Feed';
 
+import ContentEditorLogin from './components/content-editor/Login';
+
 import UnauthRoutes from './routes/UnauthRoutes';
 import POIRoutes from './routes/POIRoutes';
 import RouteRoutes from './routes/RouteRoutes';
@@ -82,6 +84,7 @@ export default class App extends Component {
                         <Route path="recover" component={ PasswordReset }/>
                     </Route>
                     <Route path="*" component={ NoMatch }/>
+                    <Route path="content-editor" component={ ContentEditorLogin }/>
                 </Route>
             </Router>
         );
