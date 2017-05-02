@@ -11,6 +11,7 @@ import MoreIcon from "material-ui/svg-icons/image/style";
 import CancelIcon from "material-ui/svg-icons/navigation/close";
 import Tags from '../utils/MyTags';
 import Post from '../utils/Post';
+import Alerts from '../utils/Alerts';
 
 import 'styles/timeline.scss';
 
@@ -90,7 +91,6 @@ export default class POIPosts extends Component {
                 }
             });
             const postsOffset = this.state.postsOffset + newPosts.length;
-
             if (this.componentIsMounted) {
                 this.setState({
                     hasMoreItems: newPosts.length === LIMIT,
@@ -105,7 +105,6 @@ export default class POIPosts extends Component {
         if (!this.state.user) {
             return;
         }
-
         let post = null;
         this.state.posts.forEach((postTemp) => {
             if (postTemp.postId === postId) {
@@ -113,14 +112,18 @@ export default class POIPosts extends Component {
             }
         });
 
-        fetch(`${this.props.url}/like`, {
-            body: JSON.stringify({
-                liked: !post.likedByUser,
-                postID: postId,
-                userID: this.state.user.uid
-            }),
-            headers: { 'Content-Type': 'application/json' },
-            method: 'POST'
+        firebase.auth().currentUser.getToken(true).then((token) => {
+            return fetch(`${this.props.url}/auth/like`, {
+                body: JSON.stringify({
+                    liked: !post.likedByUser,
+                    postID: postId
+                }),
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                method: 'POST'
+            });
         }).
         then((response) => {
             if (response.status >= httpCodes.BAD_REQUEST || response.status === httpCodes.NO_CONTENT) {
@@ -137,20 +140,20 @@ export default class POIPosts extends Component {
                     postTemp.likes = response.likes;
                 }
             });
-
             if (this.componentIsMounted) {
                 this.setState({ posts });
             }
+        }).
+        catch(() => {
+            Alerts.createErrorAlert('Error submitting the like.');
         });
     }
 
     getPosts(posts) {
         const postsList = [];
-
         if (!posts || !posts.length) {
             return postsList;
         }
-
         let itemClassInverted = false;
         posts.forEach((postEntry) => {
             postsList.push(
@@ -163,7 +166,6 @@ export default class POIPosts extends Component {
             );
             itemClassInverted = !itemClassInverted;
         });
-
         postsList.push(<li key="timeline-terminator" className="clearfix" style={{ 'float': 'none' }} />);
 
         return postsList;
@@ -173,14 +175,11 @@ export default class POIPosts extends Component {
         if (!this.componentIsMounted) {
             return;
         }
-
         const tagsFilter = this.state.tagsFilter.slice();
         if (tagsFilter.indexOf(tagName) !== NOT_FOUND) {
             return;
         }
-
         tagsFilter.push(tagName);
-
         this.setState({ tagsFilter });
     }
 
@@ -225,8 +224,8 @@ export default class POIPosts extends Component {
         }
 
         const filterIcon = this.state.filtering
-                            ? <CancelIcon/>
-                            : <MoreIcon/>;
+            ? <CancelIcon/>
+            : <MoreIcon/>;
         const toggleTagFilterButton =
             <div className="filter-button-container">
                 <FloatingActionButton backgroundColor="#012935"
@@ -252,8 +251,7 @@ export default class POIPosts extends Component {
                               }}
                               onRemoveTag={(tagId, tagName) => {
                                   this.removeTagFilter(tagName);
-                              }}
-                        />
+                              }}/>
                     </div>
                 </Paper>
             </div>;

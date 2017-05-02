@@ -7,8 +7,8 @@ module.exports = {
     up: (queryInterface) => {
 
         return queryInterface.bulkInsert('tags', [
-            { name: '#feup' },
-            { name: '#uporto' }
+            { name: 'feup' },
+            { name: 'uporto' }
         ], {});
     }
 };
