@@ -106,7 +106,6 @@ export default class POIPosts extends Component {
         if (!this.state.user) {
             return;
         }
-
         let post = null;
         this.state.posts.forEach((postTemp) => {
             if (postTemp.postId === postId) {
@@ -154,11 +153,9 @@ export default class POIPosts extends Component {
 
     getPosts(posts) {
         const postsList = [];
-
         if (!posts || !posts.length) {
             return postsList;
         }
-
         let itemClassInverted = false;
         posts.forEach((postEntry) => {
             postsList.push(
@@ -171,7 +168,6 @@ export default class POIPosts extends Component {
             );
             itemClassInverted = !itemClassInverted;
         });
-
         postsList.push(<li key="timeline-terminator" className="clearfix" style={{ 'float': 'none' }} />);
 
         return postsList;
@@ -181,14 +177,11 @@ export default class POIPosts extends Component {
         if (!this.componentIsMounted) {
             return;
         }
-
         const tagsFilter = this.state.tagsFilter.slice();
         if (tagsFilter.indexOf(tagName) !== NOT_FOUND) {
             return;
         }
-
         tagsFilter.push(tagName);
-
         this.setState({ tagsFilter });
     }
 
@@ -259,8 +252,7 @@ export default class POIPosts extends Component {
                               }}
                               onRemoveTag={(tagName) => {
                                   this.removeTagFilter(tagName);
-                              }}
-                        />
+                              }}/>
                     </div>
                 </Paper>
             </div>;
