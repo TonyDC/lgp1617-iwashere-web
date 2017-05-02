@@ -32,7 +32,9 @@ export default class POICard extends Component {
                                  user={this.props.user}/>;
 
             if (this.props.showPostButton && this.props.user) {
-                poiPost = <CreatePostDialog open url={API_POI_POST_URL} poiId={this.props.poiInfo.poiId} user={this.props.user}/>;
+                poiPost = <CreatePostDialog url={API_POI_POST_URL}
+                                            poiId={this.props.poiInfo.poiId}
+                                            user={this.props.user}/>;
             }
         }
 

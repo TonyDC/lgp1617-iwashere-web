@@ -107,7 +107,7 @@ export default class POIDetail extends Component {
         if (this.props.params.id) {
 
             if (this.state.poiInfo) {
-                poiCard = <POICard poiInfo={this.state.poiInfo} user={this.state.user} showPostButton={true}/>;
+                poiCard = <POICard poiInfo={this.state.poiInfo} user={this.state.user} showPostButton/>;
 
                 if (this.state.poiInfo.type === PLACE_TYPE) {
                     userMediaTimeline =

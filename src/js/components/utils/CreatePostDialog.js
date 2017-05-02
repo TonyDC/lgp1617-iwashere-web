@@ -9,6 +9,9 @@ import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 
+const ONE_ELEMENT = 1;
+const NOT_FOUND = -1;
+
 export default class CreatePostDialog extends Component {
 
     constructor(props) {
@@ -17,7 +20,7 @@ export default class CreatePostDialog extends Component {
         this.state = {
             inProgress: false,
             open: false,
-            post: {}
+            post: { tags: [] }
         };
 
         this.handleOpen = this.handleOpen.bind(this);
@@ -33,6 +36,7 @@ export default class CreatePostDialog extends Component {
     }
 
     createPost() {
+        // TODO add form check
         console.log(this.state.post);
 
         firebase.auth().currentUser.getToken(true).then((token) => {
@@ -57,7 +61,13 @@ export default class CreatePostDialog extends Component {
             return response.json();
         }).
         then((newPost) => {
-           // TODO update list of posts
+            if (this.props.onNewPost) {
+                this.props.onNewPost(newPost);
+            }
+
+            if (this.componentIsMounted) {
+                this.setState({ open: false });
+            }
         }).
         catch(() => {
             if (!this.componentIsMounted) {
@@ -71,16 +81,15 @@ export default class CreatePostDialog extends Component {
 
     handleOpen() {
         if (this.componentIsMounted) {
-            this.setState({open: true});
+            this.setState({ open: true });
         }
     }
 
-    handleClose(clearData) {
-        const newState = { open: false };
-
-        if (clearData) {
-            newState.post = null;
-        }
+    handleClose() {
+        const newState = {
+            open: false,
+            post: { tags: [] }
+        };
 
         if (this.componentIsMounted) {
             this.setState(newState);
@@ -93,16 +102,32 @@ export default class CreatePostDialog extends Component {
         const { post } = this.state;
         post.description = event.target.value
         if (this.componentIsMounted) {
-            this.setState({post});
+            this.setState({ post });
         }
     }
 
     addTagToPost(tagId) {
-        // TODO add tagId in this.state.tags
+        const { post } = this.state;
+        const tagIndex = post.tags.indexOf(tagId);
+        if (tagIndex !== NOT_FOUND) {
+            return;
+        }
+        post.tags.push(tagId);
+        if (this.componentIsMounted) {
+            this.setState({ post });
+        }
     }
 
     removeTagFromPost(tagId) {
-        // TODO remove tagId in this.state.tags
+        const { post } = this.state;
+        const tagIndex = post.tags.indexOf(tagId);
+        if (tagIndex === NOT_FOUND) {
+            return;
+        }
+        post.tags.splice(tagIndex, ONE_ELEMENT);
+        if (this.componentIsMounted) {
+            this.setState({ post });
+        }
     }
 
     render() {
@@ -111,7 +136,7 @@ export default class CreatePostDialog extends Component {
                 label="Cancel"
                 primary
                 onTouchTap={() => {
-                    this.handleClose(true);
+                    this.handleClose();
                 }}
             />,
             <FlatButton
@@ -135,7 +160,7 @@ export default class CreatePostDialog extends Component {
                     modal={false}
                     open={this.state.open}
                     onRequestClose={() => {
-                        this.handleClose(true);
+                        this.handleClose();
                     }}
                 >
                     <form>
@@ -162,7 +187,7 @@ export default class CreatePostDialog extends Component {
 }
 
 CreatePostDialog.propTypes = {
-    open: PropTypes.bool.isRequired,
+    onNewPost: PropTypes.func,
     poiId: PropTypes.string,
     url: PropTypes.string.isRequired,
     user: PropTypes.any
