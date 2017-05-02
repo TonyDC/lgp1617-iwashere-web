@@ -20,5 +20,7 @@
 - https://certbot.eff.org/#ubuntuxenial-nginx
 - http://tobiasahlin.com/spinkit/
 - http://realfavicongenerator.net/
+- https://gist.github.com/markerikson/ead940a93a2a877dc97824e5f839840f
+- https://spring.io/understanding/javascript-modules
 
 
