@@ -18,6 +18,7 @@ const TWO_SIZE = 2;
 const THREE_SIZE = 3;
 
 router.post('/', (req, res, next) => {
+    console.error('chech-1');
     const { poiID, description, tags } = req.body;
 
     if (!poiID || typeof description !== 'string' || !tags) {
@@ -31,13 +32,17 @@ router.post('/', (req, res, next) => {
     const { postDB, userDB, poiDB } = db;
     Promise.all([userDB.getUserByUID(userID), poiDB.getPOIDetailByID(poiID)]).
     then((results) => {
+console.error('chech');
         if (results && results.length === TWO_SIZE &&
             results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE &&
             results[ONE_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE) {
 
+            console.error('chech2');
+
             return Promise.all([postDB.createPost(description, poiID, userID),
                 postDB.addPostTags[utils.convertListToArray(tags)]]).
             then((creationResults) => {
+                console.error('chech3');
                 if (results && results.length === TWO_SIZE &&
                     results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE) {
                     res.json(utils.convertObjectToCamelCase(creationResults[ZERO_INDEX])).end();
