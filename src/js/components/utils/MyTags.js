@@ -95,7 +95,7 @@ export default class MyTags extends Component {
         let tagId = NOT_FOUND;
         this.state.allTags.forEach((tag) => {
             if (tag.name === tagName) {
-                tagId = tag.tagId;
+                ({ tagId } = tag);
             }
         });
 

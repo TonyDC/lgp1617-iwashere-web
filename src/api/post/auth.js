@@ -25,8 +25,7 @@ const { thumb } = require('node-thumbnail');
 const { sendFileToFirebase, unlink, detectFile } = require('../utils/async_conversions');
 
 router.post('/', (req, res, next) => {
-    const { poiID, description, tags } = req.body;
-
+    const { poiID, description, tags, contentUrl, contentHash, contentType } = req.body;
     if (!poiID || typeof description !== 'string' || !tags) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
@@ -35,28 +34,36 @@ router.post('/', (req, res, next) => {
 
     const userID = req.auth.token.uid;
 
-    const { postDB, userDB, poiDB } = db;
-    Promise.all([userDB.getUserByUID(userID), poiDB.getPOIDetailByID(poiID)]).
+    const { contentDB, postDB, userDB, poiDB } = db;
+    const primaryChecks = [userDB.getUserByUID(userID), poiDB.getPOIDetailByID(poiID)];
+    if (contentType && typeof contentType === 'string') {
+        primaryChecks.push(contentDB.getContentTypeByName(contentType));
+    }
+    Promise.all(primaryChecks).
     then((results) => {
-        if (results && results.length === TWO_SIZE &&
-            results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE &&
-            results[ONE_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE) {
+        if (utils.checkResultList(results, [primaryChecks.length], true)) {
 
             return postDB.createPost(description, poiID, userID).
             then((postResult) => {
                 if (postResult && postResult.length > NO_ELEMENT_SIZE) {
                     const { postId } = utils.convertObjectToCamelCase(postResult[ZERO_INDEX]);
+                    const { contentTypeId } = utils.convertObjectToCamelCase(results[TWO_INDEX][ONE_INDEX]);
 
-                    return postDB.addPostTags(postId, tags).
-                    then((tagResult) => {
-                        if (tagResult && tagResult.length > NO_ELEMENT_SIZE) {
+                    const createAdditionalPostInfo = [postDB.addPostTags(postId, tags)];
+                    if (contentUrl && typeof contentUrl === 'string' &&
+                        contentHash && typeof contentHash === 'string' &&
+                        contentType && typeof contentType === 'string') {
+                        createAdditionalPostInfo.push(postDB.addPostContent(postId, contentUrl, contentHash, contentTypeId));
+                    }
+
+                    return Promise.all(createAdditionalPostInfo).
+                    then((additionalPostInfo) => {
+                        if (utils.checkResultList(additionalPostInfo, [createAdditionalPostInfo.length], true)) {
 
                             return Promise.all([postDB.getPostById(postId),
                                 postDB.getPostTags(utils.convertArrayToString([postId]))]).
-                            then((getPostResult) => {
-                                if (getPostResult && getPostResult.length === TWO_SIZE &&
-                                    getPostResult[ZERO_INDEX] && getPostResult[ZERO_INDEX].length > NO_ELEMENT_SIZE &&
-                                    getPostResult[ONE_INDEX] && getPostResult[ONE_INDEX].length > NO_ELEMENT_SIZE) {
+                                then((getPostResult) => {
+                                    if (utils.checkResultList(getPostResult, [TWO_SIZE], true)) {
 
                                     const newPost = utils.convertObjectToCamelCase(getPostResult[ZERO_INDEX]);
                                     newPost.tags = utils.convertObjectsToCamelCase(getPostResult[ONE_INDEX]);
@@ -71,7 +78,7 @@ router.post('/', (req, res, next) => {
                             });
                         }
 
-                        res.status(httpCodes.BAD_REQUEST).json({ message: 'error adding tags to post' }).
+                        res.status(httpCodes.BAD_REQUEST).json({ message: 'error adding tags or content to post' }).
                         end();
 
                         return null;
@@ -85,7 +92,7 @@ router.post('/', (req, res, next) => {
             });
         }
 
-        res.status(httpCodes.BAD_REQUEST).json({ message: '(userID, poiID) not found' }).
+        res.status(httpCodes.BAD_REQUEST).json({ message: 'userID, poiID or contentType not found' }).
         end();
 
         return null;
