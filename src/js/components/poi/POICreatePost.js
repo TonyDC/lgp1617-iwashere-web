@@ -37,9 +37,6 @@ export default class CreatePostDialog extends Component {
     }
 
     createPost() {
-        // TODO add form check
-        console.log(this.state.post);
-
         firebase.auth().currentUser.getToken(true).then((token) => {
             return fetch(API_POI_POST_URL, {
                 body: JSON.stringify({
@@ -100,7 +97,7 @@ export default class CreatePostDialog extends Component {
         event.preventDefault();
 
         const { post } = this.state;
-        post.description = event.target.value
+        post.description = event.target.value;
         if (this.componentIsMounted) {
             this.setState({ post });
         }
