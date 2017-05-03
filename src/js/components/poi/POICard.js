@@ -5,7 +5,7 @@ import { Card, CardMedia, CardTitle, CardText } from 'material-ui/Card';
 import Rater from '../utils/MyRater';
 import Carousel from '../utils/MyCarousel';
 import Tags from '../utils/MyTags';
-import CreatePostDialog from '../utils/CreatePostDialog';
+import CreatePostDialog from './POICreatePost';
 
 import 'styles/poi_card.scss';
 import 'styles/utils.scss';

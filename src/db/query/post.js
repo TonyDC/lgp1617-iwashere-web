@@ -99,7 +99,7 @@ module.exports.updatePostLike = (postID, userID, liked) => {
 module.exports.createPost = (description, poiID, userID) => {
     // language=POSTGRES-SQL
     return db.query(`INSERT INTO posts(description, poi_id, user_id) 
-    VALUES(:description, :poiID, :userID) RETURNING postId`, {
+    VALUES(:description, :poiID, :userID) RETURNING post_id`, {
         replacements: {
             description,
             poiID,
@@ -112,8 +112,8 @@ module.exports.createPost = (description, poiID, userID) => {
 module.exports.addPostTags = (postID, tagIdList) => {
     // language=POSTGRES-SQL
     return db.query(` 
-    INSERT INTO post_tags(tag_id, post_id)
-    VALUES (:postID, :tagIdList) ON CONFLICT DO NOTHING`, {
+    INSERT INTO post_tags(post_id, tag_id)
+    VALUES (:postID, unnest(array[:tagIdList])) ON CONFLICT DO NOTHING RETURNING tag_id`, {
         replacements: {
             postID,
             tagIdList

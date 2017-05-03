@@ -94,17 +94,17 @@ export default class MyTags extends Component {
 
         let tagId = NOT_FOUND;
         this.state.allTags.forEach((tag) => {
-            if (tag.tagName === tag.name) {
+            if (tag.name === tagName) {
                 tagId = tag.tagId;
             }
         });
 
-        if (tagId < NOT_FOUND) {
+        if (tagId === NOT_FOUND) {
             return;
         }
 
         this.setState({ filterInput: '' });
-        this.props.onAddTag(tagName, tagId);
+        this.props.onAddTag(tagId, tagName);
     }
 
     render() {

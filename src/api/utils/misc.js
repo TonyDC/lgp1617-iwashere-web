@@ -84,24 +84,3 @@ module.exports.convertArrayToString = (objects) => {
 
     return `${arrayString}}`;
 };
-
-/**
- * Returns the array in string form, as required by POSTGRESQL.
- * @param {Object[]} objects array with original objects
- *
- * @return {string} array in string form
- */
-module.exports.convertListToArray = (objects) => {
-    let arrayString = 'array[';
-
-    if (objects && objects.length) {
-        let index = ZERO_INDEX;
-        arrayString = `${arrayString}${objects[index++]}`;
-
-        for (; index < objects.length; index++) {
-            arrayString = `${arrayString}, ${objects[index]}`;
-        }
-    }
-
-    return `${arrayString}]`;
-};

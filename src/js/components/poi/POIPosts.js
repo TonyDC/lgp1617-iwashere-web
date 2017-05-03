@@ -91,6 +91,7 @@ export default class POIPosts extends Component {
                 }
             });
             const postsOffset = this.state.postsOffset + newPosts.length;
+
             if (this.componentIsMounted) {
                 this.setState({
                     hasMoreItems: newPosts.length === LIMIT,
@@ -140,6 +141,7 @@ export default class POIPosts extends Component {
                     postTemp.likes = response.likes;
                 }
             });
+
             if (this.componentIsMounted) {
                 this.setState({ posts });
             }

@@ -18,7 +18,6 @@ const TWO_SIZE = 2;
 const THREE_SIZE = 3;
 
 router.post('/', (req, res, next) => {
-    console.error('chech-1');
     const { poiID, description, tags } = req.body;
 
     if (!poiID || typeof description !== 'string' || !tags) {
@@ -32,24 +31,50 @@ router.post('/', (req, res, next) => {
     const { postDB, userDB, poiDB } = db;
     Promise.all([userDB.getUserByUID(userID), poiDB.getPOIDetailByID(poiID)]).
     then((results) => {
-console.error('chech');
         if (results && results.length === TWO_SIZE &&
             results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE &&
             results[ONE_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE) {
 
-            console.error('chech2');
+            return postDB.createPost(description, poiID, userID).
+            then((postResult) => {
+                if (postResult && postResult.length > NO_ELEMENT_SIZE) {
+                    const { postId } = utils.convertObjectToCamelCase(postResult[ZERO_INDEX]);
 
-            return Promise.all([postDB.createPost(description, poiID, userID),
-                postDB.addPostTags[utils.convertListToArray(tags)]]).
-            then((creationResults) => {
-                console.error('chech3');
-                if (results && results.length === TWO_SIZE &&
-                    results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE) {
-                    res.json(utils.convertObjectToCamelCase(creationResults[ZERO_INDEX])).end();
-                } else {
-                    res.status(httpCodes.BAD_REQUEST).json({ message: 'unknown error' }).
-                    end();
+                    return postDB.addPostTags(postId, tags).
+                    then((tagResult) => {
+                        if (tagResult && tagResult.length > NO_ELEMENT_SIZE) {
+
+                            return Promise.all([postDB.getPostById(postId),
+                                postDB.getPostTags(utils.convertArrayToString([postId]))]).
+                                then((getPostResult) => {
+                                    if (getPostResult && getPostResult.length === TWO_SIZE &&
+                                        getPostResult[ZERO_INDEX] && getPostResult[ZERO_INDEX].length > NO_ELEMENT_SIZE &&
+                                        getPostResult[ONE_INDEX] && getPostResult[ONE_INDEX].length > NO_ELEMENT_SIZE) {
+
+                                        const newPost = utils.convertObjectToCamelCase(getPostResult[ZERO_INDEX]);
+                                        newPost.tags = utils.convertObjectsToCamelCase(getPostResult[ONE_INDEX]);
+                                        newPost.likes = NO_ELEMENT_SIZE;
+                                        newPost.likedByUser = false;
+
+                                        res.json(newPost).end();
+                                    } else {
+                                        res.status(httpCodes.BAD_REQUEST).json({ message: 'unknown error' }).
+                                        end();
+                                    }
+                                });
+                        }
+
+                        res.status(httpCodes.BAD_REQUEST).json({ message: 'error adding tags to post' }).
+                        end();
+
+                        return null;
+                    });
                 }
+
+                res.status(httpCodes.BAD_REQUEST).json({ message: 'error creating post' }).
+                end();
+
+                return null;
             });
         }
 
