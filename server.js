@@ -14,6 +14,7 @@ const mainConfig = require('./config');
 const path = require('path');
 const bodyParser = require('body-parser');
 const express = require('express');
+const formidable = require('express-formidable');
 const httpCodes = require('http-status-codes');
 const firebaseAdmin = require("firebase-admin");
 
@@ -58,6 +59,13 @@ app.use(bodyParser.json());
 
 // URL-encoded body parser
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(formidable({
+    hash: 'sha1',
+    keepExtensions: true,
+    maxFieldsSize: 2 * 1024 * 1024,
+    multiples: true // req.files to be arrays of files
+}));
 
 // Firebase Admin SDK Initialization
 const serviceAccountKey = require(mainConfig.FIREBASE_ADMIN_SDK_PATH);
