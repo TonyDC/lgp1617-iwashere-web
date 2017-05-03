@@ -167,10 +167,10 @@ export default class CreatePostDialog extends Component {
                         <Tags className="tag-input"
                               title="Add tag..."
                               tags={this.state.post.tags}
-                              onAddTag={(tagId, tagName) => {
+                              onAddTag={(tagId) => {
                                   this.addTagToPost(tagId);
                               }}
-                              onRemoveTag={(tagId, tagName) => {
+                              onRemoveTag={(tagId) => {
                                   this.removeTagFromPost(tagId);
                               }}
                         />

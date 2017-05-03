@@ -214,7 +214,6 @@ export default class POIPosts extends Component {
 
     render() {
         let filteredPosts = this.state.posts.slice();
-
         if (this.state.tagsFilter.length) {
             filteredPosts = filteredPosts.filter((post) => {
                 const postTagsInFilter = post.tags.filter((postTag) => {

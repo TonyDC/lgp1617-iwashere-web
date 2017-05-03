@@ -1,5 +1,7 @@
 /* eslint guard-for-in: "off" */
 
+const NOT_FOUND = -1;
+const NO_ELEMENT_SIZE = 0;
 const ZERO_INDEX = 0;
 const ONE_INDEX = 1;
 
@@ -83,4 +85,28 @@ module.exports.convertArrayToString = (objects) => {
     }
 
     return `${arrayString}}`;
+};
+
+/**
+ * Ensures the resultList has an acceptable size and that .
+ * @param {[][]} resultList list of results
+ * @param {[]} acceptableLengths acceptable lengths of the result list
+ * @param {boolean} containsLists tells if the result list contains lists
+ *
+ * @return {boolean} array in string form
+ */
+module.exports.checkResultList = (resultList, acceptableLengths, containsLists = false) => {
+    if (!resultList) {
+        return false;
+    }
+
+    if (containsLists) {
+        for (let index = 0; index < resultList.length; index++) {
+            if (!(resultList[index] && resultList[index].length > NO_ELEMENT_SIZE)) {
+                return false;
+            }
+        }
+    }
+
+    return acceptableLengths.indexOf(resultList.length) !== NOT_FOUND;
 };

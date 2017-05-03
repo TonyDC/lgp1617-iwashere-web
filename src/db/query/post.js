@@ -147,3 +147,17 @@ module.exports.setPostDeleted = (userID, postID) => {
         type: db.QueryTypes.UPDATE
     });
 };
+
+module.exports.addPostContent = (postID, contentUrl, contentHash, contentTypeId) => {
+    // language=POSTGRES-SQL
+    return db.query(`INSERT INTO post_contents(post_id, url, hash, content_type_id) 
+    VALUES(:postID, :contentUrl, :contentHash, :contentTypeId) RETURNING content_id`, {
+        replacements: {
+            contentHash,
+            contentTypeId,
+            contentUrl,
+            postID
+        },
+        type: db.QueryTypes.INSERT
+    });
+};
