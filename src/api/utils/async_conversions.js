@@ -4,6 +4,8 @@ const fs = require('fs');
 const storage = require('@google-cloud/storage');
 const { Magic, MAGIC_MIME_TYPE } = require('mmmagic');
 
+const sharp = require('sharp');
+
 const config = require('../../../config');
 
 // Authenticating on a per-API-basis.
@@ -72,3 +74,16 @@ module.exports.sendFileToFirebase = (src, dest, metadata) => {
     });
 };
 
+module.exports.resizeImageToPNG = (filename, output, size) => {
+    return new Promise((resolve, reject) => {
+        sharp(filename).resize(size).
+        png().
+        toFile(output, (err, info) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(info);
+            }
+        });
+    });
+};

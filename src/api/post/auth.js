@@ -20,9 +20,9 @@ const ONE_SIZE = 1;
 const TWO_SIZE = 2;
 const THREE_SIZE = 3;
 
-const { thumb } = require('node-thumbnail');
+const sharp = require('sharp');
 
-const { sendFileToFirebase, unlink, detectFile } = require('../utils/async_conversions');
+const { sendFileToFirebase, unlink, detectFile, resizeImageToPNG } = require('../utils/async_conversions');
 
 router.post('/', (req, res, next) => {
     const { poiID, description, tags, contentUrl, contentHash, contentType } = req.body;
