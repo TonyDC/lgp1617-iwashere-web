@@ -193,38 +193,15 @@ router.post('/upload', (req, res) => {
     detectFile(sampleFile.path).
     then((type) => {
         if (['image/jpeg', 'image/png'].indexOf(type) === -1) {
-            return Promise.reject(new Error('Bad file format. Only JPG or PNG are accepted'));
+            return Promise.reject(new Error('Bad file format. Only JPEG or PNG are accepted'));
         }
         console.log(type);
 
         return Promise.all([
-            thumb({
-                source: sampleFile.path,
-                destination: '/Users/ADC/Desktop',
-                prefix: 'small_',
-                digest: true,
-                basename: sampleFile.hash,
-                width: 400
-            }),
-            thumb({
-                source: sampleFile.path,
-                destination: '/Users/ADC/Desktop',
-                prefix: 'medium_',
-                digest: true,
-                basename: sampleFile.hash,
-                width: 800
-            }),
-            thumb({
-                source: sampleFile.path,
-                destination: '/Users/ADC/Desktop',
-                prefix: 'large_',
-                digest: true,
-                basename: sampleFile.hash,
-                width: 1200
-            }),
-            Promise.resolve(sampleFile.hash)
+            sharp(sampleFile.path).resize(400).png().toFile('/Users/ADC/Desktop/small_' + sampleFile.name + '.png'),
+            sharp(sampleFile.path).resize(800).png().toFile('/Users/ADC/Desktop/medium_' + sampleFile.name + '.png'),
+            sharp(sampleFile.path).resize(1200).png().toFile('/Users/ADC/Desktop/large_' + sampleFile.name + '.png')
         ]);
-
     }).
     then((arrays) => {
         console.log(arrays);

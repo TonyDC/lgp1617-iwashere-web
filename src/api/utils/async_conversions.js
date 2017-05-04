@@ -87,3 +87,17 @@ module.exports.resizeImageToPNG = (filename, output, size) => {
         });
     });
 };
+
+module.exports.resizeImageToJPG = (src, dest, newName, size) => {
+    return new Promise((resolve, reject) => {
+        sharp(filename).resize(size).
+        jpeg().
+        toFile(output, (err, info) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(info);
+            }
+        });
+    });
+};
