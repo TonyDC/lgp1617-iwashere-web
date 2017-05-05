@@ -65,8 +65,8 @@ router.post('/', (req, res, next) => {
 
                             return Promise.all([postDB.getPostById(postId),
                                 postDB.getPostTags(utils.convertArrayToString([postId]))]).
-                            then((getPostResult) => {
-                                if (utils.checkResultList(getPostResult, [TWO_SIZE], true)) {
+                                then((getPostResult) => {
+                                    if (utils.checkResultList(getPostResult, [TWO_SIZE], true)) {
 
                                     const newPost = utils.convertObjectToCamelCase(getPostResult[ZERO_INDEX]);
                                     newPost.tags = utils.convertObjectsToCamelCase(getPostResult[ONE_INDEX]);

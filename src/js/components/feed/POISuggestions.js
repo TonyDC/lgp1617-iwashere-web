@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { GridList } from "material-ui/GridList";
 import { Card, CardTitle } from "material-ui/Card";
 import Alerts from "../utils/Alerts";
-import POIMosaic from "./POIMosaic";
+import POIMosaic from "./PostMosaic";
 import IconButton from "material-ui/IconButton";
 import { red500 as currentLocationColor } from "material-ui/styles/colors";
 import MapsMyLocation from "material-ui/svg-icons/maps/my-location";
@@ -13,11 +13,9 @@ import "styles/suggestions.scss";
 
 const httpCodes = require('http-status-codes');
 const API_POI_SUGGESTIONS_URL = 'api/poi/suggestions';
-const MOSAIC_SIZE = 4;
-const TWO = 2;
-const THREE = 3;
 const NO_ELEMENT_SIZE = 0;
-const POI_SUGGESTION_TITLE = 'Points of interest';
+const LIMIT = 20;
+const POI_SUGGESTION_TITLE = 'Feed';
 const USING_LOCATION_TOOLTIP = 'Using your location';
 const DEFAULT_SPACING = 2;
 
@@ -35,9 +33,8 @@ export default class POISuggestions extends Component {
 
         this.state = {
             hasMoreSuggestions: true,
-            limitSuggestions: 20,
-            previousSuggestions: [],
-            suggestions: []
+            suggestions: [],
+            suggestionsOffset: 0
         };
     }
 
@@ -86,7 +83,7 @@ export default class POISuggestions extends Component {
             return;
         }
 
-        let url = `${API_POI_SUGGESTIONS_URL}/${this.state.limitSuggestions}`;
+        let url = `${API_POI_SUGGESTIONS_URL}/${this.state.suggestionsOffset}/${LIMIT}`;
 
         if (this.state.location) {
             url += `/${this.state.location.lat}/${this.state.location.lng}`;
@@ -103,85 +100,33 @@ export default class POISuggestions extends Component {
 
             return response.json();
         }).
-        then((response) => {
+        then((newSuggestions) => {
             if (!this.componentIsMounted) {
                 return;
             }
 
-            const suggestions = this.state.suggestions.concat(response);
-            const limitSuggestions = suggestions.length * TWO;
+            const suggestions = this.state.suggestions.concat(newSuggestions);
+            const suggestionsOffset = this.state.suggestionsOffset + newSuggestions.length;
 
             this.setState({
-                hasMoreSuggestions: suggestions.length === this.state.limitSuggestions,
-                limitSuggestions,
-                suggestions
-            }, () => {
-                this.updateSuggestions();
+                hasMoreSuggestions: newSuggestions.length === LIMIT,
+                suggestions,
+                suggestionsOffset
             });
         });
     }
 
-    updateSuggestions() {
-        const { suggestions, previousSuggestions } = this.state;
-
-        if (suggestions.length < MOSAIC_SIZE) {
-            if (this.state.hasMoreSuggestions) {
-                this.fetchSuggestions();
-            } else {
-                while (suggestions.length < MOSAIC_SIZE && previousSuggestions.length > NO_ELEMENT_SIZE) {
-                    const newSuggestion = previousSuggestions.shift();
-                    suggestions.push(newSuggestion);
-                }
-
-                if (!this.componentIsMounted) {
-                    return;
-                }
-
-                this.setState({
-                    previousSuggestions,
-                    suggestions
-                });
-            }
-        }
-    }
-
     selectMosaic(poiId) {
-        this.props.router.push(`/poi/${poiId}`);
+        // open post modal
     }
 
     dismissMosaic(poiId) {
-        const { previousSuggestions } = this.state;
-        let { suggestions } = this.state;
-
-        suggestions.forEach((poi) => {
-            if (poi.poiId === poiId) {
-                previousSuggestions.push(poi);
-            }
-        });
-
-        suggestions = suggestions.filter((poi) => {
-            return poi.poiId !== poiId;
-        });
-
-        if (!this.componentIsMounted) {
-            return;
-        }
-
-        this.setState({
-            previousSuggestions,
-            suggestions
-        }, () => {
-            this.updateSuggestions();
-        });
+        this.props.router.push(`/poi/${poiId}`);
     }
 
     getPoiMosaics() {
-        const suggestions = this.state.suggestions.slice();
-        const mosaics = [];
-
-        while (mosaics.length < MOSAIC_SIZE && suggestions.length > NO_ELEMENT_SIZE) {
-            const poi = suggestions.shift();
-            mosaics.push(<POIMosaic
+        return this.state.suggestions.map((poi) => {
+            return <POIMosaic
                 key={poi.poiId}
                 poi={poi}
                 onSelect={() => {
@@ -189,15 +134,8 @@ export default class POISuggestions extends Component {
                 }}
                 onDismiss={() => {
                     this.dismissMosaic(poi.poiId);
-                }}
-            />);
-        }
-
-        while (mosaics.length < MOSAIC_SIZE) {
-            mosaics.push(<POIMosaic key={`null-mosaic#${mosaics.length}`} />);
-        }
-
-        return mosaics;
+                }}/>;
+        });
     }
 
     overrideStyle(originalStyle, newStyle) {
@@ -220,10 +158,6 @@ export default class POISuggestions extends Component {
             gridStyle = this.overrideStyle(gridStyle, this.props.style);
         }
 
-        gridStyle.width -= THREE * DEFAULT_SPACING;
-        gridStyle.height -= THREE * DEFAULT_SPACING;
-        const cellHeight = gridStyle.width / (MOSAIC_SIZE / TWO);
-
         const poiSuggestions = this.getPoiMosaics();
 
         let locationIcon = null;
@@ -243,7 +177,7 @@ export default class POISuggestions extends Component {
             <Card className="suggestions-card">
                 {locationIcon}
                 <CardTitle title={POI_SUGGESTION_TITLE}/>
-                <GridList cols={MOSAIC_SIZE / TWO} rows={MOSAIC_SIZE / TWO} style={gridStyle} cellHeight={cellHeight}>
+                <GridList style={gridStyle}>
                     {poiSuggestions}
                 </GridList>
             </Card>

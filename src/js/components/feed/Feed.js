@@ -5,7 +5,7 @@ import { Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 import ReactDOM from "react-dom";
-import POISuggestions from '../poi/POISuggestions';
+import POISuggestions from './POISuggestions';
 
 import 'styles/utils.scss';
 
