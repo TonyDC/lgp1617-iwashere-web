@@ -67,7 +67,10 @@ module.exports.sendFileToFirebase = (src, dest, metadata) => {
             reject(err);
         }).
         on('finish', () => {
-            resolve();
+            resolve({
+                dest,
+                src
+            });
         });
     });
 };

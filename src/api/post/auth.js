@@ -3,8 +3,8 @@
 const express = require('express');
 const router = express.Router();
 
-const crypto = require('crypto');
-const path = require('path');
+const cryptoModule = require('crypto');
+const pathModule = require('path');
 
 const httpCodes = require('http-status-codes');
 const utils = require('../utils/misc');
@@ -20,6 +20,8 @@ const TWO_INDEX = 2;
 const ONE_SIZE = 1;
 const TWO_SIZE = 2;
 const THREE_SIZE = 3;
+
+const ELEMENT_NOT_FOUND = -1;
 
 const sharp = require('sharp');
 
@@ -63,8 +65,8 @@ router.post('/', (req, res, next) => {
 
                             return Promise.all([postDB.getPostById(postId),
                                 postDB.getPostTags(utils.convertArrayToString([postId]))]).
-                                then((getPostResult) => {
-                                    if (utils.checkResultList(getPostResult, [TWO_SIZE], true)) {
+                            then((getPostResult) => {
+                                if (utils.checkResultList(getPostResult, [TWO_SIZE], true)) {
 
                                     const newPost = utils.convertObjectToCamelCase(getPostResult[ZERO_INDEX]);
                                     newPost.tags = utils.convertObjectsToCamelCase(getPostResult[ONE_INDEX]);
@@ -188,6 +190,7 @@ router.post('/upload', (req, res, next) => {
     // req.files contains files
     const { uid } = req.auth.token;
     const { fields, files } = req;
+
     /*
      * size: 261095424,
      * path: '/var/folders/jy/zh7zx0v135lc5722tlt0f2n00000gn/T/upload_ad4f5519b5560a5f99aee575ef591ddf',
@@ -196,50 +199,73 @@ router.post('/upload', (req, res, next) => {
      * hash: null,
      * lastModifiedDate: 2017-05-03T18:39:46.983Z,
      */
-    const { sampleFile } = files;
+    const postImage = files.sampleFile;
+    if (!postImage) {
+        res.status(httpCodes.BAD_REQUEST).send({ message: `'sampleFile' file not found.` }).
+        end();
 
-    console.log(files);
+        return;
+    }
+    const { size, path, name, hash, lastModifiedDate } = postImage;
 
-    detectFile(sampleFile.path).
+    detectFile(path).
     then((type) => {
-        if (['image/jpeg', 'image/png'].indexOf(type) === -1) {
+        if (['image/jpeg', 'image/png'].indexOf(type) === ELEMENT_NOT_FOUND) {
             return Promise.reject(new Error('Bad file format. Only JPEG or PNG are accepted'));
         }
-        console.log(type);
 
-        return Promise.all([
-            sharp(sampleFile.path).resize(400).png().toFile('/Users/ADC/Desktop/a/small_' + sampleFile.name + '.png'),
-            sharp(sampleFile.path).resize(800).png().toFile('/Users/ADC/Desktop/a/medium_' + sampleFile.name + '.png'),
-            sharp(sampleFile.path).resize(1200).png().toFile('/Users/ADC/Desktop/a/large_' + sampleFile.name + '.png')
-        ]);
+        return sharp(path).metadata();
+    }).
+    then((metadata) => {
+        const { width } = metadata;
+
+        const dirname = pathModule.dirname(path);
+        const paths = [
+            {
+                dir: pathModule.join(dirname, `xsmall_${name}.png`),
+                size: 200
+            },
+            {
+                dir: pathModule.join(dirname, `small_${name}.png`),
+                size: 400
+            },
+            {
+                dir: pathModule.join(dirname, `medium_${name}.png`),
+                size: 800
+            },
+            {
+                dir: pathModule.join(dirname, `large_${name}.png`),
+                size: 1200
+            }
+        ];
+        const promises = paths.map((obj) => {
+            return sharp(path).resize(Math.min(width, obj.size)).
+            png().
+            toFile(obj.dir).
+            then(() => {
+                return obj.dir;
+            });
+        });
+        promises.push(Promise.resolve(path));
+
+        return Promise.all(promises);
     }).
     then((arrays) => {
-        console.log(arrays);
-
-        return sendFileToFirebase(sampleFile.path, `${uid}/${sampleFile.name}`);
+        return Promise.all(arrays.map((imagePath) => {
+            return sendFileToFirebase(imagePath, `${uid}/${pathModule.basename(imagePath)} - ${hash} - ${lastModifiedDate} - ${size}`);
+        }));
+    }).
+    then((arrays) => {
+        return Promise.all(arrays.map((imagePathObj) => {
+            return unlink(imagePathObj.src);
+        }));
     }).
     then(() => {
-        return unlink(sampleFile.path);
-    }).
-    then(() => {
-        console.log('OK');
-
         res.end();
     }).
     catch((error) => {
-        console.error(error);
         next(error);
     });
-
-
-    /*
-     * size: 261095424,
-     * path: '/var/folders/jy/zh7zx0v135lc5722tlt0f2n00000gn/T/upload_ad4f5519b5560a5f99aee575ef591ddf',
-     * name: 'debian-mac-8.5.0-amd64-netinst.iso',
-     * type: 'application/x-iso9660-image',
-     * hash: null,
-     * lastModifiedDate: 2017-05-03T18:39:46.983Z,
-     */
 });
 
 module.exports = router;
