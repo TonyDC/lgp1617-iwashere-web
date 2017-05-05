@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router();
 
 const crypto = require('crypto');
+const path = require('path');
 
 const httpCodes = require('http-status-codes');
 const utils = require('../utils/misc');
@@ -22,7 +23,7 @@ const THREE_SIZE = 3;
 
 const sharp = require('sharp');
 
-const { sendFileToFirebase, unlink, detectFile, resizeImageToPNG } = require('../utils/async_conversions');
+const { sendFileToFirebase, unlink, detectFile } = require('../utils/async_conversions');
 
 router.post('/', (req, res, next) => {
     const { poiID, description, tags, contentUrl, contentHash, contentType } = req.body;
@@ -182,10 +183,19 @@ router.post('/like', (req, res, next) => {
     });
 });
 
-router.post('/upload', (req, res) => {
+router.post('/upload', (req, res, next) => {
     // req.fields contains non-file fields
     // req.files contains files
+    const { uid } = req.auth.token;
     const { fields, files } = req;
+    /*
+     * size: 261095424,
+     * path: '/var/folders/jy/zh7zx0v135lc5722tlt0f2n00000gn/T/upload_ad4f5519b5560a5f99aee575ef591ddf',
+     * name: 'debian-mac-8.5.0-amd64-netinst.iso',
+     * type: 'application/x-iso9660-image',
+     * hash: null,
+     * lastModifiedDate: 2017-05-03T18:39:46.983Z,
+     */
     const { sampleFile } = files;
 
     console.log(files);
@@ -198,26 +208,27 @@ router.post('/upload', (req, res) => {
         console.log(type);
 
         return Promise.all([
-            sharp(sampleFile.path).resize(400).png().toFile('/Users/ADC/Desktop/small_' + sampleFile.name + '.png'),
-            sharp(sampleFile.path).resize(800).png().toFile('/Users/ADC/Desktop/medium_' + sampleFile.name + '.png'),
-            sharp(sampleFile.path).resize(1200).png().toFile('/Users/ADC/Desktop/large_' + sampleFile.name + '.png')
+            sharp(sampleFile.path).resize(400).png().toFile('/Users/ADC/Desktop/a/small_' + sampleFile.name + '.png'),
+            sharp(sampleFile.path).resize(800).png().toFile('/Users/ADC/Desktop/a/medium_' + sampleFile.name + '.png'),
+            sharp(sampleFile.path).resize(1200).png().toFile('/Users/ADC/Desktop/a/large_' + sampleFile.name + '.png')
         ]);
     }).
     then((arrays) => {
         console.log(arrays);
 
-        return sendFileToFirebase(sampleFile.path, 'promise/' + sampleFile.name);
+        return sendFileToFirebase(sampleFile.path, `${uid}/${sampleFile.name}`);
     }).
     then(() => {
         return unlink(sampleFile.path);
     }).
     then(() => {
         console.log('OK');
+
         res.end();
     }).
     catch((error) => {
         console.error(error);
-        res.sendStatus(403).end();
+        next(error);
     });
 
 
@@ -229,8 +240,6 @@ router.post('/upload', (req, res) => {
      * hash: null,
      * lastModifiedDate: 2017-05-03T18:39:46.983Z,
      */
-
-    // if to be optimistic (loading bar on client side)
 });
 
 module.exports = router;

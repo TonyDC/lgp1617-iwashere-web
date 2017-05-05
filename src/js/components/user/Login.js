@@ -124,6 +124,7 @@ export default class Login extends Component {
         const { email, password } = this.state;
         firebase.auth().signInWithEmailAndPassword(email, password).
         then(() => {
+            firebase.auth().currentUser.getToken(true).then((t) => console.log(t));
             this.setState({ inProgress: false });
             this.props.router.push('/');
         }).

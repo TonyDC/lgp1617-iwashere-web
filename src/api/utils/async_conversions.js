@@ -4,22 +4,20 @@ const fs = require('fs');
 const storage = require('@google-cloud/storage');
 const { Magic, MAGIC_MIME_TYPE } = require('mmmagic');
 
-const sharp = require('sharp');
-
 const config = require('../../../config');
 
 // Authenticating on a per-API-basis.
 const gcs = storage({
     keyFilename: config.FIREBASE_ADMIN_SDK_PATH,
-    projectId: 'iwashere-mobile'
+    projectId: config.FIREBASE_CONFIG.projectId
 });
 
 // Reference an existing bucket.
-const bucket = gcs.bucket('iwashere-mobile.appspot.com');
+const bucket = gcs.bucket(config.FIREBASE_CONFIG.storageBucket);
 
 /**
- *
- * @param file
+ * Detects the type of file
+ * @param file the path to the file
  * @returns {Promise}
  */
 module.exports.detectFile = (file) => {
@@ -37,8 +35,8 @@ module.exports.detectFile = (file) => {
 };
 
 /**
- *
- * @param file
+ * Remove file from file system
+ * @param file The path to the file
  * @returns {Promise}
  */
 module.exports.unlink = (file) => {
@@ -54,10 +52,10 @@ module.exports.unlink = (file) => {
 };
 
 /**
- *
- * @param src
- * @param dest
- * @param metadata
+ * Send file to Firebase Cloud Storage
+ * @param src the path to the file
+ * @param dest the path in Firebase Storage
+ * @param metadata optional metadata parameters
  * @returns {Promise}
  */
 module.exports.sendFileToFirebase = (src, dest, metadata) => {
@@ -70,34 +68,6 @@ module.exports.sendFileToFirebase = (src, dest, metadata) => {
         }).
         on('finish', () => {
             resolve();
-        });
-    });
-};
-
-module.exports.resizeImageToPNG = (filename, output, size) => {
-    return new Promise((resolve, reject) => {
-        sharp(filename).resize(size).
-        png().
-        toFile(output, (err, info) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(info);
-            }
-        });
-    });
-};
-
-module.exports.resizeImageToJPG = (src, dest, newName, size) => {
-    return new Promise((resolve, reject) => {
-        sharp(filename).resize(size).
-        jpeg().
-        toFile(output, (err, info) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(info);
-            }
         });
     });
 };
