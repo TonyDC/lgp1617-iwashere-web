@@ -91,6 +91,7 @@ app.use(expressWinston.errorLogger({ transports: windstonTransports.transportErr
 
 // Error middleware handler
 app.use((err, req, res, next) => {
+    console.log(err);
     res.status(httpCodes.INTERNAL_SERVER_ERROR).send({ message: 'Something went wrong!' }).
     end();
 });

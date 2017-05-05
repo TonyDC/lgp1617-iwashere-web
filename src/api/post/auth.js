@@ -3,7 +3,8 @@
 const express = require('express');
 const router = express.Router();
 
-const crypto = require('crypto');
+const cryptoModule = require('crypto');
+const pathModule = require('path');
 
 const httpCodes = require('http-status-codes');
 const utils = require('../utils/misc');
@@ -20,11 +21,13 @@ const ONE_SIZE = 1;
 const TWO_SIZE = 2;
 const THREE_SIZE = 3;
 
+const ELEMENT_NOT_FOUND = -1;
+
 const sharp = require('sharp');
 
-const { sendFileToFirebase, unlink, detectFile, resizeImageToPNG } = require('../utils/async_conversions');
+const { sendFileToFirebase, unlink, detectFile } = require('../utils/async_conversions');
 
-router.poi('/', (req, res, next) => {
+router.post('/', (req, res, next) => {
     const { poiID, description, tags, contentUrl, contentHash, contentType } = req.body;
     if (!poiID || typeof description !== 'string' || !tags) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
@@ -136,7 +139,7 @@ router.put('/', (req, res, next) => {
     });
 });
 
-router.poi('/like', (req, res, next) => {
+router.post('/like', (req, res, next) => {
     const { postID, liked } = req.body;
     if (!postID || isNaN(parseInt(postID, DECIMAL_BASE)) || typeof liked !== 'boolean') {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
@@ -182,44 +185,11 @@ router.poi('/like', (req, res, next) => {
     });
 });
 
-router.poi('/upload', (req, res) => {
+router.post('/upload', (req, res, next) => {
     // req.fields contains non-file fields
     // req.files contains files
+    const { uid } = req.auth.token;
     const { fields, files } = req;
-    const { sampleFile } = files;
-
-    console.log(files);
-
-    detectFile(sampleFile.path).
-    then((type) => {
-        if (['image/jpeg', 'image/png'].indexOf(type) === -1) {
-            return Promise.reject(new Error('Bad file format. Only JPEG or PNG are accepted'));
-        }
-        console.log(type);
-
-        return Promise.all([
-            sharp(sampleFile.path).resize(400).png().toFile('/Users/ADC/Desktop/small_' + sampleFile.name + '.png'),
-            sharp(sampleFile.path).resize(800).png().toFile('/Users/ADC/Desktop/medium_' + sampleFile.name + '.png'),
-            sharp(sampleFile.path).resize(1200).png().toFile('/Users/ADC/Desktop/large_' + sampleFile.name + '.png')
-        ]);
-    }).
-    then((arrays) => {
-        console.log(arrays);
-
-        return sendFileToFirebase(sampleFile.path, 'promise/' + sampleFile.name);
-    }).
-    then(() => {
-        return unlink(sampleFile.path);
-    }).
-    then(() => {
-        console.log('OK');
-        res.end();
-    }).
-    catch((error) => {
-        console.error(error);
-        res.sendStatus(403).end();
-    });
-
 
     /*
      * size: 261095424,
@@ -229,8 +199,73 @@ router.poi('/upload', (req, res) => {
      * hash: null,
      * lastModifiedDate: 2017-05-03T18:39:46.983Z,
      */
+    const postImage = files.sampleFile;
+    if (!postImage) {
+        res.status(httpCodes.BAD_REQUEST).send({ message: `'sampleFile' file not found.` }).
+        end();
 
-    // if to be optimistic (loading bar on client side)
+        return;
+    }
+    const { size, path, name, hash, lastModifiedDate } = postImage;
+
+    detectFile(path).
+    then((type) => {
+        if (['image/jpeg', 'image/png'].indexOf(type) === ELEMENT_NOT_FOUND) {
+            return Promise.reject(new Error('Bad file format. Only JPEG or PNG are accepted'));
+        }
+
+        return sharp(path).metadata();
+    }).
+    then((metadata) => {
+        const { width } = metadata;
+
+        const dirname = pathModule.dirname(path);
+        const paths = [
+            {
+                dir: pathModule.join(dirname, `xsmall_${name}.png`),
+                size: 200
+            },
+            {
+                dir: pathModule.join(dirname, `small_${name}.png`),
+                size: 400
+            },
+            {
+                dir: pathModule.join(dirname, `medium_${name}.png`),
+                size: 800
+            },
+            {
+                dir: pathModule.join(dirname, `large_${name}.png`),
+                size: 1200
+            }
+        ];
+        const promises = paths.map((obj) => {
+            return sharp(path).resize(Math.min(width, obj.size)).
+            png().
+            toFile(obj.dir).
+            then(() => {
+                return obj.dir;
+            });
+        });
+        promises.push(Promise.resolve(path));
+
+        return Promise.all(promises);
+    }).
+    then((arrays) => {
+        return Promise.all(arrays.map((imagePath) => {
+            return sendFileToFirebase(imagePath, `${uid}/${pathModule.basename(imagePath)} - ${hash} - ${lastModifiedDate} - ${size}`);
+        }));
+    }).
+    then((arrays) => {
+        return Promise.all(arrays.map((imagePathObj) => {
+            return unlink(imagePathObj.src);
+        }));
+    }).
+    then(() => {
+        res.end();
+    }).
+    catch((error) => {
+        next(error);
+    });
 });
 
 module.exports = router;
