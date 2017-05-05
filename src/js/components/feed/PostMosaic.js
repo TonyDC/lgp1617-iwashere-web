@@ -6,7 +6,7 @@ import { GridLoader as Loader } from 'halogen';
 import { GridTile } from 'material-ui/GridList';
 import IconButton from 'material-ui/IconButton';
 import StarBorder from 'material-ui/svg-icons/toggle/star-border';
-import RemoveIcon from 'material-ui/svg-icons/av/shuffle';
+import GoToPOIIcon from 'material-ui/svg-icons/communication/location-on';
 
 import 'styles/poi_mosaic.scss';
 import 'styles/utils.scss';
@@ -14,7 +14,7 @@ import 'styles/utils.scss';
 const ZERO_INDEX = 0;
 const MAX_RATING_SCALE = 5;
 const RATING_PRECISION = 1;
-const REMOVE_MESSAGE = 'Dismiss and replace';
+const POI_BUTTON_MESSAGE = 'Go to the point of interest';
 
 export default class POIMosaic extends Component {
 
@@ -31,16 +31,16 @@ export default class POIMosaic extends Component {
             );
         }
 
-        let poiMedia = null;
+        let postMedia = null;
         if (poi.media.length) {
-            poiMedia = <img src={poi.media[ZERO_INDEX].url} />;
+            postMedia = <img src={poi.media[ZERO_INDEX].url} />;
         }
 
-        let dismissButton = null;
+        let poiButton = null;
         if (this.props.dismissible) {
-            dismissButton =
-                <IconButton tooltipPosition="top-left" tooltip={REMOVE_MESSAGE}>
-                    <RemoveIcon color="white" />
+            poiButton =
+                <IconButton tooltipPosition="top-left" tooltip={POI_BUTTON_MESSAGE}>
+                    <GoToPOIIcon color="white" />
                 </IconButton>;
         }
 
@@ -56,9 +56,9 @@ export default class POIMosaic extends Component {
                 }}
                 title={poi.name}
                 subtitle={<div className="vert-align"><span>{poi.rating.toFixed(RATING_PRECISION)}/{MAX_RATING_SCALE}</span> <StarBorder color="white" className="rating-star" /></div>}
-                actionIcon={dismissButton}
+                actionIcon={poiButton}
             >
-                {poiMedia}
+                {postMedia}
             </GridTile>
         );
     }

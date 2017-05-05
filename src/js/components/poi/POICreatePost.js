@@ -40,9 +40,9 @@ export default class CreatePostDialog extends Component {
         firebase.auth().currentUser.getToken(true).then((token) => {
             return fetch(API_POI_POST_URL, {
                 body: JSON.stringify({
-                    description: this.state.post.description,
+                    description: this.state.poi.description,
                     poiID: this.props.poiId,
-                    tags: this.state.post.tags
+                    tags: this.state.poi.tags
                 }),
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -163,7 +163,7 @@ export default class CreatePostDialog extends Component {
                     <form>
                         <Tags className="tag-input"
                               title="Add tag..."
-                              tags={this.state.post.tags}
+                              tags={this.state.poi.tags}
                               onAddTag={(tagId) => {
                                   this.addTagToPost(tagId);
                               }}

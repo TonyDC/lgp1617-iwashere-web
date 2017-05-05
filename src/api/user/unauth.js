@@ -26,7 +26,7 @@ const NO_ELEMENTS_SIZE = 0,
  * See: https://firebase.google.com/docs/auth/admin/manage-users
  */
 
-router.post('/register', (req, res) => {
+router.poi('/register', (req, res) => {
     const { email, password, confirmPassword, username } = req.body;
 
     if (typeof password !== 'string' || typeof confirmPassword !== 'string' || password !== confirmPassword) {
@@ -81,7 +81,7 @@ router.post('/register', (req, res) => {
     });
 });
 
-router.post('/register-by-provider', (req, res, next) => {
+router.poi('/register-by-provider', (req, res, next) => {
     const { uid } = req.body;
     const { userDB } = db;
 

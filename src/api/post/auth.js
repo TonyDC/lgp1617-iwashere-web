@@ -24,7 +24,7 @@ const sharp = require('sharp');
 
 const { sendFileToFirebase, unlink, detectFile, resizeImageToPNG } = require('../utils/async_conversions');
 
-router.post('/', (req, res, next) => {
+router.poi('/', (req, res, next) => {
     const { poiID, description, tags, contentUrl, contentHash, contentType } = req.body;
     if (!poiID || typeof description !== 'string' || !tags) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
@@ -136,7 +136,7 @@ router.put('/', (req, res, next) => {
     });
 });
 
-router.post('/like', (req, res, next) => {
+router.poi('/like', (req, res, next) => {
     const { postID, liked } = req.body;
     if (!postID || isNaN(parseInt(postID, DECIMAL_BASE)) || typeof liked !== 'boolean') {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
@@ -182,7 +182,7 @@ router.post('/like', (req, res, next) => {
     });
 });
 
-router.post('/upload', (req, res) => {
+router.poi('/upload', (req, res) => {
     // req.fields contains non-file fields
     // req.files contains files
     const { fields, files } = req;
