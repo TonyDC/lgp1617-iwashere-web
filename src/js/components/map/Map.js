@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import GoogleMapReact from 'google-map-react';
 import Alerts from '../utils/Alerts';
 import httpCodes from 'http-status-codes';
-import { blue500 as POIColor, red500 as currentLocationColor } from 'material-ui/styles/colors';
+import { red500 as POIColor, blue500 as currentLocationColor } from 'material-ui/styles/colors';
 import { GOOGLE_MAPS_API_KEY } from '../../../../config';
 import POISideBar from '../poi/POISideBar';
 

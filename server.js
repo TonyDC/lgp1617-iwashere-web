@@ -14,7 +14,7 @@ const mainConfig = require('./config');
 const path = require('path');
 const bodyParser = require('body-parser');
 const express = require('express');
-const formidable = require('express-formidable');
+const formidable = require('./src/api/middleware/form');
 const httpCodes = require('http-status-codes');
 const firebaseAdmin = require("firebase-admin");
 
@@ -63,8 +63,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(formidable({
     hash: 'sha1',
     keepExtensions: true,
-    maxFieldsSize: 2 * 1024 * 1024,
-    multiples: true // req.files to be arrays of files
+    maxFieldsSize: 2 * 1024 * 1024, // in bytes
+    multiples: true                 // req.files to be arrays of files
 }));
 
 // Firebase Admin SDK Initialization
@@ -91,9 +91,15 @@ app.use(expressWinston.errorLogger({ transports: windstonTransports.transportErr
 
 // Error middleware handler
 app.use((err, req, res, next) => {
-    console.log(err);
-    res.status(httpCodes.INTERNAL_SERVER_ERROR).send({ message: 'Something went wrong!' }).
-    end();
+    console.error(err);
+
+    if (process.env.NODE_ENV === 'production' && res.headersSent) {
+        console.error('WARNING: HEADERS HAVE ALREADY BEEN SENT!!! YOU CANNOT SET HEADERS AFTER BEING SENT.');
+
+    } else {
+        res.status(httpCodes.INTERNAL_SERVER_ERROR).send({ message: 'Something went wrong!' }).
+        end();
+    }
 });
 
 /* *********************************** */

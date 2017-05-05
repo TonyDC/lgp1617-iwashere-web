@@ -211,57 +211,60 @@ router.post('/upload', (req, res, next) => {
     detectFile(path).
     then((type) => {
         if (['image/jpeg', 'image/png'].indexOf(type) === ELEMENT_NOT_FOUND) {
-            return Promise.reject(new Error('Bad file format. Only JPEG or PNG are accepted'));
+            res.status(httpCodes.BAD_REQUEST).send({ message: 'Bad file format. Only JPEG or PNG are accepted' }).
+            end();
+
+            return null;
         }
 
-        return sharp(path).metadata();
-    }).
-    then((metadata) => {
-        const { width } = metadata;
+        return sharp(path).metadata().
+        then((metadata) => {
+            const { width } = metadata;
 
-        const dirname = pathModule.dirname(path);
-        const paths = [
-            {
-                dir: pathModule.join(dirname, `xsmall_${name}.png`),
-                size: 200
-            },
-            {
-                dir: pathModule.join(dirname, `small_${name}.png`),
-                size: 400
-            },
-            {
-                dir: pathModule.join(dirname, `medium_${name}.png`),
-                size: 800
-            },
-            {
-                dir: pathModule.join(dirname, `large_${name}.png`),
-                size: 1200
-            }
-        ];
-        const promises = paths.map((obj) => {
-            return sharp(path).resize(Math.min(width, obj.size)).
-            png().
-            toFile(obj.dir).
-            then(() => {
-                return obj.dir;
+            const dirname = pathModule.dirname(path);
+            const paths = [
+                {
+                    dir: pathModule.join(dirname, `xsmall_${name}.png`),
+                    size: 200
+                },
+                {
+                    dir: pathModule.join(dirname, `small_${name}.png`),
+                    size: 400
+                },
+                {
+                    dir: pathModule.join(dirname, `medium_${name}.png`),
+                    size: 800
+                },
+                {
+                    dir: pathModule.join(dirname, `large_${name}.png`),
+                    size: 1200
+                }
+            ];
+            const promises = paths.map((obj) => {
+                return sharp(path).resize(Math.min(width, obj.size)).
+                png().
+                toFile(obj.dir).
+                then(() => {
+                    return obj.dir;
+                });
             });
-        });
-        promises.push(Promise.resolve(path));
+            promises.push(Promise.resolve(path));
 
-        return Promise.all(promises);
-    }).
-    then((arrays) => {
-        return Promise.all(arrays.map((imagePath) => {
-            return sendFileToFirebase(imagePath, `${uid}/${pathModule.basename(imagePath)} - ${hash} - ${lastModifiedDate} - ${size}`);
-        }));
-    }).
-    then((arrays) => {
-        return Promise.all(arrays.map((imagePathObj) => {
-            return unlink(imagePathObj.src);
-        }));
-    }).
-    then(() => {
-        res.end();
+            return Promise.all(promises);
+        }).
+        then((arrays) => {
+            return Promise.all(arrays.map((imagePath) => {
+                return sendFileToFirebase(imagePath, `${uid}/${pathModule.basename(imagePath)} - ${hash} - ${lastModifiedDate} - ${size}`);
+            }));
+        }).
+        then((arrays) => {
+            return Promise.all(arrays.map((imagePathObj) => {
+                return unlink(imagePathObj.src);
+            }));
+        }).
+        then(() => {
+            res.end();
+        });
     }).
     catch((error) => {
         next(error);
