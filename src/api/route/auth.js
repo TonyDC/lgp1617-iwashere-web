@@ -23,7 +23,7 @@ const ONE_INDEX = 1;
 const NO_ELEMENT_SIZE = 0;
 const TWO_SIZE = 2;
 
-router.poi('/rating', (req, res, next) => {
+router.post('/rating', (req, res, next) => {
     const { routeID, rating } = req.body;
     if (!routeID || !rating || RATING_VALUES.indexOf(rating) === VALUE_NOT_FOUND ||
         isNaN(parseInt(routeID, DECIMAL_BASE))) {
