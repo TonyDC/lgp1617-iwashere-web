@@ -204,7 +204,7 @@ export default class CreatePostDialog extends Component {
                         </Dropzone>
                         {
                             this.state.post.files.map((file, index) => {
-                                return <div key={index} onClick={(event) => {
+                                return <span key={index} onClick={(event) => {
                                     event.preventDefault();
 
                                     const { files } = this.state.post;
@@ -219,7 +219,7 @@ export default class CreatePostDialog extends Component {
                                 }
                                 }>
                                     <img src={file.preview} style={{width: '100px', objectFit: 'contain'}}/>
-                                </div>;
+                                </span>;
                             })
                         }
                     </form>

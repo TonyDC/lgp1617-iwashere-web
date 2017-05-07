@@ -200,7 +200,9 @@ function processFiles (uid) {
                 });
             }
 
-            const extension = typeIndex === 1? 'jpeg' : 'png';
+            const extension = typeIndex === 0
+                ? 'jpeg'
+                : 'png';
 
             return sharp(path).metadata().
             then((metadata) => {
@@ -209,37 +211,47 @@ function processFiles (uid) {
                 const dirname = pathModule.dirname(path);
                 const paths = [
                     {
+                        basename: `xsmall_${name}.${extension}`,
                         dir: pathModule.join(dirname, `xsmall_${name}.${extension}`),
                         size: 200
                     },
                     {
+                        basename: `small_${name}.${extension}`,
                         dir: pathModule.join(dirname, `small_${name}.${extension}`),
                         size: 400
                     },
                     {
+                        basename: `medium_${name}.${extension}`,
                         dir: pathModule.join(dirname, `medium_${name}.${extension}`),
                         size: 800
                     },
                     {
+                        basename: `large_${name}.${extension}`,
                         dir: pathModule.join(dirname, `large_${name}.${extension}`),
                         size: 1200
                     }
                 ];
                 const promises = paths.map((obj) => {
                     return sharp(path).resize(Math.min(width, obj.size)).
-                    png().
+                    jpeg().
                     toFile(obj.dir).
                     then(() => {
-                        return obj.dir;
+                        return obj;
                     });
                 });
-                promises.push(Promise.resolve(path));
+                promises.push(Promise.resolve({
+                    basename: `original_${name}.${extension}`,
+                    dir: path,
+                    size: width
+                }));
 
                 return Promise.all(promises);
             }).
             then((arrays) => {
-                return Promise.all(arrays.map((imagePath) => {
-                    return sendFileToFirebase(imagePath, `${uid}/${pathModule.basename(imagePath)} - ${hash} - ${lastModifiedDate} - ${size}`);
+                return Promise.all(arrays.map((imageInfo) => {
+                    const { basename, dir } = imageInfo;
+
+                    return sendFileToFirebase(dir, `${uid}/${lastModifiedDate} - ${hash} - ${size} - ${basename}`);
                 }));
             }).
             then((arrays) => {
