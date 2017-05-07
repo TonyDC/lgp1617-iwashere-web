@@ -21,10 +21,8 @@ const TITLE = 'Feed';
 const USING_LOCATION_TOOLTIP = 'Using your location';
 
 const DEFAULT_STYLE = {
-    height: 500,
     overflowX: 'auto',
-    overflowY: 'auto',
-    width: 500
+    overflowY: 'auto'
 };
 
 export default class POISuggestions extends Component {
@@ -149,26 +147,7 @@ export default class POISuggestions extends Component {
         });
     }
 
-    overrideStyle(originalStyle, newStyle) {
-        const newObject = {};
-
-        for (const attribute in originalStyle) {
-            if (attribute in newStyle) {
-                newObject[attribute] = newStyle[attribute];
-            } else {
-                newObject[attribute] = originalStyle[attribute];
-            }
-        }
-
-        return newObject;
-    }
-
     render() {
-        let gridStyle = DEFAULT_STYLE;
-        if (this.props.style) {
-            gridStyle = this.overrideStyle(gridStyle, this.props.style);
-        }
-
         let locationIcon = null;
         if (this.state.location) {
             locationIcon =
@@ -183,7 +162,7 @@ export default class POISuggestions extends Component {
         }
 
         const loader =
-            <div className="hor-align vert-align">
+            <div className="hor-align">
                 <Loader color="#012935" className="loader"/>
             </div>;
 
@@ -192,12 +171,11 @@ export default class POISuggestions extends Component {
                 {locationIcon}
                 <CardTitle title={TITLE}/>
                 <InfiniteScroll
-                    pageStart={0}
                     initialLoad={false}
                     loadMore={this.fetchSuggestions.bind(this)}
                     hasMore={this.state.hasMoreSuggestions}
                     loader={loader}>
-                    <GridList style={gridStyle}>
+                    <GridList style={DEFAULT_STYLE}>
                         { this.getPostMosaics() }
                     </GridList>
                 </InfiniteScroll>
@@ -206,9 +184,4 @@ export default class POISuggestions extends Component {
     }
 }
 
-POISuggestions.defaultProps = { style: DEFAULT_STYLE };
-
-POISuggestions.propTypes = {
-    router: PropTypes.object,
-    style: PropTypes.object
-};
+POISuggestions.propTypes = { router: PropTypes.object };
