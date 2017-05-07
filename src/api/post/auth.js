@@ -11,6 +11,8 @@ const utils = require('../utils/misc');
 
 const db = root_require('src/db/query');
 
+const async = require('async');
+
 const DECIMAL_BASE = 10;
 
 const NO_ELEMENT_SIZE = 0;
@@ -63,10 +65,9 @@ router.post('/', (req, res, next) => {
                     then((additionalPostInfo) => {
                         if (utils.checkResultList(additionalPostInfo, [createAdditionalPostInfo.length], true)) {
 
-                            return Promise.all([postDB.getPostById(postId),
-                                postDB.getPostTags(utils.convertArrayToString([postId]))]).
-                                then((getPostResult) => {
-                                    if (utils.checkResultList(getPostResult, [TWO_SIZE], true)) {
+                            return Promise.all([postDB.getPostById(postId), postDB.getPostTags(utils.convertArrayToString([postId]))]).
+                            then((getPostResult) => {
+                                if (utils.checkResultList(getPostResult, [TWO_SIZE], true)) {
 
                                     const newPost = utils.convertObjectToCamelCase(getPostResult[ZERO_INDEX]);
                                     newPost.tags = utils.convertObjectsToCamelCase(getPostResult[ONE_INDEX]);
@@ -185,11 +186,102 @@ router.post('/like', (req, res, next) => {
     });
 });
 
+
+function processFiles (uid) {
+    return (fileItem, callback) => {
+        const { size, path, name, hash, lastModifiedDate } = fileItem;
+
+        detectFile(path).then((type) => {
+            const typeIndex = ['image/jpeg', 'image/png'].indexOf(type);
+            if (typeIndex === ELEMENT_NOT_FOUND) {
+                return callback({
+                    code: 1,
+                    message: 'Bad file format. Only JPEG or PNG are accepted'
+                });
+            }
+
+            const extension = typeIndex === 1? 'jpeg' : 'png';
+
+            return sharp(path).metadata().
+            then((metadata) => {
+                const { width } = metadata;
+
+                const dirname = pathModule.dirname(path);
+                const paths = [
+                    {
+                        dir: pathModule.join(dirname, `xsmall_${name}.${extension}`),
+                        size: 200
+                    },
+                    {
+                        dir: pathModule.join(dirname, `small_${name}.${extension}`),
+                        size: 400
+                    },
+                    {
+                        dir: pathModule.join(dirname, `medium_${name}.${extension}`),
+                        size: 800
+                    },
+                    {
+                        dir: pathModule.join(dirname, `large_${name}.${extension}`),
+                        size: 1200
+                    }
+                ];
+                const promises = paths.map((obj) => {
+                    return sharp(path).resize(Math.min(width, obj.size)).
+                    png().
+                    toFile(obj.dir).
+                    then(() => {
+                        return obj.dir;
+                    });
+                });
+                promises.push(Promise.resolve(path));
+
+                return Promise.all(promises);
+            }).
+            then((arrays) => {
+                return Promise.all(arrays.map((imagePath) => {
+                    return sendFileToFirebase(imagePath, `${uid}/${pathModule.basename(imagePath)} - ${hash} - ${lastModifiedDate} - ${size}`);
+                }));
+            }).
+            then((arrays) => {
+                return Promise.all(arrays.map((imagePathObj) => {
+                    return unlink(imagePathObj.src);
+                }));
+            }).
+            then(() => {
+                return callback();
+            });
+        }).
+        catch((error) => {
+            callback({
+                code: 2,
+                message: error
+            });
+        });
+    };
+}
+
 router.post('/upload', (req, res, next) => {
     // req.fields contains non-file fields
     // req.files contains files
     const { uid } = req.auth.token;
     const { fields, files } = req;
+    const { description , tags, poiId } = fields;
+    let { postFiles } = files;
+
+    if (!postFiles) {
+        res.status(httpCodes.BAD_REQUEST).send({ message: `'postFiles' file not found.` }).
+        end();
+
+        return;
+
+    } else if (!Array.isArray(postFiles)) {
+        // When there is just one file, 'postFiles' is just a File object
+        postFiles = [postFiles];
+    }
+
+    // TODO check fields
+    console.log(fields);
+    console.log(files);
 
     /*
      * size: 261095424,
@@ -199,75 +291,23 @@ router.post('/upload', (req, res, next) => {
      * hash: null,
      * lastModifiedDate: 2017-05-03T18:39:46.983Z,
      */
-    const postImage = files.sampleFile;
-    if (!postImage) {
-        res.status(httpCodes.BAD_REQUEST).send({ message: `'sampleFile' file not found.` }).
-        end();
 
-        return;
-    }
-    const { size, path, name, hash, lastModifiedDate } = postImage;
+    async.each(postFiles, processFiles(uid), (err) => {
+        if (err) {
+            const { code, message } = err;
+            if (code === 1) {
+                res.status(httpCodes.BAD_REQUEST).json({ message }).
+                end();
 
-    detectFile(path).
-    then((type) => {
-        if (['image/jpeg', 'image/png'].indexOf(type) === ELEMENT_NOT_FOUND) {
-            res.status(httpCodes.BAD_REQUEST).send({ message: 'Bad file format. Only JPEG or PNG are accepted' }).
-            end();
+                return null;
+            }
 
-            return null;
+            return next(message);
         }
 
-        return sharp(path).metadata().
-        then((metadata) => {
-            const { width } = metadata;
+        res.end();
 
-            const dirname = pathModule.dirname(path);
-            const paths = [
-                {
-                    dir: pathModule.join(dirname, `xsmall_${name}.png`),
-                    size: 200
-                },
-                {
-                    dir: pathModule.join(dirname, `small_${name}.png`),
-                    size: 400
-                },
-                {
-                    dir: pathModule.join(dirname, `medium_${name}.png`),
-                    size: 800
-                },
-                {
-                    dir: pathModule.join(dirname, `large_${name}.png`),
-                    size: 1200
-                }
-            ];
-            const promises = paths.map((obj) => {
-                return sharp(path).resize(Math.min(width, obj.size)).
-                png().
-                toFile(obj.dir).
-                then(() => {
-                    return obj.dir;
-                });
-            });
-            promises.push(Promise.resolve(path));
-
-            return Promise.all(promises);
-        }).
-        then((arrays) => {
-            return Promise.all(arrays.map((imagePath) => {
-                return sendFileToFirebase(imagePath, `${uid}/${pathModule.basename(imagePath)} - ${hash} - ${lastModifiedDate} - ${size}`);
-            }));
-        }).
-        then((arrays) => {
-            return Promise.all(arrays.map((imagePathObj) => {
-                return unlink(imagePathObj.src);
-            }));
-        }).
-        then(() => {
-            res.end();
-        });
-    }).
-    catch((error) => {
-        next(error);
+        return null;
     });
 });
 
