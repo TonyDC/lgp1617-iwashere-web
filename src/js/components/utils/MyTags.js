@@ -6,6 +6,7 @@ import AutoComplete from 'material-ui/AutoComplete';
 
 import 'styles/my_tags.scss';
 
+const API_TAG = '/api/tag/';
 const NOT_FOUND = -1;
 
 export default class MyTags extends Component {
@@ -32,7 +33,7 @@ export default class MyTags extends Component {
     }
 
     fetchAllTags() {
-        fetch('/api/tag/', {
+        fetch(API_TAG, {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
         }).
@@ -53,11 +54,11 @@ export default class MyTags extends Component {
     }
 
     renderTag(tag) {
-        if ('onRemveTag' in this.props) {
+        if ('onRemoveTag' in this.props) {
             return (
                 <Chip
                     onRequestDelete={() => {
-                        this.props.onRemoveTag(tag.name);
+                        this.props.onRemoveTag(tag.tagId);
                     }}
                     labelColor="white"
                     key={`tag#${tag.tagId}`}
@@ -109,6 +110,7 @@ export default class MyTags extends Component {
 
     render() {
         let input = null;
+        let tagList = this.props.tags.map(this.renderTag, this);
 
         if (!this.props.readOnly) {
             const allTags = this.state.allTags.map((tag) => {
@@ -125,15 +127,20 @@ export default class MyTags extends Component {
                     onNewRequest={ (tag) => {
                         this.addTag(tag);
                     }}
-                    fullWidth
                 />;
+
+            tagList = this.state.allTags.filter((tag) => {
+                return this.props.tags.indexOf(tag.tagId) !== NOT_FOUND;
+            });
+
+            tagList = tagList.map(this.renderTag, this);
         }
 
         return (
-            <div>
+            <div className="tag-list-wrapper">
                 {input}
                 <div className={`tags-wrapper ${this.props.class}`}>
-                    {this.props.tags.map(this.renderTag, this)}
+                    { tagList }
                 </div>
             </div>
         );
