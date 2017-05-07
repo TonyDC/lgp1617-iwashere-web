@@ -92,17 +92,14 @@ export default class POISuggestions extends Component {
 
         let url = API_POST_POI_SUGGESTIONS_URL;
 
-        if (this.user) {
-            url += `/${this.state.uid}`;
+        if (this.state.user) {
+            url += `/${this.state.user.uid}`;
         }
-
-        url += `/${this.state.suggestionsOffset}/${LIMIT}`;
-
         if (this.state.location) {
             url += `/${this.state.location.lat}/${this.state.location.lng}`;
         }
+        url += `/${this.state.suggestionsOffset}/${LIMIT}`;
 
-        console.log(url);
         fetch(url, {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'

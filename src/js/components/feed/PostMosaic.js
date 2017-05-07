@@ -11,12 +11,12 @@ import GoToPOIIcon from 'material-ui/svg-icons/communication/location-on';
 import 'styles/poi_mosaic.scss';
 import 'styles/utils.scss';
 
-const ZERO_INDEX = 0;
+const MEDIA_TYPE = "image;imagem";
 const MAX_RATING_SCALE = 5;
 const RATING_PRECISION = 1;
 const POI_BUTTON_MESSAGE = 'Go to the point of interest';
 
-export default class POIMosaic extends Component {
+export default class PostMosaic extends Component {
 
     render() {
         const { post } = this.props;
@@ -33,8 +33,8 @@ export default class POIMosaic extends Component {
         }
 
         let postMedia = null;
-        if (post.media.length) {
-            postMedia = <img src={post.media[ZERO_INDEX].url} />;
+        if (post.type === MEDIA_TYPE) {
+            postMedia = <img src={post.url} />;
         }
 
         let poiButton = null;
@@ -65,9 +65,9 @@ export default class POIMosaic extends Component {
     }
 }
 
-POIMosaic.defaultProps = { dismissible: true };
+PostMosaic.defaultProps = { dismissible: true };
 
-POIMosaic.propTypes = {
+PostMosaic.propTypes = {
     dismissible: PropTypes.bool,
     onDismiss: PropTypes.func,
     onSelect: PropTypes.func,

@@ -136,8 +136,8 @@ module.exports.handleGetPOIsPostRequest = (params) => {
                             }
 
                             post.likedByUser = (postsLikedByUser.filter((like) => {
-                                    return like.postId === post.postId;
-                                })).length > NO_ELEMENT_SIZE;
+                                return like.postId === post.postId;
+                            })).length > NO_ELEMENT_SIZE;
                         });
 
                         fulfill(posts);

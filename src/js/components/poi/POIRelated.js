@@ -15,7 +15,7 @@ export default class RoutePOIs extends Component {
         const mosaics = [];
 
         poiList.forEach((poi) => {
-            mosaics.push(<POIMosaic
+            mosaics.push(<PostMosaic
                 key={poi.poiId}
                 poi={poi}
                 onSelect={() => {
