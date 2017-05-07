@@ -94,10 +94,7 @@ export default class CreatePostDialog extends Component {
     }
 
     handleClose() {
-        const newState = {
-            open: false,
-            post: { tags: [] }
-        };
+        const newState = { open: false };
 
         if (this.componentIsMounted) {
             this.setState(newState);

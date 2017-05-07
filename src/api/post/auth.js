@@ -232,8 +232,14 @@ function processFiles (uid) {
                     }
                 ];
                 const promises = paths.map((obj) => {
-                    return sharp(path).resize(Math.min(width, obj.size)).
-                    jpeg().
+                    let sharpObject = sharp(path).resize(Math.min(width, obj.size));
+                    if (typeIndex === 0) {
+                        sharpObject = sharpObject.jpeg();
+                    } else {
+                        sharpObject = sharpObject.png();
+                    }
+
+                    return sharpObject.
                     toFile(obj.dir).
                     then(() => {
                         return obj;
