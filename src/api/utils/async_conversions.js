@@ -87,11 +87,11 @@ module.exports.getHashOfFile = (file, date = Date.now()) => {
         hash.update(String(date));
         const input = fs.createReadStream(file);
         hash.on('finish', () => {
-            // Here, the hash is already digested
-            resolve(hash.read());
             // http://stackoverflow.com/questions/19277094/how-to-close-a-readable-stream-before-end
             // http://stackoverflow.com/questions/20796902/deleting-file-in-node-js
             input.close();
+            // Here, the hash is already digested
+            resolve(hash.read());
         });
         input.on('error', () => {
             reject(new Error('Failed to obtain SHA256'));
