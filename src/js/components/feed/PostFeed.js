@@ -141,7 +141,6 @@ export default class POISuggestions extends Component {
     }
 
     toggleLike(post) {
-        console.log(post);
         if (!this.state.user) {
             return;
         }
@@ -160,7 +159,6 @@ export default class POISuggestions extends Component {
             });
         }).
         then((response) => {
-            console.log(response);
             if (response.status >= httpCodes.BAD_REQUEST || response.status === httpCodes.NO_CONTENT) {
                 return Promise.reject(new Error(response.statusText));
             }
@@ -168,10 +166,8 @@ export default class POISuggestions extends Component {
             return response.json();
         }).
         then((response) => {
-            const { posts } = this.state;
-            const postIndex = posts.indexOf(post);
-
-            console.log(response);
+            const { suggestions } = this.state;
+            const postIndex = suggestions.indexOf(post);
 
             if (postIndex === NOT_FOUND) {
                 return;
@@ -179,10 +175,10 @@ export default class POISuggestions extends Component {
 
             post.likedByUser = !post.likedByUser;
             post.likes = response.likes;
-            posts[postIndex] = post;
+            suggestions[postIndex] = post;
 
             if (this.componentIsMounted) {
-                this.setState({ posts });
+                this.setState({ suggestions });
             }
         }).
         catch(() => {
