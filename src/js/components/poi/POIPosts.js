@@ -170,22 +170,22 @@ export default class POIPosts extends Component {
         return postsList;
     }
 
-    addTagFilter(tagName) {
+    addTagFilter(tagId) {
         if (!this.componentIsMounted) {
             return;
         }
         const tagsFilter = this.state.tagsFilter.slice();
-        if (tagsFilter.indexOf(tagName) !== NOT_FOUND) {
+        if (tagsFilter.indexOf(tagId) !== NOT_FOUND) {
             return;
         }
-        tagsFilter.push(tagName);
+        tagsFilter.push(tagId);
         this.setState({ tagsFilter });
     }
 
-    removeTagFilter(tagName) {
+    removeTagFilter(tagId) {
         let { tagsFilter } = this.state;
         tagsFilter = tagsFilter.filter((tag) => {
-            return tag !== tagName;
+            return tag !== tagId;
         });
         if (this.componentIsMounted) {
             this.setState({
@@ -214,7 +214,7 @@ export default class POIPosts extends Component {
         if (this.state.tagsFilter.length) {
             filteredPosts = filteredPosts.filter((post) => {
                 const postTagsInFilter = post.tags.filter((postTag) => {
-                    return this.state.tagsFilter.indexOf(postTag.name) !== NOT_FOUND;
+                    return this.state.tagsFilter.indexOf(postTag.tagId) !== NOT_FOUND;
                 });
 
                 return postTagsInFilter.length > NO_ELEMENT_SIZE;
@@ -242,13 +242,14 @@ export default class POIPosts extends Component {
                 <Paper className="paper-min-width" zDepth={4}>
                     <div className="filter-content">
                         <Tags className="tag-input"
+                              class="tag-filter"
                               title="Filter by tag..."
                               tags={this.state.tagsFilter}
-                              onAddTag={(tagId, tagName) => {
-                                  this.addTagFilter(tagName);
+                              onAddTag={(tagId) => {
+                                  this.addTagFilter(tagId);
                               }}
-                              onRemoveTag={(tagId, tagName) => {
-                                  this.removeTagFilter(tagName);
+                              onRemoveTag={(tagId) => {
+                                  this.removeTagFilter(tagId);
                               }}/>
                     </div>
                 </Paper>
@@ -264,7 +265,7 @@ export default class POIPosts extends Component {
             }
 
             return (
-                <Col xs={12} mdOffset={2} md={8} lgOffset={2} lg={8}> {tagFilter} </Col>
+                <Col xs={12} mdOffset={1} md={10} lgOffset={1} lg={10}> {toggleTagFilterButton} {tagFilter} </Col>
             );
         }
 
