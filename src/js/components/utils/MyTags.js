@@ -125,6 +125,7 @@ export default class MyTags extends Component {
                     onNewRequest={ (tag) => {
                         this.addTag(tag);
                     }}
+                    fullWidth
                 />;
         }
 

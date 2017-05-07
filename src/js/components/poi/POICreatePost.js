@@ -8,8 +8,9 @@ import Tags from '../utils/MyTags';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
+import Dropzone from 'react-dropzone';
 
-const API_POI_POST_URL = '/api/post/auth/';
+const API_POI_POST_URL = '/api/post/auth/upload';
 const ONE_ELEMENT = 1;
 const NOT_FOUND = -1;
 
@@ -21,7 +22,11 @@ export default class CreatePostDialog extends Component {
         this.state = {
             inProgress: false,
             open: false,
-            post: { tags: [] }
+            post: {
+                description: '',
+                files: [],
+                tags: []
+            }
         };
 
         this.handleOpen = this.handleOpen.bind(this);
@@ -38,16 +43,22 @@ export default class CreatePostDialog extends Component {
 
     createPost() {
         firebase.auth().currentUser.getToken(true).then((token) => {
+            const { description, tags, files } = this.state.post;
+            const { poiId } = this.props;
+
+            const form = new FormData();
+            form.append('description', description);
+            form.append('tags', tags);
+            form.append('poiId', poiId);
+            for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
+                // Note: In order to detect the array of files in the server, each file, individually, must be appended to the same form key.
+                form.append('postFiles', files[fileIndex]);
+            }
+
+            // 'Content-Type': `multipart/form-data` must not be added; the 'boundary' token must be provided automatically
             return fetch(API_POI_POST_URL, {
-                body: JSON.stringify({
-                    description: this.state.post.description,
-                    poiID: this.props.poiId,
-                    tags: this.state.post.tags
-                }),
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
+                body: form,
+                headers: { 'Authorization': `Bearer ${token}` },
                 method: 'POST'
             });
         }).
@@ -127,6 +138,18 @@ export default class CreatePostDialog extends Component {
         }
     }
 
+    onDrop(files) {
+        this.state.post.files.forEach((file) => {
+            window.URL.revokeObjectURL(file.preview);
+        });
+        this.setState({
+            post: {
+                ...this.state.post,
+                files
+            }
+        });
+    }
+
     render() {
         const actions = [
             <FlatButton
@@ -176,6 +199,29 @@ export default class CreatePostDialog extends Component {
                                    onChange={ this.handleDescription.bind(this) }
                                    fullWidth
                         />
+                        <Dropzone onDrop={this.onDrop.bind(this)}>
+                            <p>Drop files here</p>
+                        </Dropzone>
+                        {
+                            this.state.post.files.map((file, index) => {
+                                return <span key={index} onClick={(event) => {
+                                    event.preventDefault();
+
+                                    const { files } = this.state.post;
+                                    files.splice(index, 1);
+                                    window.URL.revokeObjectURL(file.preview);
+                                    this.setState({
+                                        post: {
+                                            ...this.state.post,
+                                            files
+                                        }
+                                    });
+                                }
+                                }>
+                                    <img src={file.preview} style={{width: '100px', objectFit: 'contain'}}/>
+                                </span>;
+                            })
+                        }
                     </form>
                 </Dialog>
             </div>
