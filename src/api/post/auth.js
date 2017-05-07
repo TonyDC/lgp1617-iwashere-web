@@ -27,7 +27,9 @@ const ELEMENT_NOT_FOUND = -1;
 
 const sharp = require('sharp');
 
-const { sendFileToFirebase, unlink, detectFile } = require('../utils/async_conversions');
+const { sendFileToFirebase, unlink, detectFile, getHashOfFile } = require('../utils/async_conversions');
+
+const upload = require('../middleware/upload');
 
 router.post('/', (req, res, next) => {
     const { poiID, description, tags, contentUrl, contentHash, contentType } = req.body;
@@ -189,7 +191,8 @@ router.post('/like', (req, res, next) => {
 
 function processFiles (uid) {
     return (fileItem, callback) => {
-        const { size, path, name, hash, lastModifiedDate } = fileItem;
+        console.log(fileItem);
+        const { fieldname, originalname, encoding, mimetype, destination, filename, path, size } = fileItem;
 
         detectFile(path).then((type) => {
             const typeIndex = ['image/jpeg', 'image/png'].indexOf(type);
@@ -211,23 +214,23 @@ function processFiles (uid) {
                 const dirname = pathModule.dirname(path);
                 const paths = [
                     {
-                        basename: `xsmall_${name}.${extension}`,
-                        dir: pathModule.join(dirname, `xsmall_${name}.${extension}`),
+                        basename: `xsmall_${filename}.${extension}`,
+                        dir: pathModule.join(dirname, `xsmall_${filename}.${extension}`),
                         size: 200
                     },
                     {
-                        basename: `small_${name}.${extension}`,
-                        dir: pathModule.join(dirname, `small_${name}.${extension}`),
+                        basename: `small_${filename}.${extension}`,
+                        dir: pathModule.join(dirname, `small_${filename}.${extension}`),
                         size: 400
                     },
                     {
-                        basename: `medium_${name}.${extension}`,
-                        dir: pathModule.join(dirname, `medium_${name}.${extension}`),
+                        basename: `medium_${filename}.${extension}`,
+                        dir: pathModule.join(dirname, `medium_${filename}.${extension}`),
                         size: 800
                     },
                     {
-                        basename: `large_${name}.${extension}`,
-                        dir: pathModule.join(dirname, `large_${name}.${extension}`),
+                        basename: `large_${filename}.${extension}`,
+                        dir: pathModule.join(dirname, `large_${filename}.${extension}`),
                         size: 1200
                     }
                 ];
@@ -246,7 +249,7 @@ function processFiles (uid) {
                     });
                 });
                 promises.push(Promise.resolve({
-                    basename: `original_${name}.${extension}`,
+                    basename: `original_${filename}.${extension}`,
                     dir: path,
                     size: width
                 }));
@@ -257,7 +260,10 @@ function processFiles (uid) {
                 return Promise.all(arrays.map((imageInfo) => {
                     const { basename, dir } = imageInfo;
 
-                    return sendFileToFirebase(dir, `${uid}/${lastModifiedDate} - ${hash} - ${size} - ${basename}`);
+                    return getHashOfFile(dir).
+                    then((hash) => {
+                        return sendFileToFirebase(dir, `${uid}/${hash} - ${size} - ${basename}`);
+                    });
                 }));
             }).
             then((arrays) => {
@@ -270,6 +276,7 @@ function processFiles (uid) {
             });
         }).
         catch((error) => {
+            // TODO unlink files
             callback({
                 code: 2,
                 message: error
@@ -278,27 +285,18 @@ function processFiles (uid) {
     };
 }
 
-router.post('/upload', (req, res, next) => {
-    // req.fields contains non-file fields
+const bodyTemplate = upload.fields([{ name: 'postFiles' }]);
+router.post('/upload', bodyTemplate, (req, res, next) => {
+    // req.body contains non-file fields
     // req.files contains files
+
     const { uid } = req.auth.token;
-    const { fields, files } = req;
-    const { description , tags, poiId } = fields;
-    let { postFiles } = files;
-
-    if (!postFiles) {
-        res.status(httpCodes.BAD_REQUEST).send({ message: `'postFiles' file not found.` }).
-        end();
-
-        return;
-
-    } else if (!Array.isArray(postFiles)) {
-        // When there is just one file, 'postFiles' is just a File object
-        postFiles = [postFiles];
-    }
+    const { body, files } = req;
+    const { description , tags, poiId } = body;
+    const { postFiles } = files;
 
     // TODO check fields
-    console.log(fields);
+    console.log(body);
     console.log(files);
 
     /*

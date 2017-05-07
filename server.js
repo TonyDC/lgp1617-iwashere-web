@@ -14,7 +14,6 @@ const mainConfig = require('./config');
 const path = require('path');
 const bodyParser = require('body-parser');
 const express = require('express');
-const formidable = require('./src/api/middleware/form');
 const httpCodes = require('http-status-codes');
 const firebaseAdmin = require("firebase-admin");
 
@@ -60,13 +59,6 @@ app.use(bodyParser.json());
 // URL-encoded body parser
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(formidable({
-    hash: 'sha1',
-    keepExtensions: true,
-    maxFieldsSize: 2 * 1024 * 1024, // in bytes
-    multiples: true                 // req.files to be arrays of files
-}));
-
 // Firebase Admin SDK Initialization
 const serviceAccountKey = require(mainConfig.FIREBASE_ADMIN_SDK_PATH);
 firebaseAdmin.initializeApp({
@@ -89,7 +81,37 @@ app.use((req, res) => {
 
 app.use(expressWinston.errorLogger({ transports: windstonTransports.transportErrorLoggers }));
 
-// Error middleware handler
+// Multer error middleware handler
+app.use((err, req, res, next) => {
+    // 'multer' error object properties
+    const { code, field } = err;
+    switch (code) {
+        case 'LIMIT_UNEXPECTED_FILE':
+            res.status(httpCodes.BAD_REQUEST).
+            json({ meesage: 'Unexpected body field' }).
+            end();
+            break;
+
+        case 'LIMIT_FILE_SIZE':
+            res.status(httpCodes.BAD_REQUEST).
+            json({ meesage: 'File size limit exceeded' }).
+            end();
+            break;
+
+        case 'LIMIT_FILE_COUNT':
+            res.status(httpCodes.BAD_REQUEST).
+            json({ meesage: 'File number limit exceeded' }).
+            end();
+            break;
+
+        default:
+            return next(err);
+    }
+
+    return null;
+});
+
+// General-purpose error middleware handler
 app.use((err, req, res, next) => {
     console.error(err);
 

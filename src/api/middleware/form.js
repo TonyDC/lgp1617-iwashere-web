@@ -1,8 +1,11 @@
 'use strict';
 
+const WIDTH_MIME_TYPE = 1;
+const MIME_TYPE_INDEX = 0;
+
 const formidable = require('formidable');
 
-module.exports = (opts) => {
+module.exports = (opts = {}) => {
     return (req, res, next) => {
         const { method } = req;
         if (method !== 'POST') {
@@ -14,10 +17,10 @@ module.exports = (opts) => {
             return next();
         }
         const contentTypeValue = contentType.split(";");
-        if (contentTypeValue.length < 1) {
+        if (contentTypeValue.length < WIDTH_MIME_TYPE) {
             return next();
         }
-        const contentTypeMIME = contentTypeValue[0].trim();
+        const contentTypeMIME = contentTypeValue[MIME_TYPE_INDEX].trim();
         if (contentTypeMIME !== 'multipart/form-data') {
             return next();
         }
@@ -26,7 +29,9 @@ module.exports = (opts) => {
         const form = new formidable.IncomingForm();
         Object.assign(form, opts);
 
-        return form.parse(req, (err, fields, files) => {
+        form.parse(req, (err, fields, files) => {
+            console.log(form.bytesExpected);
+
             if (err) {
                 return next(err);
             }
@@ -37,6 +42,11 @@ module.exports = (opts) => {
             });
 
             return next();
+        });
+
+        form.on('fileBegin', function(name, file) {
+            console.log(name, file);
+
         });
 
         /*

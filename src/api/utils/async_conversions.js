@@ -1,5 +1,6 @@
 "use strict";
 
+const crypto = require('crypto');
 const fs = require('fs');
 const storage = require('@google-cloud/storage');
 const { Magic, MAGIC_MIME_TYPE } = require('mmmagic');
@@ -72,5 +73,23 @@ module.exports.sendFileToFirebase = (src, dest, metadata) => {
                 src
             });
         });
+    });
+};
+
+
+module.exports.getHashOfFile = (file, date = Date.now()) => {
+    return new Promise((resolve, reject) => {
+        const hash = crypto.createHash('sha256');
+        hash.setEncoding('hex');
+        hash.update(String(date));
+        const input = fs.createReadStream(file);
+        hash.on('finish', () => {
+            // Here, the hash is already digested
+            resolve(hash.read());
+        });
+        input.on('error', () => {
+            reject(new Error('Failed to obtain SHA256'));
+        });
+        input.pipe(hash);
     });
 };
