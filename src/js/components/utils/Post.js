@@ -79,7 +79,7 @@ export default class Post extends Component {
                             <IconButton iconStyle={buttonStyle} style={likeButtonSize}
                                         onTouchTap={() => {
                                             if (typeof this.props.onLike !== 'undefined') {
-                                                this.props.onLike(this.props.post.postId);
+                                                this.props.onLike(this.props.post);
                                             }
                                         }}>
                                 <LikeIcon/>
@@ -91,6 +91,8 @@ export default class Post extends Component {
         );
     }
 }
+
+Post.defaultProps = { inverted: false };
 
 Post.propTypes = {
     inverted: PropTypes.bool.isRequired,

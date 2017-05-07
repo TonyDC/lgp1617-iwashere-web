@@ -42,7 +42,7 @@ export default class CreatePostDialog extends Component {
     }
 
     createPost() {
-        firebase.auth().currentUser.getToken(true).then((token) => {
+        firebase.auth().currentUser.getToken().then((token) => {
             const { description, tags, files } = this.state.post;
             const { poiId } = this.props;
 

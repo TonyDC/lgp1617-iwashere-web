@@ -4,8 +4,7 @@ import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
-import ReactDOM from "react-dom";
-import POISuggestions from './POISuggestions';
+import PostSuggestions from './PostFeed';
 
 import 'styles/utils.scss';
 
@@ -18,13 +17,7 @@ export default class Feed extends Component {
         this.state = { user: reduxState.userStatus.userInfo };
     }
 
-    componentWillMount() {
-        this.updateDimensions();
-    }
-
     componentDidMount() {
-        this.componentIsMounted = true;
-
         this.reduxListenerUnsubscribe = this.context.store.subscribe(() => {
             const reduxState = this.context.store.getState();
             if (!this.componentIsMounted) {
@@ -33,38 +26,13 @@ export default class Feed extends Component {
 
             this.setState({ user: reduxState.userStatus.userInfo });
         });
-
-        // The same function object must be used when binding and unbinding the event listener
-        this.resizeHandler = this.updateDimensions.bind(this);
-        window.addEventListener("resize", this.resizeHandler);
-        this.updateDimensions();
     }
 
     componentWillUnmount() {
-        window.removeEventListener("resize", this.resizeHandler);
-        this.resizeHandler = null;
         this.componentIsMounted = false;
     }
 
-    updateDimensions() {
-        if (!this.componentIsMounted || !this.feedContainer) {
-            return;
-        }
-
-        this.setState({
-            feedHeight: ReactDOM.findDOMNode(this.feedContainer).offsetHeight,
-            feedWidth: ReactDOM.findDOMNode(this.feedContainer).offsetWidth
-        });
-    }
-
     render() {
-
-        const feedStyle = {};
-        if (this.state.feedWidth && this.state.feedHeight) {
-            feedStyle.width = this.state.feedWidth;
-            feedStyle.height = this.state.feedHeight;
-        }
-
         return (
             <div className="wrapper-fill">
                 <Helmet>
@@ -73,14 +41,8 @@ export default class Feed extends Component {
 
                 <div className="container">
                     <Row className="show-grid">
-                        <Col xs={12} mdOffset={3} md={6} lgOffset={3} lg={6}>
-                            <POISuggestions user={this.state.user} router={this.props.router} style={feedStyle}
-                                            ref={(node) => {
-                                                if (node !== null) {
-                                                    this.feedContainer = node;
-                                                }
-                                            }}
-                            />
+                        <Col xs={12} mdOffset={2} md={8} lgOffset={2} lg={8}>
+                            <PostSuggestions user={this.state.user} router={this.props.router}/>
                         </Col>
                     </Row>
                 </div>

@@ -102,22 +102,16 @@ export default class POIPosts extends Component {
         });
     }
 
-    toggleLike(postId) {
+    toggleLike(post) {
         if (!this.state.user) {
             return;
         }
-        let post = null;
-        this.state.posts.forEach((postTemp) => {
-            if (postTemp.postId === postId) {
-                post = postTemp;
-            }
-        });
 
-        firebase.auth().currentUser.getToken(true).then((token) => {
+        firebase.auth().currentUser.getToken().then((token) => {
             return fetch(`${this.props.url}/auth/like`, {
                 body: JSON.stringify({
                     liked: !post.likedByUser,
-                    postID: postId
+                    postID: post.postId
                 }),
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -135,12 +129,15 @@ export default class POIPosts extends Component {
         }).
         then((response) => {
             const { posts } = this.state;
-            posts.forEach((postTemp) => {
-                if (postTemp.postId === postId) {
-                    postTemp.likedByUser = !postTemp.likedByUser;
-                    postTemp.likes = response.likes;
-                }
-            });
+            const postIndex = posts.indexOf(post);
+
+            if (postIndex === NOT_FOUND) {
+                return;
+            }
+
+            post.likedByUser = !post.likedByUser;
+            post.likes = response.likes;
+            posts[postIndex] = post;
 
             if (this.componentIsMounted) {
                 this.setState({ posts });
@@ -162,7 +159,7 @@ export default class POIPosts extends Component {
                 <Post post={postEntry}
                       inverted={itemClassInverted}
                       onLike={() => {
-                          this.toggleLike(postEntry.postId);
+                          this.toggleLike(postEntry);
                       }}
                       key={postEntry.postId}/>
             );

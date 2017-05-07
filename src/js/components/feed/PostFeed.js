@@ -6,6 +6,7 @@ import { Card, CardTitle } from "material-ui/Card";
 import { GridLoader as Loader } from 'halogen';
 import InfiniteScroll from 'react-infinite-scroller';
 import Alerts from "../utils/Alerts";
+import ViewPost from "../utils/ViewPost";
 import PostMosaic from "./PostMosaic";
 import { GridList } from "material-ui/GridList";
 import IconButton from "material-ui/IconButton";
@@ -15,16 +16,16 @@ import NoLocation from "material-ui/svg-icons/device/gps-off";
 
 import "styles/suggestions.scss";
 
+const API_LIKE_POST = '/api/post/auth/like';
 const API_POST_POI_SUGGESTIONS_URL = 'api/post/post_poi';
+const NOT_FOUND = -1;
 const LIMIT = 20;
 const TITLE = 'Feed';
 const USING_LOCATION_TOOLTIP = 'Using your location';
 
 const DEFAULT_STYLE = {
-    height: 500,
     overflowX: 'auto',
-    overflowY: 'auto',
-    width: 500
+    overflowY: 'auto'
 };
 
 export default class POISuggestions extends Component {
@@ -41,7 +42,19 @@ export default class POISuggestions extends Component {
 
     componentDidMount() {
         this.componentIsMounted = true;
-        this.getCurrentLocation();
+
+        if (!this.state.location) {
+            this.getCurrentLocation().then(() => {
+                const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+                    if (this.componentIsMounted) {
+                        this.setState({ user }, () => {
+                            unsubscribe();
+                            this.fetchSuggestions();
+                        });
+                    }
+                });
+            });
+        }
     }
 
     componentWillUnmount() {
@@ -56,33 +69,34 @@ export default class POISuggestions extends Component {
         };
 
         const locationInProgressAlert = Alerts.createInfoAlert(`Retrieving location...`);
-        navigator.geolocation.getCurrentPosition((position) => {
-            if (!this.componentIsMounted) {
-                return;
-            }
-            const { latitude, longitude } = position.coords;
-            this.setState({
-                location: {
-                    lat: latitude,
-                    lng: longitude
+
+        return new Promise((fulfill, reject) => {
+            navigator.geolocation.getCurrentPosition((position) => {
+                if (!this.componentIsMounted) {
+                    reject(new Error('Component not mounted.'));
+
+                    return;
                 }
-            }, () => {
-                firebase.auth().onAuthStateChanged((user) => {
-                    if (this.componentIsMounted) {
-                        this.setState({ user }, () => {
-                            this.fetchSuggestions();
-                        });
+
+                const { latitude, longitude } = position.coords;
+                this.setState({
+                    location: {
+                        lat: latitude,
+                        lng: longitude
                     }
+                }, () => {
+                    fulfill(true);
                 });
-            });
 
-            Alerts.close(locationInProgressAlert);
-            Alerts.createInfoAlert(`Location found.`);
-        }, () => {
-            Alerts.closeAll();
-            Alerts.createErrorAlert('Error while retrieving current location.');
-        }, geoOptions);
+                Alerts.close(locationInProgressAlert);
+                Alerts.createInfoAlert(`Location found.`);
+            }, () => {
+                Alerts.closeAll();
+                Alerts.createErrorAlert('Error while retrieving current location.');
 
+                fulfill(false);
+            }, geoOptions);
+        });
     }
 
     fetchSuggestions() {
@@ -91,7 +105,6 @@ export default class POISuggestions extends Component {
         }
 
         let url = API_POST_POI_SUGGESTIONS_URL;
-
         if (this.state.user) {
             url += `/${this.state.user.uid}`;
         }
@@ -127,11 +140,65 @@ export default class POISuggestions extends Component {
         });
     }
 
-    selectMosaic(postId) {
-        // open post modal
+    toggleLike(post) {
+        if (!this.state.user) {
+            return;
+        }
+
+        firebase.auth().currentUser.getToken().then((token) => {
+            return fetch(API_LIKE_POST, {
+                body: JSON.stringify({
+                    liked: !post.likedByUser,
+                    postID: post.postId
+                }),
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                method: 'POST'
+            });
+        }).
+        then((response) => {
+            if (response.status >= httpCodes.BAD_REQUEST || response.status === httpCodes.NO_CONTENT) {
+                return Promise.reject(new Error(response.statusText));
+            }
+
+            return response.json();
+        }).
+        then((response) => {
+            const { suggestions } = this.state;
+            const postIndex = suggestions.indexOf(post);
+
+            if (postIndex === NOT_FOUND) {
+                return;
+            }
+
+            post.likedByUser = !post.likedByUser;
+            post.likes = response.likes;
+            suggestions[postIndex] = post;
+
+            if (this.componentIsMounted) {
+                this.setState({ suggestions });
+            }
+        }).
+        catch(() => {
+            Alerts.createErrorAlert('Error submitting the like.');
+        });
     }
 
-    dismissMosaic(poiId) {
+    openPostView(postSelected) {
+        if (this.componentIsMounted) {
+            this.setState({ postSelected });
+        }
+    }
+
+    closePostView() {
+        if (this.componentIsMounted) {
+            this.setState({ postSelected: null });
+        }
+    }
+
+    viewPostPOI(poiId) {
         this.props.router.push(`/poi/${poiId}`);
     }
 
@@ -141,34 +208,15 @@ export default class POISuggestions extends Component {
                 key={post.postId}
                 post={post}
                 onSelect={() => {
-                    this.selectMosaic(post.postId);
+                    this.openPostView(post);
                 }}
                 onDismiss={() => {
-                    this.dismissMosaic(post.poiId);
+                    this.viewPostPOI(post.poiId);
                 }}/>;
         });
     }
 
-    overrideStyle(originalStyle, newStyle) {
-        const newObject = {};
-
-        for (const attribute in originalStyle) {
-            if (attribute in newStyle) {
-                newObject[attribute] = newStyle[attribute];
-            } else {
-                newObject[attribute] = originalStyle[attribute];
-            }
-        }
-
-        return newObject;
-    }
-
     render() {
-        let gridStyle = DEFAULT_STYLE;
-        if (this.props.style) {
-            gridStyle = this.overrideStyle(gridStyle, this.props.style);
-        }
-
         let locationIcon = null;
         if (this.state.location) {
             locationIcon =
@@ -183,21 +231,30 @@ export default class POISuggestions extends Component {
         }
 
         const loader =
-            <div className="hor-align vert-align">
+            <div className="hor-align">
                 <Loader color="#012935" className="loader"/>
             </div>;
+
+        let postView = null;
+        if (this.state.postSelected) {
+            postView = <ViewPost post={this.state.postSelected}
+                                 onClose = {this.closePostView.bind(this)}
+                                 onToggleLike={(post) => {
+                                     this.toggleLike(post);
+                                 }}/>;
+        }
 
         return (
             <Card className="suggestions-card">
                 {locationIcon}
                 <CardTitle title={TITLE}/>
+                { postView }
                 <InfiniteScroll
-                    pageStart={0}
                     initialLoad={false}
                     loadMore={this.fetchSuggestions.bind(this)}
                     hasMore={this.state.hasMoreSuggestions}
                     loader={loader}>
-                    <GridList style={gridStyle}>
+                    <GridList style={DEFAULT_STYLE}>
                         { this.getPostMosaics() }
                     </GridList>
                 </InfiniteScroll>
@@ -206,9 +263,4 @@ export default class POISuggestions extends Component {
     }
 }
 
-POISuggestions.defaultProps = { style: DEFAULT_STYLE };
-
-POISuggestions.propTypes = {
-    router: PropTypes.object,
-    style: PropTypes.object
-};
+POISuggestions.propTypes = { router: PropTypes.object };
