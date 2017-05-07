@@ -146,7 +146,7 @@ export default class POISuggestions extends Component {
             return;
         }
 
-        firebase.auth().currentUser.getToken(true).then((token) => {
+        firebase.auth().currentUser.getToken().then((token) => {
             return fetch(API_LIKE_POST, {
                 body: JSON.stringify({
                     liked: !post.likedByUser,
