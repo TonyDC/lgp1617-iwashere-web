@@ -271,7 +271,8 @@ function processFiles (uid) {
             }).
             then((arrays) => {
                 return Promise.all(arrays.map((imagePathObj) => {
-                    return unlink(imagePathObj.src);
+                    // return unlink(imagePathObj.src);
+                    return null;
                 }));
             }).
             then(() => {
