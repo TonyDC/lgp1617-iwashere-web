@@ -18,9 +18,16 @@ module.exports.getPOIPosts = (poiID, offset, limit) => {
 
 module.exports.getPOIsPost = (offset, limit) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT DISTINCT ON (single_post_id) *
-    FROM (SELECT *, name AS type, posts.created_at as post_date, posts.post_id AS single_post_id
-          FROM posts INNER JOIN post_contents ON post_contents.post_id = posts.post_id 
+    return db.query(`WITH poi_ratings AS (SELECT AVG(rating) AS rating, poi_id
+                 FROM (SELECT DISTINCT ON (user_id) poi_id, rating FROM poi_ratings
+                 ORDER BY user_id, created_at DESC) current_ratings
+                 GROUP BY poi_id)
+    SELECT DISTINCT ON (single_post_id) *
+    FROM (SELECT *, content_types.name AS type, posts.created_at as post_date, posts.post_id AS single_post_id,
+               pois.name AS name
+          FROM pois INNER JOIN poi_ratings ON pois.poi_id = poi_ratings.poi_id
+          INNER JOIN posts ON posts.poi_id = pois.poi_id 
+          INNER JOIN post_contents ON post_contents.post_id = posts.post_id 
           INNER JOIN content_types ON post_contents.content_type_id = content_types.content_type_id
           WHERE content_types.content_type_id = 1 ORDER BY post_date DESC) pois_posts
     LIMIT :limit OFFSET :offset;`, {
@@ -34,15 +41,15 @@ module.exports.getPOIsPost = (offset, limit) => {
 
 module.exports.getPOIsPostWithLocation = (lat, lng, offset, limit) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT DISTINCT ON (single_post_id) * FROM (
-        WITH poi_ratings AS (SELECT AVG(rating) AS rating, poi_id
+    return db.query(`WITH poi_ratings AS (SELECT AVG(rating) AS rating, poi_id
                  FROM (SELECT DISTINCT ON (user_id) poi_id, rating FROM poi_ratings
                  ORDER BY user_id, created_at DESC) current_ratings
                  GROUP BY poi_id)
+        SELECT DISTINCT ON (single_post_id) * FROM (
         SELECT *, content_types.name AS type, posts.created_at as post_date, posts.post_id AS single_post_id, 
                get_distance_function(latitude::real, longitude::real, :lat::real, :lng::real) as distance,
                pois.name AS name
-        FROM pois INNER JOIN posts INNER JOIN poi_ratings ON pois.poi_id = poi_ratings.poi_id
+        FROM pois INNER JOIN poi_ratings ON pois.poi_id = poi_ratings.poi_id
         INNER JOIN posts ON posts.poi_id = pois.poi_id 
         INNER JOIN post_contents ON post_contents.post_id = posts.post_id 
         INNER JOIN content_types ON post_contents.content_type_id = content_types.content_type_id

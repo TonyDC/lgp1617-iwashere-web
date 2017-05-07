@@ -121,6 +121,8 @@ module.exports.handleGetPOIsPostRequest = (params) => {
                         }
 
                         posts.forEach((post) => {
+                            post.rating = parseFloat(post.rating);
+
                             post.tags = postTags.filter((tag) => {
                                 return tag.postId === post.postId;
                             });

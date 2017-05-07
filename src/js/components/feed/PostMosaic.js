@@ -47,6 +47,7 @@ export default class PostMosaic extends Component {
 
         return (
             <GridTile
+                key={post.postId}
                 className="clickable"
                 onTouchTap={(event) => {
                     if (event._targetInst._tag === 'svg' || event._targetInst._tag === 'path') {
