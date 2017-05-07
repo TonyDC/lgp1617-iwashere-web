@@ -13,12 +13,12 @@ if (process.env.NODE_ENV === 'test') {
             DATABASE: 'lgp',
             PASSWORD: '123',
             CONN_CONFIG: {
-                host: '127.0.0.1',
                 dialect: 'postgres',
+                host: '127.0.0.1',
                 pool: {
+                    idle: 0,
                     max: 0,
-                    min: 0,
-                    idle: 0
+                    min: 0
                 },
             },
             USERNAME: 'luiscosta'
