@@ -15,7 +15,7 @@ import NoLocation from "material-ui/svg-icons/device/gps-off";
 
 import "styles/suggestions.scss";
 
-const API_POI_SUGGESTIONS_URL = 'api/poi/suggestions';
+const API_POST_POI_SUGGESTIONS_URL = 'api/post/post_poi';
 const LIMIT = 20;
 const TITLE = 'Feed';
 const USING_LOCATION_TOOLTIP = 'Using your location';
@@ -90,7 +90,7 @@ export default class POISuggestions extends Component {
             return;
         }
 
-        let url = API_POI_SUGGESTIONS_URL;
+        let url = API_POST_POI_SUGGESTIONS_URL;
 
         if (this.user) {
             url += `/${this.state.uid}`;
@@ -102,6 +102,7 @@ export default class POISuggestions extends Component {
             url += `/${this.state.location.lat}/${this.state.location.lng}`;
         }
 
+        console.log(url);
         fetch(url, {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
@@ -129,7 +130,7 @@ export default class POISuggestions extends Component {
         });
     }
 
-    selectMosaic(poiId) {
+    selectMosaic(postId) {
         // open post modal
     }
 
@@ -137,16 +138,16 @@ export default class POISuggestions extends Component {
         this.props.router.push(`/poi/${poiId}`);
     }
 
-    getPoiMosaics() {
-        return this.state.suggestions.map((poi) => {
+    getPostMosaics() {
+        return this.state.suggestions.map((post) => {
             return <PostMosaic
-                key={poi.poiId}
-                poi={poi}
+                key={post.postId}
+                post={post}
                 onSelect={() => {
-                    this.selectMosaic(poi.poiId);
+                    this.selectMosaic(post.postId);
                 }}
                 onDismiss={() => {
-                    this.dismissMosaic(poi.poiId);
+                    this.dismissMosaic(post.poiId);
                 }}/>;
         });
     }
@@ -170,8 +171,6 @@ export default class POISuggestions extends Component {
         if (this.props.style) {
             gridStyle = this.overrideStyle(gridStyle, this.props.style);
         }
-
-        const poiSuggestions = this.getPoiMosaics();
 
         let locationIcon = null;
         if (this.state.location) {
@@ -202,7 +201,7 @@ export default class POISuggestions extends Component {
                     hasMore={this.state.hasMoreSuggestions}
                     loader={loader}>
                     <GridList style={gridStyle}>
-                        {poiSuggestions}
+                        { this.getPostMosaics() }
                     </GridList>
                 </InfiniteScroll>
             </Card>

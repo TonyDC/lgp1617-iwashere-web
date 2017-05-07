@@ -22,7 +22,7 @@ module.exports.getPOIsPost = (offset, limit) => {
     FROM (SELECT *, name AS type, posts.created_at as post_date, posts.post_id AS single_post_id
           FROM posts INNER JOIN post_contents ON post_contents.post_id = posts.post_id 
           INNER JOIN content_types ON post_contents.content_type_id = content_types.content_type_id
-          WHERE content_types.content_type_id = '1' ORDER BY  posts.created_at DESC) pois_posts
+          WHERE content_types.content_type_id = 1 ORDER BY post_date DESC) pois_posts
     LIMIT :limit OFFSET :offset;`, {
         replacements: {
             limit,
@@ -35,12 +35,12 @@ module.exports.getPOIsPost = (offset, limit) => {
 module.exports.getPOIsPostWithLocation = (lat, lng, offset, limit) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT DISTINCT ON (single_post_id) *
-    FROM (SELECT *, name AS type, posts.created_at as post_date, posts.post_id AS single_post_id, 
+    FROM (SELECT *, content_types.name AS type, posts.created_at as post_date, posts.post_id AS single_post_id, 
                  get_distance_function(latitude::real, longitude::real, :lat::real, :lng::real) as distance
           FROM pois INNER JOIN posts ON posts.poi_id = pois.poi_id 
           INNER JOIN post_contents ON post_contents.post_id = posts.post_id 
           INNER JOIN content_types ON post_contents.content_type_id = content_types.content_type_id
-          WHERE content_types.content_type_id = '1' ORDER BY distance, posts.created_at DESC) pois_posts
+          WHERE content_types.content_type_id = 1 ORDER BY distance, post_date DESC) pois_posts
     LIMIT :limit OFFSET :offset;`, {
         replacements: {
             lat,

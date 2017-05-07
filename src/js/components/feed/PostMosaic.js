@@ -19,9 +19,10 @@ const POI_BUTTON_MESSAGE = 'Go to the point of interest';
 export default class POIMosaic extends Component {
 
     render() {
-        const { poi } = this.props;
+        const { post } = this.props;
+        console.log(post);
 
-        if (!poi) {
+        if (!post) {
             return (
                 <GridTile>
                     <div className="hor-align vert-align">
@@ -32,8 +33,8 @@ export default class POIMosaic extends Component {
         }
 
         let postMedia = null;
-        if (poi.media.length) {
-            postMedia = <img src={poi.media[ZERO_INDEX].url} />;
+        if (post.media.length) {
+            postMedia = <img src={post.media[ZERO_INDEX].url} />;
         }
 
         let poiButton = null;
@@ -54,8 +55,8 @@ export default class POIMosaic extends Component {
                         this.props.onSelect();
                     }
                 }}
-                title={poi.name}
-                subtitle={<div className="vert-align"><span>{poi.rating.toFixed(RATING_PRECISION)}/{MAX_RATING_SCALE}</span> <StarBorder color="white" className="rating-star" /></div>}
+                title={post.name}
+                subtitle={<div className="vert-align"><span>{post.rating.toFixed(RATING_PRECISION)}/{MAX_RATING_SCALE}</span> <StarBorder color="white" className="rating-star" /></div>}
                 actionIcon={poiButton}
             >
                 {postMedia}
@@ -70,5 +71,5 @@ POIMosaic.propTypes = {
     dismissible: PropTypes.bool,
     onDismiss: PropTypes.func,
     onSelect: PropTypes.func,
-    poi: PropTypes.object
+    post: PropTypes.object
 };
