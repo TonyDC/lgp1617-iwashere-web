@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import Dialog from 'material-ui/Dialog';
 import Post from '../utils/Post';
 
+import 'styles/view_post.scss';
+
 export default class ViewPostModal extends Component {
 
     constructor(props) {
@@ -22,6 +24,8 @@ export default class ViewPostModal extends Component {
     render() {
         return (
             <Dialog
+                className="post-modal"
+                bodyClassName="post-modal-content"
                 modal={false}
                 open={this.state.open}
                 onRequestClose={() => {
