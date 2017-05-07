@@ -70,6 +70,7 @@ module.exports.sendFileToFirebase = (src, dest, metadata) => {
         on('finish', () => {
             // http://stackoverflow.com/questions/19277094/how-to-close-a-readable-stream-before-end
             // http://stackoverflow.com/questions/20796902/deleting-file-in-node-js
+            tempReadStream.unpipe(remoteWriteStream);
             tempReadStream.close();
             resolve({
                 dest,
@@ -89,11 +90,15 @@ module.exports.getHashOfFile = (file, date = Date.now()) => {
         hash.on('finish', () => {
             // http://stackoverflow.com/questions/19277094/how-to-close-a-readable-stream-before-end
             // http://stackoverflow.com/questions/20796902/deleting-file-in-node-js
+            input.unpipe(hash);
             input.close();
             // Here, the hash is already digested
             resolve(hash.read());
         });
         input.on('error', () => {
+            reject(new Error('Failed to obtain SHA256'));
+        });
+        hash.on('error', () => {
             reject(new Error('Failed to obtain SHA256'));
         });
         input.pipe(hash);
