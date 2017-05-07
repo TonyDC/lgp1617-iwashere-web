@@ -1,9 +1,13 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { GridList } from "material-ui/GridList";
+import httpCodes from 'http-status-codes';
+import * as firebase from 'firebase';
 import { Card, CardTitle } from "material-ui/Card";
+import { GridLoader as Loader } from 'halogen';
+import InfiniteScroll from 'react-infinite-scroller';
 import Alerts from "../utils/Alerts";
-import POIMosaic from "./PostMosaic";
+import PostMosaic from "./PostMosaic";
+import { GridList } from "material-ui/GridList";
 import IconButton from "material-ui/IconButton";
 import { red500 as currentLocationColor } from "material-ui/styles/colors";
 import MapsMyLocation from "material-ui/svg-icons/maps/my-location";
@@ -11,13 +15,10 @@ import NoLocation from "material-ui/svg-icons/device/gps-off";
 
 import "styles/suggestions.scss";
 
-const httpCodes = require('http-status-codes');
 const API_POI_SUGGESTIONS_URL = 'api/poi/suggestions';
-const NO_ELEMENT_SIZE = 0;
 const LIMIT = 20;
-const POI_SUGGESTION_TITLE = 'Feed';
+const TITLE = 'Feed';
 const USING_LOCATION_TOOLTIP = 'Using your location';
-const DEFAULT_SPACING = 2;
 
 const DEFAULT_STYLE = {
     height: 500,
@@ -66,7 +67,13 @@ export default class POISuggestions extends Component {
                     lng: longitude
                 }
             }, () => {
-                this.fetchSuggestions();
+                firebase.auth().onAuthStateChanged((user) => {
+                    if (this.componentIsMounted) {
+                        this.setState({ user }, () => {
+                            this.fetchSuggestions();
+                        });
+                    }
+                });
             });
 
             Alerts.close(locationInProgressAlert);
@@ -83,7 +90,13 @@ export default class POISuggestions extends Component {
             return;
         }
 
-        let url = `${API_POI_SUGGESTIONS_URL}/${this.state.suggestionsOffset}/${LIMIT}`;
+        let url = API_POI_SUGGESTIONS_URL;
+
+        if (this.user) {
+            url += `/${this.state.uid}`;
+        }
+
+        url += `/${this.state.suggestionsOffset}/${LIMIT}`;
 
         if (this.state.location) {
             url += `/${this.state.location.lat}/${this.state.location.lng}`;
@@ -126,7 +139,7 @@ export default class POISuggestions extends Component {
 
     getPoiMosaics() {
         return this.state.suggestions.map((poi) => {
-            return <POIMosaic
+            return <PostMosaic
                 key={poi.poiId}
                 poi={poi}
                 onSelect={() => {
@@ -173,13 +186,25 @@ export default class POISuggestions extends Component {
                 </IconButton>;
         }
 
+        const loader =
+            <div className="hor-align vert-align">
+                <Loader color="#012935" className="loader"/>
+            </div>;
+
         return (
             <Card className="suggestions-card">
                 {locationIcon}
-                <CardTitle title={POI_SUGGESTION_TITLE}/>
-                <GridList style={gridStyle}>
-                    {poiSuggestions}
-                </GridList>
+                <CardTitle title={TITLE}/>
+                <InfiniteScroll
+                    pageStart={0}
+                    initialLoad={false}
+                    loadMore={this.fetchSuggestions.bind(this)}
+                    hasMore={this.state.hasMoreSuggestions}
+                    loader={loader}>
+                    <GridList style={gridStyle}>
+                        {poiSuggestions}
+                    </GridList>
+                </InfiniteScroll>
             </Card>
         );
     }
@@ -189,6 +214,5 @@ POISuggestions.defaultProps = { style: DEFAULT_STYLE };
 
 POISuggestions.propTypes = {
     router: PropTypes.object,
-    style: PropTypes.object,
-    user: PropTypes.any
+    style: PropTypes.object
 };
