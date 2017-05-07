@@ -9,6 +9,7 @@ import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import Dropzone from 'react-dropzone';
+import nProgress from 'nprogress';
 
 const API_POI_POST_URL = '/api/post/auth/upload';
 const ONE_ELEMENT = 1;
@@ -42,6 +43,7 @@ export default class CreatePostDialog extends Component {
     }
 
     createPost() {
+        nProgress.start();
         firebase.auth().currentUser.getToken().then((token) => {
             const { description, tags, files } = this.state.post;
             const { poiId } = this.props;
@@ -78,11 +80,14 @@ export default class CreatePostDialog extends Component {
             if (this.componentIsMounted) {
                 this.setState({ open: false });
             }
+
+            nProgress.done();
         }).
         catch((error) => {
             if (!this.componentIsMounted) {
                 return;
             }
+            nProgress.done();
             this.setState({ inProgress: false });
             Alerts.createErrorAlert('Error while creating the post.');
         });
