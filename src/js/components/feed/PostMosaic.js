@@ -20,7 +20,6 @@ export default class PostMosaic extends Component {
 
     render() {
         const { post } = this.props;
-        console.log(post);
 
         if (!post) {
             return (
