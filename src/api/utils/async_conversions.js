@@ -86,6 +86,7 @@ module.exports.getHashOfFile = (file, date = Date.now()) => {
         hash.on('finish', () => {
             // Here, the hash is already digested
             resolve(hash.read());
+            input.close();
         });
         input.on('error', () => {
             reject(new Error('Failed to obtain SHA256'));

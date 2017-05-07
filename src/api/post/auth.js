@@ -246,6 +246,9 @@ function processFiles (uid) {
                     toFile(obj.dir).
                     then(() => {
                         return obj;
+                    }).
+                    catch((error) => {
+                        return Object.assign({}, obj, { error });
                     });
                 });
                 promises.push(Promise.resolve({
@@ -285,6 +288,11 @@ function processFiles (uid) {
     };
 }
 
+/*
+ * WARNING: Make sure that you always handle the files that a user uploads.
+ * Never add multer as a global middleware since a malicious user could upload files to a route that you didn’t anticipate.
+ * Only use this function on routes where you are handling the uploaded files.
+ */
 const bodyTemplate = upload.fields([{ name: 'postFiles' }]);
 router.post('/upload', bodyTemplate, (req, res, next) => {
     // req.body contains non-file fields
@@ -292,21 +300,13 @@ router.post('/upload', bodyTemplate, (req, res, next) => {
 
     const { uid } = req.auth.token;
     const { body, files } = req;
+
     const { description , tags, poiId } = body;
     const { postFiles } = files;
 
     // TODO check fields
     console.log(body);
     console.log(files);
-
-    /*
-     * size: 261095424,
-     * path: '/var/folders/jy/zh7zx0v135lc5722tlt0f2n00000gn/T/upload_ad4f5519b5560a5f99aee575ef591ddf',
-     * name: 'debian-mac-8.5.0-amd64-netinst.iso',
-     * type: 'application/x-iso9660-image',
-     * hash: null,
-     * lastModifiedDate: 2017-05-03T18:39:46.983Z,
-     */
 
     async.each(postFiles, processFiles(uid), (err) => {
         if (err) {
