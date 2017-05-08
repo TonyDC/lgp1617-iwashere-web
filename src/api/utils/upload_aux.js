@@ -7,7 +7,6 @@ const sharp = require('sharp');
 const { sendFileToFirebase, unlink, detectFile, getHashOfFile } = require('../utils/async_conversions');
 
 const ELEMENT_NOT_FOUND = -1;
-const ZERO_INDEX = 0;
 
 const SUPPORTED_IMAGES_MIME_TYPES = ['image/jpeg', 'image/png'];
 const JPEG_INDEX = SUPPORTED_IMAGES_MIME_TYPES.indexOf('image/jpeg');
@@ -58,7 +57,7 @@ function processFiles (uid) {
                 ];
                 const promises = paths.map((obj) => {
                     let sharpObject = sharp(path).resize(Math.min(width, obj.size));
-                    if (typeIndex === ZERO_INDEX) {
+                    if (typeIndex === JPEG_INDEX) {
                         sharpObject = sharpObject.jpeg();
                     } else {
                         sharpObject = sharpObject.png();
