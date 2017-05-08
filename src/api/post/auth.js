@@ -14,7 +14,7 @@ const db = root_require('src/db/query');
 const async = require('async');
 
 const DECIMAL_BASE = 10;
-
+const ELEMENT_NOT_FOUND = -1;
 const NO_ELEMENT_SIZE = 0;
 const ZERO_INDEX = 0;
 const ONE_INDEX = 1;
@@ -22,8 +22,6 @@ const TWO_INDEX = 2;
 const ONE_SIZE = 1;
 const TWO_SIZE = 2;
 const THREE_SIZE = 3;
-
-const ELEMENT_NOT_FOUND = -1;
 
 const sharp = require('sharp');
 const { sendFileToFirebase, unlink, detectFile, getHashOfFile } = require('../utils/async_conversions');
@@ -33,6 +31,7 @@ const bodyTemplate = upload.fields([{ name: 'postFiles' }]);
 router.post('/', bodyTemplate, (req, res, next) => {
     const { body, files } = req;
     const { poiID, description, tags } = body;
+    const { postFiles } = files;
     const userID = req.auth.token.uid;
 
     if (!poiID || typeof description !== 'string' || !tags || !userID || typeof userID !== 'string') {
@@ -41,26 +40,25 @@ router.post('/', bodyTemplate, (req, res, next) => {
         return;
     }
 
-    console.log(body);
-    console.log(files);
+    console.error('oi', tags);
 
     const { postDB, userDB, poiDB } = db;
     const primaryChecks = [userDB.getUserByUID(userID), poiDB.getPOIDetailByID(poiID)];
     Promise.all(primaryChecks).
     then((results) => {
         if (utils.checkResultList(results, [primaryChecks.length], true)) {
+            const createPost = [postDB.createPost(description, poiID, userID)];
+            if (postFiles.length > NO_ELEMENT_SIZE) {
+                createPost.push(upload_aux.handleFileUpload(postFiles, userID));
+            }
 
-            return Promise.all([postDB.createPost(description, poiID, userID),
-                upload_aux.handleFileUpload(files, userID)]).
+            return Promise.all(createPost).
             then((postResults) => {
-                if (utils.checkResultList(postResults, [TWO_SIZE], true)) {
+                if (utils.checkResultList(postResults, [createPost.length], true)) {
                     const { postId } = utils.convertObjectToCamelCase(postResults[ZERO_INDEX][ZERO_INDEX]);
-                    const { contentUrl, contentHash, contentTypeId } = postResults[ONE_INDEX][ZERO_INDEX];
-
                     const createAdditionalPostInfo = [postDB.addPostTags(postId, tags)];
-                    if (contentUrl && typeof contentUrl === 'string' &&
-                        contentHash && typeof contentHash === 'string' &&
-                        contentTypeId) {
+                    if (postFiles.length > NO_ELEMENT_SIZE) {
+                        const { contentUrl, contentHash, contentTypeId } = postResults[ONE_INDEX][ZERO_INDEX];
                         createAdditionalPostInfo.push(postDB.addPostContent(postId, contentUrl, contentHash, contentTypeId));
                     }
 

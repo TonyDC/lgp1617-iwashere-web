@@ -1,11 +1,14 @@
 'use strict';
 
+const db = root_require('src/db/query');
+const utils = require('../utils/misc');
 const pathModule = require('path');
 const async = require('async');
 const sharp = require('sharp');
 
 const { sendFileToFirebase, unlink, detectFile, getHashOfFile } = require('../utils/async_conversions');
 
+const IMAGE_TYPE = 'image;imagem';
 const SUPPORTED_TYPES = ['image/jpeg', 'image/png'];
 const JPEG_INDEX = SUPPORTED_TYPES.indexOf('image/jpeg');
 const PNG_INDEX = SUPPORTED_TYPES.indexOf('image/png');
@@ -24,11 +27,11 @@ function processFiles (uid) {
             switch (typeIndex) {
                 case JPEG_INDEX:
                     extension = 'jpeg';
-                    contentTypeName = 'image/imagem';
+                    contentTypeName = IMAGE_TYPE;
                     break;
                 case PNG_INDEX:
                     extension = 'png';
-                    contentTypeName = 'image/imagem';
+                    contentTypeName = IMAGE_TYPE;
                     break;
                 default:
                     return callback({
@@ -117,11 +120,10 @@ function processFiles (uid) {
                 }));
             }).
             then(() => {
-                db.contentDB.getContentTypeByName(contentTypeName);
+                return db.contentDB.getContentTypeByName(contentTypeName);
             }).
             then((contentTypeId) => {
-                console.log(contentTypeId);
-                response.contentTypeId = contentTypeId[ZERO_INDEX];
+                response.contentTypeId = utils.convertObjectToCamelCase(contentTypeId[ZERO_INDEX]).contentTypeId;
 
                 return callback(null, response);
             });

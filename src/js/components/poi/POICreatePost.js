@@ -11,7 +11,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import Dropzone from 'react-dropzone';
 import nProgress from 'nprogress';
 
-const API_POI_POST_URL = '/api/post/auth/upload';
+const API_POI_POST_URL = '/api/post/auth/';
 const ONE_ELEMENT = 1;
 const NOT_FOUND = -1;
 
@@ -48,10 +48,12 @@ export default class CreatePostDialog extends Component {
             const { description, tags, files } = this.state.post;
             const { poiId } = this.props;
 
+            console.error(tags);
+
             const form = new FormData();
             form.append('description', description);
             form.append('tags', tags);
-            form.append('poiId', poiId);
+            form.append('poiID', poiId);
             for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
                 // Note: In order to detect the array of files in the server, each file, individually, must be appended to the same form key.
                 form.append('postFiles', files[fileIndex]);
