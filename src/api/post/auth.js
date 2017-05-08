@@ -33,7 +33,9 @@ const bodyTemplate = upload.fields([{ name: 'postFiles' }]);
 router.post('/', bodyTemplate, (req, res, next) => {
     const { body, files } = req;
     const { poiID, description, tags } = body;
-    if (!poiID || typeof description !== 'string' || !tags) {
+    const userID = req.auth.token.uid;
+
+    if (!poiID || typeof description !== 'string' || !tags || !userID || typeof userID !== 'string') {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
@@ -41,8 +43,6 @@ router.post('/', bodyTemplate, (req, res, next) => {
 
     console.log(body);
     console.log(files);
-
-    const userID = req.auth.token.uid;
 
     const { postDB, userDB, poiDB } = db;
     const primaryChecks = [userDB.getUserByUID(userID), poiDB.getPOIDetailByID(poiID)];
