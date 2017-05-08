@@ -115,7 +115,7 @@ module.exports.handleFileUpload = (files, userId) => {
                 reject(err);
             }
 
-            fulfill([{contentUrl, contentHash, contentType}]);
+            fulfill([{contentUrl, contentHash, contentTypeId}]);
         });
     });
 };

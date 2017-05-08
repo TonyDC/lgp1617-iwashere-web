@@ -44,11 +44,8 @@ router.post('/', bodyTemplate, (req, res, next) => {
 
     const userID = req.auth.token.uid;
 
-    const { contentDB, postDB, userDB, poiDB } = db;
+    const { postDB, userDB, poiDB } = db;
     const primaryChecks = [userDB.getUserByUID(userID), poiDB.getPOIDetailByID(poiID)];
-    if (contentType && typeof contentType === 'string') {
-        primaryChecks.push(contentDB.getContentTypeByName(contentType));
-    }
     Promise.all(primaryChecks).
     then((results) => {
         if (utils.checkResultList(results, [primaryChecks.length], true)) {
@@ -58,13 +55,12 @@ router.post('/', bodyTemplate, (req, res, next) => {
             then((postResults) => {
                 if (utils.checkResultList(postResults, [TWO_SIZE], true)) {
                     const { postId } = utils.convertObjectToCamelCase(postResults[ZERO_INDEX][ZERO_INDEX]);
-                    const { contentTypeId } = utils.convertObjectToCamelCase(results[TWO_INDEX][ONE_INDEX]);
-                    const { contentUrl, contentHash, contentType } = postResults[ONE_INDEX][ZERO_INDEX];
+                    const { contentUrl, contentHash, contentTypeId } = postResults[ONE_INDEX][ZERO_INDEX];
 
                     const createAdditionalPostInfo = [postDB.addPostTags(postId, tags)];
                     if (contentUrl && typeof contentUrl === 'string' &&
                         contentHash && typeof contentHash === 'string' &&
-                        contentType && typeof contentType === 'string') {
+                        contentTypeId) {
                         createAdditionalPostInfo.push(postDB.addPostContent(postId, contentUrl, contentHash, contentTypeId));
                     }
 
@@ -242,7 +238,7 @@ function processFiles (uid) {
                 const promises = paths.map((obj) => {
                     let sharpObject = sharp(path).resize(Math.min(width, obj.size));
                     if (typeIndex === 0) {
-                        sharpObject = sharpObject.jpeg();
+                        sharpObject = sharpObject.png();
                     } else {
                         sharpObject = sharpObject.png();
                     }
