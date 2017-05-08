@@ -23,7 +23,7 @@ module.exports.getPOIsPost = (offset, limit) => {
                  ORDER BY user_id, created_at DESC) current_ratings
                  GROUP BY poi_id)
     SELECT DISTINCT ON (single_post_id) *
-    FROM (SELECT *, content_types.name AS type, posts.created_at as post_date, posts.post_id AS single_post_id,
+    FROM (SELECT *, content_types.name AS type, posts.created_at as post_date, posts.poi_id AS single_post_id,
                pois.name AS name
           FROM pois INNER JOIN poi_ratings ON pois.poi_id = poi_ratings.poi_id
           INNER JOIN posts ON posts.poi_id = pois.poi_id 
@@ -46,7 +46,7 @@ module.exports.getPOIsPostWithLocation = (lat, lng, offset, limit) => {
                  ORDER BY user_id, created_at DESC) current_ratings
                  GROUP BY poi_id)
         SELECT DISTINCT ON (single_post_id) * FROM (
-        SELECT *, content_types.name AS type, posts.created_at as post_date, posts.post_id AS single_post_id, 
+        SELECT *, content_types.name AS type, posts.created_at as post_date, posts.poi_id AS single_post_id, 
                get_distance_function(latitude::real, longitude::real, :lat::real, :lng::real) as distance,
                pois.name AS name
         FROM pois INNER JOIN poi_ratings ON pois.poi_id = poi_ratings.poi_id

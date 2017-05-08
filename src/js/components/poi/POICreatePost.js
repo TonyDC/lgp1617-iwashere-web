@@ -65,7 +65,6 @@ export default class CreatePostDialog extends Component {
             });
         }).
         then((response) => {
-            console.log(response);
             if (response.status >= httpCodes.BAD_REQUEST || response.status === httpCodes.NO_CONTENT) {
                 return Promise.reject(new Error(response.statusText));
             }
@@ -83,7 +82,7 @@ export default class CreatePostDialog extends Component {
 
             nProgress.done();
         }).
-        catch((error) => {
+        catch(() => {
             if (!this.componentIsMounted) {
                 return;
             }
@@ -154,7 +153,7 @@ export default class CreatePostDialog extends Component {
     }
 
     render() {
-        const actions = [
+        let actions = [
             <FlatButton
                 label="Cancel"
                 primary
@@ -171,6 +170,10 @@ export default class CreatePostDialog extends Component {
                 }}
             />
         ];
+
+        if (this.state.inProgress) {
+            actions = null;
+        }
 
         return (
             <div className="poi-detail-buttons">
