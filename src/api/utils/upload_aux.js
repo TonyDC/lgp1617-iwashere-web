@@ -1,33 +1,41 @@
 'use strict';
 
+const db = root_require('src/db/query');
 const pathModule = require('path');
 const async = require('async');
 const sharp = require('sharp');
-
 const { sendFileToFirebase, unlink, detectFile, getHashOfFile } = require('../utils/async_conversions');
 
-const ELEMENT_NOT_FOUND = -1;
+const SUPPORTED_TYPES = ['image/jpeg', 'image/png'];
+const JPEG_INDEX = SUPPORTED_TYPES.indexOf('image/jpeg');
+const PNG_INDEX = SUPPORTED_TYPES.indexOf('image/png');
 const ZERO_INDEX = 0;
-
-const SUPPORTED_IMAGES_MIME_TYPES = ['image/jpeg', 'image/png'];
-const JPEG_INDEX = SUPPORTED_IMAGES_MIME_TYPES.indexOf('image/jpeg');
 
 function processFiles (uid) {
     return (fileItem, callback) => {
         const { fieldname, originalname, encoding, mimetype, destination, filename, path, size } = fileItem;
+        const response = {};
+        let contentTypeName = null;
 
         detectFile(path).then((type) => {
-            const typeIndex = SUPPORTED_IMAGES_MIME_TYPES.indexOf(type);
-            if (typeIndex === ELEMENT_NOT_FOUND) {
-                return callback({
-                    code: 1,
-                    message: 'Bad file format. Only JPEG or PNG are accepted.'
-                });
-            }
+            const typeIndex = SUPPORTED_TYPES.indexOf(type);
 
-            const extension = typeIndex === JPEG_INDEX
-                ? 'jpeg'
-                : 'png';
+            let extension = null;
+            switch (typeIndex) {
+                case JPEG_INDEX:
+                    extension = 'jpeg';
+                    contentTypeName = 'image/imagem';
+                    break;
+                case PNG_INDEX:
+                    extension = 'png';
+                    contentTypeName = 'image/imagem';
+                    break;
+                default:
+                    return callback({
+                        code: 1,
+                        message: 'Bad file format.'
+                    });
+            }
 
             return sharp(path).metadata().
             then((metadata) => {
@@ -58,14 +66,23 @@ function processFiles (uid) {
                 ];
                 const promises = paths.map((obj) => {
                     let sharpObject = sharp(path).resize(Math.min(width, obj.size));
-                    if (typeIndex === ZERO_INDEX) {
-                        sharpObject = sharpObject.jpeg();
-                    } else {
-                        sharpObject = sharpObject.png();
+                    switch (typeIndex) {
+                        case JPEG_INDEX:
+                            sharpObject = sharpObject.jpeg();
+                            break;
+                        case PNG_INDEX:
+                            sharpObject = sharpObject.png();
+                            break;
+                        default:
+                            return callback({
+                                error: {
+                                    code: 1,
+                                    message: 'Bad file format.'
+                                }
+                            });
                     }
 
-                    return sharpObject.
-                    toFile(obj.dir).
+                    return sharpObject.toFile(obj.dir).
                     then(() => {
                         return obj;
                     }).
@@ -87,6 +104,9 @@ function processFiles (uid) {
 
                     return getHashOfFile(dir).
                     then((hash) => {
+                        response.contentHash = hash;
+                        response.contentUrl = `${uid}/${hash} - ${size} - ${basename}`; // TODO check if this is correct
+
                         return sendFileToFirebase(dir, `${uid}/${hash} - ${size} - ${basename}`);
                     });
                 }));
@@ -97,14 +117,22 @@ function processFiles (uid) {
                 }));
             }).
             then(() => {
-                return callback();
+                db.contentDB.getContentTypeByName(contentTypeName);
+            }).
+            then((contentTypeId) => {
+                console.log(contentTypeId);
+                response.contentTypeId = contentTypeId[ZERO_INDEX];
+
+                return callback(null, response);
             });
         }).
         catch((error) => {
             // TODO unlink files
             callback({
-                code: 2,
-                message: error
+                error: {
+                    code: 2,
+                    message: error
+                }
             });
         });
     };
@@ -112,12 +140,12 @@ function processFiles (uid) {
 
 module.exports.handleFileUpload = (files, userId) => {
     return new Promise((fulfill, reject) => {
-        async.each(files, processFiles(userId), (err) => {
-            if (err) {
-                reject(err);
+        async.map(files, processFiles(userId), (error, fileInfo) => {
+            if (error) {
+                reject(error);
             }
 
-            fulfill([{contentUrl, contentHash, contentTypeId}]);
+            fulfill(fileInfo);
         });
     });
 };
