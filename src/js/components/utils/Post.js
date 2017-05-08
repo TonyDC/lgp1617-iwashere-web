@@ -56,11 +56,17 @@ export default class Post extends Component {
                             ? likeButtonStyle.liked
                             : likeButtonStyle.disabled;
 
+        let badge = null;
+        if ('inverted' in this.props) {
+            badge = <div className="timeline-badge primary"/>;
+        }
+
         return (
             <li id={`post#${this.props.post.postId}`} className={`${this.props.inverted
                 ? 'timeline-inverted'
                 : ''}`}>
-                <div className="timeline-badge primary" />
+
+                {badge}
 
                 <div className="timeline-panel">
                     <div className="timeline-heading">
@@ -92,10 +98,8 @@ export default class Post extends Component {
     }
 }
 
-Post.defaultProps = { inverted: false };
-
 Post.propTypes = {
-    inverted: PropTypes.bool.isRequired,
+    inverted: PropTypes.bool,
     onLike: PropTypes.any,
     post: PropTypes.object.isRequired
 };

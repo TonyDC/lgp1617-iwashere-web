@@ -3,18 +3,14 @@
 const express = require('express');
 const router = express.Router();
 
-const pathModule = require('path');
-
 const httpCodes = require('http-status-codes');
 const utils = require('../utils/misc');
 const upload_aux = require('../utils/upload_aux');
+const upload = require('../middleware/upload');
 
 const db = root_require('src/db/query');
 
-const async = require('async');
-
 const DECIMAL_BASE = 10;
-const ELEMENT_NOT_FOUND = -1;
 const NO_ELEMENT_SIZE = 0;
 const ZERO_INDEX = 0;
 const ONE_INDEX = 1;
@@ -22,10 +18,6 @@ const TWO_INDEX = 2;
 const ONE_SIZE = 1;
 const TWO_SIZE = 2;
 const THREE_SIZE = 3;
-
-const sharp = require('sharp');
-const { sendFileToFirebase, unlink, detectFile, getHashOfFile } = require('../utils/async_conversions');
-const upload = require('../middleware/upload');
 
 const bodyTemplate = upload.fields([{ name: 'postFiles' }]);
 router.post('/', bodyTemplate, (req, res, next) => {
@@ -182,145 +174,6 @@ router.post('/like', (req, res, next) => {
     }).
     catch((error) => {
         next(error);
-    });
-});
-
-
-function processFiles (uid) {
-    return (fileItem, callback) => {
-        console.log(fileItem);
-        const { fieldname, originalname, encoding, mimetype, destination, filename, path, size } = fileItem;
-
-        detectFile(path).then((type) => {
-            const typeIndex = ['image/jpeg', 'image/png'].indexOf(type);
-            if (typeIndex === ELEMENT_NOT_FOUND) {
-                return callback({
-                    code: 1,
-                    message: 'Bad file format. Only JPEG or PNG are accepted'
-                });
-            }
-
-            const extension = typeIndex === 0
-                ? 'jpeg'
-                : 'png';
-
-            return sharp(path).metadata().
-            then((metadata) => {
-                const { width } = metadata;
-
-                const dirname = pathModule.dirname(path);
-                const paths = [
-                    {
-                        basename: `xsmall_${filename}.${extension}`,
-                        dir: pathModule.join(dirname, `xsmall_${filename}.${extension}`),
-                        size: 200
-                    },
-                    {
-                        basename: `small_${filename}.${extension}`,
-                        dir: pathModule.join(dirname, `small_${filename}.${extension}`),
-                        size: 400
-                    },
-                    {
-                        basename: `medium_${filename}.${extension}`,
-                        dir: pathModule.join(dirname, `medium_${filename}.${extension}`),
-                        size: 800
-                    },
-                    {
-                        basename: `large_${filename}.${extension}`,
-                        dir: pathModule.join(dirname, `large_${filename}.${extension}`),
-                        size: 1200
-                    }
-                ];
-                const promises = paths.map((obj) => {
-                    let sharpObject = sharp(path).resize(Math.min(width, obj.size));
-                    if (typeIndex === 0) {
-                        sharpObject = sharpObject.jpeg();
-                    } else {
-                        sharpObject = sharpObject.png();
-                    }
-
-                    return sharpObject.
-                    toFile(obj.dir).
-                    then(() => {
-                        return obj;
-                    }).
-                    catch((error) => {
-                        return Object.assign({}, obj, { error });
-                    });
-                });
-                promises.push(Promise.resolve({
-                    basename: `original_${filename}.${extension}`,
-                    dir: path,
-                    size: width
-                }));
-
-                return Promise.all(promises);
-            }).
-            then((arrays) => {
-                return Promise.all(arrays.map((imageInfo) => {
-                    const { basename, dir } = imageInfo;
-
-                    return getHashOfFile(dir).
-                    then((hash) => {
-                        return sendFileToFirebase(dir, `${uid}/${hash} - ${size} - ${basename}`);
-                    });
-                }));
-            }).
-            then((arrays) => {
-                return Promise.all(arrays.map((imagePathObj) => {
-                    return unlink(imagePathObj.src);
-                }));
-            }).
-            then(() => {
-                return callback();
-            });
-        }).
-        catch((error) => {
-            // TODO unlink files
-            callback({
-                code: 2,
-                message: error
-            });
-        });
-    };
-}
-
-/*
- * WARNING: Make sure that you always handle the files that a user uploads.
- * Never add multer as a global middleware since a malicious user could upload files to a route that you didn’t anticipate.
- * Only use this function on routes where you are handling the uploaded files.
- */
-//const bodyTemplate = upload.fields([{ name: 'postFiles' }]);
-router.post('/upload', bodyTemplate, (req, res, next) => {
-    // req.body contains non-file fields
-    // req.files contains files
-
-    const { uid } = req.auth.token;
-    const { body, files } = req;
-
-    const { description , tags, poiId } = body;
-    const { postFiles } = files;
-
-    // TODO check fields
-    console.log(body);
-    console.log(files);
-
-    async.each(postFiles, processFiles(uid), (err) => {
-        if (err) {
-            const { code, message } = err;
-            if (code === 1) {
-                res.status(httpCodes.BAD_REQUEST).json({ message }).
-                end();
-
-                return null;
-            }
-
-            return next(message);
-        }
-
-        res.end();
-
-        return null;
     });
 });
 
