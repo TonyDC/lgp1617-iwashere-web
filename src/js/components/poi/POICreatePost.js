@@ -48,8 +48,6 @@ export default class CreatePostDialog extends Component {
             const { description, tags, files } = this.state.post;
             const { poiId } = this.props;
 
-            console.error(tags);
-
             const form = new FormData();
             form.append('description', description);
             form.append('tags', tags);

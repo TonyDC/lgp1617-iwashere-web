@@ -40,8 +40,6 @@ router.post('/', bodyTemplate, (req, res, next) => {
         return;
     }
 
-    console.error('oi', tags);
-
     const { postDB, userDB, poiDB } = db;
     const primaryChecks = [userDB.getUserByUID(userID), poiDB.getPOIDetailByID(poiID)];
     Promise.all(primaryChecks).
@@ -56,7 +54,7 @@ router.post('/', bodyTemplate, (req, res, next) => {
             then((postResults) => {
                 if (utils.checkResultList(postResults, [createPost.length], true)) {
                     const { postId } = utils.convertObjectToCamelCase(postResults[ZERO_INDEX][ZERO_INDEX]);
-                    const createAdditionalPostInfo = [postDB.addPostTags(postId, tags)];
+                    const createAdditionalPostInfo = [postDB.addPostTags(postId, utils.convertStringToArray(tags))];
                     if (postFiles.length > NO_ELEMENT_SIZE) {
                         const { contentUrl, contentHash, contentTypeId } = postResults[ONE_INDEX][ZERO_INDEX];
                         createAdditionalPostInfo.push(postDB.addPostContent(postId, contentUrl, contentHash, contentTypeId));
