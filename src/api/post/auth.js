@@ -7,6 +7,7 @@ const pathModule = require('path');
 
 const httpCodes = require('http-status-codes');
 const utils = require('../utils/misc');
+const upload_aux = require('../utils/upload_aux');
 
 const db = root_require('src/db/query');
 
@@ -25,18 +26,21 @@ const THREE_SIZE = 3;
 const ELEMENT_NOT_FOUND = -1;
 
 const sharp = require('sharp');
-
 const { sendFileToFirebase, unlink, detectFile, getHashOfFile } = require('../utils/async_conversions');
-
 const upload = require('../middleware/upload');
 
-router.post('/', (req, res, next) => {
-    const { poiID, description, tags, contentUrl, contentHash, contentType } = req.body;
+const bodyTemplate = upload.fields([{ name: 'postFiles' }]);
+router.post('/', bodyTemplate, (req, res, next) => {
+    const { body, files } = req;
+    const { poiID, description, tags } = body;
     if (!poiID || typeof description !== 'string' || !tags) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
+
+    console.log(body);
+    console.log(files);
 
     const userID = req.auth.token.uid;
 
@@ -49,11 +53,13 @@ router.post('/', (req, res, next) => {
     then((results) => {
         if (utils.checkResultList(results, [primaryChecks.length], true)) {
 
-            return postDB.createPost(description, poiID, userID).
-            then((postResult) => {
-                if (postResult && postResult.length > NO_ELEMENT_SIZE) {
-                    const { postId } = utils.convertObjectToCamelCase(postResult[ZERO_INDEX]);
+            return Promise.all([postDB.createPost(description, poiID, userID),
+                upload_aux.handleFileUpload(files, userID)]).
+            then((postResults) => {
+                if (utils.checkResultList(postResults, [TWO_SIZE], true)) {
+                    const { postId } = utils.convertObjectToCamelCase(postResults[ZERO_INDEX][ZERO_INDEX]);
                     const { contentTypeId } = utils.convertObjectToCamelCase(results[TWO_INDEX][ONE_INDEX]);
+                    const { contentUrl, contentHash, contentType } = postResults[ONE_INDEX][ZERO_INDEX];
 
                     const createAdditionalPostInfo = [postDB.addPostTags(postId, tags)];
                     if (contentUrl && typeof contentUrl === 'string' &&
@@ -292,7 +298,7 @@ function processFiles (uid) {
  * Never add multer as a global middleware since a malicious user could upload files to a route that you didn’t anticipate.
  * Only use this function on routes where you are handling the uploaded files.
  */
-const bodyTemplate = upload.fields([{ name: 'postFiles' }]);
+//const bodyTemplate = upload.fields([{ name: 'postFiles' }]);
 router.post('/upload', bodyTemplate, (req, res, next) => {
     // req.body contains non-file fields
     // req.files contains files
