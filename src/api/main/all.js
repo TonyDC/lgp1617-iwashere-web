@@ -44,4 +44,10 @@ router.get('/search', (req, res, next) => {
     });
 });
 
+
+router.get('/fortune', (req, res) => {
+    res.json({ fortune: 'Today, is a nice day' }).
+    end();
+});
+
 module.exports = router;

@@ -63,6 +63,9 @@ module.exports.sendFileToFirebase = (src, dest, metadata) => {
     return new Promise((resolve, reject) => {
         const tempReadStream = fs.createReadStream(src);
         const remoteWriteStream = bucket.file(dest).createWriteStream({ metadata });
+        tempReadStream.on('error', (err) => {
+            reject(err);
+        });
         tempReadStream.pipe(remoteWriteStream).
         on('error', (err) => {
             reject(err);
@@ -87,7 +90,14 @@ module.exports.getHashOfFile = (file, date = Date.now()) => {
         hash.setEncoding('hex');
         hash.update(String(date));
         const input = fs.createReadStream(file);
-        hash.on('finish', () => {
+        input.on('error', () => {
+            reject(new Error('Failed to obtain SHA256'));
+        });
+        input.pipe(hash).
+        on('error', () => {
+            reject(new Error('Failed to obtain SHA256'));
+        }).
+        on('finish', () => {
             // http://stackoverflow.com/questions/19277094/how-to-close-a-readable-stream-before-end
             // http://stackoverflow.com/questions/20796902/deleting-file-in-node-js
             input.unpipe(hash);
@@ -95,12 +105,5 @@ module.exports.getHashOfFile = (file, date = Date.now()) => {
             // Here, the hash is already digested
             resolve(hash.read());
         });
-        input.on('error', () => {
-            reject(new Error('Failed to obtain SHA256'));
-        });
-        hash.on('error', () => {
-            reject(new Error('Failed to obtain SHA256'));
-        });
-        input.pipe(hash);
     });
 };

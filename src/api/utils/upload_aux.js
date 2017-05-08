@@ -1,20 +1,23 @@
-const cryptoModule = require('crypto');
+'use strict';
+
 const pathModule = require('path');
 const async = require('async');
 const sharp = require('sharp');
+
 const { sendFileToFirebase, unlink, detectFile, getHashOfFile } = require('../utils/async_conversions');
-const upload = require('../middleware/upload');
 
 const ELEMENT_NOT_FOUND = -1;
 const ZERO_INDEX = 0;
 
+const SUPPORTED_IMAGES_MIME_TYPES = ['image/jpeg', 'image/png'];
+const JPEG_INDEX = SUPPORTED_IMAGES_MIME_TYPES.indexOf('image/jpeg');
+
 function processFiles (uid) {
     return (fileItem, callback) => {
-        console.log(fileItem);
         const { fieldname, originalname, encoding, mimetype, destination, filename, path, size } = fileItem;
 
         detectFile(path).then((type) => {
-            const typeIndex = ['image/jpeg', 'image/png'].indexOf(type);
+            const typeIndex = SUPPORTED_IMAGES_MIME_TYPES.indexOf(type);
             if (typeIndex === ELEMENT_NOT_FOUND) {
                 return callback({
                     code: 1,
@@ -22,7 +25,7 @@ function processFiles (uid) {
                 });
             }
 
-            const extension = typeIndex === 0
+            const extension = typeIndex === JPEG_INDEX
                 ? 'jpeg'
                 : 'png';
 
@@ -90,8 +93,7 @@ function processFiles (uid) {
             }).
             then((arrays) => {
                 return Promise.all(arrays.map((imagePathObj) => {
-                    // return unlink(imagePathObj.src);
-                    return null;
+                    return unlink(imagePathObj.src);
                 }));
             }).
             then(() => {

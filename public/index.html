@@ -40,8 +40,8 @@
             }
 
             .sk-cube-grid {
-                width: 20vh;
-                height: 20vh;
+                width: 30vh;
+                height: 30vh;
             }
 
             .sk-cube-grid .sk-cube {
@@ -103,16 +103,38 @@
             /* ********* */
 
             #loader {
-                background-color: #012935;
-                height: 100%;
+                height: 60vh;
                 display: flex;
                 flex-direction: row;
                 justify-content: space-around;
                 align-items: center;
             }
 
+            #fortune-cookie {
+                opacity: 0;
+                height: auto;
+                text-align: center;
+                font-family: 'Oxygen', sans-serif;
+                font-size: 2rem;
+                margin: 0 10vw;
+                word-wrap: break-word;
+                hyphens: none;
+                color: white;
+
+                -webkit-transition: opacity 1s ease-in;
+                -moz-transition: opacity 1s ease-in;
+                -ms-transition: opacity 1s ease-in;
+                -o-transition: opacity 1s ease-in;
+                transition: opacity 1s ease-in;
+            }
+
+            #fortune-cookie h5 {
+                margin-top: 0;
+            }
+
             #main {
-                height: 100%;
+                background-color: #012935;
+                height: 100vh;
             }
 
         </style>
@@ -168,7 +190,31 @@
                     <div class="sk-cube sk-cube9"></div>
                 </div>
             </div>
+            <div id="fortune-cookie">
+                <h5>Did you know?</h5>
+                <div id="fortune-cookie-content"></div>
+            </div>
         </div>
-        <script type="text/javascript" src="/public/bundle.js"></script>
+        <script type="text/javascript">
+            fetch('/api/fortune').then((response) => {
+                if (response.status >= 400) {
+                    return Promise.reject(new Error(response.statusText));
+                }
+
+                return response.json();
+            }).then((message) => {
+                const placeholder = document.getElementById('fortune-cookie-content');
+                placeholder.innerHTML = message.fortune;
+
+                const wrapper = document.getElementById('fortune-cookie');
+                wrapper.style.opacity = 1;
+            }).catch((error) => {
+                // Fail silently
+                console.error(error);
+            }).then(() => {
+
+            });
+        </script>
+        <script type="text/javascript" src="/public/bundle.js" async defer></script>
     </body>
 </html>
