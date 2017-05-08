@@ -38,12 +38,13 @@ module.exports.detectFile = (file) => {
 /**
  * Remove file from file system
  * @param file The path to the file
+ * @param suppressNotFound if ENOENT error is to be suppressed
  * @returns {Promise}
  */
-module.exports.unlink = (file) => {
+module.exports.unlink = (file, suppressNotFound = true) => {
     return new Promise((resolve, reject) => {
         fs.unlink(file, (err) => {
-            if (err) {
+            if (err && (!suppressNotFound || err.code !== 'ENOENT')) {
                 reject(err);
             } else {
                 resolve();
