@@ -13,6 +13,7 @@ const ZERO_INDEX = 0;
 const ONE_INDEX = 1;
 const TWO_INDEX = 2;
 
+const ONE_SIZE = 1;
 const THREE_SIZE = 3;
 
 router.get('/search', (req, res, next) => {
@@ -45,9 +46,22 @@ router.get('/search', (req, res, next) => {
 });
 
 
-router.get('/fortune', (req, res) => {
-    res.json({ fortune: 'Today, is a nice day' }).
-    end();
+router.get('/fortune', (req, res, next) => {
+    const { fortuneCookieDB } = db;
+    fortuneCookieDB.getRandomFortuneCookie().
+    then((cookie) => {
+        if (!cookie || typeof cookie !== 'object' || cookie.length < ONE_SIZE) {
+            res.sendStatus(httpCodes.NO_CONTENT).end();
+
+            return;
+        }
+
+        res.json({ fortune: cookie[ZERO_INDEX].description }).
+        end();
+    }).
+    catch((error) => {
+        next(error);
+    });
 });
 
 module.exports = router;

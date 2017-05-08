@@ -1,9 +1,9 @@
 'use strict';
 
-const db = root_require('src/db/query');
 const pathModule = require('path');
 const async = require('async');
 const sharp = require('sharp');
+
 const { sendFileToFirebase, unlink, detectFile, getHashOfFile } = require('../utils/async_conversions');
 
 const SUPPORTED_TYPES = ['image/jpeg', 'image/png'];
@@ -129,10 +129,8 @@ function processFiles (uid) {
         catch((error) => {
             // TODO unlink files
             callback({
-                error: {
-                    code: 2,
-                    message: error
-                }
+                code: 2,
+                message: error
             });
         });
     };

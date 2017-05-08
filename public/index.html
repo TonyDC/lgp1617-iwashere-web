@@ -197,12 +197,15 @@
         </div>
         <script type="text/javascript">
             fetch('/api/fortune').then((response) => {
-                if (response.status >= 400) {
+                if (response.status !== 200) {
                     return Promise.reject(new Error(response.statusText));
                 }
 
                 return response.json();
             }).then((message) => {
+                if (!message || typeof message !== 'object' || !message.fortune)
+                    return;
+
                 const placeholder = document.getElementById('fortune-cookie-content');
                 placeholder.innerHTML = message.fortune;
 
