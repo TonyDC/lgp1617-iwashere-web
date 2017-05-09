@@ -9,6 +9,7 @@ import InfiniteScroll from 'react-infinite-scroller';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import MoreIcon from "material-ui/svg-icons/image/style";
 import CancelIcon from "material-ui/svg-icons/navigation/close";
+import ViewPost from "../utils/ViewPost";
 import Tags from '../utils/MyTags';
 import Post from '../utils/Post';
 import Alerts from '../utils/Alerts';
@@ -23,7 +24,6 @@ export default class POIPosts extends Component {
 
     constructor(props) {
         super(props);
-
         this.state = {
             filtering: false,
             hasMoreItems: true,
@@ -50,117 +50,100 @@ export default class POIPosts extends Component {
     }
 
     fetchPosts() {
-        if (!this.state.hasMoreItems) {
-            return;
-        }
-
-        let url = `${this.props.url}/poi_posts/`;
-        if (this.state.user) {
-            url += `${this.state.user.uid}/`;
-        }
-        url += `${this.props.poiId}/${this.state.postsOffset}/${LIMIT}`;
-
-        fetch(url, {
-            headers: { 'Content-Type': 'application/json' },
-            method: 'GET'
-        }).
-        then((response) => {
-            if (response.status >= httpCodes.BAD_REQUEST) {
-                return Promise.reject(new Error(response.statusText));
+        if (this.state.hasMoreItems) {
+            let url = `${this.props.url}/poi_posts/`;
+            if (this.state.user) {
+                url += `${this.state.user.uid}/`;
             }
+            url += `${this.props.poiId}/${this.state.postsOffset}/${LIMIT}`;
 
-            if (response.status === httpCodes.NO_CONTENT) {
-                if (this.componentIsMounted) {
-                    this.setState({ hasMoreItems: false });
+            fetch(url, {
+                headers: { 'Content-Type': 'application/json' },
+                method: 'GET'
+            }).then((response) => {
+                if (response.status >= httpCodes.BAD_REQUEST || response.status === httpCodes.NO_CONTENT) {
+                    if (response.status === httpCodes.NO_CONTENT && this.componentIsMounted) {
+                        this.setState({ hasMoreItems: false });
+                    }
+
+                    return Promise.reject(new Error(response.statusText));
                 }
 
-                return Promise.reject(new Error(response.statusText));
-            }
-
-            return response.json();
-        }).
-        then((newPosts) => {
-            const posts = this.state.posts.slice();
-            const postIds = posts.map((post) => {
-                return post.postId;
-            });
-
-            newPosts.forEach((post) => {
-                if (postIds.indexOf(post.postId) === NOT_FOUND) {
-                    posts.push(post);
-                }
-            });
-            const postsOffset = this.state.postsOffset + newPosts.length;
-
-            if (this.componentIsMounted) {
-                this.setState({
-                    hasMoreItems: newPosts.length === LIMIT,
-                    posts,
-                    postsOffset
+                return response.json();
+            }).
+            then((newPosts) => {
+                const posts = this.state.posts.slice();
+                const postIds = posts.map((post) => {
+                    return post.postId;
                 });
-            }
-        });
+                newPosts.forEach((post) => {
+                    if (postIds.indexOf(post.postId) === NOT_FOUND) {
+                        posts.push(post);
+                    }
+                });
+                const postsOffset = this.state.postsOffset + newPosts.length;
+
+                if (this.componentIsMounted) {
+                    this.setState({
+                        hasMoreItems: newPosts.length === LIMIT,
+                        posts,
+                        postsOffset
+                    });
+                }
+            });
+        }
     }
 
     toggleLike(post) {
-        if (!this.state.user) {
-            return;
-        }
+        if (this.state.user) {
+            firebase.auth().currentUser.getToken().then((token) => {
+                return fetch(`${this.props.url}/auth/like`, {
+                    body: JSON.stringify({
+                        liked: !post.likedByUser,
+                        postID: post.postId
+                    }),
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    method: 'POST'
+                });
+            }).
+            then((response) => {
+                if (response.status >= httpCodes.BAD_REQUEST || response.status === httpCodes.NO_CONTENT) {
+                    return Promise.reject(new Error(response.statusText));
+                }
 
-        firebase.auth().currentUser.getToken().then((token) => {
-            return fetch(`${this.props.url}/auth/like`, {
-                body: JSON.stringify({
-                    liked: !post.likedByUser,
-                    postID: post.postId
-                }),
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                method: 'POST'
+                return response.json();
+            }).
+            then((response) => {
+                const { posts } = this.state;
+                const postIndex = posts.indexOf(post);
+                if (postIndex !== NOT_FOUND) {
+                    post.likedByUser = !post.likedByUser;
+                    post.likes = response.likes;
+                    posts[postIndex] = post;
+                }
+
+                if (this.componentIsMounted) {
+                    this.setState({ posts });
+                }
+            }).
+            catch(() => {
+                Alerts.createErrorAlert('Error submitting the like.');
             });
-        }).
-        then((response) => {
-            if (response.status >= httpCodes.BAD_REQUEST || response.status === httpCodes.NO_CONTENT) {
-                return Promise.reject(new Error(response.statusText));
-            }
-
-            return response.json();
-        }).
-        then((response) => {
-            const { posts } = this.state;
-            const postIndex = posts.indexOf(post);
-
-            if (postIndex === NOT_FOUND) {
-                return;
-            }
-
-            post.likedByUser = !post.likedByUser;
-            post.likes = response.likes;
-            posts[postIndex] = post;
-
-            if (this.componentIsMounted) {
-                this.setState({ posts });
-            }
-        }).
-        catch(() => {
-            Alerts.createErrorAlert('Error submitting the like.');
-        });
+        }
     }
 
-    getPosts(posts) {
+    getTimelinePosts(posts) {
         const postsList = [];
-        if (!posts || !posts.length) {
-            return postsList;
-        }
         let itemClassInverted = false;
         posts.forEach((postEntry) => {
             postsList.push(
                 <Post post={postEntry}
                       inverted={itemClassInverted}
-                      onLike={() => {
-                          this.toggleLike(postEntry);
-                      }}
+                      onLike={ this.toggleLike.bind(this) }
+                      onClick={ this.openPostView.bind(this) }
                       key={postEntry.postId}/>
             );
             itemClassInverted = !itemClassInverted;
@@ -170,42 +153,59 @@ export default class POIPosts extends Component {
         return postsList;
     }
 
+    openPostView(postSelected) {
+        if (this.componentIsMounted) {
+            this.setState({ postSelected });
+        }
+    }
+
+    closePostView() {
+        if (this.componentIsMounted) {
+            this.setState({ postSelected: null });
+        }
+    }
+
+    getPostView() {
+        if (this.state.postSelected) {
+            return <ViewPost post={this.state.postSelected}
+                             onClose = {this.closePostView.bind(this)}
+                             onToggleLike={(post) => {
+                                 this.toggleLike(post);
+                             }}/>;
+        }
+
+        return null;
+    }
+
     addTagFilter(tagId) {
-        if (!this.componentIsMounted) {
-            return;
+        if (this.componentIsMounted) {
+            const tagsFilter = this.state.tagsFilter.slice();
+            if (tagsFilter.indexOf(tagId) !== NOT_FOUND) {
+                tagsFilter.push(tagId);
+                this.setState({ tagsFilter });
+            }
         }
-        const tagsFilter = this.state.tagsFilter.slice();
-        if (tagsFilter.indexOf(tagId) !== NOT_FOUND) {
-            return;
-        }
-        tagsFilter.push(tagId);
-        this.setState({ tagsFilter });
     }
 
     removeTagFilter(tagId) {
-        let { tagsFilter } = this.state;
-        tagsFilter = tagsFilter.filter((tag) => {
-            return tag !== tagId;
-        });
         if (this.componentIsMounted) {
-            this.setState({
-                filtering: tagsFilter.length > NO_ELEMENT_SIZE,
-                tagsFilter
+            const tagsFilter = this.state.tagsFilter.filter((tag) => {
+                return tag !== tagId;
             });
+            this.setState({ tagsFilter });
         }
     }
 
     toggleFiltering() {
-        if (!this.componentIsMounted) {
-            return;
-        }
-        if (this.state.filtering) {
-            this.setState({
-                filtering: false,
-                tagsFilter: []
-            });
-        } else {
-            this.setState({ filtering: true });
+        if (this.componentIsMounted) {
+            if (this.state.filtering) {
+                this.setState({
+                    filtering: false,
+                    tagsFilter: []
+                });
+            } else {
+                this.setState({ filtering: true });
+            }
         }
     }
 
@@ -237,26 +237,25 @@ export default class POIPosts extends Component {
                 <Loader color="#012935" className="loader"/>
             </div>;
 
-        let tagFilter =
-            <div className="filter-container">
-                <Paper className="paper-min-width" zDepth={4}>
-                    <div className="filter-content">
-                        <Tags className="tag-input"
-                              class="tag-filter"
-                              title="Filter by tag..."
-                              tags={this.state.tagsFilter}
-                              onAddTag={(tagId) => {
-                                  this.addTagFilter(tagId);
-                              }}
-                              onRemoveTag={(tagId) => {
-                                  this.removeTagFilter(tagId);
-                              }}/>
-                    </div>
-                </Paper>
-            </div>;
-
-        if (!this.state.filtering) {
-            tagFilter = null;
+        let tagFilter = null;
+        if (this.state.filtering) {
+            tagFilter =
+                <div className="filter-container">
+                    <Paper className="paper-min-width" zDepth={4}>
+                        <div className="filter-content">
+                            <Tags className="tag-input"
+                                  class="tag-filter"
+                                  title="Filter by tag..."
+                                  tags={this.state.tagsFilter}
+                                  onAddTag={(tagId) => {
+                                      this.addTagFilter(tagId);
+                                  }}
+                                  onRemoveTag={(tagId) => {
+                                      this.removeTagFilter(tagId);
+                                  }}/>
+                        </div>
+                    </Paper>
+                </div>;
         }
 
         if (filteredPosts.length === NO_ELEMENT_SIZE) {
@@ -271,6 +270,7 @@ export default class POIPosts extends Component {
 
         return (
             <Col xs={12} mdOffset={1} md={10} lgOffset={1} lg={10}>
+                {this.getPostView()}
                 {toggleTagFilterButton}
                 {tagFilter}
                 <InfiniteScroll
@@ -279,7 +279,7 @@ export default class POIPosts extends Component {
                     hasMore={this.state.hasMoreItems}
                     loader={loader}>
                     <ul className="timeline timeline-container">
-                        {this.getPosts(filteredPosts)}
+                        {this.getTimelinePosts(filteredPosts)}
                     </ul>
                 </InfiniteScroll>
             </Col>

@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { GridLoader as Loader } from 'halogen';
+import Image from '../utils/Image';
 import { GridTile } from 'material-ui/GridList';
 import IconButton from 'material-ui/IconButton';
 import StarBorder from 'material-ui/svg-icons/toggle/star-border';
@@ -33,7 +34,7 @@ export default class PostMosaic extends Component {
 
         let postMedia = null;
         if (post.type === MEDIA_TYPE) {
-            postMedia = <img src={post.url} />;
+            postMedia = <Image url={post.url} />;
         }
 
         let poiButton = null;

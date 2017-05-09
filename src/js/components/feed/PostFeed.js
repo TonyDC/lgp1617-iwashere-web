@@ -141,49 +141,43 @@ export default class POISuggestions extends Component {
     }
 
     toggleLike(post) {
-        if (!this.state.user) {
-            return;
-        }
+        if (this.state.user) {
+            firebase.auth().currentUser.getToken().then((token) => {
+                return fetch(API_LIKE_POST, {
+                    body: JSON.stringify({
+                        liked: !post.likedByUser,
+                        postID: post.postId
+                    }),
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    method: 'POST'
+                });
+            }).
+            then((response) => {
+                if (response.status >= httpCodes.BAD_REQUEST || response.status === httpCodes.NO_CONTENT) {
+                    return Promise.reject(new Error(response.statusText));
+                }
 
-        firebase.auth().currentUser.getToken().then((token) => {
-            return fetch(API_LIKE_POST, {
-                body: JSON.stringify({
-                    liked: !post.likedByUser,
-                    postID: post.postId
-                }),
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                method: 'POST'
+                return response.json();
+            }).
+            then((response) => {
+                if (this.componentIsMounted) {
+                    const { suggestions } = this.state;
+                    const postIndex = suggestions.indexOf(post);
+                    if (postIndex !== NOT_FOUND) {
+                        post.likedByUser = !post.likedByUser;
+                        post.likes = response.likes;
+                        suggestions[postIndex] = post;
+                    }
+                    this.setState({ suggestions });
+                }
+            }).
+            catch(() => {
+                Alerts.createErrorAlert('Error submitting the like.');
             });
-        }).
-        then((response) => {
-            if (response.status >= httpCodes.BAD_REQUEST || response.status === httpCodes.NO_CONTENT) {
-                return Promise.reject(new Error(response.statusText));
-            }
-
-            return response.json();
-        }).
-        then((response) => {
-            const { suggestions } = this.state;
-            const postIndex = suggestions.indexOf(post);
-
-            if (postIndex === NOT_FOUND) {
-                return;
-            }
-
-            post.likedByUser = !post.likedByUser;
-            post.likes = response.likes;
-            suggestions[postIndex] = post;
-
-            if (this.componentIsMounted) {
-                this.setState({ suggestions });
-            }
-        }).
-        catch(() => {
-            Alerts.createErrorAlert('Error submitting the like.');
-        });
+        }
     }
 
     openPostView(postSelected) {
@@ -217,16 +211,14 @@ export default class POISuggestions extends Component {
     }
 
     render() {
-        let locationIcon = null;
+        let locationIcon =
+            <IconButton className="location-icon" tooltipPosition="top-left" tooltip={USING_LOCATION_TOOLTIP}>
+                <NoLocation/>
+            </IconButton>;
         if (this.state.location) {
             locationIcon =
                 <IconButton className="location-icon" tooltipPosition="top-left" tooltip={USING_LOCATION_TOOLTIP}>
                     <MapsMyLocation color={ currentLocationColor }/>
-                </IconButton>;
-        } else {
-            locationIcon =
-                <IconButton className="location-icon" tooltipPosition="top-left" tooltip={USING_LOCATION_TOOLTIP}>
-                    <NoLocation/>
                 </IconButton>;
         }
 
@@ -239,9 +231,8 @@ export default class POISuggestions extends Component {
         if (this.state.postSelected) {
             postView = <ViewPost post={this.state.postSelected}
                                  onClose = {this.closePostView.bind(this)}
-                                 onToggleLike={(post) => {
-                                     this.toggleLike(post);
-                                 }}/>;
+                                 onToggleLike={ this.toggleLike.bind(this)}
+                                 />;
         }
 
         return (
