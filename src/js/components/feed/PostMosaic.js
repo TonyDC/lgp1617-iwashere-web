@@ -34,7 +34,7 @@ export default class PostMosaic extends Component {
 
         let postMedia = null;
         if (post.type === MEDIA_TYPE) {
-            postMedia = <Image url={post.url} />;
+            postMedia = <Image url={post.urlS} />;
         }
 
         let poiButton = null;

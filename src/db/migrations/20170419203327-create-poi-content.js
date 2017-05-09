@@ -13,9 +13,10 @@ module.exports = {
         return queryInterface.sequelize.query(`
             CREATE TABLE poi_contents (
                 poi_content_id BIGSERIAL PRIMARY KEY,
-                url TEXT NOT NULL,
-                hash TEXT NOT NULL,
-                description TEXT,
+                url_xs TEXT NOT NULL,
+                url_s TEXT NOT NULL,
+                url_m TEXT NOT NULL,
+                url_l TEXT NOT NULL,
                 content_type_id INTEGER NOT NULL REFERENCES content_types(content_type_id) ON DELETE RESTRICT,
                 poi_id BIGINT NOT NULL REFERENCES pois(poi_id) ON DELETE RESTRICT,
                 created_at TIMESTAMP NOT NULL,

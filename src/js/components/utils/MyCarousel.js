@@ -56,7 +56,7 @@ export default class MyCarousel extends Component {
         media.forEach((mediaEntry) => {
             if (mediaEntry.type === 'image;imagem') {
                 mediaList.push(<div key={key++}>
-                    <Image url={mediaEntry.url} />
+                    <Image url={mediaEntry.urlM} />
                 </div>);
             } else if (mediaEntry.type === 'video;vídeo') {
                 mediaList.push(<div key={key++}>

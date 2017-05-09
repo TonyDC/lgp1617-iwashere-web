@@ -15,6 +15,7 @@ const NO_ELEMENT_SIZE = 0;
 const ZERO_INDEX = 0;
 const ONE_INDEX = 1;
 const TWO_INDEX = 2;
+const THREE_INDEX = 3;
 const ONE_SIZE = 1;
 const TWO_SIZE = 2;
 const THREE_SIZE = 3;
@@ -48,8 +49,12 @@ router.post('/', bodyTemplate, (req, res, next) => {
                     const { postId } = utils.convertObjectToCamelCase(postResults[ZERO_INDEX][ZERO_INDEX]);
                     const createAdditionalPostInfo = [postDB.addPostTags(postId, utils.convertStringToArray(tags))];
                     if (postFiles.length > NO_ELEMENT_SIZE) {
-                        const { contentUrl, contentHash, contentTypeId } = postResults[ONE_INDEX][ZERO_INDEX];
-                        createAdditionalPostInfo.push(postDB.addPostContent(postId, contentUrl, contentHash, contentTypeId));
+                        const { contentUrls, contentTypeId } = postResults[ONE_INDEX][ZERO_INDEX];
+                        const urlXs = contentUrls[ZERO_INDEX];
+                        const urlS = contentUrls[ONE_INDEX];
+                        const urlM = contentUrls[TWO_INDEX];
+                        const urlL = contentUrls[THREE_INDEX];
+                        createAdditionalPostInfo.push(postDB.addPostContent(postId, contentTypeId, urlXs, urlS, urlM, urlL));
                     }
 
                     return Promise.all(createAdditionalPostInfo).

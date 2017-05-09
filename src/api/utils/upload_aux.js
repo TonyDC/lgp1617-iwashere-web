@@ -19,13 +19,19 @@ const NO_ERROR = 0;
 const BAD_REQUEST_MSG_CODE = 1;
 const INTERNAL_ERROR_MSG_CODE = 2;
 
+/**
+ * Creates a file on firebase under ./<uid>, returning its url and contentTypeId.
+ * If the file is of IMAGE_TYPE, several files are created with different sizes.
+ * @param uid the uid of the file's owner
+ * @return {function(*, *=)}
+ */
 function processFiles (uid) {
     return (fileItem, callback) => {
         const { contentDB } = db;
-        const { fieldname, originalname, encoding, mimetype, destination, filename, path, size } = fileItem;
+        const { filename, path, size } = fileItem;
         const response = {
             contentTypeId: null,
-            objects: []
+            contentUrls: []
         };
         const filesToEliminate = [path];
 
@@ -119,12 +125,10 @@ function processFiles (uid) {
 
                     return getHashOfFile(dir).
                     then((hash) => {
-                        const contentInfo = {};
-                        contentInfo.contentHash = hash;
-                        contentInfo.contentUrl = `${uid}/${hash} - ${size} - ${basename}`; // TODO check if this is correct
-                        response.objects.push(contentInfo);
+                        const contentUrl = `${uid}/${hash} - ${size} - ${basename}`;
+                        response.contentUrls.push(contentUrl);
 
-                        return sendFileToFirebase(dir, `${uid}/${hash} - ${size} - ${basename}`);
+                        return sendFileToFirebase(dir, contentUrl);
                     });
                 }));
             }).

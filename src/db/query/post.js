@@ -6,7 +6,8 @@ module.exports.getPOIPosts = (poiID, offset, limit) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT *, name AS type, posts.created_at as post_date, posts.post_id
     FROM posts LEFT JOIN post_contents ON post_contents.post_id = posts.post_id LEFT JOIN content_types ON post_contents.content_type_id = content_types.content_type_id
-    WHERE poi_id = :poiID ORDER BY posts.created_at LIMIT :limit OFFSET :offset`, {
+    WHERE poi_id = :poiID AND deleted = FALSE
+    ORDER BY posts.created_at LIMIT :limit OFFSET :offset`, {
         replacements: {
             limit,
             offset,
@@ -197,15 +198,17 @@ module.exports.setPostDeleted = (userID, postID) => {
     });
 };
 
-module.exports.addPostContent = (postID, contentUrl, contentHash, contentTypeId) => {
+module.exports.addPostContent = (postId, contentTypeId, urlXs, urlS, urlM, urlL) => {
     // language=POSTGRES-SQL
-    return db.query(`INSERT INTO post_contents(post_id, url, hash, content_type_id) 
-    VALUES(:postID, :contentUrl, :contentHash, :contentTypeId) RETURNING content_id`, {
+    return db.query(`INSERT INTO post_contents(post_id, content_type_id, url_xs, url_s, url_m, url_l) 
+    VALUES(:postId, :contentTypeId, :urlXs, :urlS, :urlM, :urlL) RETURNING content_id`, {
         replacements: {
-            contentHash,
             contentTypeId,
-            contentUrl,
-            postID
+            postId,
+            urlL,
+            urlM,
+            urlS,
+            urlXs
         },
         type: db.QueryTypes.INSERT
     });

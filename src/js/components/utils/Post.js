@@ -41,9 +41,9 @@ export default class Post extends Component {
 
         let mediaComponent = null;
         if (post.type === IMAGE_TYPE) {
-            mediaComponent = <Image url={ post.url }/>;
+            mediaComponent = <Image url={ post.urlM }/>;
         } else if (post.type === VIDEO_TYPE) {
-            mediaComponent = <iframe src={ post.url }/>;
+            mediaComponent = <iframe src={ post.urlM }/>;
         }
 
         let tagList = null;
