@@ -39,7 +39,7 @@ router.post('/', bodyTemplate, (req, res, next) => {
     then((results) => {
         if (utils.checkResultList(results, [primaryChecks.length], true)) {
             const createPost = [postDB.createPost(description, poiID, userID)];
-            if (postFiles.length > NO_ELEMENT_SIZE) {
+            if (postFiles && postFiles.length > NO_ELEMENT_SIZE) {
                 createPost.push(uploadAux.handleFileUpload(postFiles, userID));
             }
 
@@ -48,7 +48,7 @@ router.post('/', bodyTemplate, (req, res, next) => {
                 if (utils.checkResultList(postResults, [createPost.length], true)) {
                     const { postId } = utils.convertObjectToCamelCase(postResults[ZERO_INDEX][ZERO_INDEX]);
                     const createAdditionalPostInfo = [postDB.addPostTags(postId, utils.convertStringToArray(tags))];
-                    if (postFiles.length > NO_ELEMENT_SIZE) {
+                    if (postFiles && postFiles.length > NO_ELEMENT_SIZE) {
                         const { contentUrls, contentTypeId } = postResults[ONE_INDEX][ZERO_INDEX].fileInfo;
                         const urlXs = contentUrls[ZERO_INDEX];
                         const urlS = contentUrls[ONE_INDEX];

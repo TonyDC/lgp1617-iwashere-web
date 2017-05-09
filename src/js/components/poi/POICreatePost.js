@@ -42,14 +42,28 @@ export default class CreatePostDialog extends Component {
         this.componentIsMounted = false;
     }
 
+    checkPost(post) {
+        const { description, files } = post;
+
+        return description.trim() || files.length === ONE_ELEMENT;
+    }
+
     createPost() {
+        if (!this.checkPost(this.state.post)) {
+            return;
+        }
+
+        if (this.componentIsMounted) {
+            this.setState({ inProgress: true });
+        }
+
         nProgress.start();
         firebase.auth().currentUser.getToken().then((token) => {
             const { description, tags, files } = this.state.post;
             const { poiId } = this.props;
 
             const form = new FormData();
-            form.append('description', description);
+            form.append('description', description.trim());
             form.append('tags', tags);
             form.append('poiID', poiId);
             for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
@@ -188,8 +202,7 @@ export default class CreatePostDialog extends Component {
                     open={this.state.open}
                     onRequestClose={() => {
                         this.handleClose();
-                    }}
-                >
+                    }}>
                     <form>
                         <Tags className="tag-input"
                               title="Add tag..."
@@ -223,9 +236,11 @@ export default class CreatePostDialog extends Component {
                                             files
                                         }
                                     });
-                                }
-                                }>
-                                    <img src={file.preview} style={{width: '100px', objectFit: 'contain'}}/>
+                                }}>
+                                    <img src={file.preview} style={{
+                                        objectFit: 'contain',
+                                        width: '100px'
+                                    }}/>
                                 </span>;
                             })
                         }

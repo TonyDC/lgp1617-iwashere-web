@@ -6,7 +6,8 @@ module.exports.getPOIPosts = (poiID, offset, limit) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT *, name AS type, posts.created_at as post_date, posts.post_id
     FROM posts LEFT JOIN post_contents ON post_contents.post_id = posts.post_id LEFT JOIN content_types ON post_contents.content_type_id = content_types.content_type_id
-    WHERE poi_id = :poiID AND deleted = FALSE
+    WHERE poi_id = :poiID AND posts.deleted = FALSE
+    
     ORDER BY posts.created_at LIMIT :limit OFFSET :offset`, {
         replacements: {
             limit,
@@ -104,7 +105,7 @@ module.exports.getPostLikedByUser = (postIdList, userId) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT post_id
     FROM likes 
-    WHERE posts.deleted = FALSE AND post_id = ANY(:postIdList) AND user_id = :userId AND liked = TRUE`, {
+    WHERE post_id = ANY(:postIdList) AND user_id = :userId AND liked = TRUE`, {
         replacements: {
             postIdList,
             userId
@@ -117,7 +118,7 @@ module.exports.getPostLike = (postId, userId) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT post_id
     FROM likes 
-    WHERE posts.deleted = FALSE AND post_id = :postId AND user_id = :userId`, {
+    WHERE post_id = :postId AND user_id = :userId`, {
         replacements: {
             postId,
             userId
