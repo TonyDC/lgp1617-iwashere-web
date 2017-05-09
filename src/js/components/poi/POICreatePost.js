@@ -215,7 +215,7 @@ export default class CreatePostDialog extends Component {
                                     event.preventDefault();
 
                                     const { files } = this.state.post;
-                                    files.splice(index, 1);
+                                    files.splice(index, ONE_ELEMENT);
                                     window.URL.revokeObjectURL(file.preview);
                                     this.setState({
                                         post: {

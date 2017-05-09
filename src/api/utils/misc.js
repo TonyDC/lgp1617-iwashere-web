@@ -123,7 +123,7 @@ module.exports.convertStringToArray = (string) => {
 
     elements.forEach((element) => {
         array.push(parseInt(element, 10));
-    })
+    });
 
     return array;
 };

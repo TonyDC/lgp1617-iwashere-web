@@ -1,7 +1,6 @@
 'use strict';
 
 const aux = require('../utils/post_aux');
-const db = root_require('src/db/query');
 const httpCodes = require('http-status-codes');
 
 const express = require('express');
