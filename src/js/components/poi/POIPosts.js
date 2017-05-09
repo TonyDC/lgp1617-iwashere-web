@@ -114,6 +114,7 @@ export default class POIPosts extends Component {
         });
 
         firebase.auth().currentUser.getToken(true).then((token) => {
+
             return fetch(`${this.props.url}/auth/`, {
                 body: JSON.stringify({ postID: postId }),
                 headers: {

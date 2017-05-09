@@ -95,3 +95,29 @@ module.exports.updatePostLike = (postID, userID, liked) => {
         type: db.QueryTypes.DELETE
     });
 };
+
+module.exports.getUserPost = (userID, postID) => {
+    // language=POSTGRES-SQL
+    return db.query(`SELECT *
+    FROM posts
+    WHERE post_id = :postID AND user_id = :userID`, {
+        replacements: {
+            postID,
+            userID
+        },
+        type: db.QueryTypes.SELECT
+    });
+};
+
+module.exports.setPostDeleted = (userID, postID) => {
+    // language=POSTGRES-SQL
+    return db.query(`UPDATE ON posts
+    SET deleted = TRUE
+    WHERE post_id = :postID AND user_id = :userID`, {
+        replacements: {
+            postID,
+            userID
+        },
+        type: db.QueryTypes.UPDATE
+    });
+};
