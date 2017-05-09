@@ -106,15 +106,10 @@ export default class POIPosts extends Component {
         if (!this.state.user) {
             return;
         }
-        let post = null;
-        this.state.posts.forEach((postTemp) => {
-            if (postTemp.postId === postId) {
-                post = postTemp;
-            }
-        });
 
-        firebase.auth().currentUser.getToken(true).then((token) => {
-            return fetch(`${this.props.url}/auth/`, {
+        const url = `${this.props.url}/auth/${postId}`;
+        firebase.auth().currentUser.getToken().then((token) => {
+            return fetch(url, {
                 body: JSON.stringify({ postID: postId }),
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -130,8 +125,10 @@ export default class POIPosts extends Component {
 
             return response.json();
         }).
-        then((response) => {
-            const { posts } = this.state;
+        then(() => {
+            const posts = this.state.posts.filter((post) => {
+                return post.postId !== postId;
+            });
 
             if (this.componentIsMounted) {
                 this.setState({ posts });

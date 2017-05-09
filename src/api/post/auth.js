@@ -21,7 +21,6 @@ const THREE_SIZE = 3;
 
 router.delete('/:postID', (req, res, next) => {
     const { postID } = req.params;
-
     if (!postID) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
