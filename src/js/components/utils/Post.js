@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import Moment from 'moment';
 
 import Tags from './MyTags';
+import Image from './Image';
 
 import IconButton from 'material-ui/IconButton';
 import LikeIcon from "material-ui/svg-icons/action/thumb-up";
@@ -40,7 +41,7 @@ export default class Post extends Component {
 
         let mediaComponent = null;
         if (post.type === IMAGE_TYPE) {
-            mediaComponent = <img src={ post.url }/>;
+            mediaComponent = <Image url={ post.url }/>;
         } else if (post.type === VIDEO_TYPE) {
             mediaComponent = <iframe src={ post.url }/>;
         }
