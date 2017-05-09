@@ -84,3 +84,44 @@ module.exports.convertArrayToString = (objects) => {
 
     return `${arrayString}}`;
 };
+
+/**
+ * Ensures the resultList has an acceptable size and that .
+ * @param {[][]} resultList list of results
+ * @param {[]} acceptableLengths acceptable lengths of the result list
+ * @param {boolean} containsLists tells if the result list contains lists
+ *
+ * @return {boolean} tells if the result list is valid
+ */
+module.exports.checkResultList = (resultList, acceptableLengths, containsLists = false) => {
+    if (!resultList) {
+        return false;
+    }
+
+    if (containsLists) {
+        for (let index = 0; index < resultList.length; index++) {
+            if (!(resultList[index] && resultList[index].length > NO_ELEMENT_SIZE)) {
+                return false;
+            }
+        }
+    }
+
+    return acceptableLengths.indexOf(resultList.length) !== NOT_FOUND;
+};
+
+/**
+ * Converts an array in string form into an array of integers.
+ * @param {string} array in string form
+ *
+ * @return {[]} the array of integers
+ */
+module.exports.convertStringToArray = (string) => {
+    const array = [];
+    const elements = string.split(',');
+
+    elements.forEach((element) => {
+        array.push(parseInt(element, 10));
+    })
+
+    return array;
+};
