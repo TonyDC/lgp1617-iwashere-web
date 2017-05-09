@@ -146,3 +146,23 @@ module.exports.getTopRatedPOIs = (limit) => {
         type: db.QueryTypes.SELECT
     });
 };
+
+module.exports.createPOI = (name, description, address, latitude, longitude, poiTypeId, parentId, editorId) => {
+    // language=POSTGRES-SQL
+    return db.query(`INSERT INTO 
+    posts(name, description, address, latitude, longitude, poi_type_id, parent_id, content_editor_id) 
+    VALUES (:name, :description, :address, :latitude, :longitude, :poiTypeId, :parentId, :editorId) 
+    RETURNING poi_id`, {
+        replacements: {
+            address,
+            description,
+            editorId,
+            latitude,
+            longitude,
+            name,
+            parentId,
+            poiTypeId
+        },
+        type: db.QueryTypes.INSERT
+    });
+};

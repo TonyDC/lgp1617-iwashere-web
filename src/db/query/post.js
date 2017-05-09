@@ -95,24 +95,3 @@ module.exports.updatePostLike = (postID, userID, liked) => {
         type: db.QueryTypes.DELETE
     });
 };
-
-module.exports.createPost = (name, description, address, text, latitude, longitude, poiTypeId, parentId, editorId) => {
-    // language=POSTGRES-SQL
-    return db.query(`INSERT INTO 
-    posts(name, description, address, text, latitude, longitude, poi_type_id, parent_id, content_editor_id) 
-    VALUES (:name, :description, :address, :text, :latitude, :longitude, :poiTypeId, :parentId, :editorId) 
-    RETURNING poi_id`, {
-        replacements: {
-            address,
-            description,
-            editorId,
-            latitude,
-            longitude,
-            name,
-            parentId,
-            poiTypeId,
-            text
-        },
-        type: db.QueryTypes.INSERT
-    });
-};
