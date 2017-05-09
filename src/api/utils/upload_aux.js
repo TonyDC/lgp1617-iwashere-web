@@ -12,15 +12,25 @@ const IMAGE_TYPE = 'image;imagem';
 const SUPPORTED_TYPES = ['image/jpeg', 'image/png'];
 const JPEG_INDEX = SUPPORTED_TYPES.indexOf('image/jpeg');
 const PNG_INDEX = SUPPORTED_TYPES.indexOf('image/png');
+
 const ZERO_INDEX = 0;
+
+const NO_ERROR = 0;
+const BAD_REQUEST_MSG_CODE = 1;
+const INTERNAL_ERROR_MSG_CODE = 2;
 
 function processFiles (uid) {
     return (fileItem, callback) => {
+        const { contentDB } = db;
         const { fieldname, originalname, encoding, mimetype, destination, filename, path, size } = fileItem;
-        const response = {};
-        let contentTypeName = null;
+        const response = {
+            contentTypeId: null,
+            objects: []
+        };
+        const filesToEliminate = [path];
 
         detectFile(path).then((type) => {
+            let contentTypeName = null;
             const typeIndex = SUPPORTED_TYPES.indexOf(type);
 
             let extension = null;
@@ -35,7 +45,8 @@ function processFiles (uid) {
                     break;
                 default:
                     return callback({
-                        code: 1,
+                        code: BAD_REQUEST_MSG_CODE,
+                        filesToEliminate,
                         message: 'Bad file format.'
                     });
             }
@@ -78,15 +89,16 @@ function processFiles (uid) {
                             break;
                         default:
                             return callback({
-                                error: {
-                                    code: 1,
-                                    message: 'Bad file format.'
-                                }
+                                code: BAD_REQUEST_MSG_CODE,
+                                filesToEliminate,
+                                message: 'Bad file format.'
                             });
                     }
 
                     return sharpObject.toFile(obj.dir).
                     then(() => {
+                        filesToEliminate.push(obj.dir);
+
                         return obj;
                     }).
                     catch((error) => {
@@ -107,31 +119,32 @@ function processFiles (uid) {
 
                     return getHashOfFile(dir).
                     then((hash) => {
-                        response.contentHash = hash;
-                        response.contentUrl = `${uid}/${hash} - ${size} - ${basename}`; // TODO check if this is correct
+                        const contentInfo = {};
+                        contentInfo.contentHash = hash;
+                        contentInfo.contentUrl = `${uid}/${hash} - ${size} - ${basename}`; // TODO check if this is correct
+                        response.objects.push(contentInfo);
 
                         return sendFileToFirebase(dir, `${uid}/${hash} - ${size} - ${basename}`);
                     });
                 }));
             }).
-            then((arrays) => {
-                return Promise.all(arrays.map((imagePathObj) => {
-                    return unlink(imagePathObj.src);
-                }));
-            }).
             then(() => {
-                return db.contentDB.getContentTypeByName(contentTypeName);
+                return contentDB.getContentTypeByName(contentTypeName);
             }).
             then((contentTypeId) => {
                 response.contentTypeId = utils.convertObjectToCamelCase(contentTypeId[ZERO_INDEX]).contentTypeId;
 
-                return callback(null, response);
+                return callback(null, {
+                    code: NO_ERROR,
+                    filesToEliminate,
+                    response
+                });
             });
         }).
         catch((error) => {
-            // TODO unlink files
             callback({
-                code: 2,
+                code: INTERNAL_ERROR_MSG_CODE,
+                filesToEliminate,
                 message: error
             });
         });
@@ -141,11 +154,23 @@ function processFiles (uid) {
 module.exports.handleFileUpload = (files, userId) => {
     return new Promise((fulfill, reject) => {
         async.map(files, processFiles(userId), (error, fileInfo) => {
-            if (error) {
-                reject(error);
-            }
+            const handler = () => {
+                if (error) {
+                    reject(error);
+                }
 
-            fulfill(fileInfo);
+                fulfill(fileInfo);
+            };
+
+            // unlink files
+            const { filesToEliminate } = error
+                ? error
+                : fileInfo;
+            const filesToEliminatePromise = filesToEliminate.map((file) => {
+                return unlink(file);
+            });
+            Promise.all(filesToEliminatePromise).then(handler).
+            catch(handler);
         });
     });
 };

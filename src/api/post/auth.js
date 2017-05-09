@@ -5,7 +5,7 @@ const router = express.Router();
 
 const httpCodes = require('http-status-codes');
 const utils = require('../utils/misc');
-const upload_aux = require('../utils/upload_aux');
+const uploadAux = require('../utils/upload_aux');
 const upload = require('../middleware/upload');
 
 const db = root_require('src/db/query');
@@ -39,7 +39,7 @@ router.post('/', bodyTemplate, (req, res, next) => {
         if (utils.checkResultList(results, [primaryChecks.length], true)) {
             const createPost = [postDB.createPost(description, poiID, userID)];
             if (postFiles.length > NO_ELEMENT_SIZE) {
-                createPost.push(upload_aux.handleFileUpload(postFiles, userID));
+                createPost.push(uploadAux.handleFileUpload(postFiles, userID));
             }
 
             return Promise.all(createPost).
@@ -97,7 +97,7 @@ router.post('/', bodyTemplate, (req, res, next) => {
     });
 });
 
-router.put('/', (req, res, next) => {
+router.delete('/', (req, res, next) => {
     const { postID } = req.body;
 
     if (!postID) {
