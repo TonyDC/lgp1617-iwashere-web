@@ -181,6 +181,7 @@ export default class CreatePostDialog extends Component {
                     className="poi-detail-button" backgroundColor="#39A8E0"
                     label="New Post" onTouchTap={this.handleOpen} />
                 <Dialog
+                    autoScrollBodyContent
                     title="Create a new post"
                     actions={actions}
                     modal={false}

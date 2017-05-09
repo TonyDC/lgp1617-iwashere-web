@@ -24,6 +24,7 @@ export default class ViewPostModal extends Component {
     render() {
         return (
             <Dialog
+                autoScrollBodyContent
                 className="post-modal"
                 bodyClassName="post-modal-content"
                 modal={false}
