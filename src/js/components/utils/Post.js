@@ -61,40 +61,47 @@ export default class Post extends Component {
             badge = <div className="timeline-badge primary"/>;
         }
 
-        return (
-            <li id={`post#${this.props.post.postId}`} className={`${this.props.inverted
-                ? 'timeline-inverted'
-                : ''}`}>
+        const postContent =
+            <div className="timeline-panel">
+                <div className="timeline-heading">
+                    {mediaComponent}
+                </div>
 
-                {badge}
+                <div className="timeline-body">
+                    <p>{this.props.post.description}</p>
+                </div>
 
-                <div className="timeline-panel">
-                    <div className="timeline-heading">
-                        {mediaComponent}
-                    </div>
-
-                    <div className="timeline-body">
-                        <p>{this.props.post.description}</p>
-                    </div>
-
-                    <div className="timeline-footer">
-                        {tagList}
-                        <small className="text-muted"><i className="glyphicon glyphicon-time"/> { Moment(date).format('MMMM Do YYYY, h:mm') }</small>
-                        <div className={`${likeClass} like-section`}>
-                            <span className="likes-count">{this.props.post.likes}</span>
-                            <IconButton iconStyle={buttonStyle} style={likeButtonSize}
-                                        onTouchTap={() => {
-                                            if (typeof this.props.onLike !== 'undefined') {
-                                                this.props.onLike(this.props.post);
-                                            }
-                                        }}>
-                                <LikeIcon/>
-                            </IconButton>
-                        </div>
+                <div className="timeline-footer">
+                    {tagList}
+                    <small className="text-muted"><i className="glyphicon glyphicon-time"/> { Moment(date).format('MMMM Do YYYY, h:mm') }</small>
+                    <div className={`${likeClass} like-section`}>
+                        <span className="likes-count">{this.props.post.likes}</span>
+                        <IconButton iconStyle={buttonStyle} style={likeButtonSize}
+                                    onTouchTap={() => {
+                                        if (typeof this.props.onLike !== 'undefined') {
+                                            this.props.onLike(this.props.post);
+                                        }
+                                    }}>
+                            <LikeIcon/>
+                        </IconButton>
                     </div>
                 </div>
-            </li>
-        );
+            </div>;
+
+        if ('inverted' in this.props) {
+            return (
+                <li id={`post#${this.props.post.postId}`} className={`${this.props.inverted
+                    ? 'timeline-inverted'
+                    : ''}`}>
+
+                    {badge}
+
+                    {postContent}
+                </li>
+            );
+        }
+
+        return postContent;
     }
 }
 

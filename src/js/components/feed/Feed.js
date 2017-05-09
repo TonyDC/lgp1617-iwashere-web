@@ -34,7 +34,7 @@ export default class Feed extends Component {
 
     render() {
         return (
-            <div className="wrapper-fill">
+            <div className="colorAccentSecondary wrapper-fill">
                 <Helmet>
                     <title>#iwashere - Feed</title>
                 </Helmet>
