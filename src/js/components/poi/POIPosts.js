@@ -29,8 +29,7 @@ export default class POIPosts extends Component {
             hasMoreItems: true,
             posts: [],
             postsOffset: 0,
-            tagsFilter: [],
-            user: null
+            tagsFilter: []
         };
     }
 
@@ -43,6 +42,19 @@ export default class POIPosts extends Component {
                 });
             }
         });
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.newPost && this.props.newPost !== nextProps.newPost && this.componentIsMounted) {
+            const posts = this.state.posts.slice();
+            const postIds = posts.map((post) => {
+                return post.postId;
+            });
+            if (postIds.indexOf(nextProps.newPost.postId) === NOT_FOUND) {
+                posts.unshift(nextProps.newPost);
+            }
+            this.setState({ posts });
+        }
     }
 
     componentWillUnmount() {
@@ -167,11 +179,9 @@ export default class POIPosts extends Component {
 
     getPostView() {
         if (this.state.postSelected) {
-            return <ViewPost post={this.state.postSelected}
-                             onClose = {this.closePostView.bind(this)}
-                             onToggleLike={(post) => {
-                                 this.toggleLike(post);
-                             }}/>;
+            return <ViewPost post={this.state.postSelected} onClose = {this.closePostView.bind(this)} onToggleLike={(post) => {
+                this.toggleLike(post);
+            }}/>;
         }
 
         return null;
@@ -213,11 +223,9 @@ export default class POIPosts extends Component {
         let filteredPosts = this.state.posts.slice();
         if (this.state.tagsFilter.length) {
             filteredPosts = filteredPosts.filter((post) => {
-                const postTagsInFilter = post.tags.filter((postTag) => {
+                return post.tags.filter((postTag) => {
                     return this.state.tagsFilter.indexOf(postTag.tagId) !== NOT_FOUND;
-                });
-
-                return postTagsInFilter.length > NO_ELEMENT_SIZE;
+                }).length > NO_ELEMENT_SIZE;
             });
         }
 
@@ -226,8 +234,7 @@ export default class POIPosts extends Component {
             : <MoreIcon/>;
         const toggleTagFilterButton =
             <div className="filter-button-container">
-                <FloatingActionButton backgroundColor="#012935"
-                                      onTouchTap={this.toggleFiltering.bind(this)}>
+                <FloatingActionButton backgroundColor="#012935" onTouchTap={this.toggleFiltering.bind(this)}>
                     {filterIcon}
                 </FloatingActionButton>
             </div>;
@@ -263,31 +270,24 @@ export default class POIPosts extends Component {
                 tagFilter = null;
             }
 
-            return (
-                <Col xs={12} mdOffset={1} md={10} lgOffset={1} lg={10}> {toggleTagFilterButton} {tagFilter} </Col>
-            );
+            return <Col xs={12} mdOffset={1} md={10} lgOffset={1} lg={10}> {toggleTagFilterButton} {tagFilter} </Col>;
         }
 
-        return (
-            <Col xs={12} mdOffset={1} md={10} lgOffset={1} lg={10}>
-                {this.getPostView()}
-                {toggleTagFilterButton}
-                {tagFilter}
-                <InfiniteScroll
-                    pageStart={0}
-                    loadMore={this.fetchPosts.bind(this)}
-                    hasMore={this.state.hasMoreItems}
-                    loader={loader}>
-                    <ul className="timeline timeline-container">
-                        {this.getTimelinePosts(filteredPosts)}
-                    </ul>
-                </InfiniteScroll>
-            </Col>
-        );
+        return <Col xs={12} mdOffset={1} md={10} lgOffset={1} lg={10}>
+                    {this.getPostView()}
+                    {toggleTagFilterButton}
+                    {tagFilter}
+                    <InfiniteScroll pageStart={0} loadMore={this.fetchPosts.bind(this)} hasMore={this.state.hasMoreItems} loader={loader}>
+                        <ul className="timeline timeline-container">
+                            {this.getTimelinePosts(filteredPosts)}
+                        </ul>
+                    </InfiniteScroll>
+                </Col>;
     }
 }
 
 POIPosts.propTypes = {
+    newPost: PropTypes.object,
     poiId: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired,
     user: PropTypes.object

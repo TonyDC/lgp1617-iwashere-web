@@ -119,11 +119,14 @@ module.exports.checkResultList = (resultList, acceptableLengths, containsLists =
  */
 module.exports.convertStringToArray = (string) => {
     const array = [];
-    const elements = string.split(',');
 
-    elements.forEach((element) => {
-        array.push(parseInt(element, 10));
-    });
+    if (string) {
+        const elements = string.split(',');
+
+        elements.forEach((element) => {
+            array.push(parseInt(element, 10));
+        });
+    }
 
     return array;
 };

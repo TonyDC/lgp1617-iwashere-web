@@ -32,7 +32,11 @@ export default class POICard extends Component {
 
             if (this.props.showPostButton && this.props.user) {
                 poiPost = <CreatePostDialog poiId={this.props.poiInfo.poiId}
-                                            user={this.props.user}/>;
+                                            onNewPost={(newPost) => {
+                                                if (typeof this.props.onNewPost !== 'undefined') {
+                                                    this.props.onNewPost(newPost);
+                                                }
+                                            }}/>;
             }
         }
 
@@ -66,6 +70,7 @@ POICard.defaultProps = { showPostButton: false };
 
 POICard.propTypes = {
     children: PropTypes.any,
+    onNewPost: PropTypes.func,
     poiInfo: PropTypes.shape({
         address: PropTypes.string.isRequired,
         description: PropTypes.string.isRequired,

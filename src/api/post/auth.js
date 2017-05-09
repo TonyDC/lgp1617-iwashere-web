@@ -27,7 +27,7 @@ router.post('/', bodyTemplate, (req, res, next) => {
     const { postFiles } = files;
     const userID = req.auth.token.uid;
 
-    if (!poiID || typeof description !== 'string' || !tags || !userID || typeof userID !== 'string') {
+    if (!poiID || typeof description !== 'string' || !userID || typeof userID !== 'string') {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
@@ -47,7 +47,11 @@ router.post('/', bodyTemplate, (req, res, next) => {
             then((postResults) => {
                 if (utils.checkResultList(postResults, [createPost.length], true)) {
                     const { postId } = utils.convertObjectToCamelCase(postResults[ZERO_INDEX][ZERO_INDEX]);
-                    const createAdditionalPostInfo = [postDB.addPostTags(postId, utils.convertStringToArray(tags))];
+                    const createAdditionalPostInfo = [];
+                    if (utils.convertStringToArray(tags).length > NO_ELEMENT_SIZE) {
+                        createAdditionalPostInfo.push(postDB.addPostTags(postId, utils.convertStringToArray(tags)));
+                    }
+
                     if (postFiles && postFiles.length > NO_ELEMENT_SIZE) {
                         const { contentUrls, contentTypeId } = postResults[ONE_INDEX][ZERO_INDEX].fileInfo;
                         const urlXs = contentUrls[ZERO_INDEX];
@@ -63,9 +67,10 @@ router.post('/', bodyTemplate, (req, res, next) => {
 
                             return Promise.all([postDB.getPostById(postId), postDB.getPostTags(utils.convertArrayToString([postId]))]).
                             then((getPostResult) => {
-                                if (utils.checkResultList(getPostResult, [TWO_SIZE], true)) {
+                                if (utils.checkResultList(getPostResult, [TWO_SIZE]) &&
+                                    getPostResult[ZERO_INDEX].length > NO_ELEMENT_SIZE) {
 
-                                    const newPost = utils.convertObjectToCamelCase(getPostResult[ZERO_INDEX]);
+                                    const newPost = utils.convertObjectToCamelCase(getPostResult[ZERO_INDEX][ZERO_INDEX]);
                                     newPost.tags = utils.convertObjectsToCamelCase(getPostResult[ONE_INDEX]);
                                     newPost.likes = NO_ELEMENT_SIZE;
                                     newPost.likedByUser = false;

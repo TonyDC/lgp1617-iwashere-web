@@ -86,7 +86,7 @@ export default class CreatePostDialog extends Component {
             return response.json();
         }).
         then((newPost) => {
-            if (this.props.onNewPost) {
+            if (typeof this.props.onNewPost !== 'undefined') {
                 this.props.onNewPost(newPost);
             }
 
@@ -108,7 +108,10 @@ export default class CreatePostDialog extends Component {
 
     handleOpen() {
         if (this.componentIsMounted) {
-            this.setState({ open: true });
+            this.setState({
+                inProgress: false,
+                open: true
+            });
         }
     }
 

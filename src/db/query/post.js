@@ -7,8 +7,7 @@ module.exports.getPOIPosts = (poiID, offset, limit) => {
     return db.query(`SELECT *, name AS type, posts.created_at as post_date, posts.post_id
     FROM posts LEFT JOIN post_contents ON post_contents.post_id = posts.post_id LEFT JOIN content_types ON post_contents.content_type_id = content_types.content_type_id
     WHERE poi_id = :poiID AND posts.deleted = FALSE
-    
-    ORDER BY posts.created_at LIMIT :limit OFFSET :offset`, {
+    ORDER BY posts.created_at DESC LIMIT :limit OFFSET :offset`, {
         replacements: {
             limit,
             offset,
