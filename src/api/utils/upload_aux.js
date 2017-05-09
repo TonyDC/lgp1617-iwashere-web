@@ -146,7 +146,8 @@ function processFiles (uid) {
             });
         }).
         catch((error) => {
-            callback({
+            console.error(error);
+            return callback({
                 code: INTERNAL_ERROR_MSG_CODE,
                 filesToEliminate,
                 message: error
