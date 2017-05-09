@@ -102,6 +102,48 @@ export default class POIPosts extends Component {
         });
     }
 
+    toggleDelete(postId) {
+        if (!this.state.user) {
+            return;
+        }
+        let post = null;
+        this.state.posts.forEach((postTemp) => {
+            if (postTemp.postId === postId) {
+                post = postTemp;
+            }
+        });
+
+        firebase.auth().currentUser.getToken(true).then((token) => {
+            return fetch(`${this.props.url}/auth/`, {
+                body: JSON.stringify({ postID: postId }),
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                method: 'DELETE'
+            });
+        }).
+        then((response) => {
+            if (response.status >= httpCodes.BAD_REQUEST || response.status === httpCodes.NO_CONTENT) {
+                return Promise.reject(new Error(response.statusText));
+            }
+
+            return response.json();
+        }).
+        then((response) => {
+            const { posts } = this.state;
+
+            if (this.componentIsMounted) {
+                this.setState({ posts });
+            }
+        }).
+        catch(() => {
+            Alerts.createErrorAlert('Error deleting the post.');
+        });
+
+    }
+
+
     toggleLike(postId) {
         if (!this.state.user) {
             return;
@@ -161,6 +203,11 @@ export default class POIPosts extends Component {
             postsList.push(
                 <Post post={postEntry}
                       inverted={itemClassInverted}
+                      onDelete={() => {
+                          this.toggleDelete(postEntry.postId);
+                      }
+
+                      }
                       onLike={() => {
                           this.toggleLike(postEntry.postId);
                       }}

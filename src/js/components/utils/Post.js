@@ -6,6 +6,9 @@ import Moment from 'moment';
 import Tags from './MyTags';
 
 import IconButton from 'material-ui/IconButton';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import MenuItem from 'material-ui/MenuItem';
+import IconMenu from 'material-ui/IconMenu';
 import LikeIcon from "material-ui/svg-icons/action/thumb-up";
 
 import 'styles/timeline.scss';
@@ -71,6 +74,7 @@ export default class Post extends Component {
                         <p>{this.props.post.description}</p>
                     </div>
 
+
                     <div className="timeline-footer">
                         {tagList}
                         <small className="text-muted"><i className="glyphicon glyphicon-time"/> { Moment(date).format('MMMM Do YYYY, h:mm') }</small>
@@ -84,6 +88,25 @@ export default class Post extends Component {
                                         }}>
                                 <LikeIcon/>
                             </IconButton>
+                            <IconMenu
+                                iconButtonElement={
+                                    <IconButton><MoreVertIcon /></IconButton>
+                                }
+                                targetOrigin={ {
+                                    horizontal: 'right',
+                                    vertical: 'top'
+                                } }
+                                anchorOrigin={{
+                                    horizontal: 'right',
+                                    vertical: 'top'
+                                } }>
+                                <MenuItem onTouchTap={() => {
+                                    if (typeof this.props.onDelete !== 'undefined') {
+                                        this.props.onDelete(this.props.post.postId);
+                                    }
+                                }}
+                                primaryText="Delete" />
+                            </IconMenu>
                         </div>
                     </div>
                 </div>
@@ -94,6 +117,7 @@ export default class Post extends Component {
 
 Post.propTypes = {
     inverted: PropTypes.bool.isRequired,
+    onDelete: PropTypes.any,
     onLike: PropTypes.any,
     post: PropTypes.object.isRequired
 };
