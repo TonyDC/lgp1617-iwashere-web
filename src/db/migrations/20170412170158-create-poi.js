@@ -30,6 +30,7 @@ module.exports = {
                 poi_type_id BIGINT NOT NULL REFERENCES poi_types(poi_type_id) ON DELETE RESTRICT,
                 parent_id BIGINT REFERENCES pois (poi_id) CHECK (parent_id IS NULL OR parent_id != poi_id),
                 content_editor_id TEXT REFERENCES content_editors(uid) NOT NULL,
+                deleted BOOL NOT NULL DEFAULT FALSE,
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP
             );

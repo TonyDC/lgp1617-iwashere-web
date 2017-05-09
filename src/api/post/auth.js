@@ -49,7 +49,7 @@ router.post('/', bodyTemplate, (req, res, next) => {
                     const { postId } = utils.convertObjectToCamelCase(postResults[ZERO_INDEX][ZERO_INDEX]);
                     const createAdditionalPostInfo = [postDB.addPostTags(postId, utils.convertStringToArray(tags))];
                     if (postFiles.length > NO_ELEMENT_SIZE) {
-                        const { contentUrls, contentTypeId } = postResults[ONE_INDEX][ZERO_INDEX];
+                        const { contentUrls, contentTypeId } = postResults[ONE_INDEX][ZERO_INDEX].fileInfo;
                         const urlXs = contentUrls[ZERO_INDEX];
                         const urlS = contentUrls[ONE_INDEX];
                         const urlM = contentUrls[TWO_INDEX];

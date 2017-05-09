@@ -12,9 +12,7 @@ const IMAGE_TYPE = 'image;imagem';
 const SUPPORTED_TYPES = ['image/jpeg', 'image/png'];
 const JPEG_INDEX = SUPPORTED_TYPES.indexOf('image/jpeg');
 const PNG_INDEX = SUPPORTED_TYPES.indexOf('image/png');
-
 const ZERO_INDEX = 0;
-
 const NO_ERROR = 0;
 const BAD_REQUEST_MSG_CODE = 1;
 const INTERNAL_ERROR_MSG_CODE = 2;
@@ -29,7 +27,7 @@ function processFiles (uid) {
     return (fileItem, callback) => {
         const { contentDB } = db;
         const { filename, path, size } = fileItem;
-        const response = {
+        const fileInfo = {
             contentTypeId: null,
             contentUrls: []
         };
@@ -126,7 +124,7 @@ function processFiles (uid) {
                     return getHashOfFile(dir).
                     then((hash) => {
                         const contentUrl = `${uid}/${hash} - ${size} - ${basename}`;
-                        response.contentUrls.push(contentUrl);
+                        fileInfo.contentUrls.push(contentUrl);
 
                         return sendFileToFirebase(dir, contentUrl);
                     });
@@ -136,17 +134,16 @@ function processFiles (uid) {
                 return contentDB.getContentTypeByName(contentTypeName);
             }).
             then((contentTypeId) => {
-                response.contentTypeId = utils.convertObjectToCamelCase(contentTypeId[ZERO_INDEX]).contentTypeId;
+                fileInfo.contentTypeId = utils.convertObjectToCamelCase(contentTypeId[ZERO_INDEX]).contentTypeId;
 
                 return callback(null, {
                     code: NO_ERROR,
-                    filesToEliminate,
-                    response
+                    fileInfo,
+                    filesToEliminate
                 });
             });
         }).
         catch((error) => {
-            console.error(error);
             return callback({
                 code: INTERNAL_ERROR_MSG_CODE,
                 filesToEliminate,
@@ -158,23 +155,31 @@ function processFiles (uid) {
 
 module.exports.handleFileUpload = (files, userId) => {
     return new Promise((fulfill, reject) => {
-        async.map(files, processFiles(userId), (error, fileInfo) => {
+        async.map(files, processFiles(userId), (error, response) => {
             const handler = () => {
                 if (error) {
                     reject(error);
                 }
 
-                fulfill(fileInfo);
+                fulfill(response);
             };
 
             // unlink files
-            const { filesToEliminate } = error
-                ? error
-                : fileInfo;
-            const filesToEliminatePromise = filesToEliminate.map((file) => {
+            const filesToEliminate = [];
+            if (error) {
+                filesToEliminate.concat(error.filesToEliminate);
+            }
+
+            if (response && response.length) {
+                response.forEach((singleResponse) => {
+                    filesToEliminate.concat(singleResponse.filesToEliminate);
+                });
+            }
+
+            const filesToEliminatePromises = filesToEliminate.map((file) => {
                 return unlink(file);
             });
-            Promise.all(filesToEliminatePromise).then(handler).
+            Promise.all(filesToEliminatePromises).then(handler).
             catch(handler);
         });
     });
