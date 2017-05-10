@@ -7,7 +7,7 @@ import Image from '../utils/Image';
 import { GridTile } from 'material-ui/GridList';
 import IconButton from 'material-ui/IconButton';
 import StarBorder from 'material-ui/svg-icons/toggle/star-border';
-import GoToPOIIcon from 'material-ui/svg-icons/communication/location-on';
+import CommunicationLocationOn from 'material-ui/svg-icons/communication/location-on';
 
 import 'styles/poi_mosaic.scss';
 import 'styles/utils.scss';
@@ -41,7 +41,7 @@ export default class PostMosaic extends Component {
         if (this.props.dismissible) {
             poiButton =
                 <IconButton tooltipPosition="top-left" tooltip={POI_BUTTON_MESSAGE}>
-                    <GoToPOIIcon color="white" />
+                    <CommunicationLocationOn color="white" />
                 </IconButton>;
         }
 

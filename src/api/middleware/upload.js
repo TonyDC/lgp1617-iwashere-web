@@ -3,7 +3,7 @@ const os = require('os');
 const multer = require('multer');
 
 const TWO = 2;
-const MB = 1024;
+const KB = 1024;
 
 /*
 Properties:
@@ -19,11 +19,9 @@ const upload = multer({
     dest: os.tmpdir(),
     limits: {
         fields: 10,
-        fileSize: TWO * MB * MB,
+        fileSize: TWO * KB * KB,
         files: 5
     }
 });
-
-// const fieldsUploadTemplate = upload.fields([{ name: 'sample-file', maxCount: 6 }]);
 
 module.exports = upload;
