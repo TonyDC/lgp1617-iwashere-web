@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router();
 
 const httpCodes = require('http-status-codes');
+const utils = require('../utils/misc');
 
 const db = root_require('src/db/query');
 
@@ -21,72 +22,60 @@ const VALUE_NOT_FOUND = -1;
 const ZERO_INDEX = 0;
 const ONE_INDEX = 1;
 const NO_ELEMENT_SIZE = 0;
+const ONE_SIZE = 1;
 const TWO_SIZE = 2;
 
 router.post('/', (req, res, next) => {
-    const { name, description, address, latitude, longitude, poiTypeId, parentId, tags } = req.body;
+    const { name, description, pois, tags } = req.body;
     const userID = req.auth.token.uid;
 
     if (!userID || typeof userID !== 'string' || !name || typeof name !== 'string' ||
-        !description || typeof description !== 'string' || !address || typeof address !== 'string' ||
-        !poiTypeId || !latitude || isNaN(parseFloat(latitude)) || !longitude || isNaN(parseFloat(longitude))) {
+        !description || typeof description !== 'string' || !pois || !pois.length > NO_ELEMENT_SIZE) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
 
-    const { userDB, poiDB } = db;
-    const primaryChecks = [userDB.getContentEditorByUID(userID), poiDB.getPOITypeByID(poiTypeId)];
+    console.error(pois);
+    console.error(tags);
+
+    const { userDB, poiDB, routeDB } = db;
+    const primaryChecks = [userDB.getContentEditorByUID(userID), poiDB.getPOIsByID(pois)];
     Promise.all(primaryChecks).
     then((results) => {
         if (utils.checkResultList(results, [primaryChecks.length], true)) {
-            const createPOI = [poiDB.createPOI(name, description, address, latitude, longitude, poiTypeId, parentId, userID)];
-            if (postFiles && postFiles.length > NO_ELEMENT_SIZE) {
-                createPOI.push(uploadAux.handleFileUpload(postFiles, userID));
-            }
 
-            return Promise.all(createPOI).
-            then((poiCreationResults) => {
-                if (utils.checkResultList(poiCreationResults, [createPOI.length], true)) {
-                    const { poiId } = utils.convertObjectToCamelCase(poiCreationResults[ZERO_INDEX][ZERO_INDEX]);
-                    const createAdditionalPoiInfo = [];
-                    if (utils.convertStringToArray(tags).length > NO_ELEMENT_SIZE) {
-                        createAdditionalPoiInfo.push(poiDB.addPOITags(poiId, utils.convertStringToArray(tags)));
+            return routeDB.createRoute(name, description, userID).
+            then((routeCreationResults) => {
+                if (utils.checkResultList(routeCreationResults, [ONE_SIZE], true)) {
+                    const { routeId } = utils.convertObjectToCamelCase(routeCreationResults[ZERO_INDEX][ZERO_INDEX]);
+                    const createAdditionalRouteInfo = [routeDB.setRoutePOIs(routeId, tags)];
+                    if (tags.length > NO_ELEMENT_SIZE) {
+                        createAdditionalRouteInfo.push(routeDB.setRouteTags(routeId, tags));
                     }
 
-                    if (postFiles && postFiles.length > NO_ELEMENT_SIZE) {
-                        poiCreationResults[ONE_INDEX].forEach((fileCreated) => {
-                            const { contentUrls, contentTypeId } = fileCreated.fileInfo;
-                            const urlXs = contentUrls[ZERO_INDEX];
-                            const urlS = contentUrls[ONE_INDEX];
-                            const urlM = contentUrls[TWO_INDEX];
-                            const urlL = contentUrls[THREE_INDEX];
-                            createAdditionalPoiInfo.push(poiDB.addPostContent(poiId, contentTypeId, urlXs, urlS, urlM, urlL));
-                        });
-                    }
-
-                    return Promise.all(createAdditionalPoiInfo).
+                    return Promise.all(createAdditionalRouteInfo).
                     then((additionalPostInfo) => {
-                        if (utils.checkResultList(additionalPostInfo, [createAdditionalPoiInfo.length], true)) {
+                        if (utils.checkResultList(additionalPostInfo, [createAdditionalRouteInfo.length], true)) {
 
-                            return res.json({ poiId }).end();
+                            return res.json({ routeId }).end();
                         }
 
-                        res.status(httpCodes.BAD_REQUEST).json({ message: 'error adding tags or content to poi' }).
+                        res.status(httpCodes.BAD_REQUEST).json({ message: 'error adding tags or pois to route' }).
                         end();
 
                         return null;
                     });
                 }
 
-                res.status(httpCodes.BAD_REQUEST).json({ message: 'error creating poi' }).
+                res.status(httpCodes.BAD_REQUEST).json({ message: 'error creating route' }).
                 end();
 
                 return null;
             });
         }
 
-        res.status(httpCodes.BAD_REQUEST).json({ message: 'content_editor_id or poi_type_id not found' }).
+        res.status(httpCodes.BAD_REQUEST).json({ message: 'content_editor_id or poi_id not found' }).
         end();
 
         return null;

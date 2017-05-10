@@ -59,7 +59,7 @@ router.post('/', bodyTemplate, (req, res, next) => {
                     const { poiId } = utils.convertObjectToCamelCase(poiCreationResults[ZERO_INDEX][ZERO_INDEX]);
                     const createAdditionalPoiInfo = [];
                     if (utils.convertStringToArray(tags).length > NO_ELEMENT_SIZE) {
-                        createAdditionalPoiInfo.push(poiDB.addPOITags(poiId, utils.convertStringToArray(tags)));
+                        createAdditionalPoiInfo.push(poiDB.setPOITags(poiId, utils.convertStringToArray(tags)));
                     }
 
                     if (postFiles && postFiles.length > NO_ELEMENT_SIZE) {
@@ -74,8 +74,8 @@ router.post('/', bodyTemplate, (req, res, next) => {
                     }
 
                     return Promise.all(createAdditionalPoiInfo).
-                    then((additionalPostInfo) => {
-                        if (utils.checkResultList(additionalPostInfo, [createAdditionalPoiInfo.length], true)) {
+                    then((additionalPoiInfo) => {
+                        if (utils.checkResultList(additionalPoiInfo, [createAdditionalPoiInfo.length], true)) {
 
                             return res.json({ poiId }).end();
                         }

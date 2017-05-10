@@ -69,3 +69,74 @@ module.exports.searchRoute = (query) => {
         type: db.QueryTypes.SELECT
     });
 };
+
+module.exports.createRoute = (name, description, editorId) => {
+    // language=POSTGRES-SQL
+    return db.query(`INSERT INTO 
+    routes(name, description, content_editor_id) 
+    VALUES (:name, :description, :editorId) 
+    RETURNING route_id`, {
+        replacements: {
+            description,
+            editorId,
+            name
+        },
+        type: db.QueryTypes.INSERT
+    });
+};
+
+module.exports.setRouteTags = (routeId, tagIdList) => {
+    // language=POSTGRES-SQL
+    return db.query(`
+    WITH previous_tags AS (DELETE FROM route_tags WHERE route_id = :routeId RETURNING tag_id)
+    INSERT INTO route_tags(route_id, tag_id)
+    VALUES (:routeId, unnest(array[:tagIdList])) ON CONFLICT DO NOTHING RETURNING tag_id`, {
+        replacements: {
+            routeId,
+            tagIdList
+        },
+        type: db.QueryTypes.INSERT
+    });
+};
+
+module.exports.setRoutePOIs = (routeId, poiIdList) => {
+    // language=POSTGRES-SQL
+    return db.query(`
+    WITH previous_pois AS (DELETE FROM route_pois WHERE route_id = :routeId RETURNING tag_id)
+    INSERT INTO route_pois(route_id, poi_id)
+    VALUES (:routeId, unnest(array[:poiIdList])) ON CONFLICT DO NOTHING RETURNING poi_id`, {
+        replacements: {
+            poiIdList,
+            routeId
+        },
+        type: db.QueryTypes.INSERT
+    });
+};
+
+module.exports.getContentEditorRoute = (userID, routeID) => {
+    // language=POSTGRES-SQL
+    return db.query(`SELECT *
+    FROM routes
+    WHERE route_id = :routeID AND user_id = :userID`, {
+        replacements: {
+            routeID,
+            userID
+        },
+        type: db.QueryTypes.SELECT
+    });
+};
+
+module.exports.setRouteDeleted = (userID, routeID, deleted = true) => {
+    // language=POSTGRES-SQL
+    return db.query(`UPDATE ON routes
+    SET deleted = TRUE
+    WHERE poi_id = :poiID AND user_id = :userID`, {
+        replacements: {
+            deleted,
+            routeID,
+            userID
+        },
+        type: db.QueryTypes.UPDATE
+    });
+};
+

@@ -152,7 +152,7 @@ module.exports.getTopRatedPOIs = (limit) => {
 module.exports.createPOI = (name, description, address, latitude, longitude, poiTypeId, parentId, editorId) => {
     // language=POSTGRES-SQL
     return db.query(`INSERT INTO 
-    posts(name, description, address, latitude, longitude, poi_type_id, parent_id, content_editor_id) 
+    pois(name, description, address, latitude, longitude, poi_type_id, parent_id, content_editor_id) 
     VALUES (:name, :description, :address, :latitude, :longitude, :poiTypeId, :parentId, :editorId) 
     RETURNING poi_id`, {
         replacements: {
@@ -169,9 +169,10 @@ module.exports.createPOI = (name, description, address, latitude, longitude, poi
     });
 };
 
-module.exports.addPOITags = (poiId, tagIdList) => {
+module.exports.setPOITags = (poiId, tagIdList) => {
     // language=POSTGRES-SQL
-    return db.query(` 
+    return db.query(`
+    WITH previous_tags AS (DELETE FROM poi_tags WHERE poi_id = :poiId RETURNING tag_id)
     INSERT INTO poi_tags(poi_id, tag_id)
     VALUES (:poiId, unnest(array[:tagIdList])) ON CONFLICT DO NOTHING RETURNING tag_id`, {
         replacements: {
@@ -195,19 +196,19 @@ module.exports.getContentEditorPOI = (userID, poiID) => {
     });
 };
 
-module.exports.setPOIDeleted = (userID, poiID) => {
+module.exports.setPOIDeleted = (userID, poiID, deleted = true) => {
     // language=POSTGRES-SQL
     return db.query(`UPDATE ON pois
-    SET deleted = TRUE
+    SET deleted = :deleted
     WHERE poi_id = :poiID AND user_id = :userID`, {
         replacements: {
+            deleted,
             poiID,
             userID
         },
         type: db.QueryTypes.UPDATE
     });
 };
-
 
 module.exports.addPOIContent = (poiId, contentTypeId, urlXs, urlS, urlM, urlL) => {
     // language=POSTGRES-SQL
