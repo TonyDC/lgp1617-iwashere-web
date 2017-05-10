@@ -159,7 +159,7 @@ router.delete('/:routeID/:deleted', (req, res, next) => {
 
     const { routeDB, userDB } = db;
     const primaryChecks = [userDB.getContentEditorByUID(userID),
-        routeDB.getRouteDetailByID(routeID)];
+        routeDB.getRouteDetailByID(routeID, true)];
     primaryChecks.
     then((results) => {
 

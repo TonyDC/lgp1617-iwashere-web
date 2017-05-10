@@ -2,10 +2,14 @@
 
 const db = require('../index');
 
-module.exports.getRouteDetailByID = (id) => {
+module.exports.getRouteDetailByID = (id, deleted = false) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT * FROM routes WHERE route_id = :id`, {
-        replacements: { id },
+    return db.query(`SELECT * FROM routes 
+    WHERE route_id = :id AND (deleted = FALSE OR :deleted)`, {
+        replacements: {
+            deleted,
+            id
+        },
         type: db.QueryTypes.SELECT
     });
 };
@@ -64,7 +68,8 @@ module.exports.addRouteRating = (routeID, userID, rating) => {
 
 module.exports.searchRoute = (query) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT * FROM routes WHERE text @@ to_tsquery(:query) `, {
+    return db.query(`SELECT * FROM routes 
+    WHERE text @@ to_tsquery(:query) AND deleted = FALSE`, {
         replacements: { query },
         type: db.QueryTypes.SELECT
     });
@@ -144,7 +149,7 @@ module.exports.updateRoute = (routeId, name, description) => {
 module.exports.setRouteDeleted = (userID, routeID, deleted = true) => {
     // language=POSTGRES-SQL
     return db.query(`UPDATE ON routes
-    SET deleted = TRUE
+    SET deleted = :deleted
     WHERE poi_id = :poiID AND user_id = :userID`, {
         replacements: {
             deleted,

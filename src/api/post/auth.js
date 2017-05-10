@@ -21,6 +21,7 @@ const TWO_SIZE = 2;
 const THREE_SIZE = 3;
 
 const bodyTemplate = upload.fields([{ name: 'postFiles' }]);
+
 router.post('/', bodyTemplate, (req, res, next) => {
     const { body, files } = req;
     const { poiID, description, tags } = body;

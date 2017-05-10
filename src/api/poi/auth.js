@@ -71,7 +71,7 @@ router.post('/', bodyTemplate, (req, res, next) => {
                             const urlS = contentUrls[ONE_INDEX];
                             const urlM = contentUrls[TWO_INDEX];
                             const urlL = contentUrls[THREE_INDEX];
-                            createAdditionalPoiInfo.push(poiDB.addPostContent(poiId, contentTypeId, urlXs, urlS, urlM, urlL));
+                            createAdditionalPoiInfo.push(poiDB.addPOIContent(poiId, contentTypeId, urlXs, urlS, urlM, urlL));
                         });
                     }
 
@@ -122,38 +122,42 @@ router.put('/', bodyTemplate, (req, res, next) => {
         return;
     }
 
+    console.error(tagList);
+    console.error(poiContentsToRemove);
+    console.error(postFiles);
+
     const { userDB, poiDB } = db;
     const primaryChecks = [userDB.getContentEditorByUID(userID),
-        poiDB.getPOITypeByID(poiTypeId), poiDB.getPOIDetailByID(poiID)];
+        poiDB.getPOITypeByID(poiTypeId), poiDB.getPOIDetailByID(poiID, true)];
     Promise.all(primaryChecks).
     then((results) => {
         if (utils.checkResultList(results, [primaryChecks.length], true)) {
-            const createPOI = [poiDB.updatePOI(poiID, name, description, address, latitude, longitude, poiTypeId, parentId)];
+            const updatePOI = [poiDB.updatePOI(poiID, name, description, address, latitude, longitude, poiTypeId, parentId)];
             if (postFiles && postFiles.length > NO_ELEMENT_SIZE) {
-                createPOI.push(uploadAux.handleFileUpload(postFiles, userID));
+                updatePOI.push(uploadAux.handleFileUpload(postFiles, userID));
             }
 
             if (poiContentsToRemove && poiContentsToRemove.length > NO_ELEMENT_SIZE) {
-                createPOI.push(poiDB.setPOIContentDeleted(poiContentsToRemove));
+                updatePOI.push(poiDB.setPOIContentDeleted(poiContentsToRemove));
             }
 
-            return Promise.all(createPOI).
-            then((poiCreationResults) => {
-                if (utils.checkResultList(poiCreationResults, [createPOI.length], true)) {
-                    const { poiId } = utils.convertObjectToCamelCase(poiCreationResults[ZERO_INDEX][ZERO_INDEX]);
+            return Promise.all(updatePOI).
+            then((poiUpdateResults) => {
+                if (utils.checkResultList(poiUpdateResults, [updatePOI.length], true)) {
+                    const { poiId } = utils.convertObjectToCamelCase(poiUpdateResults[ZERO_INDEX][ZERO_INDEX]);
                     const createAdditionalPoiInfo = [];
                     if (tagList.length > NO_ELEMENT_SIZE) {
                         createAdditionalPoiInfo.push(poiDB.setPOITags(poiId, tagList));
                     }
 
                     if (postFiles && postFiles.length > NO_ELEMENT_SIZE) {
-                        poiCreationResults[ONE_INDEX].forEach((fileCreated) => {
+                        poiUpdateResults[ONE_INDEX].forEach((fileCreated) => {
                             const { contentUrls, contentTypeId } = fileCreated.fileInfo;
                             const urlXs = contentUrls[ZERO_INDEX];
                             const urlS = contentUrls[ONE_INDEX];
                             const urlM = contentUrls[TWO_INDEX];
                             const urlL = contentUrls[THREE_INDEX];
-                            createAdditionalPoiInfo.push(poiDB.addPostContent(poiId, contentTypeId, urlXs, urlS, urlM, urlL));
+                            createAdditionalPoiInfo.push(poiDB.addPOIContent(poiId, contentTypeId, urlXs, urlS, urlM, urlL));
                         });
                     }
 
@@ -200,7 +204,7 @@ router.delete('/:poiID/:deleted', (req, res, next) => {
 
     const { poiDB, userDB } = db;
     const primaryChecks = [userDB.getContentEditorByUID(userID),
-        poiDB.getPOIDetailByID(poiID)];
+        poiDB.getPOIDetailByID(poiID, true)];
     primaryChecks.
     then((results) => {
 

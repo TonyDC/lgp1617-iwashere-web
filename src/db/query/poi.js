@@ -2,12 +2,15 @@
 
 const db = require('../index');
 
-module.exports.getPOIDetailByID = (id) => {
+module.exports.getPOIDetailByID = (id, deleted = false) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT pois.*, poi_types.name AS type 
     FROM pois INNER JOIN poi_types ON pois.poi_type_id = poi_types.poi_type_id 
-    WHERE pois.poi_id = :id`, {
-        replacements: { id },
+    WHERE pois.poi_id = :id AND (pois.deleted = FALSE OR :deleted)`, {
+        replacements: {
+            deleted,
+            id
+        },
         type: db.QueryTypes.SELECT
     });
 };
@@ -22,12 +25,15 @@ module.exports.getPOITypeByID = (id) => {
     });
 };
 
-module.exports.getPOIsByID = (poiIdList) => {
+module.exports.getPOIsByID = (poiIdList, deleted = false) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT pois.*, poi_types.name AS type 
     FROM pois INNER JOIN poi_types ON pois.poi_type_id = poi_types.poi_type_id 
-    WHERE pois.poi_id = ANY(:poiIdList)`, {
-        replacements: { poiIdList },
+    WHERE pois.poi_id = ANY(:poiIdList) AND (pois.deleted = FALSE OR :deleted)`, {
+        replacements: {
+            deleted,
+            poiIdList
+        },
         type: db.QueryTypes.SELECT
     });
 };
@@ -46,7 +52,8 @@ module.exports.getPOIsWithin = (minLat, maxLat, minLng, maxLng) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT * 
     FROM pois 
-    WHERE latitude >= :minLat AND latitude <= :maxLat AND longitude >= :minLng AND longitude <= :maxLng`, {
+    WHERE latitude >= :minLat AND latitude <= :maxLat AND longitude >= :minLng AND longitude <= :maxLng
+    AND pois.deleted = FALSE`, {
         replacements: {
             maxLat,
             maxLng,
@@ -61,7 +68,7 @@ module.exports.getPOIAllMedia = (poiId) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT *, name AS type 
     FROM poi_contents INNER JOIN content_types ON poi_contents.content_type_id = content_types.content_type_id
-    WHERE poi_contents.poi_id = :poiId`, {
+    WHERE poi_contents.poi_id = :poiId AND poi_contents.deleted = FALSE`, {
         replacements: { poiId },
         type: db.QueryTypes.SELECT
     });
@@ -71,7 +78,7 @@ module.exports.getPOIMedia = (poiIdList) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT *, name AS type 
     FROM poi_contents INNER JOIN content_types ON poi_contents.content_type_id = content_types.content_type_id
-    WHERE content_types.content_type_id = '1' AND poi_contents.poi_id = ANY(:poiIdList) 
+    WHERE content_types.content_type_id = '1' AND poi_contents.deleted = FALSE AND poi_contents.poi_id = ANY(:poiIdList) 
     ORDER BY poi_contents.created_at DESC LIMIT 1`, {
         replacements: { poiIdList },
         type: db.QueryTypes.SELECT
@@ -115,7 +122,8 @@ module.exports.addPOIRating = (poiID, userID, rating) => {
 
 module.exports.searchPOI = (query) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT * FROM pois WHERE text @@ to_tsquery(:query) `, {
+    return db.query(`SELECT * FROM pois 
+    WHERE text @@ to_tsquery(:query) AND pois.deleted = FALSE`, {
         replacements: { query },
         type: db.QueryTypes.SELECT
     });
@@ -124,7 +132,8 @@ module.exports.searchPOI = (query) => {
 module.exports.searchNearbyPOI = (query, lat, lng) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT *, get_distance_function(latitude::real, longitude::real, :lat::real, :lng::real) as distance 
-    FROM pois WHERE text @@ to_tsquery(:query) 
+    FROM pois 
+    WHERE text @@ to_tsquery(:query) AND pois.deleted = FALSE 
     ORDER BY distance DESC`, {
         replacements: {
             lat,
@@ -144,6 +153,7 @@ module.exports.getNearbyPOIs = (lat, lng, limit) => {
     GROUP BY poi_id)
     SELECT *, get_distance_function(latitude::real, longitude::real, :lat::real, :lng::real) as distance 
     FROM pois LEFT JOIN poi_ratings ON pois.poi_id = poi_ratings.poi_id
+    WHERE pois.deleted = FALSE
     ORDER BY rating NULLS LAST, distance DESC LIMIT :limit`, {
         replacements: {
             lat,
@@ -163,6 +173,7 @@ module.exports.getTopRatedPOIs = (limit) => {
     GROUP BY poi_id)
     SELECT *
     FROM pois LEFT JOIN poi_ratings ON pois.poi_id = poi_ratings.poi_id
+    WHERE pois.deleted = FALSE
     ORDER BY rating NULLS LAST LIMIT :limit`, {
         replacements: { limit },
         type: db.QueryTypes.SELECT
