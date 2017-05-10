@@ -81,10 +81,47 @@ app.use((req, res) => {
 
 app.use(expressWinston.errorLogger({ transports: windstonTransports.transportErrorLoggers }));
 
-// Error middleware handler
+// Multer error middleware handler
 app.use((err, req, res, next) => {
-    res.status(httpCodes.INTERNAL_SERVER_ERROR).send({ message: 'Something went wrong!' }).
-    end();
+    // 'multer' error object properties
+    const { code, field } = err;
+    switch (code) {
+        case 'LIMIT_UNEXPECTED_FILE':
+            res.status(httpCodes.BAD_REQUEST).
+            json({ meesage: 'Unexpected body field' }).
+            end();
+            break;
+
+        case 'LIMIT_FILE_SIZE':
+            res.status(httpCodes.BAD_REQUEST).
+            json({ meesage: 'File size limit exceeded' }).
+            end();
+            break;
+
+        case 'LIMIT_FILE_COUNT':
+            res.status(httpCodes.BAD_REQUEST).
+            json({ meesage: 'File number limit exceeded' }).
+            end();
+            break;
+
+        default:
+            return next(err);
+    }
+
+    return null;
+});
+
+// General-purpose error middleware handler
+app.use((err, req, res, next) => {
+    console.error(err);
+
+    if (process.env.NODE_ENV === 'production' && res.headersSent) {
+        console.error('WARNING: HEADERS HAVE ALREADY BEEN SENT!!! YOU CANNOT SET HEADERS AFTER BEING SENT.');
+
+    } else {
+        res.status(httpCodes.INTERNAL_SERVER_ERROR).send({ message: 'Something went wrong!' }).
+        end();
+    }
 });
 
 /* *********************************** */

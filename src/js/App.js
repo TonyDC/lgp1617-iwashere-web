@@ -17,6 +17,7 @@ import POIDetail from './components/poi/POIDetail';
 import RouteDetail from './components/route/RouteDetail';
 import POISearch from './components/poi/POISearch';
 import Feed from './components/feed/Feed';
+import POICreatePost from './components/poi/POICreatePost';
 
 import UnauthRoutes from './routes/UnauthRoutes';
 import POIRoutes from './routes/POIRoutes';
@@ -72,6 +73,7 @@ export default class App extends Component {
                     <Route path="poi" component={ POIRoutes }>
                         <Route path="search" component={ POISearch } />
                         <Route path=":id" component={ POIDetail } />
+                        <Route path="post" component={ POICreatePost } />
                     </Route>
                     <Route path="route" component={ RouteRoutes }>
                         <Route path=":id" component={ RouteDetail } />

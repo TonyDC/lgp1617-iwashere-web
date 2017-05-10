@@ -11,17 +11,17 @@ if (process.env.NODE_ENV === 'test') {
         },
         POSTGRESQL_CONFIG: {
             DATABASE: ' ',
-            USERNAME: ' ',
             PASSWORD: ' ',
             CONN_CONFIG: {
-                host: ' ',
                 dialect: ' ',
+                host: ' ',
                 pool: {
+                    idle: 0,
                     max: 0,
-                    min: 0,
-                    idle: 0
+                    min: 0
                 },
-            }
+            },
+            USERNAME: ' '
         },
         GOOGLE_MAPS_API_KEY: ' '
     };

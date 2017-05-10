@@ -103,7 +103,9 @@ module.exports.searchPOI = (query) => {
 
 module.exports.searchNearbyPOI = (query, lat, lng) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT *, get_distance_function(latitude::real, longitude::real, :lat::real, :lng::real) as distance FROM pois WHERE text @@ to_tsquery(:query) ORDER BY distance DESC`, {
+    return db.query(`SELECT *, get_distance_function(latitude::real, longitude::real, :lat::real, :lng::real) as distance 
+    FROM pois WHERE text @@ to_tsquery(:query) 
+    ORDER BY distance DESC`, {
         replacements: {
             lat,
             lng,
@@ -162,6 +164,62 @@ module.exports.createPOI = (name, description, address, latitude, longitude, poi
             name,
             parentId,
             poiTypeId
+        },
+        type: db.QueryTypes.INSERT
+    });
+};
+
+module.exports.addPOITags = (poiId, tagIdList) => {
+    // language=POSTGRES-SQL
+    return db.query(` 
+    INSERT INTO poi_tags(poi_id, tag_id)
+    VALUES (:poiId, unnest(array[:tagIdList])) ON CONFLICT DO NOTHING RETURNING tag_id`, {
+        replacements: {
+            poiId,
+            tagIdList
+        },
+        type: db.QueryTypes.INSERT
+    });
+};
+
+module.exports.getContentEditorPOI = (userID, poiID) => {
+    // language=POSTGRES-SQL
+    return db.query(`SELECT *
+    FROM pois
+    WHERE pois.deleted = FALSE AND poi_id = :poiID AND user_id = :userID`, {
+        replacements: {
+            poiID,
+            userID
+        },
+        type: db.QueryTypes.SELECT
+    });
+};
+
+module.exports.setPOIDeleted = (userID, poiID) => {
+    // language=POSTGRES-SQL
+    return db.query(`UPDATE ON pois
+    SET deleted = TRUE
+    WHERE poi_id = :poiID AND user_id = :userID`, {
+        replacements: {
+            poiID,
+            userID
+        },
+        type: db.QueryTypes.UPDATE
+    });
+};
+
+
+module.exports.addPOIContent = (poiId, contentTypeId, urlXs, urlS, urlM, urlL) => {
+    // language=POSTGRES-SQL
+    return db.query(`INSERT INTO poi_contents(poi_id, content_type_id, url_xs, url_s, url_m, url_l) 
+    VALUES(:poiId, :contentTypeId, :urlXs, :urlS, :urlM, :urlL) RETURNING content_id`, {
+        replacements: {
+            contentTypeId,
+            poiId,
+            urlL,
+            urlM,
+            urlS,
+            urlXs
         },
         type: db.QueryTypes.INSERT
     });

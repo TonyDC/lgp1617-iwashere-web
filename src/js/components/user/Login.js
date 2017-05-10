@@ -164,7 +164,6 @@ export default class Login extends Component {
         return errorList.length === NO_ERROR;
     }
 
-
     handleEmail(event) {
         event.preventDefault();
         this.setState({ email: event.target.value });
