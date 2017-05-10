@@ -3,20 +3,23 @@
 const httpCodes = require('http-status-codes');
 const firebaseAdmin = require('firebase-admin');
 
+const db = root_require('./src/db/query');
+
 const AUTH_BODY_LENGTH = 2,
     AUTH_TYPE_INDEX = 0,
     TOKEN_INDEX = 1;
 
 const ELEMENT_NOT_FOUND_ARRAY = -1;
+const NO_ELEMENTS = 0;
 
 /**
- * Fireabse Authentication ExpressJS middleware
+ * Firebase ExpressJS Authentication middleware
  *
  * The request object gains a new property `req.auth.token`, containing information about the logged user
  *
  * @param {object} req The request object
  * @param {object} res The response object
- * @param {object} next The next middleware callback
+ * @param {function} next The next middleware callback
  *
  * @return {void}
  */
@@ -56,4 +59,76 @@ function firebaseAuth (req, res, next) {
     });
 }
 
+/**
+ * Content Editor ExpressJS Authentication middleware
+ *
+ * Checks whether the user is a content editor.
+ *
+ * @param {object} req The request object
+ * @param {object} res The response object
+ * @param {function} next The next middleware callback
+ *
+ * @return {void}
+ */
+function verifyContentEditor (req, res, next) {
+    const { uid } = req.auth.token;
+    if (!uid || typeof uid !== 'string') {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    const { contentEditorDB } = db;
+    contentEditorDB.getContentEditor(uid).
+    then((record) => {
+        if (record && record.length > NO_ELEMENTS) {
+            return next();
+        }
+
+        res.sendStatus(httpCodes.UNAUTHORIZED).end();
+
+        return null;
+    }).
+    catch((error) => {
+        next(error);
+    });
+}
+
+/**
+ * Admin ExpressJS Authentication middleware
+ *
+ * Checks whether the user is an admin.
+ *
+ * @param {object} req The request object
+ * @param {object} res The response object
+ * @param {function} next The next middleware callback
+ *
+ * @return {void}
+ */
+function verifyAdmin (req, res, next) {
+    const { uid } = req.auth.token;
+    if (!uid || typeof uid !== 'string') {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    const { adminDB } = db;
+    adminDB.getAdmin(uid).
+    then((record) => {
+        if (record && record.length > NO_ELEMENTS) {
+            return next();
+        }
+
+        res.sendStatus(httpCodes.UNAUTHORIZED).end();
+
+        return null;
+    }).
+    catch((error) => {
+        next(error);
+    });
+}
+
 module.exports.firebaseAuth = firebaseAuth;
+module.exports.verifyContentEditor = verifyContentEditor;
+module.exports.verifyAdmin = verifyAdmin;

@@ -23,6 +23,9 @@ router.use('/route', require('./route'));
 // Tag-related endpoints
 router.use('/tag', require('./tag'));
 
+// Reserved area endpoints
+router.use('/reserved', require('./reserved'));
+
 // General-purpose endpoints
 router.use('/', require('./main'));
 

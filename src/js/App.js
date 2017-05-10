@@ -42,6 +42,7 @@ export default class App extends Component {
     hookListeners() {
         this.firebaseObserverUnsubscriber = firebase.auth().onAuthStateChanged((user) => {
             if (user) {
+                firebase.auth().currentUser.getToken(true).then((token) => console.log(token));
                 this.context.store.dispatch(loginActionCreator(user));
             } else {
                 this.context.store.dispatch(logoutActionCreator());
@@ -80,6 +81,11 @@ export default class App extends Component {
                         <Route path="login" component={ Login }/>
                         <Route path="register" component={ Register }/>
                         <Route path="recover" component={ PasswordReset }/>
+                    </Route>
+                    { /* TODO */}
+                    <Route path="admin" component={ NoMatch } onEnter={ this.redirectIfLoggedIn.bind(this) }>
+                        <IndexRoute component={ Map } />
+                        <Route path="dash" component={ NoMatch } onEnter={ this.redirectIfLoggedIn.bind(this)}/>
                     </Route>
                     <Route path="*" component={ NoMatch }/>
                 </Route>
