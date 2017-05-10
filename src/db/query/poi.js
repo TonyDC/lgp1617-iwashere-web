@@ -12,6 +12,26 @@ module.exports.getPOIDetailByID = (id) => {
     });
 };
 
+module.exports.getPOITypeByID = (id) => {
+    // language=POSTGRES-SQL
+    return db.query(`SELECT *
+    FROM poi_types 
+    WHERE poi_type_id = :id`, {
+        replacements: { id },
+        type: db.QueryTypes.SELECT
+    });
+};
+
+module.exports.getPOIsByID = (poiIdList) => {
+    // language=POSTGRES-SQL
+    return db.query(`SELECT pois.*, poi_types.name AS type 
+    FROM pois INNER JOIN poi_types ON pois.poi_type_id = poi_types.poi_type_id 
+    WHERE pois.poi_id = ANY(:poiIdList)`, {
+        replacements: { poiIdList },
+        type: db.QueryTypes.SELECT
+    });
+};
+
 module.exports.getPOITags = (poiID) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT tags.name, tags.tag_id 
@@ -223,5 +243,37 @@ module.exports.addPOIContent = (poiId, contentTypeId, urlXs, urlS, urlM, urlL) =
             urlXs
         },
         type: db.QueryTypes.INSERT
+    });
+};
+
+module.exports.setPOIContentDeleted = (poiContentIdList, deleted = true) => {
+    // language=POSTGRES-SQL
+    return db.query(`UPDATE poi_contents
+    SET deleted = :deleted
+    WHERE poi_content_id = ANY(:poiContentId)`, {
+        replacements: {
+            deleted,
+            poiContentIdList
+        },
+        type: db.QueryTypes.UPDATE
+    });
+};
+
+module.exports.updatePOI = (poiId, name, description, address, latitude, longitude, poiTypeId, parentId) => {
+    // language=POSTGRES-SQL
+    return db.query(`UPDATE pois SET 
+    name = :name AND description =  :description AND address = :address AND latitude = :latitude AND longitude = :longitude
+    AND poi_type_id = :poiTypeId AND parent_id = parentId 
+    RETURNING poi_id`, {
+        replacements: {
+            address,
+            description,
+            latitude,
+            longitude,
+            name,
+            parentId,
+            poiTypeId
+        },
+        type: db.QueryTypes.UPDATE
     });
 };

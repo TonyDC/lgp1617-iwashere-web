@@ -29,7 +29,7 @@ router.post('/', (req, res, next) => {
     const { name, description, pois, tags } = req.body;
     const userID = req.auth.token.uid;
 
-    if (!userID || typeof userID !== 'string' || !name || typeof name !== 'string' ||
+    if (!userID || typeof userID !== 'string' || !name || typeof name !== 'string' || !tags || !tags.length ||
         !description || typeof description !== 'string' || !pois || !pois.length > NO_ELEMENT_SIZE) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
@@ -76,6 +76,68 @@ router.post('/', (req, res, next) => {
         }
 
         res.status(httpCodes.BAD_REQUEST).json({ message: 'content_editor_id or poi_id not found' }).
+        end();
+
+        return null;
+    }).
+    catch((error) => {
+        next(error);
+    });
+});
+
+router.put('/', (req, res, next) => {
+    const { routeID, name, description, pois, tags } = req.body;
+    const userID = req.auth.token.uid;
+
+    if (!routeID || !userID || typeof userID !== 'string' || !name || typeof name !== 'string' || !tags || !tags.length ||
+        !description || typeof description !== 'string' || !pois || !pois.length > NO_ELEMENT_SIZE) {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    console.error(pois);
+    console.error(tags);
+
+    const { userDB, poiDB, routeDB } = db;
+    const primaryChecks = [userDB.getContentEditorByUID(userID),
+        poiDB.getPOIsByID(pois), routeDB.getContentEditorRoute(userID, routeID)];
+
+    Promise.all(primaryChecks).
+    then((results) => {
+        if (utils.checkResultList(results, [primaryChecks.length], true)) {
+
+            return routeDB.updateRoute(routeID, name, description).
+            then((routeUpdateResults) => {
+                if (utils.checkResultList(routeUpdateResults, [ONE_SIZE], true)) {
+                    const { routeId } = utils.convertObjectToCamelCase(routeUpdateResults[ZERO_INDEX][ZERO_INDEX]);
+                    const updateAdditionalRouteInfo = [routeDB.setRoutePOIs(routeId, tags)];
+                    if (tags.length > NO_ELEMENT_SIZE) {
+                        updateAdditionalRouteInfo.push(routeDB.setRouteTags(routeId, tags));
+                    }
+
+                    return Promise.all(updateAdditionalRouteInfo).
+                    then((additionalPostInfo) => {
+                        if (utils.checkResultList(additionalPostInfo, [updateAdditionalRouteInfo.length], true)) {
+
+                            return res.json({ routeId }).end();
+                        }
+
+                        res.status(httpCodes.BAD_REQUEST).json({ message: 'error adding tags or pois to route' }).
+                        end();
+
+                        return null;
+                    });
+                }
+
+                res.status(httpCodes.BAD_REQUEST).json({ message: 'error updating route' }).
+                end();
+
+                return null;
+            });
+        }
+
+        res.status(httpCodes.BAD_REQUEST).json({ message: 'content_editor_id, route_id or poi_id not found' }).
         end();
 
         return null;

@@ -29,13 +29,15 @@ const NO_ELEMENT_SIZE = 0;
 const TWO_SIZE = 2;
 
 const bodyTemplate = upload.fields([{ name: 'postFiles' }]);
+
 router.post('/', bodyTemplate, (req, res, next) => {
     const { body, files } = req;
     const { name, description, address, latitude, longitude, poiTypeId, parentId, tags } = body;
+    const tagList = utils.convertStringToArray(tags);
     const { postFiles } = files;
     const userID = req.auth.token.uid;
 
-    if (!userID || typeof userID !== 'string' || !name || typeof name !== 'string' ||
+    if (!userID || typeof userID !== 'string' || !name || typeof name !== 'string' || !tagList.length ||
         !description || typeof description !== 'string' || !address || typeof address !== 'string' ||
         !poiTypeId || !latitude || isNaN(parseFloat(latitude)) || !longitude || isNaN(parseFloat(longitude))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
@@ -58,8 +60,8 @@ router.post('/', bodyTemplate, (req, res, next) => {
                 if (utils.checkResultList(poiCreationResults, [createPOI.length], true)) {
                     const { poiId } = utils.convertObjectToCamelCase(poiCreationResults[ZERO_INDEX][ZERO_INDEX]);
                     const createAdditionalPoiInfo = [];
-                    if (utils.convertStringToArray(tags).length > NO_ELEMENT_SIZE) {
-                        createAdditionalPoiInfo.push(poiDB.setPOITags(poiId, utils.convertStringToArray(tags)));
+                    if (tagList.length > NO_ELEMENT_SIZE) {
+                        createAdditionalPoiInfo.push(poiDB.setPOITags(poiId, tagList));
                     }
 
                     if (postFiles && postFiles.length > NO_ELEMENT_SIZE) {
@@ -95,6 +97,88 @@ router.post('/', bodyTemplate, (req, res, next) => {
         }
 
         res.status(httpCodes.BAD_REQUEST).json({ message: 'content_editor_id or poi_type_id not found' }).
+        end();
+
+        return null;
+    }).
+    catch((error) => {
+        next(error);
+    });
+});
+
+router.put('/', bodyTemplate, (req, res, next) => {
+    const { body, files } = req;
+    const { poiID, name, description, address, latitude, longitude, poiTypeId, parentId, tags, contentsToRemove } = body;
+    const tagList = utils.convertStringToArray(tags);
+    const poiContentsToRemove = utils.convertStringToArray(contentsToRemove);
+    const { postFiles } = files;
+    const userID = req.auth.token.uid;
+
+    if (!poiID || !userID || typeof userID !== 'string' || !name || typeof name !== 'string' || !tagList.length ||
+        !description || typeof description !== 'string' || !address || typeof address !== 'string' ||
+        !poiTypeId || !latitude || isNaN(parseFloat(latitude)) || !longitude || isNaN(parseFloat(longitude))) {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    const { userDB, poiDB } = db;
+    const primaryChecks = [userDB.getContentEditorByUID(userID),
+        poiDB.getPOITypeByID(poiTypeId), poiDB.getPOIDetailByID(poiID)];
+    Promise.all(primaryChecks).
+    then((results) => {
+        if (utils.checkResultList(results, [primaryChecks.length], true)) {
+            const createPOI = [poiDB.updatePOI(poiID, name, description, address, latitude, longitude, poiTypeId, parentId)];
+            if (postFiles && postFiles.length > NO_ELEMENT_SIZE) {
+                createPOI.push(uploadAux.handleFileUpload(postFiles, userID));
+            }
+
+            if (poiContentsToRemove && poiContentsToRemove.length > NO_ELEMENT_SIZE) {
+                createPOI.push(poiDB.setPOIContentDeleted(poiContentsToRemove));
+            }
+
+            return Promise.all(createPOI).
+            then((poiCreationResults) => {
+                if (utils.checkResultList(poiCreationResults, [createPOI.length], true)) {
+                    const { poiId } = utils.convertObjectToCamelCase(poiCreationResults[ZERO_INDEX][ZERO_INDEX]);
+                    const createAdditionalPoiInfo = [];
+                    if (tagList.length > NO_ELEMENT_SIZE) {
+                        createAdditionalPoiInfo.push(poiDB.setPOITags(poiId, tagList));
+                    }
+
+                    if (postFiles && postFiles.length > NO_ELEMENT_SIZE) {
+                        poiCreationResults[ONE_INDEX].forEach((fileCreated) => {
+                            const { contentUrls, contentTypeId } = fileCreated.fileInfo;
+                            const urlXs = contentUrls[ZERO_INDEX];
+                            const urlS = contentUrls[ONE_INDEX];
+                            const urlM = contentUrls[TWO_INDEX];
+                            const urlL = contentUrls[THREE_INDEX];
+                            createAdditionalPoiInfo.push(poiDB.addPostContent(poiId, contentTypeId, urlXs, urlS, urlM, urlL));
+                        });
+                    }
+
+                    return Promise.all(createAdditionalPoiInfo).
+                    then((additionalPoiInfo) => {
+                        if (utils.checkResultList(additionalPoiInfo, [createAdditionalPoiInfo.length], true)) {
+
+                            return res.json({ poiId }).end();
+                        }
+
+                        res.status(httpCodes.BAD_REQUEST).json({ message: 'error adding tags or content to poi' }).
+                        end();
+
+                        return null;
+                    });
+                }
+
+                res.status(httpCodes.BAD_REQUEST).json({ message: 'error updating poi' }).
+                end();
+
+                return null;
+            });
+        }
+
+        res.status(httpCodes.BAD_REQUEST).json({ message: 'content_editor_id, poi_id or poi_type_id not found' }).
         end();
 
         return null;
