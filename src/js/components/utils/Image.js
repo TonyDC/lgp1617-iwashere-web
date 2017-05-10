@@ -22,6 +22,10 @@ export default class Image extends Component {
     }
 
     handleImageDownload() {
+        if (!this.props.url) {
+            return;
+        }
+
         // Create a reference from an HTTPS URL
         // Note that in the URL, characters are URL escaped!
         this.storage.refFromURL(`gs://iwashere-mobile.appspot.com/${this.props.url}`).getDownloadURL().
@@ -43,5 +47,3 @@ export default class Image extends Component {
         return <div/>;
     }
 }
-
-Image.propTypes = { url: PropTypes.string.isRequired };

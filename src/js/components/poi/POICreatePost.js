@@ -15,6 +15,9 @@ const API_POI_POST_URL = '/api/post/auth/';
 const ONE_ELEMENT = 1;
 const NOT_FOUND = -1;
 
+import 'styles/dropzone.scss';
+import 'styles/create_post.scss';
+
 export default class CreatePostDialog extends Component {
 
     constructor(props) {
@@ -46,6 +49,14 @@ export default class CreatePostDialog extends Component {
         const { description, files } = post;
 
         return description.trim() || files.length === ONE_ELEMENT;
+    }
+
+    onDragEnter() {
+        this.setState({ dropzoneActive: true });
+    }
+
+    onDragLeave() {
+        this.setState({ dropzoneActive: false });
     }
 
     createPost() {
@@ -157,7 +168,30 @@ export default class CreatePostDialog extends Component {
         }
     }
 
-    onDrop(files) {
+    onDrop(files, rejected) {
+        let error = false;
+
+        this.setState({ dropzoneActive: false });
+        if (files && files.length > 1) {
+            files.forEach((file) => {
+                window.URL.revokeObjectURL(file.preview);
+            });
+            this.setState({ rejected: true });
+            error = true;
+        }
+
+        if (rejected && rejected.length > 0) {
+            rejected.forEach((file) => {
+                window.URL.revokeObjectURL(file.preview);
+            });
+            this.setState({ rejected: true });
+            error = true;
+        }
+
+        if (error) {
+            return;
+        }
+
         this.state.post.files.forEach((file) => {
             window.URL.revokeObjectURL(file.preview);
         });
@@ -165,7 +199,8 @@ export default class CreatePostDialog extends Component {
             post: {
                 ...this.state.post,
                 files
-            }
+            },
+            rejected: false
         });
     }
 
@@ -192,6 +227,18 @@ export default class CreatePostDialog extends Component {
             actions = null;
         }
 
+        const overlayStyle = {
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
+            padding: '2.5em 0',
+            background: 'rgba(0,0,0,0.5)',
+            textAlign: 'center',
+            color: '#fff'
+        };
+
         return (
             <div className="poi-detail-buttons">
                 <RaisedButton
@@ -206,48 +253,55 @@ export default class CreatePostDialog extends Component {
                     onRequestClose={() => {
                         this.handleClose();
                     }}>
-                    <form>
-                        <Tags className="tag-input"
-                              title="Add tag..."
-                              tags={this.state.post.tags}
-                              onAddTag={(tagId) => {
-                                  this.addTagToPost(tagId);
-                              }}
-                              onRemoveTag={(tagId) => {
-                                  this.removeTagFromPost(tagId);
-                              }}
-                        />
-                        <TextField hintText="Enter a description"
-                                   floatingLabelText="Description"
-                                   onChange={ this.handleDescription.bind(this) }
-                                   fullWidth
-                        />
-                        <Dropzone onDrop={this.onDrop.bind(this)}>
-                            <p>Drop files here</p>
-                        </Dropzone>
-                        {
-                            this.state.post.files.map((file, index) => {
-                                return <span key={index} onClick={(event) => {
-                                    event.preventDefault();
+                    <Dropzone className="custom-dropzone" onDrop={this.onDrop.bind(this)} accept="image/jpeg, image/png" disableClick onDragEnter={this.onDragEnter.bind(this)} onDragLeave={this.onDragLeave.bind(this)}>
+                        <form>
+                            <Tags className="tag-input"
+                                  title="Add tag..."
+                                  tags={this.state.post.tags}
+                                  onAddTag={(tagId) => {
+                                      this.addTagToPost(tagId);
+                                  }}
+                                  onRemoveTag={(tagId) => {
+                                      this.removeTagFromPost(tagId);
+                                  }}
+                            />
+                            <TextField hintText="Enter a description"
+                                       floatingLabelText="Description"
+                                       onChange={ this.handleDescription.bind(this) }
+                                       fullWidth
+                            />
+                            <div>
+                                { this.state.dropzoneActive && <div style={overlayStyle}>Drop files...</div> }
+                                <p style={{textAlign: 'center', marginTop: '30px'}}>Drag and drop file to this modal (png, jpeg)</p>
+                                { this.state.rejected && <p style={{textAlign: 'center', marginTop: '30px'}}>Files were rejected. Only ONE PNG or JPEG picture is accepted</p> }
+                                { this.state.post.files.length > 0 && <p style={{textAlign: 'center', marginTop: '30px'}}>Files to load</p> }
+                                {
+                                    this.state.post.files &&
+                                    this.state.post.files.map((file, index) => {
+                                        return <span key={index} onClick={(event) => {
+                                            event.preventDefault();
 
-                                    const { files } = this.state.post;
-                                    files.splice(index, ONE_ELEMENT);
-                                    window.URL.revokeObjectURL(file.preview);
-                                    this.setState({
-                                        post: {
-                                            ...this.state.post,
-                                            files
-                                        }
-                                    });
-                                }}>
-                                    <img src={file.preview} style={{
-                                        objectFit: 'contain',
-                                        width: '100px'
-                                    }}/>
+                                            const { files } = this.state.post;
+                                            files.splice(index, ONE_ELEMENT);
+                                            window.URL.revokeObjectURL(file.preview);
+                                            this.setState({
+                                                post: {
+                                                    ...this.state.post,
+                                                    files
+                                                }
+                                            });
+                                        }}>
+                                            <i className="fa fa-trash" aria-hidden="true" style={{marginRight: '10px', cursor: 'pointer'}}/>
+                                        <img src={file.preview} style={{
+                                            objectFit: 'contain',
+                                            width: '100px'
+                                        }}/>
                                 </span>;
-                            })
-                        }
-                    </form>
+                                    })
+                                }
+                            </div>
+                        </form>
+                    </Dropzone>
                 </Dialog>
             </div>
         );

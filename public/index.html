@@ -185,7 +185,7 @@
         <div id="main">
             <div id="loader">
                 <!--
-                <div data-aload class="iwashere-loader"></div>
+                <div class="iwashere-loader"></div>
                 -->
                 <div class="sk-cube-grid">
                     <div class="sk-cube sk-cube1"></div>
@@ -205,29 +205,27 @@
             </div>
         </div>
         <script type="text/javascript">
-            // On load
-            window.onload = function() {
-                fetch('/api/fortune').then((response) => {
-                    if (response.status !== 200) {
-                        return Promise.reject(new Error(response.statusText));
-                    }
+            fetch('/api/fortune').then((response) => {
+                if (response.status !== 200) {
+                    return Promise.reject(new Error(response.statusText));
+                }
 
-                    return response.json();
-                }).then((message) => {
-                    if (!message || typeof message !== 'object' || !message.fortune)
-                        return;
+                return response.json();
+            }).then((message) => {
+                console.log(message);
+                if (!message || typeof message !== 'object' || !message.fortune)
+                    return;
 
-                    const placeholder = document.getElementById('fortune-cookie-content');
-                    placeholder.innerHTML = message.fortune;
+                const placeholder = document.getElementById('fortune-cookie-content');
+                placeholder.innerHTML = message.fortune;
 
-                    const wrapper = document.getElementById('fortune-cookie');
-                    wrapper.style.opacity = 1;
-                }).catch((error) => {
-                    // Fail silently
-                    console.error(error);
-                });
-            }
+                const wrapper = document.getElementById('fortune-cookie');
+                wrapper.style.opacity = 1;
+            }).catch((error) => {
+                // Fail silently
+                console.error(error);
+            });
         </script>
-        <script type="text/javascript" src="/public/bundle.js"></script>
+        <script type="text/javascript" src="/public/bundle.js" async defer></script>
     </body>
 </html>
