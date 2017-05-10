@@ -188,6 +188,40 @@ router.put('/', bodyTemplate, (req, res, next) => {
     });
 });
 
+router.delete('/:poiID/:deleted', (req, res, next) => {
+    const { poiID, deleted } = req.params;
+    if (!poiID || typeof deleted === 'undefined') {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    const userID = req.auth.token.uid;
+
+    const { poiDB, userDB } = db;
+    const primaryChecks = [userDB.getContentEditorByUID(userID),
+        poiDB.getPOIDetailByID(poiID)];
+    primaryChecks.
+    then((results) => {
+
+        if (utils.checkResultList(results, [primaryChecks.length], true)) {
+
+            return poiDB.setPOIDeleted(poiID, deleted).
+            then(() => {
+                res.end();
+            });
+        }
+
+        res.status(httpCodes.BAD_REQUEST).json({ message: '(userID, poiID) not found' }).
+        end();
+
+        return null;
+    }).
+    catch((error) => {
+        next(error);
+    });
+});
+
 router.post('/rating', (req, res, next) => {
     const { poiID, rating } = req.body;
     if (!poiID || !rating || RATING_VALUES.indexOf(rating) === VALUE_NOT_FOUND ||

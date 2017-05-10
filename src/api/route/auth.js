@@ -147,6 +147,40 @@ router.put('/', (req, res, next) => {
     });
 });
 
+router.delete('/:routeID/:deleted', (req, res, next) => {
+    const { routeID, deleted } = req.params;
+    if (!routeID || typeof deleted === 'undefined') {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    const userID = req.auth.token.uid;
+
+    const { routeDB, userDB } = db;
+    const primaryChecks = [userDB.getContentEditorByUID(userID),
+        routeDB.getRouteDetailByID(routeID)];
+    primaryChecks.
+    then((results) => {
+
+        if (utils.checkResultList(results, [primaryChecks.length], true)) {
+
+            return routeDB.setRouteDeleted(routeID, deleted).
+            then(() => {
+                res.end();
+            });
+        }
+
+        res.status(httpCodes.BAD_REQUEST).json({ message: '(userID, routeID) not found' }).
+        end();
+
+        return null;
+    }).
+    catch((error) => {
+        next(error);
+    });
+});
+
 router.post('/rating', (req, res, next) => {
     const { routeID, rating } = req.body;
     if (!routeID || !rating || RATING_VALUES.indexOf(rating) === VALUE_NOT_FOUND ||
