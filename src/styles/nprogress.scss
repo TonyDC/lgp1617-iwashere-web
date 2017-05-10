@@ -7,7 +7,7 @@ $progress_color: #FF6633;
 #nprogress .bar{
     background: $progress_color;
     position:fixed;
-    z-index:1031;
+    z-index:1501;
     top:0;
     left:0;
     width:100%;
@@ -30,7 +30,7 @@ $progress_color: #FF6633;
 #nprogress .spinner{
     display:block;
     position:fixed;
-    z-index:1031;
+    z-index:1501;
     top:15px;
     right:15px;
 }

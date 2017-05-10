@@ -158,7 +158,7 @@ MyTags.propTypes = {
     class: PropTypes.string,
     onAddTag: PropTypes.func,
     onRemoveTag: PropTypes.func,
-    readOnly: PropTypes.bool.isRequired,
+    readOnly: PropTypes.bool,
     tags: PropTypes.array,
     title: PropTypes.string
 };

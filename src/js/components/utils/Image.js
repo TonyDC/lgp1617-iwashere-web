@@ -47,3 +47,5 @@ export default class Image extends Component {
         return <div/>;
     }
 }
+
+Image.propTypes = { url: PropTypes.string };

@@ -12,10 +12,11 @@ import Dropzone from 'react-dropzone';
 import nProgress from 'nprogress';
 
 const API_POI_POST_URL = '/api/post/auth/';
+
+const NO_ELEMENTS = 0;
 const ONE_ELEMENT = 1;
 const NOT_FOUND = -1;
 
-import 'styles/dropzone.scss';
 import 'styles/create_post.scss';
 
 export default class CreatePostDialog extends Component {
@@ -68,6 +69,10 @@ export default class CreatePostDialog extends Component {
             this.setState({ inProgress: true });
         }
 
+        if (this.errorAlert) {
+            Alerts.close(this.errorAlert);
+        }
+
         nProgress.start();
         firebase.auth().currentUser.getToken().then((token) => {
             const { description, tags, files } = this.state.post;
@@ -106,6 +111,7 @@ export default class CreatePostDialog extends Component {
             }
 
             nProgress.done();
+            this.errorAlert = null;
         }).
         catch(() => {
             if (!this.componentIsMounted) {
@@ -113,7 +119,7 @@ export default class CreatePostDialog extends Component {
             }
             nProgress.done();
             this.setState({ inProgress: false });
-            Alerts.createErrorAlert('Error while creating the post.');
+            this.errorAlert = Alerts.createErrorAlert('Error while creating the post.');
         });
     }
 
@@ -172,7 +178,7 @@ export default class CreatePostDialog extends Component {
         let error = false;
 
         this.setState({ dropzoneActive: false });
-        if (files && files.length > 1) {
+        if (files && files.length > ONE_ELEMENT) {
             files.forEach((file) => {
                 window.URL.revokeObjectURL(file.preview);
             });
@@ -180,7 +186,7 @@ export default class CreatePostDialog extends Component {
             error = true;
         }
 
-        if (rejected && rejected.length > 0) {
+        if (rejected && rejected.length > NO_ELEMENTS) {
             rejected.forEach((file) => {
                 window.URL.revokeObjectURL(file.preview);
             });
@@ -188,6 +194,7 @@ export default class CreatePostDialog extends Component {
             error = true;
         }
 
+        // If any error has been detected, return
         if (error) {
             return;
         }
@@ -205,59 +212,29 @@ export default class CreatePostDialog extends Component {
     }
 
     render() {
-        let actions = [
-            <FlatButton
-                label="Cancel"
-                primary
-                onTouchTap={() => {
-                    this.handleClose();
-                }}
+        const actions = [
+            <FlatButton label="Cancel" primary
+                        onTouchTap={() => {
+                            this.handleClose();
+                        }}
             />,
-            <FlatButton
-                label="Submit"
-                primary
-                keyboardFocused
-                onTouchTap={() => {
-                    this.createPost();
-                }}
+            <FlatButton label="Submit" primary disabled={this.state.inProgress}
+                        onTouchTap={() => {
+                            this.createPost();
+                        }}
             />
         ];
 
-        if (this.state.inProgress) {
-            actions = null;
-        }
-
-        const overlayStyle = {
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0,
-            padding: '2.5em 0',
-            background: 'rgba(0,0,0,0.5)',
-            textAlign: 'center',
-            color: '#fff'
-        };
-
         return (
             <div className="poi-detail-buttons">
-                <RaisedButton
-                    className="poi-detail-button" backgroundColor="#39A8E0"
-                    label="New Post" onTouchTap={this.handleOpen} />
-                <Dialog
-                    autoScrollBodyContent
-                    title="Create a new post"
-                    actions={actions}
-                    modal={false}
-                    open={this.state.open}
-                    onRequestClose={() => {
-                        this.handleClose();
-                    }}>
+                <RaisedButton className="poi-detail-button" backgroundColor="#39A8E0" label="New Post" onTouchTap={this.handleOpen.bind(this)} />
+                <Dialog autoScrollBodyContent title="Create a new post" actions={actions} modal={false} open={this.state.open}
+                        onRequestClose={() => {
+                            this.handleClose();
+                        }}>
                     <Dropzone className="custom-dropzone" onDrop={this.onDrop.bind(this)} accept="image/jpeg, image/png" disableClick onDragEnter={this.onDragEnter.bind(this)} onDragLeave={this.onDragLeave.bind(this)}>
                         <form>
-                            <Tags className="tag-input"
-                                  title="Add tag..."
-                                  tags={this.state.post.tags}
+                            <Tags className="tag-input" title="Add tag..." tags={this.state.post.tags}
                                   onAddTag={(tagId) => {
                                       this.addTagToPost(tagId);
                                   }}
@@ -265,16 +242,12 @@ export default class CreatePostDialog extends Component {
                                       this.removeTagFromPost(tagId);
                                   }}
                             />
-                            <TextField hintText="Enter a description"
-                                       floatingLabelText="Description"
-                                       onChange={ this.handleDescription.bind(this) }
-                                       fullWidth
-                            />
+                            <TextField hintText="Enter a description" floatingLabelText="Description" onChange={ this.handleDescription.bind(this) } fullWidth />
                             <div>
-                                { this.state.dropzoneActive && <div style={overlayStyle}>Drop files...</div> }
-                                <p style={{textAlign: 'center', marginTop: '30px'}}>Drag and drop file to this modal (png, jpeg)</p>
-                                { this.state.rejected && <p style={{textAlign: 'center', marginTop: '30px'}}>Files were rejected. Only ONE PNG or JPEG picture is accepted</p> }
-                                { this.state.post.files.length > 0 && <p style={{textAlign: 'center', marginTop: '30px'}}>Files to load</p> }
+                                { this.state.dropzoneActive && <div className="overlay">Drop files...</div> }
+                                <p className="dropzone-info">Drag and drop file to this modal (png, jpeg)</p>
+                                { this.state.rejected && <p className="dropzone-info">Files were rejected. Only ONE PNG or JPEG picture is accepted</p> }
+                                { this.state.post.files.length > NO_ELEMENTS && <p className="dropzone-info">Files to load</p> }
                                 {
                                     this.state.post.files &&
                                     this.state.post.files.map((file, index) => {
@@ -291,11 +264,8 @@ export default class CreatePostDialog extends Component {
                                                 }
                                             });
                                         }}>
-                                            <i className="fa fa-trash" aria-hidden="true" style={{marginRight: '10px', cursor: 'pointer'}}/>
-                                        <img src={file.preview} style={{
-                                            objectFit: 'contain',
-                                            width: '100px'
-                                        }}/>
+                                            <i className="fa fa-trash dropzone-delete-icon" aria-hidden="true"/>
+                                        <img src={file.preview} className="dropzone-thumbnail"/>
                                 </span>;
                                     })
                                 }
