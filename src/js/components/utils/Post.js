@@ -1,9 +1,12 @@
+/* eslint no-underscore-dangle: "off" */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import Moment from 'moment';
 
 import Tags from './MyTags';
+import Image from './Image';
 
 import IconButton from 'material-ui/IconButton';
 import LikeIcon from "material-ui/svg-icons/action/thumb-up";
@@ -33,67 +36,91 @@ const likeButtonSize = {
 
 export default class Post extends Component {
 
-    render() {
-        const date = new Date(this.props.post.postDate);
+    getPostDisplay(post) {
+        const date = new Date(post.postDate);
 
         let mediaComponent = null;
-        if (this.props.post.type === IMAGE_TYPE) {
-            mediaComponent = <img src={ this.props.post.url }/>;
-        } else if (this.props.post.type === VIDEO_TYPE) {
-            mediaComponent = <iframe src={ this.props.post.url }/>;
+        if (post.type === IMAGE_TYPE) {
+            mediaComponent = <Image url={ post.urlM }/>;
+        } else if (post.type === VIDEO_TYPE) {
+            mediaComponent = <iframe src={ post.urlM }/>;
         }
 
         let tagList = null;
-        if (this.props.post.tags.length) {
-            tagList = <Tags readOnly tags={this.props.post.tags} class="post-tags"/>;
+        if (post.tags.length) {
+            tagList = <Tags readOnly tags={post.tags} class="post-tags"/>;
         }
 
-        const likeClass = this.props.post.likedByUser
-                        ? 'liked'
-                        : 'text-muted';
+        const likeClass = post.likedByUser
+            ? 'liked'
+            : 'text-muted';
 
-        const buttonStyle = this.props.post.likedByUser
-                            ? likeButtonStyle.liked
-                            : likeButtonStyle.disabled;
+        const buttonStyle = post.likedByUser
+            ? likeButtonStyle.liked
+            : likeButtonStyle.disabled;
 
         return (
-            <li id={`post#${this.props.post.postId}`} className={`${this.props.inverted
-                ? 'timeline-inverted'
-                : ''}`}>
-                <div className="timeline-badge primary" />
+            <div className="timeline-panel">
+                <div className="timeline-heading">
+                    {mediaComponent}
+                </div>
 
-                <div className="timeline-panel">
-                    <div className="timeline-heading">
-                        {mediaComponent}
-                    </div>
+                <div className="timeline-body">
+                    <p>{post.description}</p>
+                </div>
 
-                    <div className="timeline-body">
-                        <p>{this.props.post.description}</p>
-                    </div>
-
-                    <div className="timeline-footer">
-                        {tagList}
-                        <small className="text-muted"><i className="glyphicon glyphicon-time"/> { Moment(date).format('MMMM Do YYYY, h:mm') }</small>
-                        <div className={`${likeClass} like-section`}>
-                            <span className="likes-count">{this.props.post.likes}</span>
-                            <IconButton iconStyle={buttonStyle} style={likeButtonSize}
-                                        onTouchTap={() => {
-                                            if (typeof this.props.onLike !== 'undefined') {
-                                                this.props.onLike(this.props.post.postId);
-                                            }
-                                        }}>
-                                <LikeIcon/>
-                            </IconButton>
-                        </div>
+                <div className="timeline-footer">
+                    {tagList}
+                    <small className="text-muted"><i className="glyphicon glyphicon-time"/> { Moment(date).format('MMMM Do YYYY, h:mm') }</small>
+                    <div className={`${likeClass} like-section`}>
+                        <span className="likes-count">{post.likes}</span>
+                        <IconButton iconStyle={buttonStyle} style={likeButtonSize}
+                                    onTouchTap={() => {
+                                        if (typeof this.props.onLike !== 'undefined') {
+                                            this.props.onLike(post);
+                                        }
+                                    }}>
+                            <LikeIcon/>
+                        </IconButton>
                     </div>
                 </div>
-            </li>
+            </div>
         );
+    }
+
+    render() {
+        let badge = null;
+        if ('inverted' in this.props) {
+            badge = <div className="timeline-badge primary"/>;
+        }
+
+        const postDisplay = this.getPostDisplay(this.props.post);
+
+        if ('inverted' in this.props) {
+            return (
+                <li id={`post#${this.props.post.postId}`} className={`${this.props.inverted
+                    ? 'timeline-inverted'
+                    : ''}`}
+                    onClick={(event) => {
+                        if (event._targetInst._tag !== 'svg' && event._targetInst._tag !== 'path') {
+                            if (typeof this.props.onClick !== 'undefined') {
+                                this.props.onClick(this.props.post);
+                            }
+                        }
+                    }}>
+                    {badge}
+                    {postDisplay}
+                </li>
+            );
+        }
+
+        return postDisplay;
     }
 }
 
 Post.propTypes = {
-    inverted: PropTypes.bool.isRequired,
-    onLike: PropTypes.any,
+    inverted: PropTypes.bool,
+    onClick: PropTypes.func,
+    onLike: PropTypes.func,
     post: PropTypes.object.isRequired
 };

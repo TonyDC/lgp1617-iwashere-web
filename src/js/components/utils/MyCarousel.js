@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { GridLoader as Loader } from 'halogen';
 import httpCodes from 'http-status-codes';
 import { Carousel } from 'react-responsive-carousel';
+import Image from './Image';
 
 import 'react-responsive-carousel/lib/styles/carousel.css';
 
@@ -55,7 +56,7 @@ export default class MyCarousel extends Component {
         media.forEach((mediaEntry) => {
             if (mediaEntry.type === 'image;imagem') {
                 mediaList.push(<div key={key++}>
-                    <img src={mediaEntry.url} />
+                    <Image url={mediaEntry.urlM} />
                 </div>);
             } else if (mediaEntry.type === 'video;vídeo') {
                 mediaList.push(<div key={key++}>
