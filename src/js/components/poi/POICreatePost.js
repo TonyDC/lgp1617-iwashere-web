@@ -264,8 +264,10 @@ export default class CreatePostDialog extends Component {
                                                 }
                                             });
                                         }}>
-                                            <i className="fa fa-trash dropzone-delete-icon" aria-hidden="true"/>
+                                            <div>
                                         <img src={file.preview} className="dropzone-thumbnail"/>
+                                            <i className="fa fa-trash dropzone-delete-icon" aria-hidden="true"/>
+                                            </div>
                                 </span>;
                                     })
                                 }

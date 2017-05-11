@@ -20,11 +20,12 @@
 }
 
 .dropzone-thumbnail {
+    display: block;
     object-fit: contain;
     width: 100px;
 }
 
 .dropzone-delete-icon {
-    margin-right: 10px;
+    margin-top: 10px;
     cursor: pointer;
 }
