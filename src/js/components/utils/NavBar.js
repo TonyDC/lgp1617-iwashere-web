@@ -66,6 +66,7 @@ export default class NavBar extends Component {
             <IconButton iconStyle={styles.buttons} onTouchTap={this.toggleUserStatus.bind(this)} tooltip={<div>Log in</div>}>
                 <SocialPerson hoverColor={grey100}/>
             </IconButton>;
+        // TODO fazer unset no local storage
         if (this.state.userStatus && this.state.userStatus.isLogged) {
             userActionButton =
                 <IconButton iconStyle={styles.buttons} onTouchTap={this.toggleUserStatus.bind(this)} tooltip={<div>Log out</div>}>

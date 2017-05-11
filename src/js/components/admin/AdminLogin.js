@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import firebase from 'firebase';
+import httpCodes from 'http-status-codes';
 
 import Paper from 'material-ui/Paper';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -10,6 +12,11 @@ import PersonAdd from 'material-ui/svg-icons/social/person-add';
 import Help from 'material-ui/svg-icons/action/help';
 import TextField from 'material-ui/TextField';
 import {Link} from 'react-router';
+
+import Alerts from '../utils/Alerts';
+
+const CONTENT_EDITOR_TYPE = 1;
+const ADMINISTRATOR = 2;
 
 const styles = {
     loginContainer: {
@@ -73,59 +80,122 @@ const styles = {
 
 export default class AdminLogin extends Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {};
+    }
+
+    handleEmail(event) {
+        event.preventDefault();
+        this.setState({ email: event.target.value });
+    }
+
+    handlePassword(event) {
+        event.preventDefault();
+        this.setState({ password: event.target.value });
+    }
+
+    handleSubmit(event) {
+        event.preventDefault();
+        // Check if user is logged in
+
+        this.setState({ inProgress: true });
+
+        // Login in Firebase
+        // Check if user is entitled to enter the reserved area
+        // If yes, get the type of user
+        // If no, redirect to main page
+        const { email, password } = this.state;
+        firebase.auth().signInWithEmailAndPassword(email, password).
+        then(() => {
+            return firebase.auth().currentUser.getToken();
+        }).
+        then((token) => {
+            return fetch('/api/reserved/user-type', {
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                method: 'GET'
+            });
+        }).
+        then((response) => {
+            if (response.status >= httpCodes.BAD_REQUEST) {
+                const error = new Error(response);
+                error.httpStatus = response.status;
+
+                return Promise.reject(error);
+            }
+
+            return response.json();
+        }).
+        then((res) => {
+            const { type } = res;
+
+            switch (type) {
+                case CONTENT_EDITOR_TYPE:
+                    localStorage.setItem('admin', CONTENT_EDITOR_TYPE);
+                    this.props.router.push('/c-editor/dash');
+                    break;
+
+                case ADMINISTRATOR:
+                    localStorage.setItem('admin', ADMINISTRATOR);
+                    this.props.router.push('/admin/dash');
+                    break;
+
+                default:
+                    return Promise.reject(new Error("Unknown user type"));
+            }
+        }).
+        catch((error) => {
+            const { httpStatus } = error;
+            if (typeof httpStatus === 'number' && httpStatus >= httpCodes.BAD_REQUEST && httpStatus < httpCodes.INTERNAL_SERVER_ERROR) {
+                Alerts.createErrorAlert('User without enough permissions');
+
+                return null;
+            }
+
+            return Promise.reject(error);
+        }).
+        catch((error) => {
+            Alerts.createErrorAlert(error);
+        }).
+        then(() => {
+            this.setState({ inProgress: false });
+        });
+    }
+
     render() {
         return (
             <div style={styles.loginContainer}>
                 <Paper style={styles.paper}>
-                    <form>
+                    <form onSubmit={this.handleSubmit.bind(this)}>
                         <TextField
                             hintText="E-mail"
                             floatingLabelText="E-mail"
                             fullWidth
+                            onChange={this.handleEmail.bind(this)}
                         />
                         <TextField
                             hintText="Password"
                             floatingLabelText="Password"
                             fullWidth
                             type="password"
+                            onChange={this.handlePassword.bind(this)}
                         />
 
                         <div>
                             <Link to="/">
                                 <RaisedButton label="Login"
                                               primary
-                                              style={styles.loginBtn}/>
+                                              style={styles.loginBtn}
+                                              onTouchTap={this.handleSubmit.bind(this)}
+                                              disabled={this.state.inProgress}
+                                />
                             </Link>
                         </div>
                     </form>
                 </Paper>
-
-                <div style={styles.buttonsDiv}>
-                    <FlatButton
-                        label="Register"
-                        href="/"
-                        style={styles.flatButton}
-                        icon={<PersonAdd />}
-                    />
-
-                    <FlatButton
-                        label="Forgot Password?"
-                        href="/"
-                        style={styles.flatButton}
-                        icon={<Help />}
-                    />
-                </div>
-
-                <div style={styles.buttonsDiv}>
-                    <Link to="/" style={{...styles.btn, ...styles.btnFacebook}}>
-                        <i className="fa fa-facebook fa-lg"/>
-                        <span style={styles.btnSpan}>Log in with Facebook</span>
-                    </Link>
-                    <Link to="/" style={{...styles.btn, ...styles.btnGoogle}}>
-                        <i className="fa fa-google-plus fa-lg"/>
-                        <span style={styles.btnSpan}>Log in with Google</span>
-                    </Link>
-                </div>
             </div>
         );
     }
