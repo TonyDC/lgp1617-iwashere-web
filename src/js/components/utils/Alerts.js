@@ -59,11 +59,11 @@ export default class Alerts extends Component {
 
     alertUserLog(userStatus) {
         if (userStatus && userStatus.isLogged) {
-            Alert.closeAll();
+            // Alert.closeAll();
             Alerts.createInfoAlert(`You are signed in as ${userStatus.userInfo.displayName}.`);
 
         } else if (this.state.previousUserStatus && this.state.previousUserStatus.isLogged && !userStatus.isLogged) {
-            Alert.closeAll();
+            // Alert.closeAll();
             Alerts.createInfoAlert('You are signed out.');
         }
 

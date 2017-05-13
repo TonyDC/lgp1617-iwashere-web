@@ -134,18 +134,20 @@ export default class AdminLogin extends Component {
 
             switch (type) {
                 case CONTENT_EDITOR_TYPE:
-                    localStorage.setItem('admin', CONTENT_EDITOR_TYPE);
-                    this.props.router.push('/c-editor/dash');
+                    localStorage.setItem('res', CONTENT_EDITOR_TYPE);
                     break;
 
                 case ADMINISTRATOR:
-                    localStorage.setItem('admin', ADMINISTRATOR);
-                    this.props.router.push('/admin/dash');
+                    localStorage.setItem('res', ADMINISTRATOR);
                     break;
 
                 default:
                     return Promise.reject(new Error("Unknown user type"));
             }
+
+            this.props.router.push('reserved/dash');
+
+            return null;
         }).
         catch((error) => {
             const { httpStatus } = error;
@@ -155,7 +157,7 @@ export default class AdminLogin extends Component {
                 return null;
             }
 
-            return Promise.reject(error);
+            return Promise.reject(error.message);
         }).
         catch((error) => {
             Alerts.createErrorAlert(error);
@@ -185,14 +187,7 @@ export default class AdminLogin extends Component {
                         />
 
                         <div>
-                            <Link to="/">
-                                <RaisedButton label="Login"
-                                              primary
-                                              style={styles.loginBtn}
-                                              onTouchTap={this.handleSubmit.bind(this)}
-                                              disabled={this.state.inProgress}
-                                />
-                            </Link>
+                            <RaisedButton type="submit" label="Login" primary style={styles.loginBtn} onTouchTap={this.handleSubmit.bind(this)} disabled={this.state.inProgress}/>
                         </div>
                     </form>
                 </Paper>
@@ -201,3 +196,4 @@ export default class AdminLogin extends Component {
     }
 };
 
+AdminLogin.propTypes = { router: PropTypes.object.isRequired };
