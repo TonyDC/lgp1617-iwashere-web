@@ -107,7 +107,14 @@ export default class CreatePostDialog extends Component {
             }
 
             if (this.componentIsMounted) {
-                this.setState({ open: false });
+                this.setState({
+                    open: false,
+                    post: {
+                        description: '',
+                        files: [],
+                        tags: []
+                    }
+                });
             }
 
             nProgress.done();
@@ -133,10 +140,15 @@ export default class CreatePostDialog extends Component {
     }
 
     handleClose() {
-        const newState = { open: false };
-
-        if (this.componentIsMounted) {
-            this.setState(newState);
+        if (!this.state.inProgress && this.componentIsMounted) {
+            this.setState({
+                open: false,
+                post: {
+                    description: '',
+                    files: [],
+                    tags: []
+                }
+            });
         }
     }
 
@@ -234,7 +246,7 @@ export default class CreatePostDialog extends Component {
                         }}>
                     <Dropzone className="custom-dropzone" onDrop={this.onDrop.bind(this)} accept="image/jpeg, image/png" disableClick onDragEnter={this.onDragEnter.bind(this)} onDragLeave={this.onDragLeave.bind(this)}>
                         <form>
-                            <Tags className="tag-input" title="Add tag..." tags={this.state.post.tags}
+                            <Tags title="Add tag..." tags={this.state.post.tags}
                                   onAddTag={(tagId) => {
                                       this.addTagToPost(tagId);
                                   }}
@@ -245,9 +257,9 @@ export default class CreatePostDialog extends Component {
                             <TextField hintText="Enter a description" floatingLabelText="Description" onChange={ this.handleDescription.bind(this) } fullWidth />
                             <div>
                                 { this.state.dropzoneActive && <div className="overlay">Drop files...</div> }
-                                <p className="dropzone-info">Drag and drop file to this modal (png, jpeg)</p>
-                                { this.state.rejected && <p className="dropzone-info">Files were rejected. Only ONE PNG or JPEG picture is accepted</p> }
-                                { this.state.post.files.length > NO_ELEMENTS && <p className="dropzone-info">Files to load</p> }
+                                <p className="dropzone-info">Drag and drop a file here (png, jpeg)</p>
+                                { this.state.rejected && <p className="dropzone-info">Files were rejected. Only one .png or .jpeg file is accepted</p> }
+                                { this.state.post.files.length > NO_ELEMENTS && <p className="dropzone-info">File to upload</p> }
                                 {
                                     this.state.post.files &&
                                     this.state.post.files.map((file, index) => {

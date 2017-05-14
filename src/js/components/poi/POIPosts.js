@@ -190,7 +190,7 @@ export default class POIPosts extends Component {
     addTagFilter(tagId) {
         if (this.componentIsMounted) {
             const tagsFilter = this.state.tagsFilter.slice();
-            if (tagsFilter.indexOf(tagId) !== NOT_FOUND) {
+            if (tagsFilter.indexOf(tagId) === NOT_FOUND) {
                 tagsFilter.push(tagId);
                 this.setState({ tagsFilter });
             }
