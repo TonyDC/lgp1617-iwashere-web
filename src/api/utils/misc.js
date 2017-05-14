@@ -1,5 +1,6 @@
 /* eslint guard-for-in: "off" */
 
+const DECIMAL_BASE = 10;
 const NOT_FOUND = -1;
 const NO_ELEMENT_SIZE = 0;
 const ZERO_INDEX = 0;
@@ -124,7 +125,7 @@ module.exports.convertStringToArray = (string) => {
         const elements = string.split(',');
 
         elements.forEach((element) => {
-            array.push(parseInt(element, 10));
+            array.push(parseInt(element, DECIMAL_BASE));
         });
     }
 
