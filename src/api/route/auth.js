@@ -36,9 +36,6 @@ router.post('/', (req, res, next) => {
         return;
     }
 
-    console.error(pois);
-    console.error(tags);
-
     const { userDB, poiDB, routeDB } = db;
     const primaryChecks = [userDB.getContentEditorByUID(userID), poiDB.getPOIsByID(pois)];
     Promise.all(primaryChecks).
@@ -95,9 +92,6 @@ router.put('/', (req, res, next) => {
 
         return;
     }
-
-    console.error(pois);
-    console.error(tags);
 
     const { userDB, poiDB, routeDB } = db;
     const primaryChecks = [userDB.getContentEditorByUID(userID),

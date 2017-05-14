@@ -122,10 +122,6 @@ router.put('/', bodyTemplate, (req, res, next) => {
         return;
     }
 
-    console.error(tagList);
-    console.error(poiContentsToRemove);
-    console.error(postFiles);
-
     const { userDB, poiDB } = db;
     const primaryChecks = [userDB.getContentEditorByUID(userID),
         poiDB.getPOITypeByID(poiTypeId), poiDB.getPOIDetailByID(poiID, true)];
