@@ -119,6 +119,7 @@ export default class MyTags extends Component {
 
             input =
                 <AutoComplete
+                    fullWidth={this.props.fullWidth}
                     searchText={this.state.filterInput}
                     hintText={this.props.title}
                     dataSource={allTags}
@@ -150,6 +151,7 @@ export default class MyTags extends Component {
 MyTags.defaultProps = {
     class: '',
     readOnly: false,
+    fullWidth: false,
     tags: []
 };
 
@@ -159,5 +161,6 @@ MyTags.propTypes = {
     onRemoveTag: PropTypes.func,
     readOnly: PropTypes.bool,
     tags: PropTypes.array,
-    title: PropTypes.string
+    title: PropTypes.string,
+    fullWidth: PropTypes.bool
 };

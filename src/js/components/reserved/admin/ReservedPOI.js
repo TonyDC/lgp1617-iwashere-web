@@ -78,11 +78,15 @@ export default class ReservedPOI extends Component {
     }
 
     componentDidMount() {
+        this.componentIsMounted = true;
+    }
 
+    componentWillUnmount() {
+        this.componentIsMounted = false;
     }
 
     fetchPOITypes() {
-        fetch('')
+        // fetch('')
     }
 
     handleName(event) {
@@ -124,6 +128,11 @@ export default class ReservedPOI extends Component {
         this.state.tags.push(tag);
     }
 
+    handleRemoveTag(tag) {
+        const cloneTagsArray = this.state.tags.slice(0);
+        this.setState({ tags: cloneTagsArray.splice(tag, 1) });
+    }
+
     render() {
         const { location } = this.state;
 
@@ -145,12 +154,14 @@ export default class ReservedPOI extends Component {
                     <h3 style={titleStyle}>Create POI</h3>
                     <Divider style={titleDividerStyle}/>
                     <TextField
+                        id="name"
                         hintText="Name"
                         floatingLabelText="Name of Point of Interest"
                         fullWidth
                         onChange={ this.handleName.bind(this) }
                     />
                     <TextField
+                        id="address"
                         hintText="Address"
                         floatingLabelText="Address of Point of Interest"
                         fullWidth
@@ -158,23 +169,24 @@ export default class ReservedPOI extends Component {
                         onChange={ this.handleAddress.bind(this) }
                     />
                     <TextField
+                        id="description"
                         hintText="Description"
                         floatingLabelText="Description of Point of Interest"
                         fullWidth
                         multiLine
                         onChange={ this.handleDescription.bind(this) }
                     />
-                    { /* TODO tags */ }
-                    <Tags onAddTag={ this.handleAddTag.bind(this) }/>
                     <TextField
+                        id="additional-info"
                         hintText="Additional information"
                         floatingLabelText="Additional information"
                         fullWidth
                         multiLine
                         onChange={ this.handleMetaInfo.bind(this) }
                     />
+                    <Tags title="Tags" tags={ this.state.tags } onAddTag={ this.handleAddTag.bind(this) } onRemoveTag={ this.handleRemoveTag.bind(this) } fullWidth/>
                     { /* TODO conteúdos */ }
-                    <h5>Select location</h5>
+                    <h5>Select location (click on the map to select a location)</h5>
                     <Paper zDepth={2} style={mapContainerStyle}>
                         <GoogleMapReact defaultCenter={this.props.center}
                                         defaultZoom={this.props.zoom}
