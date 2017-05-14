@@ -106,7 +106,7 @@ export default class MyRater extends Component {
 
     updateRating(ratingEvent) {
         if (ratingEvent.lastRating >= NO_RATING) {
-            firebase.auth().currentUser.getToken(true).then((token) => {
+            firebase.auth().currentUser.getToken().then((token) => {
                 return fetch(this.props.authUrl, {
                     body: JSON.stringify({
                         poiID: this.props.poiId,
