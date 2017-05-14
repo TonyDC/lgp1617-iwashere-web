@@ -6,6 +6,7 @@ import AutoComplete from 'material-ui/AutoComplete';
 
 import 'styles/my_tags.scss';
 
+const API_TAG = '/api/tag/';
 const NOT_FOUND = -1;
 
 export default class MyTags extends Component {
@@ -32,7 +33,7 @@ export default class MyTags extends Component {
     }
 
     fetchAllTags() {
-        fetch('/api/tag/', {
+        fetch(API_TAG, {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
         }).
@@ -57,7 +58,7 @@ export default class MyTags extends Component {
             return (
                 <Chip
                     onRequestDelete={() => {
-                        this.props.onRemoveTag(tag.name);
+                        this.props.onRemoveTag(tag.tagId);
                     }}
                     labelColor="white"
                     key={`tag#${tag.tagId}`}
@@ -92,19 +93,24 @@ export default class MyTags extends Component {
             return;
         }
 
-        const allTags = this.state.allTags.map((tag) => {
-            return tag.name;
+        let tagId = NOT_FOUND;
+        this.state.allTags.forEach((tag) => {
+            if (tag.name === tagName) {
+                ({ tagId } = tag);
+            }
         });
-        if (allTags.indexOf(tagName) === NOT_FOUND) {
+
+        if (tagId === NOT_FOUND) {
             return;
         }
 
         this.setState({ filterInput: '' });
-        this.props.onAddTag(tagName);
+        this.props.onAddTag(tagId, tagName);
     }
 
     render() {
         let input = null;
+        let tagList = this.props.tags.map(this.renderTag, this);
 
         if (!this.props.readOnly) {
             const allTags = this.state.allTags.map((tag) => {
@@ -114,21 +120,27 @@ export default class MyTags extends Component {
             input =
                 <AutoComplete
                     searchText={this.state.filterInput}
-                    hintText="Filter by tag..."
+                    hintText={this.props.title}
                     dataSource={allTags}
                     onUpdateInput={this.handleUpdateInput.bind(this)}
-                    floatingLabelText="Filter by tag..."
+                    floatingLabelText={this.props.title}
                     onNewRequest={ (tag) => {
                         this.addTag(tag);
                     }}
                 />;
+
+            tagList = this.state.allTags.filter((tag) => {
+                return this.props.tags.indexOf(tag.tagId) !== NOT_FOUND;
+            });
+
+            tagList = tagList.map(this.renderTag, this);
         }
 
         return (
-            <div>
+            <div className="tag-list-wrapper">
                 {input}
                 <div className={`tags-wrapper ${this.props.class}`}>
-                    {this.props.tags.map(this.renderTag, this)}
+                    { tagList }
                 </div>
             </div>
         );
@@ -146,5 +158,6 @@ MyTags.propTypes = {
     onAddTag: PropTypes.func,
     onRemoveTag: PropTypes.func,
     readOnly: PropTypes.bool,
-    tags: PropTypes.array
+    tags: PropTypes.array,
+    title: PropTypes.string
 };

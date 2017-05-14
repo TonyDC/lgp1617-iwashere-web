@@ -5,3 +5,5 @@ module.exports.routeDB = require('./route');
 module.exports.tagDB = require('./tag');
 module.exports.contentEditorDB = require('./content-editor');
 module.exports.adminDB = require('./admin');
+module.exports.contentDB = require('./content');
+module.exports.fortuneCookieDB = require('./fortune-cookie');

@@ -1,0 +1,27 @@
+.overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 2.5em 0;
+    background: rgba(0,0,0,0.5);
+    text-align: center;
+    color: #fff;
+};
+
+.dropzone-info {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.dropzone-thumbnail {
+    display: block;
+    object-fit: contain;
+    width: 100px;
+}
+
+.dropzone-delete-icon {
+    margin-top: 10px;
+    cursor: pointer;
+}

@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { GridLoader as Loader } from 'halogen';
 import { GridList } from "material-ui/GridList";
 import { Card, CardTitle } from "material-ui/Card";
-import POIMosaic from "./POIMosaic";
+import POIMosaic from "../feed/PostMosaic";
 
 import 'styles/route_pois.scss';
 
