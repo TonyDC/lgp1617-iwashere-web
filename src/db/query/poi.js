@@ -146,3 +146,11 @@ module.exports.getTopRatedPOIs = (limit) => {
         type: db.QueryTypes.SELECT
     });
 };
+
+module.exports.getAllPOITypes = () => {
+    // language=POSTGRES-SQL
+    return db.query(`SELECT * FROM poi_types`, {
+        replacements: { },
+        type: db.QueryTypes.SELECT
+    });
+};

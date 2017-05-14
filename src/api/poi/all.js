@@ -109,8 +109,8 @@ router.get('/rating/:poiID/:userID', (req, res, next) => {
             res.json(result[ZERO_INDEX]).end();
         } else {
             res.status(httpCodes.NO_CONTENT).
-                json({ rating: 0 }).
-                end();
+            json({ rating: 0 }).
+            end();
         }
     }).
     catch((error) => {
@@ -245,6 +245,21 @@ router.get('/suggestions/:limit', (req, res, next) => {
                 res.json(suggestions).end();
             }
         });
+    }).
+    catch((error) => {
+        next(error);
+    });
+});
+
+router.get('/types', (req, res, next) => {
+    const { poiDB } = db;
+    poiDB.getAllPOITypes().
+    then((types) => {
+        if (types) {
+            res.json(types).end();
+        } else {
+            res.sendStatus(httpCodes.NO_CONTENT).end();
+        }
     }).
     catch((error) => {
         next(error);

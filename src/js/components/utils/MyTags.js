@@ -53,7 +53,7 @@ export default class MyTags extends Component {
     }
 
     renderTag(tag) {
-        if ('onRemveTag' in this.props) {
+        if ('onRemoveTag' in this.props) {
             return (
                 <Chip
                     onRequestDelete={() => {
@@ -67,7 +67,7 @@ export default class MyTags extends Component {
                 </Chip>
             );
         }
-        
+
         return (
             <Chip
                 labelColor="white"
@@ -135,7 +135,6 @@ export default class MyTags extends Component {
     }
 }
 
-
 MyTags.defaultProps = {
     class: '',
     readOnly: false,
@@ -146,6 +145,6 @@ MyTags.propTypes = {
     class: PropTypes.string,
     onAddTag: PropTypes.func,
     onRemoveTag: PropTypes.func,
-    readOnly: PropTypes.bool.isRequired,
+    readOnly: PropTypes.bool,
     tags: PropTypes.array
 };

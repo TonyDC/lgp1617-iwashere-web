@@ -26,7 +26,7 @@ import POIRoutes from './routes/POIRoutes';
 import RouteRoutes from './routes/RouteRoutes';
 
 import AdminLogin from './components/reserved/AdminLogin';
-import AdminDashboard from './components/reserved/admin/AdminDashboard';
+import AdminDashboard from './components/reserved/admin/ReservedPOI';
 
 import Alerts from './components/utils/Alerts';
 
