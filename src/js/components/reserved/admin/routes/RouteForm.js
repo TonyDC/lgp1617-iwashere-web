@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import httpCodes from 'http-status-codes';
-
 import RouteMap from '../../../route/RouteMap';
 import POIList from './POIList';
 import Alerts from '../../../utils/Alerts';
-
 import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
@@ -15,12 +13,10 @@ import CommunicationLocationOn from 'material-ui/svg-icons/communication/locatio
 import { blue500 as POIColor } from 'material-ui/styles/colors';
 
 import Pin from '../../../map/Pin';
-
 import Tags from '../../../utils/MyTags';
 
 import 'styles/utils.scss';
 import 'styles/map.scss';
-
 
 const ONE_ELEMENT = 1;
 const NOT_FOUND = -1;
@@ -44,21 +40,6 @@ const mapContainerStyle = {
     height: 400,
     position: 'relative',
     width: 400
-};
-
-const SelectedLocation = (props) => {
-    return <Pin lat={ props.lat } lng={ props.lng }>
-        <div className="pin">
-            <IconButton>
-                <CommunicationLocationOn color={ POIColor }/>
-            </IconButton>
-        </div>
-    </Pin>;
-};
-
-SelectedLocation.propTypes = {
-    lat: PropTypes.number.isRequired,
-    lng: PropTypes.number.isRequired
 };
 
 export default class ReservedRoute extends Component {
@@ -276,7 +257,11 @@ export default class ReservedRoute extends Component {
                              onDismissMosaic={this.handleRemovePoi.bind(this)}
                              onMoveMosaic={this.handleReorderPoi.bind(this)}/>
                 </div>
-                <RaisedButton label="Submit" style={buttonStyle} />
+                <RaisedButton label="Submit"
+                              style={buttonStyle}
+                              onTouchTap={() => {
+                                  this.props.onSave(this.state.route);
+                              }} />
             </div>
         );
     }

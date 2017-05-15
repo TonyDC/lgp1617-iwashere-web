@@ -12,6 +12,7 @@ import 'styles/utils.scss';
 import 'styles/map.scss';
 
 const API_ROUTE_URL = '/api/route/auth/';
+const TWO_SIZE = 2;
 
 const mainStyle = {
     margin: 20,
@@ -19,7 +20,13 @@ const mainStyle = {
     paddingTop: 5
 };
 
-export default class ReservedRoute extends Component {
+export default class CreateRoute extends Component {
+    static checkRoute(route) {
+        route.description = route.description.trim();
+        route.name = route.name.trim();
+
+        return route.name && route.description && route.pois.length >= TWO_SIZE;
+    }
 
     constructor(props) {
         super(props);
@@ -87,7 +94,7 @@ export default class ReservedRoute extends Component {
     }
 }
 
-ReservedRoute.defaultProps = {
+CreateRoute.defaultProps = {
     center: {
         lat: 41.14792237,
         lng: -8.61129427
@@ -95,4 +102,4 @@ ReservedRoute.defaultProps = {
     zoom: 17
 };
 
-ReservedRoute.propTypes = { router: PropTypes.object };
+CreateRoute.propTypes = { router: PropTypes.object };
