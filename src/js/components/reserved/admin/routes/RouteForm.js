@@ -8,11 +8,7 @@ import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import IconButton from 'material-ui/IconButton';
-import CommunicationLocationOn from 'material-ui/svg-icons/communication/location-on';
-import { blue500 as POIColor } from 'material-ui/styles/colors';
 
-import Pin from '../../../map/Pin';
 import Tags from '../../../utils/MyTags';
 
 import 'styles/utils.scss';
