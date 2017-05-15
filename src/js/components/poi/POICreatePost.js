@@ -17,7 +17,7 @@ const NO_ELEMENTS = 0;
 const ONE_ELEMENT = 1;
 const NOT_FOUND = -1;
 
-import 'styles/create_post.scss';
+import 'styles/dropzone.scss';
 
 export default class CreatePostDialog extends Component {
 
@@ -214,6 +214,10 @@ export default class CreatePostDialog extends Component {
         this.state.post.files.forEach((file) => {
             window.URL.revokeObjectURL(file.preview);
         });
+
+        // NOTE: the order matters!
+        // ...this.state.post,
+        // files
         this.setState({
             post: {
                 ...this.state.post,

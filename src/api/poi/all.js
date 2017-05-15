@@ -175,32 +175,6 @@ router.get('/range/:minLat/:maxLat/:minLng/:maxLng', (req, res, next) => {
     });
 });
 
-router.get('/:id', (req, res, next) => {
-    const { id } = req.params;
-    if (!id || isNaN(parseInt(id, DECIMAL_BASE))) {
-        res.sendStatus(httpCodes.BAD_REQUEST).end();
-
-        return;
-    }
-
-    const { poiDB } = db;
-    Promise.all([poiDB.getPOIDetailByID(id), poiDB.getPOITags(id)]).
-    then((results) => {
-        if (results && results.length === TWO_SIZE &&
-            results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE) {
-            const poi = utils.convertObjectToCamelCase(results[ZERO_INDEX][ZERO_INDEX]);
-            poi.tags = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
-
-            res.json(poi).end();
-        } else {
-            res.sendStatus(httpCodes.NO_CONTENT).end();
-        }
-    }).
-    catch((error) => {
-        next(error);
-    });
-});
-
 router.get('/suggestions/:limit/:lat/:lng', (req, res, next) => {
     const { limit, lat, lng } = req.params;
     if (!limit || isNaN(parseInt(limit, DECIMAL_BASE)) || !lat || !lng ||
@@ -256,7 +230,35 @@ router.get('/types', (req, res, next) => {
     poiDB.getAllPOITypes().
     then((types) => {
         if (types) {
-            res.json(types).end();
+            res.json(utils.convertObjectsToCamelCase(types)).end();
+        } else {
+            res.sendStatus(httpCodes.NO_CONTENT).end();
+        }
+    }).
+    catch((error) => {
+        next(error);
+    });
+});
+
+// NOTE: this endpoint definition must be the last one, as the placeholder may conflict with the previous endpoints.
+// Endpoints are visited taking into consideration the order they are defined.
+router.get('/:id', (req, res, next) => {
+    const { id } = req.params;
+    if (!id || isNaN(parseInt(id, DECIMAL_BASE))) {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    const { poiDB } = db;
+    Promise.all([poiDB.getPOIDetailByID(id), poiDB.getPOITags(id)]).
+    then((results) => {
+        if (results && results.length === TWO_SIZE &&
+            results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE) {
+            const poi = utils.convertObjectToCamelCase(results[ZERO_INDEX][ZERO_INDEX]);
+            poi.tags = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
+
+            res.json(poi).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
         }
