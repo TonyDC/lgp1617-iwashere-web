@@ -57,10 +57,16 @@ export default class RouteMap extends Component {
         this.map = map;
         this.maps = maps;
 
-        if (this.bounds) {
-            this.map.fitBounds(this.bounds);
+        if (this.props.readOnly) {
+            if (this.bounds) {
+                this.map.fitBounds(this.bounds);
+            } else {
+                this.onPropsUpdated();
+            }
         } else {
-            this.onPropsUpdated();
+            map.addListener('tilesloaded', () => {
+                this.props.onMapChanged(map.getBounds());
+            });
         }
     }
 
@@ -122,6 +128,7 @@ RouteMap.defaultProps = {
         lng: -8.61129427
     },
     poiList: [],
+    readOnly: false,
     zoom: 17
 };
 
@@ -130,8 +137,10 @@ RouteMap.propTypes = {
         lat: PropTypes.number,
         lng: PropTypes.number
     }),
+    onMapChanged: PropTypes.func,
     onPoiSelected: PropTypes.func.isRequired,
     poiList: PropTypes.array,
-    router: PropTypes.object.isRequired,
+    readOnly: PropTypes.bool,
+    router: PropTypes.object,
     zoom: PropTypes.number
 };
