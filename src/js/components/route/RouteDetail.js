@@ -148,7 +148,8 @@ export default class RouteDetail extends Component {
 
         let routeMap = null;
         if (this.state.routePois) {
-            routeMap = <RouteMap onPoiSelected={this.poiSelected.bind(this)}
+            routeMap = <RouteMap readOnly
+                                 onPoiSelected={this.poiSelected.bind(this)}
                                  poiList={this.state.routePois}
                                  router={this.props.router}/>;
         }

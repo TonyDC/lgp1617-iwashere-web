@@ -93,7 +93,7 @@ module.exports.createRoute = (name, description, editorId) => {
 module.exports.setRouteTags = (routeId, tagIdList) => {
     // language=POSTGRES-SQL
     return db.query(`
-    WITH previous_tags AS (DELETE FROM route_tags WHERE route_id = :routeId RETURNING tag_id)
+    DELETE FROM route_tags WHERE route_id = :routeId;
     INSERT INTO route_tags(route_id, tag_id)
     VALUES (:routeId, unnest(array[:tagIdList])) ON CONFLICT DO NOTHING RETURNING tag_id`, {
         replacements: {
@@ -107,11 +107,12 @@ module.exports.setRouteTags = (routeId, tagIdList) => {
 module.exports.setRoutePOIs = (routeId, poiIdList) => {
     // language=POSTGRES-SQL
     return db.query(`
-    WITH previous_pois AS (DELETE FROM route_pois WHERE route_id = :routeId RETURNING tag_id)
-    INSERT INTO route_pois(route_id, poi_id)
-    VALUES (:routeId, unnest(array[:poiIdList])) ON CONFLICT DO NOTHING RETURNING poi_id`, {
+    DELETE FROM route_pois WHERE route_id = :routeId RETURNING poi_id;
+    INSERT INTO route_pois(route_id, poi_id, poi_order)
+    VALUES (:routeId, unnest(array[:poiIdList]), generate_series(1, :poiListLength)) ON CONFLICT DO NOTHING RETURNING poi_id`, {
         replacements: {
             poiIdList,
+            poiListLength: poiIdList.length,
             routeId
         },
         type: db.QueryTypes.INSERT

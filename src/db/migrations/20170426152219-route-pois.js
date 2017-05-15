@@ -14,6 +14,7 @@ module.exports = {
             CREATE TABLE route_pois (
                 route_id BIGINT NOT NULL REFERENCES routes(route_id),
                 poi_id BIGINT NOT NULL REFERENCES pois(poi_id),
+                poi_order SMALLINT NOT NULL DEFAULT 0,
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP,
                 

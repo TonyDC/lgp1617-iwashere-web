@@ -11,13 +11,12 @@ import RaisedButton from 'material-ui/RaisedButton';
 import Dropzone from 'react-dropzone';
 import nProgress from 'nprogress';
 
-const API_POI_POST_URL = '/api/post/auth/';
+import 'styles/dropzone.scss';
 
+const API_POI_POST_URL = '/api/post/auth/';
 const NO_ELEMENTS = 0;
 const ONE_ELEMENT = 1;
 const NOT_FOUND = -1;
-
-import 'styles/dropzone.scss';
 
 export default class CreatePostDialog extends Component {
 
@@ -33,9 +32,6 @@ export default class CreatePostDialog extends Component {
                 tags: []
             }
         };
-
-        this.handleOpen = this.handleOpen.bind(this);
-        this.handleClose = this.handleClose.bind(this);
     }
 
     componentDidMount() {
@@ -61,12 +57,10 @@ export default class CreatePostDialog extends Component {
     }
 
     createPost() {
-        if (!this.checkPost(this.state.post)) {
+        let userLoggedIn = null;
+        if (!this.componentIsMounted || !this.checkPost(this.state.post) ||
+            !(userLoggedIn = firebase.auth().currentUser)) {
             return;
-        }
-
-        if (this.componentIsMounted) {
-            this.setState({ inProgress: true });
         }
 
         if (this.errorAlert) {
@@ -74,7 +68,9 @@ export default class CreatePostDialog extends Component {
         }
 
         nProgress.start();
-        firebase.auth().currentUser.getToken().then((token) => {
+        this.setState({ inProgress: true });
+
+        userLoggedIn.getToken().then((token) => {
             const { description, tags, files } = this.state.post;
             const { poiId } = this.props;
 

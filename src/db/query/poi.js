@@ -17,9 +17,7 @@ module.exports.getPOIDetailByID = (id, deleted = false) => {
 
 module.exports.getPOITypeByID = (id) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT *
-    FROM poi_types 
-    WHERE poi_type_id = :id`, {
+    return db.query(`SELECT * FROM poi_types WHERE poi_type_id = :id`, {
         replacements: { id },
         type: db.QueryTypes.SELECT
     });
@@ -50,8 +48,13 @@ module.exports.getPOITags = (poiID) => {
 
 module.exports.getPOIsWithin = (minLat, maxLat, minLng, maxLng) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT * 
-    FROM pois 
+    return db.query(`WITH poi_ratings AS 
+    (SELECT AVG(rating) AS rating, poi_id
+    FROM (SELECT DISTINCT ON (user_id) poi_id, rating FROM poi_ratings
+    ORDER BY user_id, created_at DESC) current_ratings
+    GROUP BY poi_id)
+    SELECT *, CASE WHEN rating IS NULL THEN 0 ELSE rating END AS rating, pois.poi_id
+    FROM pois LEFT JOIN poi_ratings ON pois.poi_id = poi_ratings.poi_id
     WHERE latitude >= :minLat AND latitude <= :maxLat AND longitude >= :minLng AND longitude <= :maxLng
     AND pois.deleted = FALSE`, {
         replacements: {
@@ -97,8 +100,7 @@ module.exports.getPOIRating = (poiID) => {
 
 module.exports.getPOIRatingByUser = (poiID, userID) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT rating FROM poi_ratings 
-    WHERE poi_id = :poiID AND user_id = :userID 
+    return db.query(`SELECT rating FROM poi_ratings  WHERE poi_id = :poiID AND user_id = :userID 
     ORDER BY created_at DESC LIMIT 1`, {
         replacements: {
             poiID,
@@ -132,8 +134,7 @@ module.exports.searchPOI = (query) => {
 module.exports.searchNearbyPOI = (query, lat, lng) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT *, get_distance_function(latitude::real, longitude::real, :lat::real, :lng::real) as distance 
-    FROM pois 
-    WHERE text @@ to_tsquery(:query) AND pois.deleted = FALSE 
+    FROM pois WHERE text @@ to_tsquery(:query) AND pois.deleted = FALSE 
     ORDER BY distance DESC`, {
         replacements: {
             lat,
@@ -211,7 +212,7 @@ module.exports.createPOI = (name, description, address, latitude, longitude, poi
 module.exports.setPOITags = (poiId, tagIdList) => {
     // language=POSTGRES-SQL
     return db.query(`
-    WITH previous_tags AS (DELETE FROM poi_tags WHERE poi_id = :poiId RETURNING tag_id)
+    DELETE FROM poi_tags WHERE poi_id = :poiId;
     INSERT INTO poi_tags(poi_id, tag_id)
     VALUES (:poiId, unnest(array[:tagIdList])) ON CONFLICT DO NOTHING RETURNING tag_id`, {
         replacements: {
@@ -224,8 +225,7 @@ module.exports.setPOITags = (poiId, tagIdList) => {
 
 module.exports.getContentEditorPOI = (userID, poiID) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT *
-    FROM pois
+    return db.query(`SELECT * FROM pois
     WHERE pois.deleted = FALSE AND poi_id = :poiID AND user_id = :userID`, {
         replacements: {
             poiID,
