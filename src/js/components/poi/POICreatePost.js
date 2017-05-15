@@ -11,13 +11,12 @@ import RaisedButton from 'material-ui/RaisedButton';
 import Dropzone from 'react-dropzone';
 import nProgress from 'nprogress';
 
-const API_POI_POST_URL = '/api/post/auth/';
+import 'styles/dropzone.scss';
 
+const API_POI_POST_URL = '/api/post/auth/';
 const NO_ELEMENTS = 0;
 const ONE_ELEMENT = 1;
 const NOT_FOUND = -1;
-
-import 'styles/dropzone.scss';
 
 export default class CreatePostDialog extends Component {
 
@@ -33,9 +32,6 @@ export default class CreatePostDialog extends Component {
                 tags: []
             }
         };
-
-        this.handleOpen = this.handleOpen.bind(this);
-        this.handleClose = this.handleClose.bind(this);
     }
 
     componentDidMount() {
