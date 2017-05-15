@@ -212,7 +212,7 @@ module.exports.createPOI = (name, description, address, latitude, longitude, poi
 module.exports.setPOITags = (poiId, tagIdList) => {
     // language=POSTGRES-SQL
     return db.query(`
-    WITH previous_tags AS (DELETE FROM poi_tags WHERE poi_id = :poiId RETURNING tag_id)
+    DELETE FROM poi_tags WHERE poi_id = :poiId;
     INSERT INTO poi_tags(poi_id, tag_id)
     VALUES (:poiId, unnest(array[:tagIdList])) ON CONFLICT DO NOTHING RETURNING tag_id`, {
         replacements: {

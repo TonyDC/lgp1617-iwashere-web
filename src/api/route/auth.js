@@ -29,7 +29,7 @@ router.post('/', (req, res, next) => {
     const { name, description, pois, tags } = req.body;
     const userID = req.auth.token.uid;
 
-    if (!userID || typeof userID !== 'string' || !name || typeof name !== 'string' || !tags || !tags.length ||
+    if (!userID || typeof userID !== 'string' || !name || typeof name !== 'string' || !tags ||
         !description || typeof description !== 'string' || !pois || !pois.length > NO_ELEMENT_SIZE) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
