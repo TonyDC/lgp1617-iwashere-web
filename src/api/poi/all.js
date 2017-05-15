@@ -164,11 +164,10 @@ router.get('/range/:minLat/:maxLat/:minLng/:maxLng', (req, res, next) => {
     const { poiDB } = db;
     poiDB.getPOIsWithin(minLat, maxLat, minLng, maxLng).
     then((rows) => {
-        if (rows) {
-            res.json(utils.convertObjectsToCamelCase(rows)).end();
-        } else {
-            res.sendStatus(httpCodes.NO_CONTENT).end();
-        }
+        aux.handlePOIResults(rows).
+        then((pois) => {
+            res.json(pois).end();
+        });
     }).
     catch((error) => {
         next(error);

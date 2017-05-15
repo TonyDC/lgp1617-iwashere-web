@@ -33,8 +33,14 @@ export default class POIMosaic extends Component {
         }
 
         let poiMedia = null;
-        if (poi.type === MEDIA_TYPE) {
-            poiMedia = <Image url={poi.urlS} />;
+        if (poi.media) {
+            poi.media.some((mediaItem) => {
+                if (mediaItem.type === MEDIA_TYPE) {
+                    poiMedia = <Image url={mediaItem.urlS}/>;
+                }
+
+                return poiMedia !== null;
+            });
         }
 
         let poiButton = null;
@@ -44,8 +50,6 @@ export default class POIMosaic extends Component {
                     <CommunicationLocationOn color="white" />
                 </IconButton>;
         }
-        
-        console.log(poi);
 
         return (
             <GridTile
@@ -59,6 +63,7 @@ export default class POIMosaic extends Component {
                     }
                 }}
                 title={poi.name}
+                subtitle={<div className="vert-align"><span>{poi.rating.toFixed(RATING_PRECISION)}/{MAX_RATING_SCALE}</span> <StarBorder color="white" className="rating-star" /></div>}
                 actionIcon={poiButton}
             >
                 {poiMedia}

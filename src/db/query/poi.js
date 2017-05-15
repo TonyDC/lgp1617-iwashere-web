@@ -50,8 +50,13 @@ module.exports.getPOITags = (poiID) => {
 
 module.exports.getPOIsWithin = (minLat, maxLat, minLng, maxLng) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT * 
-    FROM pois 
+    return db.query(`WITH poi_ratings AS 
+    (SELECT AVG(rating) AS rating, poi_id
+    FROM (SELECT DISTINCT ON (user_id) poi_id, rating FROM poi_ratings
+    ORDER BY user_id, created_at DESC) current_ratings
+    GROUP BY poi_id)
+    SELECT *, CASE WHEN rating IS NULL THEN 0 ELSE rating END AS rating, pois.poi_id
+    FROM pois LEFT JOIN poi_ratings ON pois.poi_id = poi_ratings.poi_id
     WHERE latitude >= :minLat AND latitude <= :maxLat AND longitude >= :minLng AND longitude <= :maxLng
     AND pois.deleted = FALSE`, {
         replacements: {
