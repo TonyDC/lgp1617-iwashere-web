@@ -4,6 +4,9 @@ import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 import GoogleMapReact from 'google-map-react';
 import Dropzone from 'react-dropzone';
+import firebase from 'firebase';
+import httpCodes from 'http-status-codes';
+import nProgress from 'nprogress';
 
 import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
@@ -87,11 +90,13 @@ export default class ReservedPOI extends Component {
         super(props);
         this.state = {
             name: '',
+            nameError: false,
             description: '',
+            descriptionError: false,
             address: '',
+            addressError: false,
             tags: [],
             metaInfo: '',
-            mapCoords: null,
             location: null,
             dropzoneActive: false,
             files: [],
@@ -108,7 +113,8 @@ export default class ReservedPOI extends Component {
                     poiTypeId: -3,
                     name: 'Error fetching types;Erro ao buscar os tipos'
                 }],
-            selectedType: -1
+            selectedType: -1,
+            selectedTypeError: false
         };
     }
 
@@ -119,11 +125,17 @@ export default class ReservedPOI extends Component {
 
     componentWillUnmount() {
         this.componentIsMounted = false;
+        // TODO put wherever nProgress is being used
+        nProgress.stop();
     }
 
     fetchPOITypes() {
         fetch('/api/poi/types').
         then((response) => {
+            if (response.status >= httpCodes.BAD_REQUEST || response.status === httpCodes.NO_CONTENT) {
+                return Promise.reject(new Error(response.statusText));
+            }
+
             return response.json();
         }).
         then((types) => {
@@ -142,7 +154,7 @@ export default class ReservedPOI extends Component {
             } else {
                 this.setState({
                     types,
-                selectedType: 1
+                    selectedType: 1
                 });
             }
 
@@ -157,17 +169,26 @@ export default class ReservedPOI extends Component {
 
     handleName(event) {
         event.preventDefault();
-        this.setState({ name: event.target.value });
+        this.setState({
+            name: event.target.value,
+            nameError: false
+        });
     }
 
     handleDescription(event) {
         event.preventDefault();
-        this.setState({ description: event.target.value });
+        this.setState({
+            description: event.target.value,
+            descriptionError: false
+        });
     }
 
     handleAddress(event) {
         event.preventDefault();
-        this.setState({ address: event.target.value });
+        this.setState({
+            address: event.target.value,
+            addressError: false
+        });
     }
 
     handleMetaInfo(event) {
@@ -200,7 +221,10 @@ export default class ReservedPOI extends Component {
     }
 
     handlePOIType(event, index, selectedType) {
-        this.setState({ selectedType });
+        this.setState({
+            selectedType,
+            selectedTypeError: false
+        });
     }
 
     onDragEnter() {
@@ -235,14 +259,132 @@ export default class ReservedPOI extends Component {
         this.setState({ files });
     }
 
+    checkParams() {
+        let error = false;
+        let { name, address, description } = this.state;
+        const { selectedType, location } = this.state;
+
+        name = name.trim();
+        if (name.length === NO_ELEMENTS) {
+            this.setState({
+                name,
+                nameError: 'Name must not be empty'
+            });
+            error = true;
+        }
+
+        address = address.trim();
+        if (address.length === NO_ELEMENTS) {
+            this.setState({
+                address,
+                addressError: 'Address must not be empty'
+            });
+            error = true;
+        }
+
+        description = description.trim();
+        if (description.length === NO_ELEMENTS) {
+            this.setState({
+                description,
+                descriptionError: 'Description must not be empty'
+            });
+            error = true;
+        }
+
+        if (selectedType < POI_TYPE_FIRST_ID) {
+            this.setState({ selectedTypeError: 'Bad selected type' });
+            error = true;
+        }
+
+        if (location === null) {
+            if (this.locationErrorAlert) {
+                Alerts.close(this.locationErrorAlert);
+                this.locationErrorAlert = null;
+            }
+            this.locationErrorAlert = Alerts.createErrorAlert('A location must be chosen for the POI in the map');
+        }
+
+        return !error;
+    }
+
     handleSubmit(event) {
         event.preventDefault();
 
+        if (!this.checkParams()) {
+            return;
+        }
 
+        nProgress.start();
+        const { currentUser } = firebase.auth();
+        if (!currentUser) {
+            nProgress.done();
+            throw new Error('Bad user');
+        }
+
+        currentUser.getToken().then((token) => {
+            const { name, address, description, tags, metaInfo, location, files, selectedType } = this.state;
+
+            const form = new FormData();
+            form.append('name', name.trim());
+            form.append('address', address.trim());
+            form.append('description', description.trim());
+            form.append('tags', JSON.stringify(tags));
+            form.append('metaInfo', metaInfo.trim());
+            form.append('location', JSON.stringify(location));
+            form.append('selectedType', selectedType);
+            for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
+                // Note: In order to detect the array of files in the server, each file, individually, must be appended to the same form key.
+                form.append('poiFiles', files[fileIndex]);
+            }
+
+            // 'Content-Type': `multipart/form-data` must not be added; the 'boundary' token must be provided automatically
+            return fetch('/api/reserved/poi/', {
+                body: form,
+                headers: { 'Authorization': `Bearer ${token}` },
+                method: 'POST'
+            });
+        }).
+        then((response) => {
+            if (response.status >= httpCodes.BAD_REQUEST) {
+                return Promise.reject(new Error(response.statusText));
+            }
+
+            Alerts.createInfoAlert('POI created successfully');
+            this.resetState();
+            nProgress.done();
+
+            return null;
+        }).
+        catch(() => {
+            nProgress.done();
+            if (this.formFetchError) {
+                Alerts.close(this.formFetchError);
+                this.formFetchError = null;
+            }
+            this.formFetchError = Alerts.createErrorAlert('Error in submitting the information. Please, try again later.');
+        });
+    }
+
+    resetState() {
+        this.setState({
+            name: '',
+            nameError: false,
+            description: '',
+            descriptionError: false,
+            address: '',
+            addressError: false,
+            tags: [],
+            metaInfo: '',
+            location: null,
+            dropzoneActive: false,
+            files: [],
+            selectedType: -1,
+            selectedTypeError: false
+        });
     }
 
     render() {
-        const { location } = this.state;
+        const { location, metaInfo, name, nameError, address, addressError, description, descriptionError, selectedType, selectedTypeError } = this.state;
 
         let selectedLocationPin = null;
         if (location) {
@@ -252,11 +394,10 @@ export default class ReservedPOI extends Component {
             );
         }
 
-
         return (
             <Paper zDepth={2} style={mainStyle}>
                 <Helmet>
-                    <title>#iwashere - Reserved - POI</title>
+                    <title>#iwashere - POI</title>
                 </Helmet>
                 <div style={mainStyle}>
                     <form onSubmit={ this.handleSubmit.bind(this) }>
@@ -267,6 +408,8 @@ export default class ReservedPOI extends Component {
                             hintText="Name"
                             floatingLabelText="Name of Point of Interest"
                             fullWidth
+                            errorText={ nameError? nameError : null }
+                            value={name}
                             onChange={ this.handleName.bind(this) }
                         />
                         <TextField
@@ -275,6 +418,8 @@ export default class ReservedPOI extends Component {
                             floatingLabelText="Address of Point of Interest"
                             fullWidth
                             multiLine
+                            errorText={ addressError? addressError : null }
+                            value={address}
                             onChange={ this.handleAddress.bind(this) }
                         />
                         <TextField
@@ -283,6 +428,8 @@ export default class ReservedPOI extends Component {
                             floatingLabelText="Description of Point of Interest"
                             fullWidth
                             multiLine
+                            errorText={ descriptionError? descriptionError : null }
+                            value={description}
                             onChange={ this.handleDescription.bind(this) }
                         />
                         <TextField
@@ -291,24 +438,27 @@ export default class ReservedPOI extends Component {
                             floatingLabelText="Additional information"
                             fullWidth
                             multiLine
+                            value={metaInfo}
                             onChange={ this.handleMetaInfo.bind(this) }
                         />
                         <SelectField
                             floatingLabelText="POI Type"
-                            value={this.state.selectedType}
+                            value={selectedType}
+                            errorText={ selectedTypeError? selectedTypeError : null }
+
                             onChange={ this.handlePOIType.bind(this) }
                             disabled={ this.state.selectedType < POI_TYPE_FIRST_ID }
                         >
                             {
                                 this.state.types.map((element, index) => {
-                                    const { poiTypeId, name } = element;
-                                    const renderName = name.split(POI_TYPE_LANG_SEPARATOR);
+                                    const { poiTypeId, name: typeName } = element;
+                                    const renderName = typeName.split(POI_TYPE_LANG_SEPARATOR);
 
                                     return (<MenuItem key={index}
                                                       value={poiTypeId}
                                                       primaryText={renderName.length > ONE_ELEMENT
                                                           ? renderName[ZERO_INDEX]
-                                                          : name } />);
+                                                          : typeName } />);
                                 })
                             }
                         </SelectField>
