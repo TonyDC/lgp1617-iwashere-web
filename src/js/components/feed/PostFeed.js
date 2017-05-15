@@ -141,8 +141,9 @@ export default class POISuggestions extends Component {
     }
 
     toggleLike(post) {
-        if (this.state.user) {
-            firebase.auth().currentUser.getToken().then((token) => {
+        const userLoggedIn = firebase.auth().currentUser;
+        if (this.state.user && userLoggedIn) {
+            userLoggedIn.getToken().then((token) => {
                 return fetch(API_LIKE_POST, {
                     body: JSON.stringify({
                         liked: !post.likedByUser,
