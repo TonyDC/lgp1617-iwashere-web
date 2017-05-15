@@ -44,6 +44,8 @@ export default class POIMosaic extends Component {
                     <CommunicationLocationOn color="white" />
                 </IconButton>;
         }
+        
+        console.log(poi);
 
         return (
             <GridTile
@@ -57,7 +59,6 @@ export default class POIMosaic extends Component {
                     }
                 }}
                 title={poi.name}
-                subtitle={<div className="vert-align"><span>{poi.rating.toFixed(RATING_PRECISION)}/{MAX_RATING_SCALE}</span> <StarBorder color="white" className="rating-star" /></div>}
                 actionIcon={poiButton}
             >
                 {poiMedia}

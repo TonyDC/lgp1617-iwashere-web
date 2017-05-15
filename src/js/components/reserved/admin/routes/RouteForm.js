@@ -96,19 +96,16 @@ export default class ReservedRoute extends Component {
             currentMinLat = latitudeRange.f,
             currentMinLng = longitudeRange.b;
 
-        if (typeof this.state.response === 'object') {
-            const { maxLat, maxLng, minLat, minLng } = this.state.response.area;
+        if (typeof this.state.area === 'object') {
+            const { maxLat, maxLng, minLat, minLng } = this.state.area;
 
             if (currentMinLat >= minLat && currentMaxLat <= maxLat && currentMinLng >= minLng && currentMaxLng <= maxLng) {
                 return;
             }
         }
 
-        if (this.isPOIsErrorsLaunched) {
-            return;
-        }
-
-        fetch(`/api/poi/range/${currentMinLat}/${currentMaxLat}/${currentMinLng}/${currentMaxLng}`).then((response) => {
+        fetch(`/api/poi/range/${currentMinLat}/${currentMaxLat}/${currentMinLng}/${currentMaxLng}`).
+        then((response) => {
             if (response.status >= httpCodes.BAD_REQUEST) {
                 return Promise.reject(new Error(response.statusText));
             }
@@ -120,15 +117,14 @@ export default class ReservedRoute extends Component {
                 return;
             }
 
+            const allPois = this.state.allPois.concat(response);
             this.setState({
-                response: {
-                    area: {
-                        maxLat: currentMaxLat,
-                        maxLng: currentMaxLng,
-                        minLat: currentMinLat,
-                        minLng: currentMinLng
-                    },
-                    content: response
+                allPois,
+                area: {
+                    maxLat: currentMaxLat,
+                    maxLng: currentMaxLng,
+                    minLat: currentMinLat,
+                    minLng: currentMinLng
                 }
             });
         }).
@@ -231,8 +227,6 @@ export default class ReservedRoute extends Component {
         const poisSelected = this.state.allPois.filter((poi) => {
             return route.pois.indexOf(poi.poiId) !== NOT_FOUND;
         });
-
-        console.log('route props', this.props.route);
 
         return (
             <div style={mainStyle}>
