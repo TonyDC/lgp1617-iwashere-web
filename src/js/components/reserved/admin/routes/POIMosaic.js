@@ -2,12 +2,11 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { GridLoader as Loader } from 'halogen';
 import Image from '../../../utils/Image';
 import { GridTile } from 'material-ui/GridList';
 import IconButton from 'material-ui/IconButton';
 import StarBorder from 'material-ui/svg-icons/toggle/star-border';
-import CommunicationLocationOn from 'material-ui/svg-icons/communication/location-on';
+import ActionDelete from 'material-ui/svg-icons/action/delete';
 
 import 'styles/poi_mosaic.scss';
 import 'styles/utils.scss';
@@ -15,22 +14,12 @@ import 'styles/utils.scss';
 const MEDIA_TYPE = "image;imagem";
 const MAX_RATING_SCALE = 5;
 const RATING_PRECISION = 1;
-const POI_BUTTON_MESSAGE = 'Go to the point of interest';
+const POI_BUTTON_MESSAGE = 'Remove the point of interest';
 
 export default class POIMosaic extends Component {
 
     render() {
         const { poi } = this.props;
-
-        if (!poi) {
-            return (
-                <GridTile>
-                    <div className="hor-align vert-align">
-                        <Loader color="#012935" className="loader"/>
-                    </div>
-                </GridTile>
-            );
-        }
 
         let poiMedia = null;
         if (poi.media) {
@@ -47,7 +36,7 @@ export default class POIMosaic extends Component {
         if (this.props.dismissible) {
             poiButton =
                 <IconButton tooltipPosition="top-left" tooltip={POI_BUTTON_MESSAGE}>
-                    <CommunicationLocationOn color="white" />
+                    <ActionDelete color="white" />
                 </IconButton>;
         }
 

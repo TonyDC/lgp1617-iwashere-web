@@ -112,12 +112,21 @@ export default class ReservedRoute extends Component {
 
             return response.json();
         }).
-        then((response) => {
+        then((pois) => {
             if (!this.componentIsMounted) {
                 return;
             }
 
-            const allPois = this.state.allPois.concat(response);
+            const { allPois } = this.state;
+            const poiIds = this.state.allPois.map((poi) => {
+                return poi.poiId;
+            });
+            pois.forEach((poi) => {
+                if (poiIds.indexOf(poi.poiId) === NOT_FOUND) {
+                    allPois.push(poi);
+                }
+            });
+
             this.setState({
                 allPois,
                 area: {
@@ -178,9 +187,10 @@ export default class ReservedRoute extends Component {
 
     handleReorderPoi(poiList) {
         if (this.componentIsMounted) {
-            console.log(poiList);
             const { route } = this.state;
-            route.pois = poiList;
+            route.pois = poiList.map((poi) => {
+                return poi.poiId;
+            });
             this.setState({ route });
         }
     }
@@ -261,7 +271,10 @@ export default class ReservedRoute extends Component {
                     <Paper zDepth={2} style={mapContainerStyle}>
                         {routeMap}
                     </Paper>
-                    <POIList pois={poisSelected} />
+                    <POIList pois={poisSelected}
+                             onSelectMosaic={this.handleAddPoi.bind(this)}
+                             onDismissMosaic={this.handleRemovePoi.bind(this)}
+                             onMoveMosaic={this.handleReorderPoi.bind(this)}/>
                 </div>
                 <RaisedButton label="Submit" style={buttonStyle} />
             </div>
