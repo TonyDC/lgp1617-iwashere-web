@@ -8,6 +8,8 @@ module.exports = {
             DROP TRIGGER timestamp_pois_trigger ON pois;
             DROP TRIGGER insert_poi_text_trigger ON pois;
             DROP TRIGGER update_poi_text_trigger ON pois;
+            DROP TRIGGER poi_content_editor_trigger ON pois;
+            DROP FUNCTION poi_content_editor_trigger_body();
             DROP FUNCTION poi_description_trigger_body();
             
             DROP INDEX poi_text_index;
@@ -28,8 +30,9 @@ module.exports = {
                 latitude DOUBLE PRECISION NOT NULL,
                 longitude DOUBLE PRECISION NOT NULL,
                 poi_type_id BIGINT NOT NULL REFERENCES poi_types(poi_type_id) ON DELETE RESTRICT,
-                parent_id BIGINT REFERENCES pois (poi_id) CHECK (parent_id IS NULL OR parent_id != poi_id),
-                content_editor_id TEXT REFERENCES content_editors(uid) NOT NULL,
+                parent_id BIGINT REFERENCES pois (poi_id) ON DELETE RESTRICT CHECK (parent_id IS NULL OR parent_id != poi_id),
+                content_editor_id TEXT NOT NULL REFERENCES users(uid) ON DELETE RESTRICT,
+                context_id BIGINT NOT NULL REFERENCES contexts(context_id) ON DELETE RESTRICT,
                 deleted BOOL NOT NULL DEFAULT FALSE,
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP
@@ -45,6 +48,49 @@ module.exports = {
                     RETURN NEW;
                 END;
                 $body$ LANGUAGE plpgsql;
+                
+            CREATE FUNCTION poi_content_editor_trigger_body() RETURNS trigger AS
+                $body$
+                DECLARE
+                    minimum_rank INTEGER;
+                    current_rank INTEGER;
+                BEGIN
+                -- TODO testar a inserção de um user não existente
+                    SELECT rank INTO minimum_rank FROM roles WHERE name = 'content-editor';
+                    SELECT rank FROM users INNER JOIN roles ON (users.role_id = roles.role_id) WHERE roles.name = 'content-editor' AND users.uid = NEW.content_editor_id;
+                    
+                    -- less rank => more privileges
+                    IF (current_rank > minimum_rank) THEN
+                        RAISE EXCEPTION 'Content Editor with insufficient privileges';
+                    END IF;
+                    
+                    -- testar se o contexto é válido, tendo em conta o contexto a que o user pertence
+                    
+                    RETURN NEW;
+                END;
+                $body$ LANGUAGE plpgsql;
+              
+                /*
+            CREATE FUNCTION poi_valid_context_trigger_body() RETURNS trigger AS
+                $body$
+                BEGIN
+                    SELECT rank INTO minimum_rank FROM roles WHERE name = 'content-editor';
+                    SELECT rank FROM users INNER JOIN roles ON (users.role_id = roles.role_id) WHERE roles.name = 'content-editor';
+                    
+                    -- less rank => more privileges
+                    IF (current_rank > minimum_rank) THEN
+                        RAISE EXCEPTION 'Content Editor with insufficient privileges';
+                    END IF;
+                    
+                    RETURN NEW;
+                END;
+                $body$ LANGUAGE plpgsql;
+                */
+                
+            CREATE TRIGGER poi_content_editor_trigger
+                BEFORE INSERT OR UPDATE ON pois
+                FOR EACH ROW
+                EXECUTE PROCEDURE poi_content_editor_trigger_body();
                         
             CREATE TRIGGER update_poi_text_trigger
                 BEFORE UPDATE ON pois
