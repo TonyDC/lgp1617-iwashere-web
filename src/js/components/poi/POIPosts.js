@@ -106,57 +106,17 @@ export default class POIPosts extends Component {
         }
     }
 
-    toggleLike(post) {
-        const userLoggedIn = firebase.auth().currentUser;
-        if (this.state.user && userLoggedIn) {
-            userLoggedIn.getToken().then((token) => {
-                return fetch(`${this.props.url}/auth/like`, {
-                    body: JSON.stringify({
-                        liked: !post.likedByUser,
-                        postID: post.postId
-                    }),
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    method: 'POST'
-                });
-            }).
-            then((response) => {
-                if (response.status >= httpCodes.BAD_REQUEST || response.status === httpCodes.NO_CONTENT) {
-                    return Promise.reject(new Error(response.statusText));
-                }
-
-                return response.json();
-            }).
-            then((response) => {
-                const { posts } = this.state;
-                const postIndex = posts.indexOf(post);
-                if (postIndex !== NOT_FOUND) {
-                    post.likedByUser = !post.likedByUser;
-                    post.likes = response.likes;
-                    posts[postIndex] = post;
-                }
-
-                if (this.componentIsMounted) {
-                    this.setState({ posts });
-                }
-            }).
-            catch(() => {
-                Alerts.createErrorAlert('Error submitting the like.');
-            });
-        }
-    }
-
     getTimelinePosts(posts) {
         const postsList = [];
         let itemClassInverted = false;
         posts.forEach((postEntry) => {
             postsList.push(
                 <Post post={postEntry}
+                      user={this.props.user}
                       inverted={itemClassInverted}
-                      onLike={ this.toggleLike.bind(this) }
-                      onClick={ this.openPostView.bind(this) }
+                      onClick={this.openPostView.bind(this)}
+                      onDelete={this.handlePostDelete.bind(this)}
+                      onToggleLike={this.handlePostLike.bind(this)}
                       key={postEntry.postId}/>
             );
             itemClassInverted = !itemClassInverted;
@@ -164,6 +124,29 @@ export default class POIPosts extends Component {
         postsList.push(<li key="timeline-terminator" className="clearfix" style={{ 'float': 'none' }} />);
 
         return postsList;
+    }
+
+    handlePostLike(post) {
+        if (this.componentIsMounted) {
+            const { posts } = this.state;
+            const postIndex = posts.indexOf(post);
+            if (postIndex !== NOT_FOUND) {
+                posts[postIndex] = post;
+            }
+            this.setState({ posts });
+        }
+    }
+
+    handlePostDelete(post) {
+        if (this.componentIsMounted) {
+            const posts = this.state.posts.filter((postEntry) => {
+                return postEntry.postId !== post.postId;
+            });
+            this.setState({
+                postSelected: null,
+                posts
+            });
+        }
     }
 
     openPostView(postSelected) {
@@ -180,9 +163,11 @@ export default class POIPosts extends Component {
 
     getPostView() {
         if (this.state.postSelected) {
-            return <ViewPost post={this.state.postSelected} onClose = {this.closePostView.bind(this)} onToggleLike={(post) => {
-                this.toggleLike(post);
-            }}/>;
+            return <ViewPost post={this.state.postSelected}
+                             onClose={this.closePostView.bind(this)}
+                             onDelete={this.handlePostDelete.bind(this)}
+                             onToggleLike={this.handlePostLike.bind(this)}
+                             user={this.state.user}/>;
         }
 
         return null;

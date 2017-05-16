@@ -108,8 +108,8 @@ router.post('/', bodyTemplate, (req, res, next) => {
     });
 });
 
-router.delete('/', (req, res, next) => {
-    const { postID } = req.body;
+router.delete('/:postID', (req, res, next) => {
+    const { postID } = req.params;
 
     if (!postID) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
@@ -123,8 +123,7 @@ router.delete('/', (req, res, next) => {
     postDB.getUserPost(userID, postID).
     then((results) => {
 
-        if (results && results.length === ONE_SIZE &&
-            results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE) {
+        if (results && results.length === ONE_SIZE) {
 
             return postDB.setPostDeleted(userID, postID).
             then(() => {

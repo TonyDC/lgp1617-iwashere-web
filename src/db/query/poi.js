@@ -237,7 +237,7 @@ module.exports.getContentEditorPOI = (userID, poiID) => {
 
 module.exports.setPOIDeleted = (userID, poiID, deleted = true) => {
     // language=POSTGRES-SQL
-    return db.query(`UPDATE ON pois
+    return db.query(`UPDATE pois
     SET deleted = :deleted
     WHERE poi_id = :poiID AND user_id = :userID`, {
         replacements: {
