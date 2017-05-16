@@ -216,7 +216,7 @@ export default class POISuggestions extends Component {
                                  onClose = {this.closePostView.bind(this)}
                                  onToggleLike={ this.handlePostLike.bind(this)}
                                  onDelete={ this.handlePostDelete.bind(this)}
-                                 />;
+                                 user={this.state.user}/>;
         }
 
         return (

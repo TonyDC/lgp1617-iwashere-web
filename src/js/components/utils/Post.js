@@ -45,10 +45,10 @@ const likeButtonSize = {
 export default class Post extends Component {
 
     setDeleted(post) {
-        if (this.props.user) {
-            const url = `${API_POST}/${post.postId}`;
-            firebase.auth().currentUser.getToken().then((token) => {
-                return fetch(url, {
+        const { currentUser } = firebase.auth();
+        if (this.props.user && currentUser) {
+            currentUser.getToken().then((token) => {
+                return fetch(`${API_POST}/${post.postId}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -75,8 +75,9 @@ export default class Post extends Component {
     }
 
     toggleLike(post) {
-        if (this.props.user) {
-            firebase.auth().currentUser.getToken().then((token) => {
+        const { currentUser } = firebase.auth();
+        if (this.props.user && currentUser) {
+            currentUser.getToken().then((token) => {
                 return fetch(API_LIKE_POST, {
                     body: JSON.stringify({
                         liked: !post.likedByUser,
@@ -125,9 +126,8 @@ export default class Post extends Component {
             tagList = <Tags readOnly tags={post.tags} class="post-tags"/>;
         }
 
-        console.log(post);
         let deleteMenu = null;
-        if (this.props.user && this.props.user.uid === post.userId) {
+        if (this.props.displayUserMenu && this.props.user && this.props.user.uid === post.userId) {
             deleteMenu =
                 <IconMenu
                     iconButtonElement={
@@ -218,7 +218,10 @@ export default class Post extends Component {
     }
 }
 
+Post.defaultProps = { displayUserMenu: false };
+
 Post.propTypes = {
+    displayUserMenu: PropTypes.bool,
     inverted: PropTypes.bool,
     onClick: PropTypes.func,
     onDelete: PropTypes.func,

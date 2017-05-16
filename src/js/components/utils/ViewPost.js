@@ -32,8 +32,10 @@ export default class ViewPostModal extends Component {
                         this.props.onClose();
                     }}>
                     <Post post={this.props.post}
+                          displayUserMenu
+                          onToggleLike={this.props.onToggleLike.bind(this)}
                           onDelete={this.props.onDelete.bind(this)}
-                          onToggleLike={this.props.onToggleLike.bind(this)}/>
+                          user={this.props.user}/>
             </Dialog>
         );
     }
@@ -43,5 +45,6 @@ ViewPostModal.propTypes = {
     onClose: PropTypes.func.isRequired,
     onDelete: PropTypes.func,
     onToggleLike: PropTypes.func.isRequired,
-    post: PropTypes.object.isRequired
+    post: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired
 };

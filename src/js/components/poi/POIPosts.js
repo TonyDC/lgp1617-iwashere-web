@@ -164,7 +164,8 @@ export default class POIPosts extends Component {
             return <ViewPost post={this.state.postSelected}
                              onClose={this.closePostView.bind(this)}
                              onDelete={this.handlePostDelete.bind(this)}
-                             onToggleLike={this.handlePostLike.bind(this)}/>;
+                             onToggleLike={this.handlePostLike.bind(this)}
+                             user={this.state.user}/>;
         }
 
         return null;
