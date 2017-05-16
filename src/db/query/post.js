@@ -190,7 +190,7 @@ module.exports.getUserPost = (userID, postID) => {
 
 module.exports.setPostDeleted = (userID, postID) => {
     // language=POSTGRES-SQL
-    return db.query(`UPDATE ON posts
+    return db.query(`UPDATE posts
     SET deleted = TRUE
     WHERE post_id = :postID AND user_id = :userID`, {
         replacements: {

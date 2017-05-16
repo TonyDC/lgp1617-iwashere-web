@@ -16,7 +16,6 @@ import NoLocation from "material-ui/svg-icons/device/gps-off";
 
 import "styles/suggestions.scss";
 
-const API_LIKE_POST = '/api/post/auth/like';
 const API_POST_POI_SUGGESTIONS_URL = 'api/post/post_poi';
 const NOT_FOUND = -1;
 const LIMIT = 20;
@@ -140,46 +139,6 @@ export default class POISuggestions extends Component {
         });
     }
 
-    toggleLike(post) {
-        if (this.state.user) {
-            firebase.auth().currentUser.getToken().then((token) => {
-                return fetch(API_LIKE_POST, {
-                    body: JSON.stringify({
-                        liked: !post.likedByUser,
-                        postID: post.postId
-                    }),
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    method: 'POST'
-                });
-            }).
-            then((response) => {
-                if (response.status >= httpCodes.BAD_REQUEST || response.status === httpCodes.NO_CONTENT) {
-                    return Promise.reject(new Error(response.statusText));
-                }
-
-                return response.json();
-            }).
-            then((response) => {
-                if (this.componentIsMounted) {
-                    const { suggestions } = this.state;
-                    const postIndex = suggestions.indexOf(post);
-                    if (postIndex !== NOT_FOUND) {
-                        post.likedByUser = !post.likedByUser;
-                        post.likes = response.likes;
-                        suggestions[postIndex] = post;
-                    }
-                    this.setState({ suggestions });
-                }
-            }).
-            catch(() => {
-                Alerts.createErrorAlert('Error submitting the like.');
-            });
-        }
-    }
-
     openPostView(postSelected) {
         if (this.componentIsMounted) {
             this.setState({ postSelected });
@@ -189,6 +148,29 @@ export default class POISuggestions extends Component {
     closePostView() {
         if (this.componentIsMounted) {
             this.setState({ postSelected: null });
+        }
+    }
+
+    handlePostLike(post) {
+        if (this.componentIsMounted) {
+            const { suggestions } = this.state;
+            const postIndex = suggestions.indexOf(post);
+            if (postIndex !== NOT_FOUND) {
+                suggestions[postIndex] = post;
+            }
+            this.setState({ suggestions });
+        }
+    }
+
+    handlePostDelete(post) {
+        if (this.componentIsMounted) {
+            const suggestions = this.state.suggestions.filter((postEntry) => {
+                return postEntry.postId !== post.postId;
+            });
+            this.setState({
+                postSelected: null,
+                suggestions
+            });
         }
     }
 
@@ -231,8 +213,9 @@ export default class POISuggestions extends Component {
         if (this.state.postSelected) {
             postView = <ViewPost post={this.state.postSelected}
                                  onClose = {this.closePostView.bind(this)}
-                                 onToggleLike={ this.toggleLike.bind(this)}
-                                 />;
+                                 onToggleLike={ this.handlePostLike.bind(this)}
+                                 onDelete={ this.handlePostDelete.bind(this)}
+                                 user={this.state.user}/>;
         }
 
         return (
