@@ -23,13 +23,6 @@ const mainStyle = {
 };
 
 export default class EditRoute extends Component {
-    static checkRoute(route) {
-        route.description = route.description.trim();
-        route.name = route.name.trim();
-
-        return route.name && route.description && route.pois.length >= TWO_SIZE;
-    }
-
     constructor(props) {
         super(props);
         this.state = {
@@ -125,6 +118,13 @@ export default class EditRoute extends Component {
                 routePoisLoaded: true
             });
         });
+    }
+
+    checkRoute(route) {
+        route.description = route.description.trim();
+        route.name = route.name.trim();
+
+        return route.name && route.description && route.pois.length >= TWO_SIZE;
     }
 
     saveRoute(route) {

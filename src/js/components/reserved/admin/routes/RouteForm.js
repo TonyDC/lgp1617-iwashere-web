@@ -45,18 +45,19 @@ export default class ReservedRoute extends Component {
         this.state = {
             allPois: [],
             location: null,
-            mapCoords: null
+            mapCoords: null,
+            route: this.props.route
         };
     }
 
     componentDidMount() {
         this.componentIsMounted = true;
-        this.setState({ route: this.props.route });
     }
 
     componentWillReceiveProps(nextProps) {
         const { route } = nextProps;
-        if (this.componentIsMounted) {
+        if (this.componentIsMounted && !this.propsReceived) {
+            this.propsReceived = true;
             this.setState({ route });
         }
     }
@@ -125,7 +126,9 @@ export default class ReservedRoute extends Component {
     handleName(event) {
         event.preventDefault();
         if (this.componentIsMounted) {
-            this.setState({ name: event.target.value });
+            const { route } = this.state;
+            route.name = event.target.value;
+            this.setState({ route });
         }
     }
 
@@ -256,6 +259,7 @@ export default class ReservedRoute extends Component {
                 <RaisedButton label="Submit"
                               style={buttonStyle}
                               onTouchTap={() => {
+                                  console.log('did');
                                   this.props.onSave(this.state.route);
                               }} />
             </div>
@@ -270,8 +274,6 @@ ReservedRoute.defaultProps = {
     },
     route: {
         description: '',
-        lat: null,
-        lng: null,
         metaInfo: '',
         name: '',
         pois: [],

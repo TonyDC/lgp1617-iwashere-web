@@ -21,12 +21,6 @@ const mainStyle = {
 };
 
 export default class CreateRoute extends Component {
-    static checkRoute(route) {
-        route.description = route.description.trim();
-        route.name = route.name.trim();
-
-        return route.name && route.description && route.pois.length >= TWO_SIZE;
-    }
 
     constructor(props) {
         super(props);
@@ -44,12 +38,21 @@ export default class CreateRoute extends Component {
         this.componentIsMounted = false;
     }
 
+    checkRoute(route) {
+        route.description = route.description.trim();
+        route.name = route.name.trim();
+
+        return route.name && route.description && route.pois.length >= TWO_SIZE;
+    }
+
     createRoute(route) {
         const userLoggedIn = firebase.auth().currentUser;
         if (this.componentIsMounted && userLoggedIn) {
             if (!this.checkRoute(route)) {
                 return;
             }
+
+            console.error(route);
 
             this.setState({ inProgress: true });
 
