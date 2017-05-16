@@ -61,12 +61,13 @@ export default class Post extends Component {
                     return Promise.reject(new Error(response.statusText));
                 }
 
-                return response.json();
-            }).
-            then(() => {
                 if (typeof this.props.onDelete !== 'undefined') {
                     this.props.onDelete(post);
                 }
+
+                Alerts.createInfoAlert("Post deleted.");
+
+                return null;
             }).
             catch(() => {
                 Alerts.createErrorAlert('Error deleting the post.');
