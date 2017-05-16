@@ -87,6 +87,12 @@ export default class POIDetail extends Component {
         });
     }
 
+    onNewPost(newPost) {
+        if (this.componentIsMounted) {
+            this.setState({ newPost });
+        }
+    }
+
     render() {
         if (this.state.error) {
             return (
@@ -107,11 +113,11 @@ export default class POIDetail extends Component {
         if (this.props.params.id) {
 
             if (this.state.poiInfo) {
-                poiCard = <POICard poiInfo={this.state.poiInfo} user={this.state.user} />;
+                poiCard = <POICard poiInfo={this.state.poiInfo} user={this.state.user} showPostButton onNewPost={this.onNewPost.bind(this)}/>;
 
                 if (this.state.poiInfo.type === PLACE_TYPE) {
                     userMediaTimeline =
-                        <POIPosts url={`/api/post`} poiId={this.props.params.id} user={this.state.user}/>;
+                        <POIPosts url={`/api/post`} poiId={this.props.params.id} user={this.state.user} newPost={this.state.newPost}/>;
                 }
             }
         }

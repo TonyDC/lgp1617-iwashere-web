@@ -22,6 +22,7 @@ module.exports = {
                 name TEXT NOT NULL,
                 description TEXT NOT NULL,
                 text TEXT NOT NULL,
+                deleted BOOL NOT NULL DEFAULT FALSE,
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP
             );

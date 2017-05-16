@@ -4,15 +4,22 @@
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
-        <meta name="description" content="#iwashere project"/>
-        <meta name="author" content="LGP2-C - FEUP"/>
-        <meta name="author" content="António Casimiro"/>
-        <meta name="author" content="Duarte Pinto"/>
-        <meta name="author" content="Pedro Pontes"/>
-        <meta name="author" content="André Maia"/>
-        <meta name="author" content="João Estrada"/>
-        <meta name="author" content="Lukas Konkol"/>
-        <meta name="author" content="Luís Costa"/>
+
+        <meta name="description" content="Project #iwashere, for Museu Digital da U.Porto"/>
+        <meta name="description" content="University: Faculdade de Engenharia da Universidade do Porto"/>
+        <meta name="description" content="Course: Laboratório de Gestão de Projectos"/>
+        <meta name="description" content="Company: Mira"/>
+
+        <meta name="author" content="André Maia - up201200674@fe.up.pt - Computer Engineer"/>
+        <meta name="author" content="António Casimiro - up201305244@fe.up.pt - Computer Engineer"/>
+        <meta name="author" content="Duarte Pinto - up201304777@fe.up.pt - Computer Engineer"/>
+        <meta name="author" content="João Gouveia - up201303988@fe.up.pt - Computer Engineer"/>
+        <meta name="author" content="Luís Costa - up200806068@fe.up.pt - Computer Engineer"/>
+        <meta name="author" content="Lukáš Konkoľ - up201610072@fe.up.pt - Computer Engineer"/>
+        <meta name="author" content="Pedro Pontes - up201305367@fe.up.pt - Computer Engineer"/>
+        <meta name="author" content="Rita Campos - up201206509@fba.up.pt - Communication Design"/>
+        <meta name="author" content="Beatriz Campos - up201406684@fba.up.pt - Communication Design"/>
+
         <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
@@ -20,7 +27,8 @@
         <link rel="shortcut icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png"/>
         <link rel="manifest" href="/public/manifest.json">
         <link rel="mask-icon" href="/public/safari-pinned-tab.svg" color="#5bbad5">
-        <meta name="theme-color" content="#ffffff">
+        <meta name="theme-color" content="#E5402B">
+
         <title>#iwashere</title>
 
         <style>
@@ -32,8 +40,15 @@
             }
 
             .sk-cube-grid {
-                width: 20vh;
-                height: 20vh;
+                width: 30vh;
+                height: 30vh;
+            }
+
+            .iwashere-loader {
+                width: 30vh;
+                height: 30vh;
+                background-image: url('/public/initial-loader.gif');
+                background-size: 100%;
             }
 
             .sk-cube-grid .sk-cube {
@@ -95,20 +110,41 @@
             /* ********* */
 
             #loader {
-                background-color: #012935;
-                height: 100%;
+                height: 60vh;
                 display: flex;
                 flex-direction: row;
                 justify-content: space-around;
                 align-items: center;
             }
 
+            #fortune-cookie {
+                opacity: 0;
+                height: auto;
+                text-align: center;
+                font-family: 'Oxygen', sans-serif;
+                font-size: 2rem;
+                margin: 0 10vw;
+                word-wrap: break-word;
+                hyphens: none;
+                color: white;
+
+                -webkit-transition: opacity 1s ease-in;
+                -moz-transition: opacity 1s ease-in;
+                -ms-transition: opacity 1s ease-in;
+                -o-transition: opacity 1s ease-in;
+                transition: opacity 1s ease-in;
+            }
+
+            #fortune-cookie h5 {
+                margin-top: 0;
+            }
+
             #main {
-                height: 100%;
+                background-color: #00272e;
+                height: 100vh;
             }
 
         </style>
-
     </head>
     <body>
         <noscript>
@@ -148,6 +184,9 @@
         </noscript>
         <div id="main">
             <div id="loader">
+                <!--
+                <div class="iwashere-loader"></div>
+                -->
                 <div class="sk-cube-grid">
                     <div class="sk-cube sk-cube1"></div>
                     <div class="sk-cube sk-cube2"></div>
@@ -160,7 +199,33 @@
                     <div class="sk-cube sk-cube9"></div>
                 </div>
             </div>
+            <div id="fortune-cookie">
+                <h5>Did you know?</h5>
+                <div id="fortune-cookie-content"></div>
+            </div>
         </div>
-        <script type="text/javascript" src="/public/bundle.js"></script>
+        <script type="text/javascript">
+            fetch('/api/fortune').then((response) => {
+                if (response.status !== 200) {
+                    return Promise.reject(new Error(response.statusText));
+                }
+
+                return response.json();
+            }).then((message) => {
+                console.log(message);
+                if (!message || typeof message !== 'object' || !message.fortune)
+                    return;
+
+                const placeholder = document.getElementById('fortune-cookie-content');
+                placeholder.innerHTML = message.fortune;
+
+                const wrapper = document.getElementById('fortune-cookie');
+                wrapper.style.opacity = 1;
+            }).catch((error) => {
+                // Fail silently
+                console.error(error);
+            });
+        </script>
+        <script type="text/javascript" src="/public/bundle.js" async defer></script>
     </body>
 </html>
