@@ -125,6 +125,31 @@ export default class Post extends Component {
             tagList = <Tags readOnly tags={post.tags} class="post-tags"/>;
         }
 
+        console.log(post);
+        let deleteMenu = null;
+        if (this.props.user && this.props.user.uid === post.userId) {
+            deleteMenu =
+                <IconMenu
+                    iconButtonElement={
+                        <IconButton><MoreVertIcon/></IconButton>
+                    }
+                    targetOrigin={ {
+                        horizontal: 'right',
+                        vertical: 'top'
+                    } }
+                    anchorOrigin={{
+                        horizontal: 'right',
+                        vertical: 'top'
+                    } }>
+                    <MenuItem onTouchTap={() => {
+                        if (typeof this.props.onDelete !== 'undefined') {
+                            this.setDeleted(post);
+                        }
+                    }}
+                              primaryText="Delete" />
+                </IconMenu>;
+        }
+
         const likeClass = post.likedByUser
             ? 'liked'
             : 'text-muted';
@@ -156,25 +181,7 @@ export default class Post extends Component {
                                     }}>
                             <LikeIcon/>
                         </IconButton>
-                        <IconMenu
-                            iconButtonElement={
-                                <IconButton><MoreVertIcon /></IconButton>
-                            }
-                            targetOrigin={ {
-                                horizontal: 'right',
-                                vertical: 'top'
-                            } }
-                            anchorOrigin={{
-                                horizontal: 'right',
-                                vertical: 'top'
-                            } }>
-                            <MenuItem onTouchTap={() => {
-                                if (typeof this.props.onDelete !== 'undefined') {
-                                    this.setDeleted(post);
-                                }
-                            }}
-                                      primaryText="Delete" />
-                        </IconMenu>
+                        {deleteMenu}
                     </div>
                 </div>
             </div>

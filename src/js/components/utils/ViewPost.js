@@ -23,20 +23,17 @@ export default class ViewPostModal extends Component {
 
     render() {
         return (
-            <Dialog
-                autoScrollBodyContent
-                className="post-modal"
-                bodyClassName="post-modal-content"
-                modal={false}
-                open={this.state.open}
-                onRequestClose={() => {
-                    this.props.onClose();
-                }}
-            >
-                <Post post={this.props.post}
-                      onLike={() => {
-                          this.props.onToggleLike(this.props.post);
-                      }}/>
+            <Dialog autoScrollBodyContent
+                    className="post-modal"
+                    bodyClassName="post-modal-content"
+                    modal={false}
+                    open={this.state.open}
+                    onRequestClose={() => {
+                        this.props.onClose();
+                    }}>
+                    <Post post={this.props.post}
+                          onDelete={this.props.onDelete.bind(this)}
+                          onToggleLike={this.props.onToggleLike.bind(this)}/>
             </Dialog>
         );
     }
@@ -44,6 +41,7 @@ export default class ViewPostModal extends Component {
 
 ViewPostModal.propTypes = {
     onClose: PropTypes.func.isRequired,
+    onDelete: PropTypes.func,
     onToggleLike: PropTypes.func.isRequired,
     post: PropTypes.object.isRequired
 };
