@@ -92,7 +92,7 @@ module.exports.createRoute = (name, description, editorId) => {
 };
 
 module.exports.setRouteTags = (routeId, tagIdList) => {
-    // language=POSTGRES-SQL
+    // language=POSTGRES-PSQL
     return db.query(`
     DELETE FROM route_tags WHERE route_id = :routeId;
     INSERT INTO route_tags(route_id, tag_id)
@@ -106,7 +106,7 @@ module.exports.setRouteTags = (routeId, tagIdList) => {
 };
 
 module.exports.setRoutePOIs = (routeId, poiIdList) => {
-    // language=POSTGRES-SQL
+    // language=POSTGRES-PSQL
     return db.query(`
     DELETE FROM route_pois WHERE route_id = :routeId RETURNING poi_id;
     INSERT INTO route_pois(route_id, poi_id, poi_order)
@@ -149,7 +149,7 @@ module.exports.updateRoute = (routeId, name, description) => {
 };
 
 module.exports.setRouteDeleted = (userID, routeID, deleted = true) => {
-    // language=POSTGRES-SQL
+    // language=POSTGRES-PSQL
     return db.query(`UPDATE ON routes
     SET deleted = :deleted
     WHERE poi_id = :poiID AND user_id = :userID`, {

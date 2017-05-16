@@ -5,6 +5,8 @@ module.exports = {
     down: (queryInterface) => {
         return queryInterface.sequelize.query(`
             DROP TRIGGER timestamp_user_contexts_trigger ON user_contexts;
+            DROP TRIGGER poi_user_context_trigger ON user_contexts;
+            DROP FUNCTION poi_user_context_trigger_body();
             DROP TABLE user_contexts;
         `);
     },
@@ -21,7 +23,21 @@ module.exports = {
                 CONSTRAINT user_contexts_pk PRIMARY KEY (user_id, context_id)
             );
             
-            -- TODO garantir que context_id é folha
+            CREATE FUNCTION poi_user_context_trigger_body() RETURNS trigger AS
+                $body$
+                BEGIN
+                    IF EXISTS (SELECT * FROM contexts c1 INNER JOIN contexts c2 ON (c1.context_id = c2.parent_id) WHERE c1.context_id = NEW.context_id) THEN
+                        RAISE EXCEPTION 'Context is not a leaf of the tree';
+                    END IF;
+
+                    RETURN NEW;
+                END;
+                $body$ LANGUAGE plpgsql;
+                
+            CREATE TRIGGER poi_user_context_trigger
+                BEFORE INSERT OR UPDATE ON user_contexts
+                FOR EACH ROW
+                EXECUTE PROCEDURE poi_user_context_trigger_body();
             
             CREATE TRIGGER timestamp_user_contexts_trigger
                 BEFORE INSERT OR UPDATE ON user_contexts

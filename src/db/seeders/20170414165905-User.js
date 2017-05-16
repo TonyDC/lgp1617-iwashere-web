@@ -7,7 +7,7 @@ module.exports = {
 
     up: (queryInterface) => {
         return queryInterface.bulkInsert('users', [
-            { uid: '2PR6AlwJNsR24FqVXx8HKIivpwY2' }
+            { uid: '2PR6AlwJNsR24FqVXx8HKIivpwY2', role_id: 1 }
         ], {});
     }
 };

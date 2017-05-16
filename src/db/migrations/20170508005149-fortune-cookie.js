@@ -27,8 +27,8 @@ module.exports = {
                     minimum_rank INTEGER;
                     current_rank INTEGER;
                 BEGIN
-                    SELECT rank INTO minimum_rank FROM roles WHERE name = 'content-editor';
-                    SELECT rank FROM users INNER JOIN roles ON (users.role_id = roles.role_id) WHERE roles.name = 'content-editor' AND users.uid = NEW.content_editor_id;
+                    SELECT rank INTO minimum_rank FROM roles WHERE roles.name = 'content-editor';
+                    SELECT rank INTO current_rank FROM users INNER JOIN roles ON (users.role_id = roles.role_id) WHERE users.uid = NEW.content_editor_id;
                     
                     -- less rank => more privileges
                     IF (current_rank > minimum_rank) THEN

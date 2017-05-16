@@ -25,6 +25,7 @@ module.exports = {
                 description TEXT NOT NULL,
                 text TEXT NOT NULL,
                 deleted BOOL NOT NULL DEFAULT FALSE,
+                context_id BIGINT NOT NULL REFERENCES contexts(context_id) ON DELETE RESTRICT,
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP
             );
@@ -50,12 +51,25 @@ module.exports = {
                     minimum_rank INTEGER;
                     current_rank INTEGER;
                 BEGIN
-                    SELECT rank INTO minimum_rank FROM roles WHERE name = 'content-editor';
-                    SELECT rank FROM users INNER JOIN roles ON (users.role_id = roles.role_id) WHERE roles.name = 'content-editor' AND users.uid = NEW.content_editor_id;
+                    SELECT rank INTO minimum_rank FROM roles WHERE roles.name = 'content-editor';
+                    SELECT rank INTO current_rank FROM users INNER JOIN roles ON (users.role_id = roles.role_id) WHERE users.uid = NEW.content_editor_id;
                     
                     -- less rank => more privileges
                     IF (current_rank > minimum_rank) THEN
                         RAISE EXCEPTION 'Content Editor with insufficient privileges';
+                    END IF;
+                    
+                    -- TODO testar se o contexto é válido, tendo em conta o contexto a que o user pertence
+                    IF NOT EXISTS (
+                          WITH RECURSIVE children(context_id, parent_id, name) AS (
+                                SELECT context_id, parent_id, name FROM contexts WHERE context_id = NEW.context_id
+                                    UNION
+                                SELECT c.context_id, c.parent_id, c.name
+                                FROM children p, contexts c
+                                WHERE p.context_id = c.parent_id
+                          ) SELECT * FROM children WHERE context_id IN (SELECT context_id FROM user_contexts WHERE user_id = NEW.content_editor_id)
+                    ) THEN 
+                        RAISE EXCEPTION 'Content Editor does not belong to the given context';
                     END IF;
                     
                     RETURN NEW;
