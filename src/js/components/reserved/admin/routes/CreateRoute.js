@@ -39,10 +39,25 @@ export default class CreateRoute extends Component {
     }
 
     checkRoute(route) {
+        Alerts.closeAll();
+        let errorFound = false;
         route.description = route.description.trim();
         route.name = route.name.trim();
 
-        return route.name && route.description && route.pois.length >= TWO_SIZE;
+        if (!route.name) {
+            Alerts.createErrorAlert("A name for the route must be provided.");
+            errorFound = true;
+        }
+        if (!route.description) {
+            Alerts.createErrorAlert("A description for the route must be provided.");
+            errorFound = true;
+        }
+        if (!route.pois || route.pois.length < TWO_SIZE) {
+            Alerts.createErrorAlert("At least two points of interest must be associated to the route.");
+            errorFound = true;
+        }
+
+        return !errorFound;
     }
 
     createRoute(route) {

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import httpCodes from 'http-status-codes';
+import Tags from '../../../utils/MyTags';
 import RouteMap from '../../../route/RouteMap';
 import POIList from './POIList';
 import Alerts from '../../../utils/Alerts';
@@ -9,11 +10,10 @@ import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 
-import Tags from '../../../utils/MyTags';
-
 import 'styles/utils.scss';
 import 'styles/map.scss';
 
+const TWO_SIZE = 2;
 const ONE_ELEMENT = 1;
 const NOT_FOUND = -1;
 
@@ -227,26 +227,22 @@ export default class ReservedRoute extends Component {
                         hintText="Name"
                         floatingLabelText="Name of the route"
                         fullWidth
-                        onChange={ this.handleName.bind(this) }
-                    />
+                        onChange={this.handleName.bind(this)}/>
                     <TextField
                         hintText="Description"
                         floatingLabelText="Description of the route"
                         fullWidth
                         multiLine
-                        onChange={ this.handleDescription.bind(this) }
-                    />
+                        onChange={this.handleDescription.bind(this)}/>
                     <Tags title="Add tag..." tags={route.tags}
-                          onAddTag={ this.handleAddTag.bind(this) }
-                          onRemoveTag={ this.handleRemoveTag.bind(this) }
-                    />
+                          onAddTag={this.handleAddTag.bind(this)}
+                          onRemoveTag={this.handleRemoveTag.bind(this)}/>
                     <TextField
                         hintText="Additional information"
                         floatingLabelText="Additional information"
                         fullWidth
                         multiLine
-                        onChange={ this.handleMetaInfo.bind(this) }
-                    />
+                        onChange={ this.handleMetaInfo.bind(this) }/>
                     <h5>Select points of interest</h5>
                     <Paper zDepth={2} style={mapContainerStyle}>
                         {routeMap}
