@@ -16,7 +16,6 @@ import NoLocation from "material-ui/svg-icons/device/gps-off";
 
 import "styles/suggestions.scss";
 
-const API_LIKE_POST = '/api/post/auth/like';
 const API_POST_POI_SUGGESTIONS_URL = 'api/post/post_poi';
 const NOT_FOUND = -1;
 const LIMIT = 20;
