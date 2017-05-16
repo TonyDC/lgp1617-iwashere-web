@@ -69,19 +69,20 @@ export default class POIPosts extends Component {
             url += `${this.props.poiId}/${this.state.postsOffset}/${LIMIT}`;
 
             fetch(url, {
-                headers: {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 method: 'GET'
             }).then((response) => {
                 if (response.status >= httpCodes.BAD_REQUEST || response.status === httpCodes.NO_CONTENT) {
                     if (response.status === httpCodes.NO_CONTENT && this.componentIsMounted) {
-                        this.setState({hasMoreItems: false});
+                        this.setState({ hasMoreItems: false });
                     }
 
                     return Promise.reject(new Error(response.statusText));
                 }
 
                 return response.json();
-            }).then((newPosts) => {
+            }).
+            then((newPosts) => {
                 const posts = this.state.posts.slice();
                 const postIds = posts.map((post) => {
                     return post.postId;
