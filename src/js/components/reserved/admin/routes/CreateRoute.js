@@ -22,14 +22,6 @@ const mainStyle = {
 
 export default class CreateRoute extends Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            location: null,
-            mapCoords: null
-        };
-    }
-
     componentDidMount() {
         this.componentIsMounted = true;
     }
@@ -112,13 +104,5 @@ export default class CreateRoute extends Component {
         );
     }
 }
-
-CreateRoute.defaultProps = {
-    center: {
-        lat: 41.14792237,
-        lng: -8.61129427
-    },
-    zoom: 17
-};
 
 CreateRoute.propTypes = { router: PropTypes.object };

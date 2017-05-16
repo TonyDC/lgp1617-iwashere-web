@@ -26,8 +26,6 @@ export default class EditRoute extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            location: null,
-            mapCoords: null,
             routeInfoLoaded: false,
             routePoisLoaded: false
         };
@@ -198,14 +196,6 @@ export default class EditRoute extends Component {
         );
     }
 }
-
-EditRoute.defaultProps = {
-    center: {
-        lat: 41.14792237,
-        lng: -8.61129427
-    },
-    zoom: 17
-};
 
 EditRoute.propTypes = {
     params: PropTypes.any,
