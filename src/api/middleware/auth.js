@@ -129,6 +129,11 @@ function verifyAdmin (req, res, next) {
     });
 }
 
+/**
+ * Check if the user is associated to a context, with the given minimum role rank
+ * @param minimumRole the minimum rank
+ * @returns {function(*, *, *)}
+ */
 function verifyUserPermissions (minimumRole) {
     return (req, res, next) => {
         const { uid } = req.auth.token;
@@ -138,31 +143,17 @@ function verifyUserPermissions (minimumRole) {
             return;
         }
 
-        const { userDB } = db;
-        // TODO implement
-        const promisesToFulfill = [
-            userDB.getContextByName(minimumRole),
-            userDB.getUserContextAndRoleByID(uid)
-        ];
-        Promise.all(promisesToFulfill).
+        const { userContextDB } = db;
+        userContextDB.getContextsByUserIDAndMinimumRank(uid, minimumRole).
         then((results) => {
-            if (results && results.length >= promisesToFulfill.length) {
-                if (!results[0] || results[0].length === NO_ELEMENTS) {
-                    next(`Role ${minimumRole} not found`);
-                } else if (!results[1] || results[1].length === NO_ELEMENTS) {
-                    res.status(httpCodes.UNAUTHORIZED).json({ message: 'User not found' }).
-                    end();
-                } else {
-                    const context = results[0][0],
-                        userContextAndRole = results[1][0];
-
-                    // TODO database
-                }
-
-                console.log(results);
-            } else {
-                res.sendStatus(httpCodes.UNAUTHORIZED).end();
+            if (results && results.length > 0) {
+                return next();
             }
+
+            res.status(httpCodes.UNAUTHORIZED).json({ message: 'User without enough permissions' }).
+            end();
+
+            return null;
         }).
         catch((error) => {
             next(error);

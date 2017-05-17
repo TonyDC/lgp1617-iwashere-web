@@ -53,7 +53,7 @@ module.exports = {
                     SELECT rank INTO minimum_rank FROM roles WHERE roles.name = 'content-editor';
                     
                     -- less rank => more privileges                
-                    IF NOT EXISTS (SELECT * FROM user_contexts INNER JOIN roles ON (user_contexts.role_id = roles.role_id) WHERE user_contexts.user_id = NEW.content_editor_id AND roles.rank <= minimum_rank AND user_contexts.active IS TRUE) THEN
+                    IF TG_OP = 'INSERT' AND NOT EXISTS (SELECT * FROM user_contexts INNER JOIN roles ON (user_contexts.role_id = roles.role_id) WHERE user_contexts.user_id = NEW.content_editor_id AND roles.rank <= minimum_rank AND user_contexts.active IS TRUE) THEN
                         RAISE EXCEPTION 'Content Editor with insufficient privileges';
                     END IF;
                     
