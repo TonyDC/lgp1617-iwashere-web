@@ -5,8 +5,6 @@ module.exports = {
     down: (queryInterface) => {
         return queryInterface.sequelize.query(`
             DROP TRIGGER timestamp_user_contexts_trigger ON user_contexts;
-            DROP TRIGGER poi_user_context_trigger ON user_contexts;
-            DROP FUNCTION poi_user_context_trigger_body();
             DROP TABLE user_contexts;
         `);
     },
@@ -16,6 +14,7 @@ module.exports = {
             CREATE TABLE user_contexts (
                 user_id TEXT NOT NULL REFERENCES users(uid) ON DELETE RESTRICT,
                 context_id BIGINT NOT NULL REFERENCES contexts(context_id) ON DELETE RESTRICT,
+                role_id BIGINT NOT NULL REFERENCES roles(role_id) ON DELETE RESTRICT,
                 active BOOL NOT NULL DEFAULT TRUE,
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP,
@@ -23,6 +22,7 @@ module.exports = {
                 CONSTRAINT user_contexts_pk PRIMARY KEY (user_id, context_id)
             );
             
+            /*
             CREATE FUNCTION poi_user_context_trigger_body() RETURNS trigger AS
                 $body$
                 BEGIN
@@ -38,6 +38,7 @@ module.exports = {
                 BEFORE INSERT OR UPDATE ON user_contexts
                 FOR EACH ROW
                 EXECUTE PROCEDURE poi_user_context_trigger_body();
+            */
             
             CREATE TRIGGER timestamp_user_contexts_trigger
                 BEFORE INSERT OR UPDATE ON user_contexts

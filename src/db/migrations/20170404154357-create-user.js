@@ -14,7 +14,6 @@ module.exports = {
             CREATE TABLE users (
                 -- user_id BIGSERIAL PRIMARY KEY,
                 uid TEXT PRIMARY KEY,
-                role_id BIGINT NOT NULL REFERENCES roles(role_id) ON DELETE RESTRICT,
                 suspended BOOL NOT NULL DEFAULT FALSE,
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP
@@ -25,7 +24,7 @@ module.exports = {
                 FOR EACH ROW
                 EXECUTE PROCEDURE register_dates_trigger_body();
                 
-            -- TODO um user pode não estar associado a um contexto (senão, triggers são necessários e transacções -> inserção por funções)
+            -- NOTE: um user pode não estar associado a um contexto (senão, triggers são necessários e transacções -> inserção por funções)
         `);
     }
 };

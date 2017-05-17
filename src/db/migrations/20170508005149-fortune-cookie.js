@@ -25,13 +25,11 @@ module.exports = {
                 $body$
                 DECLARE
                     minimum_rank INTEGER;
-                    current_rank INTEGER;
                 BEGIN
                     SELECT rank INTO minimum_rank FROM roles WHERE roles.name = 'content-editor';
-                    SELECT rank INTO current_rank FROM users INNER JOIN roles ON (users.role_id = roles.role_id) WHERE users.uid = NEW.content_editor_id;
                     
-                    -- less rank => more privileges
-                    IF (current_rank > minimum_rank) THEN
+                    -- less rank => more privileges                
+                    IF NOT EXISTS (SELECT * FROM user_contexts INNER JOIN roles ON (user_contexts.role_id = roles.role_id) WHERE user_contexts.user_id = NEW.content_editor_id AND roles.rank <= minimum_rank AND user_contexts.active IS TRUE) THEN
                         RAISE EXCEPTION 'Content Editor with insufficient privileges';
                     END IF;
                     
