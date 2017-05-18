@@ -18,17 +18,17 @@ import MenuItem from 'material-ui/MenuItem';
 import CommunicationLocationOn from 'material-ui/svg-icons/communication/location-on';
 import { blue500 as POIColor } from 'material-ui/styles/colors';
 
-import { GOOGLE_MAPS_API_KEY } from '../../../../../config';
-import Pin from '../../map/Pin';
+import { GOOGLE_MAPS_API_KEY } from '../../../../../../config/index';
+import Pin from '../../../map/Pin';
 
-import Tags from '../../utils/MyTags';
-import Alerts from '../../utils/Alerts';
+import Tags from '../../../utils/MyTags';
+import Alerts from '../../../utils/Alerts';
 
 import 'styles/utils.scss';
 import 'styles/map.scss';
 import 'styles/dropzone.scss';
 
-const POI_TYPE_FIRST_ID = 0;
+const POI_TYPE_FIRST_ID = 1;
 const ZERO_INDEX = 0;
 const NO_ELEMENTS = 0;
 const ONE_ELEMENT = 1;
@@ -89,32 +89,33 @@ export default class ReservedPOI extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: '',
-            nameError: false,
-            description: '',
-            descriptionError: false,
             address: '',
             addressError: false,
-            tags: [],
-            metaInfo: '',
-            location: null,
+            description: '',
+            descriptionError: false,
             dropzoneActive: false,
             files: [],
+            location: null,
+            metaInfo: '',
+            name: '',
+            nameError: false,
+            selectedType: -1,
+            selectedTypeError: false,
+            tags: [],
             types: [
                 {
-                    poiTypeId: -1,
-                    name: 'Fetching...;A buscar...'
+                    name: 'Fetching...;A buscar...',
+                    poiTypeId: -1
                 },
                 {
-                    poiTypeId: -2,
-                    name: 'No types found;Sem tipos de POI'
+                    name: 'No types found;Sem tipos de POI',
+                    poiTypeId: -2
                 },
                 {
-                    poiTypeId: -3,
-                    name: 'Error fetching types;Erro ao buscar os tipos'
-                }],
-            selectedType: -1,
-            selectedTypeError: false
+                    name: 'Error fetching types;Erro ao buscar os tipos',
+                    poiTypeId: -3
+                }
+            ]
         };
     }
 
@@ -148,13 +149,11 @@ export default class ReservedPOI extends Component {
             }
 
             if (types.length === NO_ELEMENTS) {
-                this.setState({
-                    selectedType: -2
-                });
+                this.setState({ selectedType: -2 });
             } else {
                 this.setState({
-                    types,
-                    selectedType: 1
+                    selectedType: 1,
+                    types
                 });
             }
 
@@ -212,7 +211,9 @@ export default class ReservedPOI extends Component {
     }
 
     handleAddTag(tag) {
-        this.state.tags.push(tag);
+        const cloneTagsArray = this.state.tags.slice(0);
+        cloneTagsArray.push(tag);
+        this.setState({ tags: cloneTagsArray });
     }
 
     handleRemoveTag(tag) {
@@ -253,10 +254,12 @@ export default class ReservedPOI extends Component {
             // TODO remove return statement in Create Post, due to memory leak issues
         }
 
-        this.state.files.forEach((file) => {
-            window.URL.revokeObjectURL(file.preview);
+        const cloneFilesArray = this.state.files.slice(0);
+        // TODO index files array by file hash
+        files.forEach((file) => {
+            cloneFilesArray.push(file);
         });
-        this.setState({ files });
+        this.setState({ files: cloneFilesArray });
     }
 
     checkParams() {
@@ -318,7 +321,7 @@ export default class ReservedPOI extends Component {
         const { currentUser } = firebase.auth();
         if (!currentUser) {
             nProgress.done();
-            throw new Error('Bad user');
+            throw new Error('Bad user object');
         }
 
         currentUser.getToken().then((token) => {
@@ -330,17 +333,22 @@ export default class ReservedPOI extends Component {
             form.append('description', description.trim());
             form.append('tags', JSON.stringify(tags));
             form.append('metaInfo', metaInfo.trim());
-            form.append('location', JSON.stringify(location));
-            form.append('selectedType', selectedType);
+            form.append('latitude', location.lat);
+            form.append('longitude', location.lng);
+            form.append('poiTypeId', selectedType);
+            form.append('context', 3);                                  // TODO Obter a lista de contextos disponíveis para o utilizador
             for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
                 // Note: In order to detect the array of files in the server, each file, individually, must be appended to the same form key.
-                form.append('poiFiles', files[fileIndex]);
+                form.append('postFiles', files[fileIndex]);
             }
 
             // 'Content-Type': `multipart/form-data` must not be added; the 'boundary' token must be provided automatically
-            return fetch('/api/reserved/poi/', {
+            return fetch('/api/reserved/content-editor/poi/', {
                 body: form,
-                headers: { 'Authorization': `Bearer ${token}` },
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'X-user-context': 1                                 // TODO obter o context seleccionado pelo utilizador
+                },
                 method: 'POST'
             });
         }).
@@ -353,6 +361,7 @@ export default class ReservedPOI extends Component {
             this.resetState();
             nProgress.done();
 
+            // The API will return the ID of the newly created POI
             return null;
         }).
         catch(() => {
@@ -367,19 +376,19 @@ export default class ReservedPOI extends Component {
 
     resetState() {
         this.setState({
-            name: '',
-            nameError: false,
-            description: '',
-            descriptionError: false,
             address: '',
             addressError: false,
-            tags: [],
-            metaInfo: '',
-            location: null,
+            description: '',
+            descriptionError: false,
             dropzoneActive: false,
             files: [],
-            selectedType: -1,
-            selectedTypeError: false
+            location: null,
+            metaInfo: '',
+            name: '',
+            nameError: false,
+            selectedType: POI_TYPE_FIRST_ID,
+            selectedTypeError: false,
+            tags: []
         });
     }
 

@@ -60,76 +60,11 @@ function firebaseAuth (req, res, next) {
 }
 
 /**
- * Content Editor ExpressJS Authentication middleware
- *
- * Checks whether the user is a content editor.
- *
- * @param {object} req The request object
- * @param {object} res The response object
- * @param {function} next The next middleware callback
- *
- * @return {void}
+ * Check if the user is associated to a context, with the given minimum role rank
+ * @param {number} minimumRank the minimum rank
+ * @returns {function(*, *, *)} the ExpressJS function handler
  */
-function verifyContentEditor (req, res, next) {
-    const { uid } = req.auth.token;
-    if (!uid || typeof uid !== 'string') {
-        res.sendStatus(httpCodes.BAD_REQUEST).end();
-
-        return;
-    }
-
-    const { contentEditorDB } = db;
-    contentEditorDB.getContentEditor(uid).
-    then((record) => {
-        if (record && record.length > NO_ELEMENTS) {
-            return next();
-        }
-
-        res.sendStatus(httpCodes.UNAUTHORIZED).end();
-
-        return null;
-    }).
-    catch((error) => {
-        next(error);
-    });
-}
-
-/**
- * Admin ExpressJS Authentication middleware
- *
- * Checks whether the user is an admin.
- *
- * @param {object} req The request object
- * @param {object} res The response object
- * @param {function} next The next middleware callback
- *
- * @return {void}
- */
-function verifyAdmin (req, res, next) {
-    const { uid } = req.auth.token;
-    if (!uid || typeof uid !== 'string') {
-        res.sendStatus(httpCodes.BAD_REQUEST).end();
-
-        return;
-    }
-
-    const { adminDB } = db;
-    adminDB.getAdmin(uid).
-    then((record) => {
-        if (record && record.length > NO_ELEMENTS) {
-            return next();
-        }
-
-        res.sendStatus(httpCodes.UNAUTHORIZED).end();
-
-        return null;
-    }).
-    catch((error) => {
-        next(error);
-    });
-}
-
-function verifyUserPermissions (minimumRole) {
+function verifyUserPermissions (minimumRank) {
     return (req, res, next) => {
         const { uid } = req.auth.token;
         if (!uid || typeof uid !== 'string') {
@@ -138,31 +73,28 @@ function verifyUserPermissions (minimumRole) {
             return;
         }
 
-        const { userDB } = db;
-        // TODO implement
-        const promisesToFulfill = [
-            userDB.getContextByName(minimumRole),
-            userDB.getUserContextAndRoleByID(uid)
-        ];
-        Promise.all(promisesToFulfill).
+        let context = req.header('X-user-context');
+        if (!context || typeof context !== 'string') {
+            res.status(httpCodes.BAD_REQUEST).json({ message: '\'X-user-context\' header must be provided' }).
+            end();
+
+            return;
+        }
+
+        context = context.trim();
+        const { userContextDB } = db;
+        userContextDB.getContextByUserIDAndMinimumRank(uid, context, minimumRank).
         then((results) => {
-            if (results && results.length >= promisesToFulfill.length) {
-                if (!results[0] || results[0].length === NO_ELEMENTS) {
-                    next(`Role ${minimumRole} not found`);
-                } else if (!results[1] || results[1].length === NO_ELEMENTS) {
-                    res.status(httpCodes.UNAUTHORIZED).json({ message: 'User not found' }).
-                    end();
-                } else {
-                    const context = results[0][0],
-                        userContextAndRole = results[1][0];
+            if (results && results.length > NO_ELEMENTS) {
+                req.auth.contextID = context;
 
-                    // TODO database
-                }
-
-                console.log(results);
-            } else {
-                res.sendStatus(httpCodes.UNAUTHORIZED).end();
+                return next();
             }
+
+            res.status(httpCodes.UNAUTHORIZED).json({ message: 'User without enough permissions' }).
+            end();
+
+            return null;
         }).
         catch((error) => {
             next(error);
@@ -171,6 +103,4 @@ function verifyUserPermissions (minimumRole) {
 }
 
 module.exports.firebaseAuth = firebaseAuth;
-module.exports.verifyContentEditor = verifyContentEditor;
-module.exports.verifyAdmin = verifyAdmin;
 module.exports.verifyUserPermissions = verifyUserPermissions;
