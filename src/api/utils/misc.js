@@ -1,4 +1,5 @@
 /* eslint guard-for-in: "off" */
+/* eslint no-prototype-builtins: "off" */
 
 const DECIMAL_BASE = 10;
 const NOT_FOUND = -1;
@@ -114,7 +115,7 @@ module.exports.checkResultList = (resultList, acceptableLengths, containsLists =
 
 /**
  * Converts an array in string form into an array of integers.
- * @param {string} array in string form
+ * @param {string} string array in string form
  *
  * @return {[]} the array of integers
  */
@@ -130,4 +131,21 @@ module.exports.convertStringToArray = (string) => {
     }
 
     return array;
+};
+
+/**
+ * Trims the object's string properties
+ * @param object
+ * @returns {{}}
+ */
+module.exports.trimStringProperties = (object) => {
+    const resultObject = {};
+    Object.assign(resultObject, object);
+    for (const property in resultObject) {
+        if (resultObject.hasOwnProperty(property) && typeof resultObject[property] === 'string') {
+            resultObject[property] = resultObject[property].trim();
+        }
+    }
+
+    return resultObject;
 };

@@ -24,21 +24,22 @@ const bodyTemplate = upload.fields([{ name: 'postFiles' }]);
 // Create new POI
 router.post('/', bodyTemplate, (req, res, next) => {
     const { body, files } = req;
-    const { name, description, address, latitude, longitude, poiTypeId, parentId, tags } = body;
+    const { name, description, address, latitude, longitude, poiTypeId, parentId, tags, context, userContext } = utils.trimStringProperties(body);
     const tagList = utils.convertStringToArray(tags);
     const { postFiles } = files;
     const { uid: userID } = req.auth.token;
 
-    if (!userID || typeof userID !== 'string' || !name || typeof name !== 'string' || !tagList.length ||
-        !description || typeof description !== 'string' || !address || typeof address !== 'string' ||
-        !poiTypeId || !latitude || isNaN(parseFloat(latitude)) || !longitude || isNaN(parseFloat(longitude))) {
+    if (typeof userID !== 'string' || typeof name !== 'string' || !tagList.length ||
+        typeof description !== 'string' || typeof address !== 'string' ||
+        isNaN(parseFloat(latitude)) || isNaN(parseFloat(longitude)) ||
+        typeof context !== 'string' || typeof userContext !== 'string') {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
 
-    const { userDB, poiDB } = db;
-    const primaryChecks = [userDB.getContentEditorByUID(userID), poiDB.getPOITypeByID(poiTypeId)];
+    const { userContextDB, poiDB } = db;
+    const primaryChecks = [userContextDB.verifyUserContext(userID, userContext), userContextDB.verifyContextUnderUserJurisdiction(userContext, context), poiDB.getPOITypeByID(poiTypeId)];
     Promise.all(primaryChecks).
     then((results) => {
         if (utils.checkResultList(results, [primaryChecks.length], true)) {

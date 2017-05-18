@@ -21,4 +21,5 @@
 - http://tobiasahlin.com/spinkit/
 - http://realfavicongenerator.net/
 - https://docs.travis-ci.com/user/languages/javascript-with-nodejs#Node.js-v4-(or-io.js-v3)-compiler-requirements
+- http://restcookbook.com/
 
