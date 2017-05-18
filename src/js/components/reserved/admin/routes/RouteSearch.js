@@ -16,7 +16,7 @@ import 'styles/utils.scss';
 
 const NO_ELEMENTS = 0;
 
-export default class UserSearch extends Component {
+export default class RouteSearch extends Component {
 
     componentDidMount() {
         this.componentIsMounted = true;
@@ -39,7 +39,7 @@ export default class UserSearch extends Component {
             throw new Error('Bad query parameter');
         }
 
-        return fetch(`/api/user/search?query=${query}`, {
+        return fetch(`/api/route/search?query=${query}`, {
             headers: { 'Accept': 'application/json' },
             method: 'GET'
         }).
@@ -75,14 +75,16 @@ export default class UserSearch extends Component {
 
             this.setState({ inProgress: 'Searching...' });
             this.performSearch(search).
-            then((json) => {
+            then((results) => {
                 if (!this.componentIsMounted) {
                     return;
                 }
 
+                // TODO: filter results by user context?
+
                 this.setState({
                     inProgress: false,
-                    results: json.results
+                    results
                 });
             }).
             catch(() => {
@@ -91,7 +93,7 @@ export default class UserSearch extends Component {
                 }
 
                 this.setState({ inProgress: false });
-                Alerts.createErrorAlert('Error while searching for users.');
+                Alerts.createErrorAlert('Error while searching for routes.');
             });
 
         }
@@ -104,9 +106,9 @@ export default class UserSearch extends Component {
         </div>;
         if (!this.state.inProgress) {
             searchButton = <RaisedButton
-                    icon={<ActionSearch />}
-                    onTouchTap={ this.submitSearch.bind(this) }
-                />;
+                icon={<ActionSearch />}
+                onTouchTap={ this.submitSearch.bind(this) }
+            />;
         }
 
         let resultsArea = null;
@@ -118,9 +120,13 @@ export default class UserSearch extends Component {
                         return (
                             <div key={index}>
                                 <ListItem
-                                    primaryText={ element.username }
+                                    primaryText={ element.name }
+                                    secondaryText={
+                                        <p>{ element.description }</p>
+                                    }
+                                    secondaryTextLines={2}
                                     onTouchTap={() => {
-                                        this.props.onUserSelected(element);
+                                        this.props.onRouteSelected(element.routeId);
                                     }}
                                 />
                                 <Divider inset/>
@@ -151,7 +157,7 @@ export default class UserSearch extends Component {
                             : this.submitSearch.bind(this) } >
                             <TextField
                                 hintText="Keywords"
-                                floatingLabelText="Search users"
+                                floatingLabelText="Search routes"
                                 value={ this.state.search }
                                 onChange={ this.handleSearchInput.bind(this) }
                                 fullWidth
@@ -168,7 +174,7 @@ export default class UserSearch extends Component {
     }
 }
 
-UserSearch.propTypes = {
-    onUserSelected: PropTypes.func.isRequired,
+RouteSearch.propTypes = {
+    onRouteSelected: PropTypes.func.isRequired,
     router: PropTypes.object.isRequired
 };

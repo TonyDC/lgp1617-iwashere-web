@@ -13,7 +13,6 @@ import RaisedButton from 'material-ui/RaisedButton';
 import 'styles/utils.scss';
 import 'styles/map.scss';
 
-const TWO_SIZE = 2;
 const ONE_ELEMENT = 1;
 const NOT_FOUND = -1;
 
