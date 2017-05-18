@@ -18,11 +18,11 @@ import MenuItem from 'material-ui/MenuItem';
 import CommunicationLocationOn from 'material-ui/svg-icons/communication/location-on';
 import { blue500 as POIColor } from 'material-ui/styles/colors';
 
-import { GOOGLE_MAPS_API_KEY } from '../../../../../config';
-import Pin from '../../map/Pin';
+import { GOOGLE_MAPS_API_KEY } from '../../../../../../config/index';
+import Pin from '../../../map/Pin';
 
-import Tags from '../../utils/MyTags';
-import Alerts from '../../utils/Alerts';
+import Tags from '../../../utils/MyTags';
+import Alerts from '../../../utils/Alerts';
 
 import 'styles/utils.scss';
 import 'styles/map.scss';
@@ -347,7 +347,7 @@ export default class ReservedPOI extends Component {
                 body: form,
                 headers: {
                     'Authorization': `Bearer ${token}`,
-                    'X-user-context': 1                             // TODO obter o context seleccionado pelo utilizador
+                    'X-user-context': 1                                 // TODO obter o context seleccionado pelo utilizador
                 },
                 method: 'POST'
             });

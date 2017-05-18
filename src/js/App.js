@@ -27,7 +27,7 @@ import POIRoutes from './routes/POIRoutes';
 import RouteRoutes from './routes/RouteRoutes';
 
 import AdminLogin from './components/reserved/AdminLogin';
-import AdminDashboard from './components/reserved/admin/ReservedPOI';
+import AdminDashboard from './components/reserved/admin/poi/POIComponent';
 import RouteDashboard from './components/reserved/admin/routes/CreateRoute';
 
 import Alerts from './components/utils/Alerts';
@@ -116,10 +116,10 @@ export default class App extends Component {
                     <Route path="reserved" component={ AppShell }>
                         <IndexRoute component={ AdminLogin } />
                         <Route path="dash" component={ AdminShell }>
-                            <IndexRedirect to="a" />
-                            <Route path="a" component={ AdminDashboard } />
-                            <Route path="b" component={ RouteDashboard } />
-                            <Route path="c" component={ AdminDashboard } />
+                            <IndexRedirect to="poi" />
+                            <Route path="poi" component={ AdminDashboard } />
+                            <Route path="route" component={ RouteDashboard } />
+                            <Route path="user" component={ AdminDashboard } />
                         </Route>
                     </Route>
                     <Route path="*" component={ NoMatch }/>
