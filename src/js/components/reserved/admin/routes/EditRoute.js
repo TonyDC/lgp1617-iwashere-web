@@ -12,7 +12,7 @@ import RouteForm from './RouteForm';
 import 'styles/utils.scss';
 import 'styles/map.scss';
 
-const API_ROUTE_URL = '/api/route/auth/';
+const API_ROUTE_URL = '/api/reserved/content-editor/route/';
 const DECIMAL_BASE = 10;
 const TWO_SIZE = 2;
 
@@ -155,11 +155,14 @@ export default class EditRoute extends Component {
             }
 
             this.setState({ inProgress: true });
-
+            route.context = 3; // TODO remove
             userLoggedIn.getToken().then((token) => {
                 return fetch(API_ROUTE_URL, {
                     body: JSON.stringify(route),
-                    headers: { 'Authorization': `Bearer ${token}` },
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'X-user-context': 1 // TODO obter o context seleccionado pelo utilizador
+                    },
                     method: 'PUT'
                 });
             }).

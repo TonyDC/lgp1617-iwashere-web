@@ -11,8 +11,8 @@ import RouteForm from './RouteForm';
 import 'styles/utils.scss';
 import 'styles/map.scss';
 
-const API_ROUTE_URL = '/api/route/auth/';
-const TWO_SIZE = 2;
+const API_ROUTE_URL = '/api/reserved/content-editor/route/';
+const ONE_SIZE = 1;
 
 const mainStyle = {
     margin: 20,
@@ -44,8 +44,8 @@ export default class CreateRoute extends Component {
             Alerts.createErrorAlert("A description for the route must be provided.");
             errorFound = true;
         }
-        if (!route.pois || route.pois.length < TWO_SIZE) {
-            Alerts.createErrorAlert("At least two points of interest must be associated to the route.");
+        if (!route.pois || route.pois.length < ONE_SIZE) {
+            Alerts.createErrorAlert("At least one point of interest must be associated to the route.");
             errorFound = true;
         }
 
@@ -59,6 +59,8 @@ export default class CreateRoute extends Component {
                 return;
             }
 
+            // TODO change this:
+            route.context = 3;
             console.error(route);
 
             this.setState({ inProgress: true });
@@ -66,7 +68,10 @@ export default class CreateRoute extends Component {
             userLoggedIn.getToken().then((token) => {
                 return fetch(API_ROUTE_URL, {
                     body: JSON.stringify(route),
-                    headers: { 'Authorization': `Bearer ${token}` },
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'X-user-context': 1 // TODO obter o context seleccionado pelo utilizador
+                    },
                     method: 'POST'
                 });
             }).
@@ -80,10 +85,11 @@ export default class CreateRoute extends Component {
             then((newRoute) => {
                 this.props.router.push(`/route/${newRoute.routeId}`);
             }).
-            catch(() => {
+            catch((error) => {
                 if (!this.componentIsMounted) {
                     return;
                 }
+                console.log(error);
 
                 this.setState({ inProgress: false });
                 this.errorAlert = Alerts.createErrorAlert('Error while creating the new route.');
