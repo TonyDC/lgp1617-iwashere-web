@@ -8,8 +8,8 @@ module.exports = {
             DROP TRIGGER timestamp_pois_trigger ON pois;
             DROP TRIGGER insert_poi_text_trigger ON pois;
             DROP TRIGGER update_poi_text_trigger ON pois;
-            DROP TRIGGER poi_content_editor_trigger ON pois;
-            DROP FUNCTION poi_content_editor_trigger_body();
+            -- DROP TRIGGER poi_content_editor_trigger ON pois;
+            -- DROP FUNCTION poi_content_editor_trigger_body();
             DROP FUNCTION poi_description_trigger_body();
             
             DROP INDEX poi_text_index;
@@ -49,6 +49,8 @@ module.exports = {
                 END;
                 $body$ LANGUAGE plpgsql;
                 
+            /*
+            -- Deixar esta parte da lógica de negócio para a camada intermédia da aplicação
             CREATE FUNCTION poi_content_editor_trigger_body() RETURNS trigger AS
                 $body$
                 DECLARE
@@ -61,7 +63,7 @@ module.exports = {
                         RAISE EXCEPTION 'Content Editor with insufficient privileges';
                     END IF;
                     
-                    /*
+                    
                     -- TODO testar se o contexto é válido, tendo em conta o contexto a que o user pertence
                     -- TODO o user que está a criar tem de pertencer a um contexto
                     -- Nota: impede que o user mude de contexto
@@ -77,7 +79,7 @@ module.exports = {
                     ) THEN 
                         RAISE EXCEPTION 'Content Editor does not belong to the given context';
                     END IF;
-                    */
+                    
 
                     RETURN NEW;
                 END;
@@ -87,6 +89,7 @@ module.exports = {
                 BEFORE INSERT OR UPDATE ON pois
                 FOR EACH ROW
                 EXECUTE PROCEDURE poi_content_editor_trigger_body();
+            */
                         
             CREATE TRIGGER update_poi_text_trigger
                 BEFORE UPDATE ON pois

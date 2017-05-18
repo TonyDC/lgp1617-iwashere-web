@@ -60,81 +60,11 @@ function firebaseAuth (req, res, next) {
 }
 
 /**
- * Content Editor ExpressJS Authentication middleware
- *
- * Checks whether the user is a content editor.
- *
- * @param {object} req The request object
- * @param {object} res The response object
- * @param {function} next The next middleware callback
- *
- * @return {void}
- */
-function verifyContentEditor (req, res, next) {
-    const { uid } = req.auth.token;
-    if (!uid || typeof uid !== 'string') {
-        res.sendStatus(httpCodes.BAD_REQUEST).end();
-
-        return;
-    }
-
-    const { contentEditorDB } = db;
-    contentEditorDB.getContentEditor(uid).
-    then((record) => {
-        if (record && record.length > NO_ELEMENTS) {
-            return next();
-        }
-
-        res.sendStatus(httpCodes.UNAUTHORIZED).end();
-
-        return null;
-    }).
-    catch((error) => {
-        next(error);
-    });
-}
-
-/**
- * Admin ExpressJS Authentication middleware
- *
- * Checks whether the user is an admin.
- *
- * @param {object} req The request object
- * @param {object} res The response object
- * @param {function} next The next middleware callback
- *
- * @return {void}
- */
-function verifyAdmin (req, res, next) {
-    const { uid } = req.auth.token;
-    if (!uid || typeof uid !== 'string') {
-        res.sendStatus(httpCodes.BAD_REQUEST).end();
-
-        return;
-    }
-
-    const { adminDB } = db;
-    adminDB.getAdmin(uid).
-    then((record) => {
-        if (record && record.length > NO_ELEMENTS) {
-            return next();
-        }
-
-        res.sendStatus(httpCodes.UNAUTHORIZED).end();
-
-        return null;
-    }).
-    catch((error) => {
-        next(error);
-    });
-}
-
-/**
  * Check if the user is associated to a context, with the given minimum role rank
- * @param minimumRole the minimum rank
- * @returns {function(*, *, *)}
+ * @param {number} minimumRank the minimum rank
+ * @returns {function(*, *, *)} the ExpressJS function handler
  */
-function verifyUserPermissions (minimumRole) {
+function verifyUserPermissions (minimumRank) {
     return (req, res, next) => {
         const { uid } = req.auth.token;
         if (!uid || typeof uid !== 'string') {
@@ -143,10 +73,21 @@ function verifyUserPermissions (minimumRole) {
             return;
         }
 
+        let context = req.header('X-user-context');
+        if (!context || typeof context !== 'string') {
+            res.status(httpCodes.BAD_REQUEST).json({ message: '\'X-user-context\' header must be provided' }).
+            end();
+
+            return;
+        }
+
+        context = context.trim();
         const { userContextDB } = db;
-        userContextDB.getContextsByUserIDAndMinimumRank(uid, minimumRole).
+        userContextDB.getContextByUserIDAndMinimumRank(uid, context, minimumRank).
         then((results) => {
-            if (results && results.length > 0) {
+            if (results && results.length > NO_ELEMENTS) {
+                req.auth.contextID = context;
+
                 return next();
             }
 
@@ -162,6 +103,4 @@ function verifyUserPermissions (minimumRole) {
 }
 
 module.exports.firebaseAuth = firebaseAuth;
-module.exports.verifyContentEditor = verifyContentEditor;
-module.exports.verifyAdmin = verifyAdmin;
 module.exports.verifyUserPermissions = verifyUserPermissions;

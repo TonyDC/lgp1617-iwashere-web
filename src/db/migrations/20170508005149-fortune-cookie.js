@@ -5,8 +5,8 @@ module.exports = {
     down: (queryInterface) => {
         return queryInterface.sequelize.query(`
             DROP TRIGGER timestamp_fortune_cookies_trigger ON fortune_cookies;
-            DROP TRIGGER fortune_cookie_content_editor_trigger ON fortune_cookies;
-            DROP FUNCTION fortune_cookie_content_editor_trigger_body();
+            -- DROP TRIGGER fortune_cookie_content_editor_trigger ON fortune_cookies;
+            -- DROP FUNCTION fortune_cookie_content_editor_trigger_body();
             DROP TABLE fortune_cookies;
         `);
     },
@@ -21,6 +21,8 @@ module.exports = {
                 updated_at TIMESTAMP
             );
             
+            /*
+            -- Deixar esta parte da lógica de negócio para a camada intermédia da aplicação
             CREATE FUNCTION fortune_cookie_content_editor_trigger_body() RETURNS trigger AS
                 $body$
                 DECLARE
@@ -41,6 +43,7 @@ module.exports = {
                 BEFORE INSERT OR UPDATE ON fortune_cookies
                 FOR EACH ROW
                 EXECUTE PROCEDURE fortune_cookie_content_editor_trigger_body();
+                */
             
             CREATE TRIGGER timestamp_fortune_cookies_trigger
                 BEFORE INSERT OR UPDATE ON fortune_cookies

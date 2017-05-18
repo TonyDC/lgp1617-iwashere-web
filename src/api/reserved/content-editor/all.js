@@ -5,6 +5,7 @@ const uploadAux = require('../../utils/upload_aux');
 const upload = require('../../middleware/upload');
 
 const httpCodes = require('http-status-codes');
+const validator = require('validator');
 
 const express = require('express');
 const router = express.Router();
@@ -24,22 +25,23 @@ const bodyTemplate = upload.fields([{ name: 'postFiles' }]);
 // Create new POI
 router.post('/', bodyTemplate, (req, res, next) => {
     const { body, files } = req;
-    const { name, description, address, latitude, longitude, poiTypeId, parentId, tags, context, userContext } = utils.trimStringProperties(body);
+    const { name, description, address, latitude, longitude, poiTypeId, parentId, tags, context } = utils.trimStringProperties(body);
     const tagList = utils.convertStringToArray(tags);
     const { postFiles } = files;
     const { uid: userID } = req.auth.token;
+    const { contextID: userContext } = req.auth;
 
-    if (typeof userID !== 'string' || typeof name !== 'string' || !tagList.length ||
-        typeof description !== 'string' || typeof address !== 'string' ||
+    if (typeof userID !== 'string' || typeof name !== 'string' || validator.isEmpty(name) || !tagList.length ||
+        typeof description !== 'string' || validator.isEmpty(description) || typeof address !== 'string' || validator.isEmpty(address) ||
         isNaN(parseFloat(latitude)) || isNaN(parseFloat(longitude)) ||
-        typeof context !== 'string' || typeof userContext !== 'string') {
+        typeof context !== 'string' || validator.isEmpty(context)) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
 
     const { userContextDB, poiDB } = db;
-    const primaryChecks = [userContextDB.verifyUserContext(userID, userContext), userContextDB.verifyContextUnderUserJurisdiction(userContext, context), poiDB.getPOITypeByID(poiTypeId)];
+    const primaryChecks = [userContextDB.verifyContextUnderUserJurisdiction(userContext, context), poiDB.getPOITypeByID(poiTypeId)];
     Promise.all(primaryChecks).
     then((results) => {
         if (utils.checkResultList(results, [primaryChecks.length], true)) {
@@ -75,21 +77,21 @@ router.post('/', bodyTemplate, (req, res, next) => {
                             return res.json({ poiId }).end();
                         }
 
-                        res.status(httpCodes.BAD_REQUEST).json({ message: 'error adding tags or content to poi' }).
+                        res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ message: 'error adding tags or content to poi' }).
                         end();
 
                         return null;
                     });
                 }
 
-                res.status(httpCodes.BAD_REQUEST).json({ message: 'error creating poi' }).
+                res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ message: 'error creating poi' }).
                 end();
 
                 return null;
             });
         }
 
-        res.status(httpCodes.BAD_REQUEST).json({ message: 'content_editor_id or poi_type_id not found' }).
+        res.status(httpCodes.BAD_REQUEST).json({ message: 'content_editor_id with invalid context jurisdiction / poi_type_id not found' }).
         end();
 
         return null;

@@ -2,13 +2,14 @@
 
 const db = require('../index');
 
-module.exports.getContextsByUserIDAndMinimumRank = (userID, minimumRank) => {
+module.exports.getContextByUserIDAndMinimumRank = (userID, contextID, minimumRank) => {
     // language=POSTGRES-PSQL
     return db.query(`SELECT * 
             FROM user_contexts INNER JOIN roles ON (user_contexts.role_id = roles.role_id) 
-            WHERE user_id = :userID AND rank <= :minimumRank AND user_contexts.active IS TRUE`,
+            WHERE user_id = :userID AND context_id = :contextID AND rank <= :minimumRank AND user_contexts.active IS TRUE`,
         {
             replacements: {
+                contextID,
                 minimumRank,
                 userID
             },

@@ -6,8 +6,8 @@ module.exports = {
         return queryInterface.sequelize.query(`
             DROP TRIGGER insert_route_text_trigger ON routes;
             DROP TRIGGER update_route_text_trigger ON routes;
-            DROP TRIGGER route_content_editor_trigger ON routes;
-            DROP FUNCTION route_content_editor_trigger_body();
+            -- DROP TRIGGER route_content_editor_trigger ON routes;
+            -- DROP FUNCTION route_content_editor_trigger_body();
             DROP FUNCTION route_description_trigger_body();
             
             DROP TRIGGER timestamp_routes_trigger ON routes;
@@ -36,7 +36,8 @@ module.exports = {
                 BEFORE INSERT OR UPDATE ON routes
                 FOR EACH ROW
                 EXECUTE PROCEDURE register_dates_trigger_body();
-                
+            /*
+             -- Deixar esta parte da lógica de negócio para a camada intermédia da aplicação
             CREATE FUNCTION route_description_trigger_body() RETURNS trigger AS
                 $body$
                 BEGIN
@@ -57,7 +58,7 @@ module.exports = {
                         RAISE EXCEPTION 'Content Editor with insufficient privileges';
                     END IF;
                     
-                    /*
+                    
                     -- Extra: testar se o contexto é válido, tendo em conta o contexto a que o user pertence
                     IF NOT EXISTS (
                           WITH RECURSIVE children(context_id, parent_id, name) AS (
@@ -70,7 +71,7 @@ module.exports = {
                     ) THEN 
                         RAISE EXCEPTION 'Content Editor does not belong to the given context';
                     END IF;
-                    */
+                    
                     
                     RETURN NEW;
                 END;
@@ -80,6 +81,7 @@ module.exports = {
                 BEFORE INSERT OR UPDATE ON routes
                 FOR EACH ROW
                 EXECUTE PROCEDURE route_content_editor_trigger_body();
+            */
                 
             CREATE TRIGGER update_route_text_trigger
                 BEFORE UPDATE ON routes

@@ -134,9 +134,9 @@ module.exports.convertStringToArray = (string) => {
 };
 
 /**
- * Trims the object's string properties
- * @param object
- * @returns {{}}
+ * Trims the object's shallow string properties
+ * @param {object} object the object to convert
+ * @returns {{}} the new object having its shallow string properties trimmed
  */
 module.exports.trimStringProperties = (object) => {
     const resultObject = {};
