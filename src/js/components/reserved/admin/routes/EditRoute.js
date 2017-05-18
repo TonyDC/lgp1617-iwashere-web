@@ -23,8 +23,11 @@ const mainStyle = {
 };
 
 export default class EditRoute extends Component {
+
     constructor(props) {
         super(props);
+
+        console.error('oiasdoiafosihaf');
         this.state = {
             routeInfoLoaded: false,
             routePoisLoaded: false
@@ -67,6 +70,10 @@ export default class EditRoute extends Component {
             if (!this.componentIsMounted) {
                 return;
             }
+
+            route.tags = route.tags.map((tag) => {
+                return parseInt(tag.tagId, DECIMAL_BASE);
+            });
 
             this.setState({
                 route,
@@ -166,13 +173,12 @@ export default class EditRoute extends Component {
             then((newRoute) => {
                 this.props.router.push(`/route/${newRoute.routeId}`);
             }).
-            catch(() => {
-                if (!this.componentIsMounted) {
-                    return;
+            catch((error) => {
+                console.error(error);
+                if (this.componentIsMounted) {
+                    this.setState({ inProgress: false });
+                    this.errorAlert = Alerts.createErrorAlert('Error while saving the changes to the route.');
                 }
-
-                this.setState({ inProgress: false });
-                this.errorAlert = Alerts.createErrorAlert('Error while creating the new route.');
             });
         }
     }
@@ -185,6 +191,8 @@ export default class EditRoute extends Component {
                                    router={this.props.router}
                                    title="Edit a route" />;
         }
+
+        console.log(this.state.route);
 
         return (
             <Paper zDepth={2} style={mainStyle}>

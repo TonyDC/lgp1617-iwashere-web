@@ -161,24 +161,22 @@ export default class CreatePostDialog extends Component {
     addTagToPost(tagId) {
         const { post } = this.state;
         const tagIndex = post.tags.indexOf(tagId);
-        if (tagIndex !== NOT_FOUND) {
-            return;
-        }
-        post.tags.push(tagId);
-        if (this.componentIsMounted) {
-            this.setState({ post });
+        if (tagIndex === NOT_FOUND) {
+            post.tags.push(tagId);
+            if (this.componentIsMounted) {
+                this.setState({ post });
+            }
         }
     }
 
     removeTagFromPost(tagId) {
         const { post } = this.state;
         const tagIndex = post.tags.indexOf(tagId);
-        if (tagIndex === NOT_FOUND) {
-            return;
-        }
-        post.tags.splice(tagIndex, ONE_ELEMENT);
-        if (this.componentIsMounted) {
-            this.setState({ post });
+        if (tagIndex !== NOT_FOUND) {
+            post.tags.splice(tagIndex, ONE_ELEMENT);
+            if (this.componentIsMounted) {
+                this.setState({ post });
+            }
         }
     }
 

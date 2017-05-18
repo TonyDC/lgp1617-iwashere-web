@@ -204,49 +204,50 @@ export default class ReservedRoute extends Component {
     }
 
     render() {
+        const route = this.state.route
+            ? this.state.route
+            : this.props.route;
+
+        const routePois = this.state.allPois.filter((poi) => {
+            return route.pois.indexOf(poi.poiId) !== NOT_FOUND;
+        });
+
         const routeMap = <RouteMap onPoiSelected={this.handleAddPoi.bind(this)}
                                    onMapChanged={this.fetchPOIs.bind(this)}
                                    poiList={this.state.allPois}
-                                   router={this.props.router} />;
-
-        const route = this.state.route
-                    ? this.state.route
-                    : this.props.route;
-
-        const poisSelected = this.state.allPois.filter((poi) => {
-            return route.pois.indexOf(poi.poiId) !== NOT_FOUND;
-        });
+                                   router={this.props.router}
+                                   zoom={0}/>;
 
         return (
             <div style={mainStyle}>
                 <div style={mainStyle}>
-                    <h3 style={titleStyle}>Create Route</h3>
+                    <h3 style={titleStyle}>{this.props.title}</h3>
                     <Divider style={titleDividerStyle}/>
-                    <TextField
-                        hintText="Name"
-                        floatingLabelText="Name of the route"
-                        fullWidth
-                        onChange={this.handleName.bind(this)}/>
-                    <TextField
-                        hintText="Description"
-                        floatingLabelText="Description of the route"
-                        fullWidth
-                        multiLine
-                        onChange={this.handleDescription.bind(this)}/>
-                    <Tags title="Add tag..." tags={route.tags}
+                    <TextField hintText="Name"
+                               floatingLabelText="Name of the route"
+                               fullWidth
+                               value={route.name}
+                               onChange={this.handleName.bind(this)}/>
+                    <TextField hintText="Description"
+                               floatingLabelText="Description of the route"
+                               fullWidth
+                               defaultValue={route.description}
+                               multiLine
+                               onChange={this.handleDescription.bind(this)}/>
+                    <Tags title="Add tag..."
+                          tags={route.tags}
                           onAddTag={this.handleAddTag.bind(this)}
                           onRemoveTag={this.handleRemoveTag.bind(this)}/>
-                    <TextField
-                        hintText="Additional information"
-                        floatingLabelText="Additional information"
-                        fullWidth
-                        multiLine
-                        onChange={ this.handleMetaInfo.bind(this) }/>
+                    <TextField hintText="Additional information"
+                               floatingLabelText="Additional information"
+                               fullWidth
+                               multiLine
+                               onChange={ this.handleMetaInfo.bind(this) }/>
                     <h5>Select points of interest</h5>
                     <Paper zDepth={2} style={mapContainerStyle}>
                         {routeMap}
                     </Paper>
-                    <POIList pois={poisSelected}
+                    <POIList pois={routePois}
                              onSelectMosaic={this.handleAddPoi.bind(this)}
                              onDismissMosaic={this.handleRemovePoi.bind(this)}
                              onMoveMosaic={this.handleReorderPoi.bind(this)}/>
@@ -254,7 +255,6 @@ export default class ReservedRoute extends Component {
                 <RaisedButton label="Submit"
                               style={buttonStyle}
                               onTouchTap={() => {
-                                  console.log('did');
                                   this.props.onSave(this.state.route);
                               }} />
             </div>

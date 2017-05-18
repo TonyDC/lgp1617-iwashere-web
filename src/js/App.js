@@ -28,7 +28,8 @@ import RouteRoutes from './routes/RouteRoutes';
 
 import AdminLogin from './components/reserved/AdminLogin';
 import AdminDashboard from './components/reserved/admin/ReservedPOI';
-import RouteDashboard from './components/reserved/admin/routes/CreateRoute';
+import CreateRoute from './components/reserved/admin/routes/CreateRoute';
+import EditRoute from './components/reserved/admin/routes/EditRoute';
 
 import Alerts from './components/utils/Alerts';
 
@@ -118,7 +119,10 @@ export default class App extends Component {
                         <Route path="dash" component={ AdminShell }>
                             <IndexRedirect to="a" />
                             <Route path="a" component={ AdminDashboard } />
-                            <Route path="b" component={ RouteDashboard } />
+                            <Route path="route" >
+                                <Route path="create" component={ CreateRoute } />
+                                <Route path=":id" component={ EditRoute } />
+                            </Route>
                             <Route path="c" component={ AdminDashboard } />
                         </Route>
                     </Route>
