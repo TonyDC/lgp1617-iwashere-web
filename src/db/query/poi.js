@@ -146,7 +146,7 @@ module.exports.searchNearbyPOI = (query, lat, lng) => {
 };
 
 module.exports.getNearbyPOIs = (lat, lng, limit) => {
-    // language=POSTGRES-SQL
+    // language=POSTGRES-PSQL
     return db.query(`WITH poi_ratings AS 
     (SELECT AVG(rating) AS rating, poi_id
     FROM (SELECT DISTINCT ON (user_id) poi_id, rating FROM poi_ratings
@@ -166,7 +166,7 @@ module.exports.getNearbyPOIs = (lat, lng, limit) => {
 };
 
 module.exports.getTopRatedPOIs = (limit) => {
-    // language=POSTGRES-SQL
+    // language=POSTGRES-PSQL
     return db.query(`WITH poi_ratings AS 
     (SELECT AVG(rating) AS rating, poi_id
     FROM (SELECT DISTINCT ON (user_id) poi_id, rating FROM poi_ratings
@@ -189,14 +189,15 @@ module.exports.getAllPOITypes = () => {
     });
 };
 
-module.exports.createPOI = (name, description, address, latitude, longitude, poiTypeId, parentId, editorId) => {
-    // language=POSTGRES-SQL
+module.exports.createPOI = (name, description, address, latitude, longitude, poiTypeId, editorId, contextId, parentId = null) => {
+    // language=POSTGRES-PSQL
     return db.query(`INSERT INTO 
-    pois(name, description, address, latitude, longitude, poi_type_id, parent_id, content_editor_id) 
-    VALUES (:name, :description, :address, :latitude, :longitude, :poiTypeId, :parentId, :editorId) 
+    pois(name, description, address, latitude, longitude, poi_type_id, parent_id, content_editor_id, context_id) 
+    VALUES (:name, :description, :address, :latitude, :longitude, :poiTypeId, :parentId, :editorId, :contextId) 
     RETURNING poi_id`, {
         replacements: {
             address,
+            contextId,
             description,
             editorId,
             latitude,
@@ -210,7 +211,7 @@ module.exports.createPOI = (name, description, address, latitude, longitude, poi
 };
 
 module.exports.setPOITags = (poiId, tagIdList) => {
-    // language=POSTGRES-SQL
+    // language=POSTGRES-PSQL
     return db.query(`
     DELETE FROM poi_tags WHERE poi_id = :poiId;
     INSERT INTO poi_tags(poi_id, tag_id)
@@ -236,7 +237,7 @@ module.exports.getContentEditorPOI = (userID, poiID) => {
 };
 
 module.exports.setPOIDeleted = (userID, poiID, deleted = true) => {
-    // language=POSTGRES-SQL
+    // language=POSTGRES-PSQL
     return db.query(`UPDATE ON pois
     SET deleted = :deleted
     WHERE poi_id = :poiID AND user_id = :userID`, {
@@ -252,7 +253,7 @@ module.exports.setPOIDeleted = (userID, poiID, deleted = true) => {
 module.exports.addPOIContent = (poiId, contentTypeId, urlXs, urlS, urlM, urlL) => {
     // language=POSTGRES-SQL
     return db.query(`INSERT INTO poi_contents(poi_id, content_type_id, url_xs, url_s, url_m, url_l) 
-    VALUES(:poiId, :contentTypeId, :urlXs, :urlS, :urlM, :urlL) RETURNING content_id`, {
+    VALUES(:poiId, :contentTypeId, :urlXs, :urlS, :urlM, :urlL) RETURNING poi_content_id`, {
         replacements: {
             contentTypeId,
             poiId,
@@ -266,7 +267,7 @@ module.exports.addPOIContent = (poiId, contentTypeId, urlXs, urlS, urlM, urlL) =
 };
 
 module.exports.setPOIContentDeleted = (poiContentIdList, deleted = true) => {
-    // language=POSTGRES-SQL
+    // language=POSTGRES-PSQL
     return db.query(`UPDATE poi_contents
     SET deleted = :deleted
     WHERE poi_content_id = ANY(:poiContentId)`, {
@@ -296,4 +297,3 @@ module.exports.updatePOI = (poiId, name, description, address, latitude, longitu
         type: db.QueryTypes.UPDATE
     });
 };
-

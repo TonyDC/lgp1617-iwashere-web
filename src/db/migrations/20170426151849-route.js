@@ -36,8 +36,7 @@ module.exports = {
                 BEFORE INSERT OR UPDATE ON routes
                 FOR EACH ROW
                 EXECUTE PROCEDURE register_dates_trigger_body();
-            /*
-             -- Deixar esta parte da lógica de negócio para a camada intermédia da aplicação
+                
             CREATE FUNCTION route_description_trigger_body() RETURNS trigger AS
                 $body$
                 BEGIN
@@ -46,6 +45,8 @@ module.exports = {
                 END;
                 $body$ LANGUAGE plpgsql;
                 
+            /*
+             -- Deixar esta parte da lógica de negócio para a camada intermédia da aplicação
             CREATE FUNCTION route_content_editor_trigger_body() RETURNS trigger AS
                 $body$
                 DECLARE

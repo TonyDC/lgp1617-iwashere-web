@@ -22,7 +22,7 @@ router.use('/admin', verifyUserPermissions(ADMIN_RANK));
 router.use('/admin', require('./admin'));
 
 // Check if user is su
-router.use('/admin', verifyUserPermissions(SU_RANK));
-router.use('/admin', require('./su'));
+router.use('/su', verifyUserPermissions(SU_RANK));
+router.use('/su', require('./su'));
 
 module.exports = router;

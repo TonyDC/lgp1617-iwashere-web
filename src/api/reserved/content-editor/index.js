@@ -3,6 +3,6 @@
 const express = require('express');
 const router = express.Router();
 
-router.use('/', require('./all'));
+router.use('/poi', require('./poi'));
 
 module.exports = router;

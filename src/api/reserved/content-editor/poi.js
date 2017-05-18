@@ -26,12 +26,12 @@ const bodyTemplate = upload.fields([{ name: 'postFiles' }]);
 router.post('/', bodyTemplate, (req, res, next) => {
     const { body, files } = req;
     const { name, description, address, latitude, longitude, poiTypeId, parentId, tags, context } = utils.trimStringProperties(body);
-    const tagList = utils.convertStringToArray(tags);
+    const tagList = JSON.parse(tags);
     const { postFiles } = files;
     const { uid: userID } = req.auth.token;
     const { contextID: userContext } = req.auth;
 
-    if (typeof userID !== 'string' || typeof name !== 'string' || validator.isEmpty(name) || !tagList.length ||
+    if (typeof userID !== 'string' || typeof name !== 'string' || validator.isEmpty(name) ||
         typeof description !== 'string' || validator.isEmpty(description) || typeof address !== 'string' || validator.isEmpty(address) ||
         isNaN(parseFloat(latitude)) || isNaN(parseFloat(longitude)) ||
         typeof context !== 'string' || validator.isEmpty(context)) {
@@ -45,7 +45,7 @@ router.post('/', bodyTemplate, (req, res, next) => {
     Promise.all(primaryChecks).
     then((results) => {
         if (utils.checkResultList(results, [primaryChecks.length], true)) {
-            const createPOI = [poiDB.createPOI(name, description, address, latitude, longitude, poiTypeId, parentId, userID)];
+            const createPOI = [poiDB.createPOI(name, description, address, latitude, longitude, poiTypeId, userID, context, parentId)];
             if (postFiles && postFiles.length > NO_ELEMENT_SIZE) {
                 createPOI.push(uploadAux.handleFileUpload(postFiles, userID));
             }
