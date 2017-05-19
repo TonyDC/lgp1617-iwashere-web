@@ -314,7 +314,7 @@ ReservedRoute.defaultProps = {
         routeId: null,
         tags: []
     },
-    zoom: 17
+    zoom: 10
 };
 
 ReservedRoute.propTypes = {
