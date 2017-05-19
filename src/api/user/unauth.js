@@ -98,7 +98,7 @@ router.post('/register-by-provider', (req, res, next) => {
                 res.sendStatus(httpStatus.CREATED).end();
             });
         } else {
-            res.sendStatus(httpStatus.NOT_MODIFIED).end();
+            res.end();
         }
 
         return null;
