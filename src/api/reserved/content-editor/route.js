@@ -10,6 +10,7 @@ const router = express.Router();
 
 const db = root_require('src/db/query');
 
+const DECIMAL_BASE = 10;
 const ZERO_INDEX = 0;
 const ONE_INDEX = 1;
 const NO_ELEMENT_SIZE = 0;
@@ -17,6 +18,8 @@ const ONE_SIZE = 1;
 
 // Create new Route
 router.post('/', (req, res, next) => {
+    console.error(req.body);
+    console.error(req);
     const { name, description, tags, pois, context } = utils.trimStringProperties(req.body);
     const { uid: userID } = req.auth.token;
     const { contextID: userContext } = req.auth;
@@ -24,26 +27,33 @@ router.post('/', (req, res, next) => {
     console.error(req.body);
     if (typeof userID !== 'string' || validator.isEmpty(userID) || typeof name !== 'string' || validator.isEmpty(name) ||
         typeof description !== 'string' || validator.isEmpty(description) || !tags || !pois || pois.length < ONE_SIZE ||
-        typeof context !== 'string' || validator.isEmpty(context)) {
+        typeof context === 'undefined' || validator.isEmpty(`${context}`)) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
-console.error('here');
+
         return;
     }
 
     const { userContextDB, poiDB, routeDB } = db;
-    const primaryChecks = [userContextDB.verifyContextUnderUserJurisdiction(userContext, context), poiDB.getPOIsByID(pois)];
+    const primaryChecks = [userContextDB.verifyContextUnderUserJurisdiction(userContext, context),
+        poiDB.getPOIsByID(utils.convertArrayToString(pois))];
     Promise.all(primaryChecks).
     then((results) => {
         if (utils.checkResultList(results, [primaryChecks.length], true) &&
             results[ONE_INDEX].length === pois.length) {
 
-            return routeDB.createRoute(name, description, userID).
+            return routeDB.createRoute(name, description, userID, context).
             then((routeCreationResults) => {
-                if (utils.checkResultList(routeCreationResults, [ONE_SIZE], true)) {
-                    const { routeId } = utils.convertObjectToCamelCase(routeCreationResults[ZERO_INDEX][ZERO_INDEX]);
-                    const createAdditionalRouteInfo = [routeDB.setRoutePOIs(routeId, tags)];
+                if (utils.checkResultList(routeCreationResults, [ONE_SIZE])) {
+                    const { routeId } = utils.convertObjectToCamelCase(routeCreationResults[ZERO_INDEX]);
+                    const poisList = pois.map((poiId) => {
+                        return parseInt(poiId, DECIMAL_BASE);
+                    });
+                    const tagsList = tags.map((tagId) => {
+                        return parseInt(tagId, DECIMAL_BASE);
+                    });
+                    const createAdditionalRouteInfo = [routeDB.setRoutePOIs(routeId, poisList)];
                     if (tags.length > NO_ELEMENT_SIZE) {
-                        createAdditionalRouteInfo.push(routeDB.setRouteTags(routeId, tags));
+                        createAdditionalRouteInfo.push(routeDB.setRouteTags(routeId, tagsList));
                     }
 
                     return Promise.all(createAdditionalRouteInfo).
@@ -94,7 +104,7 @@ router.put('/', (req, res, next) => {
 
     const { userContextDB, poiDB, routeDB } = db;
     const primaryChecks = [userContextDB.verifyContextUnderUserJurisdiction(userContext, context),
-        poiDB.getPOIsByID(pois), routeDB.getContentEditorRoute(userID, routeID)];
+        poiDB.getPOIsByID(utils.convertArrayToString(pois)), routeDB.getContentEditorRoute(userID, routeID)];
     Promise.all(primaryChecks).
     then((results) => {
         if (utils.checkResultList(results, [primaryChecks.length], true) &&
@@ -104,7 +114,7 @@ router.put('/', (req, res, next) => {
             then((routeUpdateResults) => {
                 if (utils.checkResultList(routeUpdateResults, [ONE_SIZE], true)) {
                     const { routeId } = utils.convertObjectToCamelCase(routeUpdateResults[ZERO_INDEX][ZERO_INDEX]);
-                    const updateAdditionalRouteInfo = [routeDB.setRoutePOIs(routeId, tags)];
+                    const updateAdditionalRouteInfo = [routeDB.setRoutePOIs(routeId, pois)];
                     if (tags.length > NO_ELEMENT_SIZE) {
                         updateAdditionalRouteInfo.push(routeDB.setRouteTags(routeId, tags));
                     }

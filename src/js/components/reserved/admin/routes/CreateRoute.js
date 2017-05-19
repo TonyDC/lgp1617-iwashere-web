@@ -53,8 +53,8 @@ export default class CreateRoute extends Component {
     }
 
     createRoute(route) {
-        const userLoggedIn = firebase.auth().currentUser;
-        if (this.componentIsMounted && userLoggedIn) {
+        const { currentUser } = firebase.auth();
+        if (this.componentIsMounted && currentUser) {
             if (!this.checkRoute(route)) {
                 return;
             }
@@ -65,12 +65,13 @@ export default class CreateRoute extends Component {
 
             this.setState({ inProgress: true });
 
-            userLoggedIn.getToken().then((token) => {
+            currentUser.getToken().then((token) => {
                 return fetch(API_ROUTE_URL, {
                     body: JSON.stringify(route),
                     headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'X-user-context': 1 // TODO obter o context seleccionado pelo utilizador
+                        'X-user-context': 1, // TODO obter o context seleccionado pelo utilizador
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
                     },
                     method: 'POST'
                 });

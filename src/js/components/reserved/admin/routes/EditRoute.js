@@ -148,19 +148,20 @@ export default class EditRoute extends Component {
     }
 
     saveRoute(route) {
-        const userLoggedIn = firebase.auth().currentUser;
-        if (this.componentIsMounted && userLoggedIn) {
+        const { currentUser } = firebase.auth();
+        if (this.componentIsMounted && currentUser) {
             if (!this.checkRoute(route)) {
                 return;
             }
 
             this.setState({ inProgress: true });
             route.context = 3; // TODO remove
-            userLoggedIn.getToken().then((token) => {
+            currentUser.getToken().then((token) => {
                 return fetch(API_ROUTE_URL, {
                     body: JSON.stringify(route),
                     headers: {
                         'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
                         'X-user-context': 1 // TODO obter o context seleccionado pelo utilizador
                     },
                     method: 'PUT'

@@ -27,7 +27,9 @@ module.exports.getPOIsByRouteID = (id) => {
 
 module.exports.getTagsByRouteID = (id) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT * FROM route_tags WHERE route_id = :id`, {
+    return db.query(`SELECT * 
+    FROM route_tags INNER JOIN tags ON route_tags.tag_id = tags.tag_id 
+    WHERE route_id = :id`, {
         replacements: { id },
         type: db.QueryTypes.SELECT
     });
@@ -76,13 +78,14 @@ module.exports.searchRoute = (query) => {
     });
 };
 
-module.exports.createRoute = (name, description, editorId) => {
+module.exports.createRoute = (name, description, editorId, contextId) => {
     // language=POSTGRES-SQL
     return db.query(`INSERT INTO 
-    routes(name, description, content_editor_id) 
-    VALUES (:name, :description, :editorId) 
+    routes(name, description, content_editor_id, context_id) 
+    VALUES (:name, :description, :editorId, :contextId) 
     RETURNING route_id`, {
         replacements: {
+            contextId,
             description,
             editorId,
             name
@@ -108,7 +111,7 @@ module.exports.setRouteTags = (routeId, tagIdList) => {
 module.exports.setRoutePOIs = (routeId, poiIdList) => {
     // language=POSTGRES-PSQL
     return db.query(`
-    DELETE FROM route_pois WHERE route_id = :routeId RETURNING poi_id;
+    DELETE FROM route_pois WHERE route_id = :routeId;
     INSERT INTO route_pois(route_id, poi_id, poi_order)
     VALUES (:routeId, unnest(array[:poiIdList]), generate_series(1, :poiListLength)) ON CONFLICT DO NOTHING RETURNING poi_id`, {
         replacements: {

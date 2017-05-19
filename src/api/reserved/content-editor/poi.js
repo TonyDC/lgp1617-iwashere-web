@@ -32,8 +32,8 @@ router.post('/', bodyTemplate, (req, res, next) => {
     const { contextID: userContext } = req.auth;
 
     if (typeof userID !== 'string' || typeof name !== 'string' || validator.isEmpty(name) ||
-        typeof description !== 'string' || validator.isEmpty(description) || typeof address !== 'string'
-        || validator.isEmpty(address) || isNaN(parseFloat(latitude)) || isNaN(parseFloat(longitude)) ||
+        typeof description !== 'string' || validator.isEmpty(description) || typeof address !== 'string' ||
+        validator.isEmpty(address) || isNaN(parseFloat(latitude)) || isNaN(parseFloat(longitude)) ||
         typeof context !== 'string' || validator.isEmpty(context)) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
