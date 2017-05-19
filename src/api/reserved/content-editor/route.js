@@ -18,13 +18,10 @@ const ONE_SIZE = 1;
 
 // Create new Route
 router.post('/', (req, res, next) => {
-    console.error(req.body);
-    console.error(req);
     const { name, description, tags, pois, context } = utils.trimStringProperties(req.body);
     const { uid: userID } = req.auth.token;
     const { contextID: userContext } = req.auth;
 
-    console.error(req.body);
     if (typeof userID !== 'string' || validator.isEmpty(userID) || typeof name !== 'string' || validator.isEmpty(name) ||
         typeof description !== 'string' || validator.isEmpty(description) || !tags || !pois || pois.length < ONE_SIZE ||
         typeof context === 'undefined' || validator.isEmpty(`${context}`)) {
@@ -89,34 +86,40 @@ router.post('/', (req, res, next) => {
 
 // Update Route
 router.put('/', (req, res, next) => {
-    const { routeID, name, description, tags, pois, context } = utils.trimStringProperties(req.body);
+    const { routeId, name, description, tags, pois, context } = utils.trimStringProperties(req.body);
     const { uid: userID } = req.auth.token;
     const { contextID: userContext } = req.auth;
 
-    console.error(req.body);
     if (typeof userID !== 'string' || validator.isEmpty(userID) || typeof name !== 'string' || validator.isEmpty(name) ||
         typeof description !== 'string' || validator.isEmpty(description) || !tags || !pois || pois.length < ONE_SIZE ||
-        typeof context !== 'string' || validator.isEmpty(context)) {
+        typeof routeId === 'undefined' || validator.isEmpty(`${routeId}`) ||
+        typeof context === 'undefined' || validator.isEmpty(`${context}`)) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
-        console.error('here');
+
         return;
     }
 
     const { userContextDB, poiDB, routeDB } = db;
     const primaryChecks = [userContextDB.verifyContextUnderUserJurisdiction(userContext, context),
-        poiDB.getPOIsByID(utils.convertArrayToString(pois)), routeDB.getContentEditorRoute(userID, routeID)];
+        poiDB.getPOIsByID(utils.convertArrayToString(pois)), routeDB.getContentEditorRoute(userID, routeId)];
     Promise.all(primaryChecks).
     then((results) => {
         if (utils.checkResultList(results, [primaryChecks.length], true) &&
             results[ONE_INDEX].length === pois.length) {
 
-            return routeDB.updateRoute(routeID, name, description).
+            return routeDB.updateRoute(routeId, name, description).
             then((routeUpdateResults) => {
-                if (utils.checkResultList(routeUpdateResults, [ONE_SIZE], true)) {
-                    const { routeId } = utils.convertObjectToCamelCase(routeUpdateResults[ZERO_INDEX][ZERO_INDEX]);
-                    const updateAdditionalRouteInfo = [routeDB.setRoutePOIs(routeId, pois)];
+                if (utils.checkResultList(routeUpdateResults, [ONE_SIZE])) {
+                    const poisList = pois.map((poiId) => {
+                        return parseInt(poiId, DECIMAL_BASE);
+                    });
+                    const tagsList = tags.map((tagId) => {
+                        return parseInt(tagId, DECIMAL_BASE);
+                    });
+                    
+                    const updateAdditionalRouteInfo = [routeDB.setRoutePOIs(routeId, poisList)];
                     if (tags.length > NO_ELEMENT_SIZE) {
-                        updateAdditionalRouteInfo.push(routeDB.setRouteTags(routeId, tags));
+                        updateAdditionalRouteInfo.push(routeDB.setRouteTags(routeId, tagsList));
                     }
 
                     return Promise.all(updateAdditionalRouteInfo).

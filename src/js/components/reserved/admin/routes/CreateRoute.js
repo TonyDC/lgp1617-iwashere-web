@@ -61,7 +61,6 @@ export default class CreateRoute extends Component {
 
             // TODO change this:
             route.context = 3;
-            console.error(route);
 
             this.setState({ inProgress: true });
 
@@ -69,9 +68,9 @@ export default class CreateRoute extends Component {
                 return fetch(API_ROUTE_URL, {
                     body: JSON.stringify(route),
                     headers: {
+                        'Authorization': `Bearer ${token}`,
                         'X-user-context': 1, // TODO obter o context seleccionado pelo utilizador
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
+                        'Content-Type': 'application/json'
                     },
                     method: 'POST'
                 });
@@ -90,7 +89,6 @@ export default class CreateRoute extends Component {
                 if (!this.componentIsMounted) {
                     return;
                 }
-                console.log(error);
 
                 this.setState({ inProgress: false });
                 this.errorAlert = Alerts.createErrorAlert('Error while creating the new route.');

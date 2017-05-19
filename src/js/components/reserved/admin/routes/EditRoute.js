@@ -14,7 +14,7 @@ import 'styles/map.scss';
 
 const API_ROUTE_URL = '/api/reserved/content-editor/route/';
 const DECIMAL_BASE = 10;
-const TWO_SIZE = 2;
+const ONE_SIZE = 1;
 
 const mainStyle = {
     margin: 20,
@@ -27,7 +27,6 @@ export default class EditRoute extends Component {
     constructor(props) {
         super(props);
 
-        console.error('oiasdoiafosihaf');
         this.state = {
             routeInfoLoaded: false,
             routePoisLoaded: false
@@ -117,7 +116,12 @@ export default class EditRoute extends Component {
             }
 
             const { route } = this.state;
-            route.pois = routePois;
+            route.pois = routePois.map((poi) => {
+                return `${poi.poiId}`;
+            });
+
+            console.log(route);
+
             this.setState({
                 route,
                 routePoisLoaded: true
@@ -139,8 +143,8 @@ export default class EditRoute extends Component {
             Alerts.createErrorAlert("A description for the route must be provided.");
             errorFound = true;
         }
-        if (!route.pois || route.pois.length < TWO_SIZE) {
-            Alerts.createErrorAlert("At least two points of interest must be associated to the route.");
+        if (!route.pois || route.pois.length < ONE_SIZE) {
+            Alerts.createErrorAlert("At least one point of interest must be associated to the route.");
             errorFound = true;
         }
 

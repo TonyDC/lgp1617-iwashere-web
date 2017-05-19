@@ -127,7 +127,7 @@ module.exports.getContentEditorRoute = (userID, routeID) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT *
     FROM routes
-    WHERE route_id = :routeID AND user_id = :userId`, {
+    WHERE route_id = :routeID AND content_editor_id = :userID`, {
         replacements: {
             routeID,
             userID
@@ -139,7 +139,7 @@ module.exports.getContentEditorRoute = (userID, routeID) => {
 module.exports.updateRoute = (routeId, name, description) => {
     // language=POSTGRES-SQL
     return db.query(`UPDATE routes
-    SET name = :name AND description = :description 
+    SET name = :name, description = :description 
     WHERE route_id = :routeId
     RETURNING route_id`, {
         replacements: {
