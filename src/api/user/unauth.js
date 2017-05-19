@@ -57,6 +57,7 @@ router.post('/register', (req, res) => {
         return;
     }
 
+    const { userDB } = db;
     firebaseAdmin.auth().createUser({
         disabled: false,
         displayName: username,
@@ -65,12 +66,14 @@ router.post('/register', (req, res) => {
         password
     }).
     then((user) => {
-        // See the UserRecord reference doc for the contents of userRecord.
-        res.send({
-            ok: true,
-            user
-        }).
-        end();
+        userDB.insertUser(user.uid).
+        then(() => {
+            // See the UserRecord reference doc for the contents of userRecord.
+            res.send({
+                ok: true,
+                user
+            }).end();
+        });
     }).
     catch((error) => {
         res.status(httpStatus.BAD_REQUEST).send({
