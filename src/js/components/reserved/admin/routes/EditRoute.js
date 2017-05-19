@@ -111,21 +111,17 @@ export default class EditRoute extends Component {
             return response.json();
         }).
         then((routePois) => {
-            if (!this.componentIsMounted) {
-                return;
+            if (this.componentIsMounted) {
+                const {route} = this.state;
+                route.pois = routePois.map((poi) => {
+                    return `${poi.poiId}`;
+                });
+
+                this.setState({
+                    route,
+                    routePoisLoaded: true
+                });
             }
-
-            const { route } = this.state;
-            route.pois = routePois.map((poi) => {
-                return `${poi.poiId}`;
-            });
-
-            console.log(route);
-
-            this.setState({
-                route,
-                routePoisLoaded: true
-            });
         });
     }
 
@@ -181,8 +177,7 @@ export default class EditRoute extends Component {
             then((newRoute) => {
                 this.props.router.push(`/route/${newRoute.routeId}`);
             }).
-            catch((error) => {
-                console.error(error);
+            catch(() => {
                 if (this.componentIsMounted) {
                     this.setState({ inProgress: false });
                     this.errorAlert = Alerts.createErrorAlert('Error while saving the changes to the route.');
@@ -191,16 +186,50 @@ export default class EditRoute extends Component {
         }
     }
 
+    deleteRoute(route, callback) {
+        const { currentUser } = firebase.auth();
+        if (this.componentIsMounted && currentUser) {
+            this.setState({ inProgress: true });
+            route.context = 3; // TODO remove
+
+            currentUser.getToken().then((token) => {
+                return fetch(`${API_ROUTE_URL}${route.routeId}/${route.deleted}`, {
+                    body: JSON.stringify({ context: route.context }),
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'X-user-context': 1 // TODO obter o context seleccionado pelo utilizador
+                    },
+                    method: 'POST'
+                });
+            }).
+            then((response) => {
+                if (response.status >= httpCodes.BAD_REQUEST || response.status === httpCodes.NO_CONTENT) {
+                    return Promise.reject(new Error(response.statusText));
+                }
+
+                return callback(true);
+            }).
+            catch(() => {
+                if (this.componentIsMounted) {
+                    this.setState({ inProgress: false });
+                    this.errorAlert = Alerts.createErrorAlert("Error while setting the route's visibility.");
+                }
+
+                return callback(false);
+            });
+        }
+    }
+
     render() {
         let routeForm = <Loader color="#012935" className="loader"/>;
         if (this.state.routeInfoLoaded && this.state.routePoisLoaded) {
             routeForm = <RouteForm onSave={this.saveRoute.bind(this)}
+                                   onDelete={this.deleteRoute.bind(this)}
                                    route={this.state.route}
                                    router={this.props.router}
                                    title="Edit a route" />;
         }
-
-        console.log(this.state.route);
 
         return (
             <Paper zDepth={2} style={mainStyle}>

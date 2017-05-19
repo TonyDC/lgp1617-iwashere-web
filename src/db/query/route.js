@@ -139,7 +139,7 @@ module.exports.getContentEditorRoute = (userID, routeID) => {
 module.exports.updateRoute = (routeId, name, description) => {
     // language=POSTGRES-SQL
     return db.query(`UPDATE routes
-    SET name = :name, description = :description 
+    SET name = :name, description = :description
     WHERE route_id = :routeId
     RETURNING route_id`, {
         replacements: {
@@ -151,15 +151,14 @@ module.exports.updateRoute = (routeId, name, description) => {
     });
 };
 
-module.exports.setRouteDeleted = (userID, routeID, deleted = true) => {
+module.exports.setRouteDeleted = (routeID, deleted = true) => {
     // language=POSTGRES-PSQL
     return db.query(`UPDATE routes
     SET deleted = :deleted
-    WHERE poi_id = :poiID AND user_id = :userID`, {
+    WHERE route_id = :routeID`, {
         replacements: {
             deleted,
-            routeID,
-            userID
+            routeID
         },
         type: db.QueryTypes.UPDATE
     });

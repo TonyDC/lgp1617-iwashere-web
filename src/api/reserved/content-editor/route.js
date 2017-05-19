@@ -101,7 +101,7 @@ router.put('/', (req, res, next) => {
 
     const { userContextDB, poiDB, routeDB } = db;
     const primaryChecks = [userContextDB.verifyContextUnderUserJurisdiction(userContext, context),
-        poiDB.getPOIsByID(utils.convertArrayToString(pois)), routeDB.getContentEditorRoute(userID, routeId)];
+        poiDB.getPOIsByID(utils.convertArrayToString(pois)), routeDB.getRouteDetailByID(routeId, true)];
     Promise.all(primaryChecks).
     then((results) => {
         if (utils.checkResultList(results, [primaryChecks.length], true) &&
@@ -116,7 +116,7 @@ router.put('/', (req, res, next) => {
                     const tagsList = tags.map((tagId) => {
                         return parseInt(tagId, DECIMAL_BASE);
                     });
-                    
+
                     const updateAdditionalRouteInfo = [routeDB.setRoutePOIs(routeId, poisList)];
                     if (tags.length > NO_ELEMENT_SIZE) {
                         updateAdditionalRouteInfo.push(routeDB.setRouteTags(routeId, tagsList));
@@ -153,25 +153,27 @@ router.put('/', (req, res, next) => {
     });
 });
 
-// Set Route delted
+// Set Route deleted
 router.post('/:routeID/:deleted', (req, res, next) => {
-    const { routeID, deleted } = req.params;
-    if (!routeID || typeof deleted === 'undefined') {
+    const { context } = utils.trimStringProperties(req.body);
+    const { routeID, deleted } = utils.trimStringProperties(req.params);
+    const { uid: userID } = req.auth.token;
+    const { contextID: userContext } = req.auth;
+
+    if (typeof userID !== 'string' || validator.isEmpty(userID) ||
+        typeof routeID === 'undefined' || validator.isEmpty(`${routeID}`) ||
+        typeof context === 'undefined' || validator.isEmpty(`${context}`)) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
 
-    const userID = req.auth.token.uid;
-
-    const { routeDB, userDB } = db;
-    const primaryChecks = [userDB.getContentEditorByUID(userID),
+    const { userContextDB, routeDB } = db;
+    const primaryChecks = [userContextDB.verifyContextUnderUserJurisdiction(userContext, context),
         routeDB.getRouteDetailByID(routeID, true)];
-    primaryChecks.
+    Promise.all(primaryChecks).
     then((results) => {
-
         if (utils.checkResultList(results, [primaryChecks.length], true)) {
-
             return routeDB.setRouteDeleted(routeID, deleted).
             then(() => {
                 res.end();
@@ -187,4 +189,5 @@ router.post('/:routeID/:deleted', (req, res, next) => {
         next(error);
     });
 });
+
 module.exports = router;

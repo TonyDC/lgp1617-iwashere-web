@@ -8,6 +8,9 @@ import Alerts from '../../../utils/Alerts';
 import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
+import Checkbox from 'material-ui/Checkbox';
+import Visibility from 'material-ui/svg-icons/action/visibility';
+import VisibilityOff from 'material-ui/svg-icons/action/visibility-off';
 import RaisedButton from 'material-ui/RaisedButton';
 
 import 'styles/utils.scss';
@@ -16,12 +19,16 @@ import 'styles/map.scss';
 const ONE_ELEMENT = 1;
 const NOT_FOUND = -1;
 
-const buttonStyle = { marginLeft: 20 };
+const buttonStyle = {
+    float: "right",
+    margin: 20
+};
 
 const mainStyle = {
     margin: 20,
     paddingBottom: 10,
-    paddingTop: 5
+    paddingTop: 5,
+    width: "70%"
 };
 
 const titleStyle = { marginLeft: 30 };
@@ -33,8 +40,7 @@ const titleDividerStyle = {
 
 const mapContainerStyle = {
     height: 400,
-    position: 'relative',
-    width: 400
+    position: 'relative'
 };
 
 export default class ReservedRoute extends Component {
@@ -194,6 +200,21 @@ export default class ReservedRoute extends Component {
         }
     }
 
+    handleDeleteStatus(event, deletedStatus) {
+        if (this.componentIsMounted) {
+            const { route } = this.state;
+            route.deleted = !deletedStatus;
+
+            this.props.onDelete(route, (success) => {
+                if (!success) {
+                    route.deleted = !route.deleted;
+                }
+
+                this.setState({ route });
+            });
+        }
+    }
+
     handleMetaInfo(event) {
         event.preventDefault();
         if (this.componentIsMounted) {
@@ -218,11 +239,26 @@ export default class ReservedRoute extends Component {
                                    router={this.props.router}
                                    zoom={0}/>;
 
+        let visibilityElement = null;
+        if (route.routeId) {
+            const visibilityLabel = route.deleted
+                                  ? "Hidden"
+                                  : "Visible";
+            visibilityElement =
+                <Checkbox
+                    label={visibilityLabel}
+                    checked={!route.deleted}
+                    checkedIcon={<Visibility />}
+                    uncheckedIcon={<VisibilityOff />}
+                    onCheck={this.handleDeleteStatus.bind(this)}/>;
+        }
+
         return (
             <div style={mainStyle}>
                 <div style={mainStyle}>
                     <h3 style={titleStyle}>{this.props.title}</h3>
                     <Divider style={titleDividerStyle}/>
+                    {visibilityElement}
                     <TextField hintText="Name"
                                floatingLabelText="Name of the route"
                                fullWidth
@@ -252,11 +288,14 @@ export default class ReservedRoute extends Component {
                              onDismissMosaic={this.handleRemovePoi.bind(this)}
                              onMoveMosaic={this.handleReorderPoi.bind(this)}/>
                 </div>
-                <RaisedButton label="Submit"
-                              style={buttonStyle}
-                              onTouchTap={() => {
-                                  this.props.onSave(this.state.route);
-                              }} />
+
+                <div>
+                    <RaisedButton label="Save"
+                                  style={buttonStyle}
+                                  onTouchTap={() => {
+                                      this.props.onSave(this.state.route);
+                                  }} />
+                </div>
             </div>
         );
     }
@@ -280,6 +319,7 @@ ReservedRoute.defaultProps = {
 
 ReservedRoute.propTypes = {
     center: PropTypes.object.isRequired,
+    onDelete: PropTypes.func.isRequired,
     onSave: PropTypes.func.isRequired,
     route: PropTypes.object.isRequired,
     router: PropTypes.object,
