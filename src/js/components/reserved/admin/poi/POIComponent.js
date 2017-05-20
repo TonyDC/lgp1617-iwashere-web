@@ -12,15 +12,12 @@ import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import IconButton from 'material-ui/IconButton';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
-import CommunicationLocationOn from 'material-ui/svg-icons/communication/location-on';
-import { blue500 as POIColor } from 'material-ui/styles/colors';
 
 import { GOOGLE_MAPS_API_KEY } from '../../../../../../config/index';
-import Pin from '../../../map/Pin';
 
+import SelectedLocation from '../../../map/SelectedLocation';
 import Tags from '../../../utils/MyTags';
 import Alerts from '../../../utils/Alerts';
 
@@ -67,21 +64,6 @@ const mapStyle = {
 const dropzoneContainerStyle = {
     position: 'relative',
     minHeight: 100
-};
-
-const SelectedLocation = (props) => {
-    return <Pin lat={ props.lat } lng={ props.lng }>
-        <div className="pin">
-            <IconButton>
-                <CommunicationLocationOn color={ POIColor }/>
-            </IconButton>
-        </div>
-    </Pin>;
-};
-
-SelectedLocation.propTypes = {
-    lat: PropTypes.number.isRequired,
-    lng: PropTypes.number.isRequired
 };
 
 export default class ReservedPOI extends Component {
@@ -534,5 +516,6 @@ ReservedPOI.propTypes = {
         lat: PropTypes.number,
         lng: PropTypes.number
     }),
+    router: PropTypes.object.isRequired,
     zoom: PropTypes.number
 };

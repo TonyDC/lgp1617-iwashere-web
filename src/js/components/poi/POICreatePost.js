@@ -57,9 +57,8 @@ export default class CreatePostDialog extends Component {
     }
 
     createPost() {
-        let userLoggedIn = null;
-        if (!this.componentIsMounted || !this.checkPost(this.state.post) ||
-            !(userLoggedIn = firebase.auth().currentUser)) {
+        const { currentUser } = firebase.auth();
+        if (!this.componentIsMounted || !this.checkPost(this.state.post) || !currentUser) {
             return;
         }
 
@@ -70,7 +69,7 @@ export default class CreatePostDialog extends Component {
         nProgress.start();
         this.setState({ inProgress: true });
 
-        userLoggedIn.getToken().then((token) => {
+        currentUser.getToken().then((token) => {
             const { description, tags, files } = this.state.post;
             const { poiId } = this.props;
 

@@ -213,15 +213,18 @@
 
                     return response.json();
                 }).then((message) => {
-                    console.log(message);
                     if (!message || typeof message !== 'object' || !message.fortune)
                         return;
 
                     const placeholder = document.getElementById('fortune-cookie-content');
-                    placeholder.innerHTML = message.fortune;
+                    if (placeholder) {
+                        placeholder.innerHTML = message.fortune;
+                    }
 
                     const wrapper = document.getElementById('fortune-cookie');
-                    wrapper.style.opacity = 1;
+                    if (wrapper) {
+                        wrapper.style.opacity = 1;
+                    }
                 }).catch((error) => {
                     // Fail silently
                     console.error(error);

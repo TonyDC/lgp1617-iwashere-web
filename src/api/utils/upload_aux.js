@@ -20,8 +20,8 @@ const INTERNAL_ERROR_MSG_CODE = 2;
 /**
  * Creates a file on firebase under ./<uid>, returning its url and contentTypeId.
  * If the file is of IMAGE_TYPE, several files are created with different sizes.
- * @param uid the uid of the file's owner
- * @return {function( {}, func)}
+ * @param {string} uid the uid of the file's owner
+ * @return {function( {}, func)} function handler
  */
 function processFiles (uid) {
     return (fileItem, callback) => {
