@@ -58,6 +58,7 @@ export default class POIDetail extends Component {
             throw new Error('Bad query parameter');
         }
 
+        // TODO URL escape query
         const entrypoint = typeof lat === 'undefined' || typeof lng === 'undefined'
             ? `/api/poi/search?query=${query}`
             : `/api/poi/search?query=${query}&lat=${lat}&lng=${lng}`;

@@ -6,6 +6,12 @@ import AdminNavigator from './AdminNavigator';
 
 import 'styles/utils.scss';
 
+const childrenStyle = {
+    // Required so that the animation can work properly
+    position: 'absolute',
+    width: '100%'
+};
+
 export default class AdminShell extends Component {
 
     render() {
@@ -13,11 +19,10 @@ export default class AdminShell extends Component {
             <div className="wrapper-fill">
                 <AdminNavigator router={this.props.router}/>
                 <RouteTransition
-
                     pathname={this.props.location.pathname}
-                    {...presets.pop}
+                    {...presets.fade}
                 >
-                    <div style={{position: 'absolute', width: '100%'}}>
+                    <div style={childrenStyle}>
                         {this.props.children}
                     </div>
                 </RouteTransition>

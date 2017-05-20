@@ -1,25 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
-import Helmet from 'react-helmet';
 import GoogleMapReact from 'google-map-react';
 import Dropzone from 'react-dropzone';
-import firebase from 'firebase';
 import httpCodes from 'http-status-codes';
-import nProgress from 'nprogress';
-
-import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import IconButton from 'material-ui/IconButton';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
-import CommunicationLocationOn from 'material-ui/svg-icons/communication/location-on';
-import { blue500 as POIColor } from 'material-ui/styles/colors';
 
 import { GOOGLE_MAPS_API_KEY } from '../../../../../../config/index';
-import Pin from '../../../map/Pin';
 
 import SelectedLocation from '../../../map/SelectedLocation';
 import Tags from '../../../utils/MyTags';
@@ -29,6 +19,13 @@ import 'styles/utils.scss';
 import 'styles/map.scss';
 import 'styles/dropzone.scss';
 
+const POI_TYPE_FIRST_ID = 1;
+const ZERO_INDEX = 0;
+const NO_ELEMENTS = 0;
+const ONE_ELEMENT = 1;
+const FIRST_ELEMENT_INDEX = 0;
+const POI_TYPE_LANG_SEPARATOR = ';';
+
 const buttonStyle = { marginLeft: 20 };
 
 const mainStyle = {
@@ -37,9 +34,7 @@ const mainStyle = {
     paddingTop: 5
 };
 
-const titleStyle = {
-    marginLeft: 30
-};
+const titleStyle = { marginLeft: 30 };
 
 const titleDividerStyle = {
     marginLeft: 30,
@@ -49,7 +44,7 @@ const titleDividerStyle = {
 const mapContainerStyle = {
     position: 'relative',
     height: 400,
-    width: 400,
+    width: 'auto',
     marginBottom: 40
 };
 
@@ -64,8 +59,286 @@ const dropzoneContainerStyle = {
 
 export default class POIForm extends Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            address: '',
+            addressError: false,
+            description: '',
+            descriptionError: false,
+            dropzoneActive: false,
+            files: [],
+            location: null,
+            metaInfo: '',
+            name: '',
+            nameError: false,
+            selectedType: -1,
+            selectedTypeError: false,
+            submitInProgress: false,
+            tags: [],
+            types: [
+                {
+                    name: 'Fetching...;A buscar...',
+                    poiTypeId: -1
+                },
+                {
+                    name: 'No types found;Sem tipos de POI',
+                    poiTypeId: -2
+                },
+                {
+                    name: 'Error fetching types;Erro ao buscar os tipos',
+                    poiTypeId: -3
+                }
+            ]
+        };
+        const { initialValues } = props;
+        if (initialValues) {
+            this.state = { ...initialValues };
+        }
+    }
+
+    componentDidMount() {
+        this.componentIsMounted = true;
+        this.fetchPOITypes();
+    }
+
+    componentWillUnmount() {
+        this.componentIsMounted = false;
+    }
+
+    fetchPOITypes() {
+        fetch('/api/poi/types').
+        then((response) => {
+            if (response.status >= httpCodes.BAD_REQUEST || response.status === httpCodes.NO_CONTENT) {
+                return Promise.reject(new Error(response.statusText));
+            }
+
+            return response.json();
+        }).
+        then((types) => {
+            if (!types) {
+                return Promise.reject(new Error('Invalid type object'));
+            }
+
+            if (!this.componentIsMounted) {
+                return null;
+            }
+
+            if (types.length === NO_ELEMENTS) {
+                this.setState({ selectedType: -2 });
+            } else {
+                this.setState({
+                    selectedType: 1,
+                    types
+                });
+            }
+
+            return null;
+        }).
+        catch(() => {
+            if (this.componentIsMounted) {
+                this.setState({ selectedType: -3 });
+            }
+        });
+    }
+
+    handleName(event) {
+        event.preventDefault();
+        this.setState({
+            name: event.target.value,
+            nameError: false
+        });
+    }
+
+    handleDescription(event) {
+        event.preventDefault();
+        this.setState({
+            description: event.target.value,
+            descriptionError: false
+        });
+    }
+
+    handleAddress(event) {
+        event.preventDefault();
+        this.setState({
+            address: event.target.value,
+            addressError: false
+        });
+    }
+
+    handleMetaInfo(event) {
+        event.preventDefault();
+        this.setState({ metaInfo: event.target.value });
+    }
+
+    onGoogleAPILoaded({ map, maps }) {
+        this.map = map;
+        this.maps = maps;
+
+        map.addListener('click', (param) => {
+            const { lat, lng } = param.latLng;
+            this.setState({
+                location: {
+                    lat: lat(),
+                    lng: lng()
+                }
+            });
+        });
+    }
+
+    handleAddTag(tag) {
+        const cloneTagsArray = this.state.tags.slice(ZERO_INDEX);
+        cloneTagsArray.push(tag);
+        this.setState({ tags: cloneTagsArray });
+    }
+
+    handleRemoveTag(tag) {
+        const cloneTagsArray = this.state.tags.slice(ZERO_INDEX);
+        this.setState({ tags: cloneTagsArray.splice(tag, ONE_ELEMENT) });
+    }
+
+    handlePOIType(event, index, selectedType) {
+        this.setState({
+            selectedType,
+            selectedTypeError: false
+        });
+    }
+
+    onDragEnter() {
+        this.setState({ dropzoneActive: true });
+    }
+
+    onDragLeave() {
+        this.setState({ dropzoneActive: false });
+    }
+
+    onDrop(files, rejected) {
+        this.setState({ dropzoneActive: false });
+        if (this.uploadErrorAlert) {
+            Alerts.close(this.uploadErrorAlert);
+            this.uploadErrorAlert = null;
+        }
+
+        if (rejected && rejected.length > NO_ELEMENTS) {
+            rejected.forEach((file) => {
+                window.URL.revokeObjectURL(file.preview);
+            });
+            this.uploadErrorAlert = Alerts.createErrorAlert('Some files were rejected. Only .png or .jpeg files are accepted');
+        }
+
+        const cloneFilesArray = this.state.files.slice(ZERO_INDEX);
+        // TODO index files array by file hash
+        files.forEach((file) => {
+            cloneFilesArray.push(file);
+        });
+        this.setState({ files: cloneFilesArray });
+    }
+
+    checkParams() {
+        let error = false;
+        let { name, address, description } = this.state;
+        const { selectedType, location } = this.state;
+
+        name = name.trim();
+        if (name.length === NO_ELEMENTS) {
+            this.setState({
+                name,
+                nameError: 'Name must not be empty'
+            });
+            error = true;
+        }
+
+        address = address.trim();
+        if (address.length === NO_ELEMENTS) {
+            this.setState({
+                address,
+                addressError: 'Address must not be empty'
+            });
+            error = true;
+        }
+
+        description = description.trim();
+        if (description.length === NO_ELEMENTS) {
+            this.setState({
+                description,
+                descriptionError: 'Description must not be empty'
+            });
+            error = true;
+        }
+
+        if (selectedType < POI_TYPE_FIRST_ID) {
+            this.setState({ selectedTypeError: 'Bad selected type' });
+            error = true;
+        }
+
+        if (location === null) {
+            if (this.locationErrorAlert) {
+                Alerts.close(this.locationErrorAlert);
+                this.locationErrorAlert = null;
+            }
+            this.locationErrorAlert = Alerts.createErrorAlert('A location must be chosen for the POI in the map');
+            error = true;
+        }
+
+        return !error;
+    }
+
+    handleSubmit(event) {
+        event.preventDefault();
+
+        this.setState({ submitInProgress: true });
+
+        if (!this.checkParams()) {
+            return;
+        }
+
+        const { onSave } = this.props;
+        if (typeof onSave === 'function') {
+            onSave(this.state).
+            then(() => {
+                if (this.componentIsMounted) {
+                    this.setState({ submitInProgress: false });
+                    this.resetFields();
+                }
+
+                Alerts.createInfoAlert('POI created successfully');
+            }).
+            catch(() => {
+                if (this.componentIsMounted) {
+                    this.setState({ submitInProgress: false });
+                }
+
+                if (this.formFetchError) {
+                    Alerts.close(this.formFetchError);
+                    this.formFetchError = null;
+                }
+                this.formFetchError = Alerts.createErrorAlert('Error in submitting the information. Please, try again later.');
+            });
+        }
+    }
+
+    resetFields() {
+        this.setState({
+            address: '',
+            addressError: false,
+            description: '',
+            descriptionError: false,
+            dropzoneActive: false,
+            files: [],
+            location: null,
+            metaInfo: '',
+            name: '',
+            nameError: false,
+            selectedType: POI_TYPE_FIRST_ID,
+            selectedTypeError: false,
+            tags: []
+        });
+    }
+
+    // TODO campo para colocar o parent do POI
+    // TODO campo para colocar o contexto do utilizador
     render() {
-        const { location, metaInfo, name, nameError, address, addressError, description, descriptionError, selectedType, selectedTypeError } = this.state;
+        const { location, metaInfo, name, nameError, address, addressError, description, descriptionError, selectedType, selectedTypeError, submitInProgress } = this.state;
 
         let selectedLocationPin = null;
         if (location) {
@@ -77,8 +350,6 @@ export default class POIForm extends Component {
 
         return (<div style={mainStyle}>
             <form onSubmit={ this.handleSubmit.bind(this) }>
-                <h3 style={titleStyle}>Create POI</h3>
-                <Divider style={titleDividerStyle}/>
                 <TextField
                     id="name"
                     hintText="Name"
@@ -121,7 +392,7 @@ export default class POIForm extends Component {
                     floatingLabelText="POI Type"
                     value={selectedType}
                     errorText={ selectedTypeError? selectedTypeError : null }
-
+                    fullWidth
                     onChange={ this.handlePOIType.bind(this) }
                     disabled={ this.state.selectedType < POI_TYPE_FIRST_ID }
                 >
@@ -156,7 +427,6 @@ export default class POIForm extends Component {
                     <Dropzone className="custom-dropzone" style={dropzoneContainerStyle} onDrop={this.onDrop.bind(this)} accept="image/jpeg, image/png" onDragEnter={this.onDragEnter.bind(this)} onDragLeave={this.onDragLeave.bind(this)}>
                         { this.state.dropzoneActive && <div className="overlay">Drop files...</div> }
                         <div className="dropzone-info">Drag and drop files here (png, jpeg)</div>
-                        { /* this.state.rejected && <p className="dropzone-info">Files were rejected. Only .png or .jpeg files are accepted</p> */ }
                         { this.state.files.length === NO_ELEMENTS && <p className="dropzone-info">No files to upload yet</p> }
                         {
                             this.state.files &&
@@ -180,12 +450,30 @@ export default class POIForm extends Component {
                         }
                     </Dropzone>
                 </Paper>
-
-                <RaisedButton type="submit" label="Submit" primary style={buttonStyle} onTouchTap={ this.handleSubmit.bind(this) }/>
+                { /* onTouchTap is not required: the button is inside a form, with a defined submit behaviour */ }
+                <RaisedButton type="submit" label="Submit" primary disabled={ submitInProgress } />
             </form>
         </div>
         );
     }
 }
 
-POIForm.propTypes = { editPOI: PropTypes.string };
+POIForm.defaultProps = {
+    center: {
+        lat: 41.14792237,
+        lng: -8.61129427
+    },
+    zoom: 17
+};
+
+POIForm.propTypes = {
+    center: PropTypes.shape({
+        lat: PropTypes.number,
+        lng: PropTypes.number
+    }),
+    zoom: PropTypes.number,
+    initialValues: PropTypes.object,
+    onSave: PropTypes.func,
+    onEdit: PropTypes.func,
+    onDelete: PropTypes.func
+};

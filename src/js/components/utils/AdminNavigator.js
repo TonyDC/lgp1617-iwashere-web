@@ -20,9 +20,9 @@ export default class AdminNavigator extends Component {
         super(props);
         const { pathname } = props.router.location;
         this.paths = [
-            '/reserved/dash/a',
-            '/reserved/dash/b',
-            '/reserved/dash/c'
+            '/reserved/dash/poi',
+            '/reserved/dash/route',
+            '/reserved/dash/user'
         ];
         const index = this.paths.indexOf(pathname.toLowerCase());
         this.state = {
