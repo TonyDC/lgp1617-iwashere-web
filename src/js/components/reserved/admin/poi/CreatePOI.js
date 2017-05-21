@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import nProgress from 'nprogress';
 import firebase from 'firebase';
 import httpCodes from 'http-status-codes';
 
@@ -33,10 +32,8 @@ export default class POIArea extends Component {
     }
 
     handleSave(data) {
-        nProgress.start();
         const { currentUser } = firebase.auth();
         if (!currentUser) {
-            nProgress.done();
             throw new Error('Bad user object');
         }
 
@@ -73,14 +70,10 @@ export default class POIArea extends Component {
                 return Promise.reject(new Error(response.statusText));
             }
 
-            nProgress.done();
-
             // The API will return the ID of the newly created POI
             return null;
         }).
         catch((err) => {
-            nProgress.done();
-
             return Promise.reject(new Error(err));
         });
     }

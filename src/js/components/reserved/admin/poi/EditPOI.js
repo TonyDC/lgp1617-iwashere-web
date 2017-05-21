@@ -5,12 +5,15 @@ import firebase from 'firebase';
 import Alerts from '../../../utils/Alerts';
 import httpCodes from 'http-status-codes';
 import Helmet from 'react-helmet';
+import { GridLoader as Loader } from 'halogen';
 
 import Paper from 'material-ui/Paper';
 
 import POIForm from './POIForm';
 
 import { checkFetchResponse, authenticatedFetch } from '../../../utils/functions';
+
+import 'styles/utils.scss';
 
 const mainStyle = {
     margin: 20,
@@ -38,13 +41,15 @@ export default class EditPOI extends Component {
     fetchPOIInfo() {
         const { router } = this.props;
         const { poiID } = router.params;
+        nProgress.start();
         fetch(`/api/poi/${encodeURIComponent(poiID)}`).
         then(checkFetchResponse).
         then((json) => {
-            const { name, address, description, poiTypeId, tags, latitude, longitude } = json;
+            const { name, address, description, poiTypeId, tags, latitude, longitude, deleted } = json;
             this.setState({
                 poi: {
                     address,
+                    deleted,
                     description,
                     location: {
                         lat: latitude,
@@ -65,25 +70,31 @@ export default class EditPOI extends Component {
         }).
         then(checkFetchResponse).
         then((json) => {
+            console.log(json);
             this.setState({
                 fetchInProgress: false,
-                filesOnFirebase: json
+                poi: {
+                    ...this.state.poi,
+                    filesOnFirebase: json
+                }
             });
         }).
         catch((err) => {
             console.error(err);
             Alerts.createErrorAlert('Error while fetching POI information. Please, try again later.');
             this.props.router.push('/reserved/dash/poi');
+        }).
+        then(() => {
+            nProgress.done();
         });
     }
 
     handleSave(data) {
-        nProgress.start();
         const { currentUser } = firebase.auth();
         if (!currentUser) {
-            nProgress.done();
             throw new Error('Bad user object');
         }
+        nProgress.start();
 
         return currentUser.getToken().then((token) => {
             const { poiID } = this;
@@ -164,6 +175,10 @@ export default class EditPOI extends Component {
                     onDelete={ this.handleDelete.bind(this) }
                 />
             );
+        } else {
+            poiForm = (<div className="hor-align">
+                <Loader color="#012935" className="loader"/>
+            </div>);
         }
 
         return (

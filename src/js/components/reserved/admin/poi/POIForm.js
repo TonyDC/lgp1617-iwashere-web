@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import GoogleMapReact from 'google-map-react';
 import Dropzone from 'react-dropzone';
 import httpCodes from 'http-status-codes';
+import nProgress from 'nprogress';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -26,6 +27,8 @@ const NO_ELEMENTS = 0;
 const ONE_ELEMENT = 1;
 const FIRST_ELEMENT_INDEX = 0;
 const POI_TYPE_LANG_SEPARATOR = ';';
+
+const DECIMAL_RADIX = 10;
 
 const buttonStyle = { marginLeft: 20 };
 
@@ -131,10 +134,13 @@ export default class POIForm extends Component {
             if (types.length === NO_ELEMENTS) {
                 this.setState({ selectedType: -2 });
             } else {
-                const { initialValues } = this.props.initialValues;
-                let initialSelectedType = 1;
+                const { initialValues } = this.props;
+                let initialSelectedType = POI_TYPE_FIRST_ID;
                 if (initialValues) {
-                    initialSelectedType = initialValues.selectedType;
+                    initialSelectedType = parseInt(initialValues.selectedType, DECIMAL_RADIX);
+                    if (isNaN(initialSelectedType)) {
+                        initialSelectedType = POI_TYPE_FIRST_ID;
+                    }
                 }
                 this.setState({
                     selectedType: initialSelectedType,
@@ -312,6 +318,7 @@ export default class POIForm extends Component {
             throw new Error('onSave function not defined');
         }
 
+        nProgress.start();
         onSave(this.state).
         then(() => {
             if (this.componentIsMounted) {
@@ -330,6 +337,7 @@ export default class POIForm extends Component {
             if (this.componentIsMounted) {
                 this.setState({ submitInProgress: false });
             }
+            nProgress.done();
         });
     }
 
@@ -351,18 +359,22 @@ export default class POIForm extends Component {
         onDelete(!deleted).
         then(() => {
             Alerts.createInfoAlert('POI deleted');
+            if (this.componentIsMounted) {
+                this.setState({
+                    deleted: !deleted,
+                    submitInProgress: false
+                });
+            }
         }).
         catch(() => {
+            if (this.componentIsMounted) {
+                this.setState({ submitInProgress: false });
+            }
             if (this.formFetchError) {
                 Alerts.close(this.formFetchError);
                 this.formFetchError = null;
             }
             this.formFetchError = Alerts.createErrorAlert('An error has occurred while toggling the POI deleted status');
-        }).
-        then(() => {
-            if (this.componentIsMounted) {
-                this.setState({ submitInProgress: false });
-            }
         });
     }
 
@@ -453,7 +465,7 @@ export default class POIForm extends Component {
                     <Dropzone className="custom-dropzone" style={dropzoneContainerStyle} onDrop={this.onDrop.bind(this)} accept="image/jpeg, image/png" onDragEnter={this.onDragEnter.bind(this)} onDragLeave={this.onDragLeave.bind(this)}>
                         { this.state.dropzoneActive && <div className="overlay">Drop files...</div> }
                         <div className="dropzone-info">Drag and drop files here (png, jpeg)</div>
-                        { this.state.files.length === NO_ELEMENTS && <p className="dropzone-info">No files to upload yet</p> }
+                        { this.state.files.length === NO_ELEMENTS && this.state.filesOnFirebase.length === NO_ELEMENTS && <p className="dropzone-info">No files to upload yet</p> }
                         {
                             this.state.files &&
                             this.state.files.map((file, index) => {
@@ -495,7 +507,7 @@ export default class POIForm extends Component {
                                     });
                                 }}>
                                             <div className="dropzone-thumbnail-container">
-                                                <Image url={urlXs} className="dropzone-thumbnail"/>
+                                                <Image url={urlXs} className="dropzone-thumbnail" withLoader/>
                                                 <i className="fa fa-trash dropzone-delete-icon" aria-hidden="true"/>
                                             </div>
                                 </span>);
@@ -524,9 +536,9 @@ POIForm.propTypes = {
         lat: PropTypes.number,
         lng: PropTypes.number
     }),
-    zoom: PropTypes.number,
     initialValues: PropTypes.object,
-    onSave: PropTypes.func,
+    onDelete: PropTypes.func,
     onEdit: PropTypes.func,
-    onDelete: PropTypes.func
+    onSave: PropTypes.func,
+    zoom: PropTypes.number
 };

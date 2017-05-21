@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import firebase from 'firebase';
 import PropTypes from 'prop-types';
+import { GridLoader as Loader } from 'halogen';
+
+import 'styles/utils.scss';
 
 export default class Image extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = { imageStatus: false };
 
         // Create a reference with an initial file path and name
         this.storage = firebase.storage();
@@ -19,6 +22,22 @@ export default class Image extends Component {
 
     componentWillUnmount() {
         this.componentIsMounted = false;
+    }
+
+    handleImageLoaded() {
+        if (!this.componentIsMounted) {
+            return;
+        }
+
+        this.setState({ imageStatus: true });
+    }
+
+    handleImageErrored() {
+        if (!this.componentIsMounted) {
+            return;
+        }
+
+        this.setState({ error: true });
     }
 
     handleImageDownload() {
@@ -35,17 +54,49 @@ export default class Image extends Component {
             }
         }).
         catch(() => {
-            this.setState({ error: true });
+            if (this.componentIsMounted) {
+                this.setState({ error: true });
+            }
         });
     }
 
     render() {
-        if (this.state.url) {
-            return <img src={this.state.url} {...this.props} />;
+        const { url: propsURL, style, className, withLoader } = this.props;
+        const additionalProps = {
+            className,
+            style
+        };
+        const { url: stateURL, imageStatus, error } = this.state;
+        let loader = null;
+        if (withLoader) {
+            if (error) {
+                loader = <i className="fa fa-exclamation-triangle" aria-hidden="true"/>;
+            } else if (!imageStatus) {
+                loader = <Loader color="#012935" className="loader"/>;
+            }
         }
 
-        return <div {...this.props} />;
+        if (propsURL) {
+            return (
+                <span>
+                    { stateURL && !error &&
+                    <img src={stateURL}
+                         {...additionalProps}
+                         onLoad={this.handleImageLoaded.bind(this)}
+                         onError={this.handleImageErrored.bind(this)}/>
+                    }
+                    { loader }
+                </span>
+            );
+        }
+
+        return <div {...additionalProps} />;
     }
 }
 
-Image.propTypes = { url: PropTypes.string };
+Image.propTypes = {
+    className: PropTypes.string,
+    style: PropTypes.object,
+    url: PropTypes.string,
+    withLoader: PropTypes.bool
+};
