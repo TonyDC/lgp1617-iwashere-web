@@ -30,7 +30,8 @@ const POI_TYPE_LANG_SEPARATOR = ';';
 
 const DECIMAL_RADIX = 10;
 
-const buttonStyle = { marginLeft: 20 };
+const buttonContainerStyle = { marginTop: 20 };
+const buttonStyle = { marginRight: 20 };
 
 const mainStyle = {
     margin: 20,
@@ -415,7 +416,7 @@ export default class POIForm extends Component {
             if (deleted) {
                 label = "Show POI";
             }
-            deleteButton = <RaisedButton label={label} secondary disabled={ submitInProgress } onTouchTap={ this.handleDelete.bind(this) } />;
+            deleteButton = <RaisedButton style={buttonStyle} label={label} secondary disabled={ submitInProgress } onTouchTap={ this.handleDelete.bind(this) } />;
         }
 
         return (<div style={mainStyle}>
@@ -447,7 +448,7 @@ export default class POIForm extends Component {
                         })
                     }
                 </SelectField>
-                <Tags title="Tags" tags={ this.state.tags } onAddTag={ this.handleAddTag.bind(this) } onRemoveTag={ this.handleRemoveTag.bind(this) } fullWidth/>
+                <Tags title="Add tags..." hintText="Tags" tags={ this.state.tags } onAddTag={ this.handleAddTag.bind(this) } onRemoveTag={ this.handleRemoveTag.bind(this) } fullWidth/>
                 <h5>Select location (click on the map to select a location)</h5>
                 <Paper zDepth={2} style={mapContainerStyle}>
                     <GoogleMapReact defaultCenter={this.props.center}
@@ -516,8 +517,10 @@ export default class POIForm extends Component {
                     </Dropzone>
                 </Paper>
                 { /* onTouchTap is not required: the button is inside a form, with a defined submit behaviour */ }
-                <RaisedButton label="Submit" primary disabled={ submitInProgress } onTouchTap={ this.handleSubmit.bind(this) }/>
+                <div style={buttonContainerStyle}>
+                <RaisedButton style={buttonStyle} label="Submit" primary disabled={ submitInProgress } onTouchTap={ this.handleSubmit.bind(this) }/>
                 { deleteButton }
+                </div>
         </div>
         );
     }

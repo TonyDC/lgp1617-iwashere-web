@@ -50,7 +50,10 @@ export default class Image extends Component {
         this.storage.refFromURL(`gs://iwashere-mobile.appspot.com/${this.props.url}`).getDownloadURL().
         then((url) => {
             if (this.componentIsMounted) {
-                this.setState({ url });
+                this.setState({
+                    imageStatus: true,
+                    url
+                });
             }
         }).
         catch(() => {
@@ -67,27 +70,23 @@ export default class Image extends Component {
             style
         };
         const { url: stateURL, imageStatus, error } = this.state;
-        let loader = null;
-        if (withLoader) {
-            if (error) {
-                loader = <i className="fa fa-exclamation-triangle" aria-hidden="true"/>;
-            } else if (!imageStatus) {
-                loader = <Loader color="#012935" className="loader"/>;
-            }
-        }
 
         if (propsURL) {
-            return (
-                <span>
-                    { stateURL && !error &&
-                    <img src={stateURL}
-                         {...additionalProps}
-                         onLoad={this.handleImageLoaded.bind(this)}
-                         onError={this.handleImageErrored.bind(this)}/>
-                    }
-                    { loader }
-                </span>
-            );
+            if (imageStatus) {
+                return <img src={stateURL}
+                            {...additionalProps}
+                            onLoad={this.handleImageLoaded.bind(this)}
+                            onError={this.handleImageErrored.bind(this)}/>;
+            } else if (withLoader) {
+                let loader = null;
+                if (error) {
+                    loader = <i className="fa fa-exclamation-triangle" aria-hidden="true"/>;
+                } else if (!imageStatus) {
+                    loader = <Loader color="#012935" className="loader"/>;
+                }
+
+                return <div {...additionalProps}>{ loader }</div>;
+            }
         }
 
         return <div {...additionalProps} />;
