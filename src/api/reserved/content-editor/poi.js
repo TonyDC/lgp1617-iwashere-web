@@ -74,6 +74,7 @@ router.post('/', bodyTemplate, (req, res, next) => {
     if (typeof userID !== 'string' || typeof name !== 'string' || validator.isEmpty(name) ||
         typeof description !== 'string' || validator.isEmpty(description) || typeof address !== 'string' ||
         validator.isEmpty(address) || isNaN(parseFloat(latitude)) || isNaN(parseFloat(longitude)) ||
+        typeof poiTypeId !== 'string' ||
         typeof context !== 'string' || validator.isEmpty(context)) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
@@ -165,6 +166,7 @@ router.put('/:poiID', bodyTemplate, (req, res, next) => {
     if (typeof userID !== 'string' || typeof name !== 'string' || validator.isEmpty(name) ||
         typeof description !== 'string' || validator.isEmpty(description) || typeof address !== 'string' ||
         validator.isEmpty(address) || isNaN(parseFloat(latitude)) || isNaN(parseFloat(longitude)) ||
+        typeof poiTypeId !== 'string' ||
         typeof context !== 'string' || validator.isEmpty(context)) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
@@ -183,7 +185,7 @@ router.put('/:poiID', bodyTemplate, (req, res, next) => {
         }
 
         // check if current context is under user jurisdiction
-        const { contextId } = utils.convertObjectToCamelCase(results[ZERO_INDEX][TWO_INDEX]);
+        const { contextId } = utils.convertObjectToCamelCase(results[TWO_INDEX][ZERO_INDEX]);
         userContextDB.verifyContextUnderUserJurisdiction(userContext, contextId).
         then((result) => {
             if (!result || result.length < ONE_SIZE) {
@@ -194,23 +196,24 @@ router.put('/:poiID', bodyTemplate, (req, res, next) => {
             }
 
             const POIUpdatePromises = [poiDB.updatePOI(poiID, name, description, address, latitude, longitude, poiTypeId, parentId)];
+            const filesToUpload = poiFiles && poiFiles.length > NO_ELEMENT_SIZE;
+            if (filesToUpload) {
+                POIUpdatePromises.push(uploadAux.handleFileUpload(poiFiles, userID));
+            }
+
             if (typeof tagList === 'object' && Array.isArray(tagList) && tagList.length > NO_ELEMENT_SIZE) {
                 POIUpdatePromises.push(poiDB.setPOITags(poiID, tagList));
             }
 
             if (typeof poiContentsToRemove === 'object' && Array.isArray(poiContentsToRemove) && poiContentsToRemove.length > NO_ELEMENT_SIZE) {
-                POIUpdatePromises.push(poiDB.setPOIContentDeleted(poiID, poiContentsToRemove));
-            }
-
-            if (poiFiles && poiFiles.length > NO_ELEMENT_SIZE) {
-                POIUpdatePromises.push(uploadAux.handleFileUpload(poiFiles, userID));
+                POIUpdatePromises.push(poiDB.setPOIContentDeleted(poiContentsToRemove));
             }
 
             return Promise.all(POIUpdatePromises).
             then((poiUpdateResults) => {
                 const newPOIFiles = [];
-                if (poiFiles && poiFiles.length > NO_ELEMENT_SIZE) {
-                    poiUpdateResults[THREE_INDEX].forEach((fileCreated) => {
+                if (filesToUpload) {
+                    poiUpdateResults[ONE_INDEX].forEach((fileCreated) => {
                         const { contentUrls, contentTypeId } = fileCreated.fileInfo;
                         const urlXs = contentUrls[ZERO_INDEX];
                         const urlS = contentUrls[ONE_INDEX];

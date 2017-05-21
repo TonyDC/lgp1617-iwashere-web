@@ -153,6 +153,14 @@ function processFiles (uid) {
     };
 }
 
+/**
+ * Utility function to handle file upload to Firebase.
+ * It organizes the files according to the user ID.
+ * It unlinks the files after processing.
+ * @param {array} files An array of objects describing the files metadata
+ * @param {string} userId the user ID
+ * @returns {Promise} A Promise whose payload is an array of upload statuses
+ */
 module.exports.handleFileUpload = (files, userId) => {
     return new Promise((fulfill, reject) => {
         async.map(files, processFiles(userId), (error, response) => {

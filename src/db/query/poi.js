@@ -280,7 +280,7 @@ module.exports.setPOIContentDeleted = (poiContentIdList, deleted = true) => {
     // language=POSTGRES-PSQL
     return db.query(`UPDATE poi_contents
     SET deleted = :deleted
-    WHERE poi_content_id = ANY(:poiContentId)`, {
+    WHERE poi_content_id = ANY(array[:poiContentIdList]::bigint[])`, {
         replacements: {
             deleted,
             poiContentIdList
@@ -289,12 +289,12 @@ module.exports.setPOIContentDeleted = (poiContentIdList, deleted = true) => {
     });
 };
 
-module.exports.updatePOI = (poiId, name, description, address, latitude, longitude, poiTypeId, parentId) => {
+module.exports.updatePOI = (poiId, name, description, address, latitude, longitude, poiTypeId, parentId = null) => {
     // language=POSTGRES-SQL
     return db.query(`UPDATE pois SET 
-    name = :name AND description =  :description AND address = :address AND latitude = :latitude AND longitude = :longitude
-    AND poi_type_id = :poiTypeId AND parent_id = parentId 
-    RETURNING poi_id`, {
+    name = :name, description = :description, address = :address, latitude = :latitude, longitude = :longitude,
+    poi_type_id = :poiTypeId, parent_id = :parentId 
+    WHERE poi_id = :poiId`, {
         replacements: {
             address,
             description,
@@ -302,6 +302,7 @@ module.exports.updatePOI = (poiId, name, description, address, latitude, longitu
             longitude,
             name,
             parentId,
+            poiId,
             poiTypeId
         },
         type: db.QueryTypes.UPDATE
