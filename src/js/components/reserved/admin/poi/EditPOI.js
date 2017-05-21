@@ -4,12 +4,13 @@ import nProgress from 'nprogress';
 import firebase from 'firebase';
 import Alerts from '../../../utils/Alerts';
 import httpCodes from 'http-status-codes';
-
 import Helmet from 'react-helmet';
 
 import Paper from 'material-ui/Paper';
 
 import POIForm from './POIForm';
+
+import { checkFetchResponse, authenticatedFetch } from '../../../utils/functions';
 
 const mainStyle = {
     margin: 20,
@@ -38,13 +39,7 @@ export default class EditPOI extends Component {
         const { router } = this.props;
         const { poiID } = router.params;
         fetch(`/api/poi/${encodeURIComponent(poiID)}`).
-        then((response) => {
-            if (response.status >= httpCodes.BAD_REQUEST) {
-                return Promise.reject(new Error('Error while fetching POI information'));
-            }
-
-            return response.json();
-        }).
+        then(checkFetchResponse).
         then((json) => {
             const { name, address, description, poiTypeId, tags, latitude, longitude } = json;
             this.setState({
@@ -67,6 +62,13 @@ export default class EditPOI extends Component {
             this.poiID = poiID;
 
             return fetch(`/api/poi/media/${encodeURIComponent(poiID)}`);
+        }).
+        then(checkFetchResponse).
+        then((json) => {
+            this.setState({
+                fetchInProgress: false,
+                filesOnFirebase: json
+            });
         }).
         catch((err) => {
             console.error(err);
@@ -135,9 +137,19 @@ export default class EditPOI extends Component {
         });
     }
 
-    handleDelete() {
-        const { poiID } = this.props.router.params;
-        // TODO
+    handleDelete(toDelete) {
+        const { poiID } = this;
+        if (!poiID) {
+            throw new Error('Bad POI ID');
+        }
+
+        if (typeof toDelete !== 'boolean') {
+            throw new Error('Bad parameter (it should be a boolean value)');
+        }
+
+        // TODO obter o context seleccionado pelo utilizador
+        return authenticatedFetch(`/api/reserved/content-editor/poi/${poiID}`, JSON.stringify({ deleted: toDelete }), { 'X-user-context': 1 }, 'POST').
+        then(checkFetchResponse);
     }
 
     render() {
@@ -159,7 +171,6 @@ export default class EditPOI extends Component {
                 <Helmet>
                     <title>#iwashere - Edit POI</title>
                 </Helmet>
-
                 { poiForm }
             </Paper>
         );

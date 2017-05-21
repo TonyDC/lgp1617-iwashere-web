@@ -186,9 +186,10 @@ router.put('/:poiID', bodyTemplate, (req, res, next) => {
     });
 });
 
-router.post('/:poiID/:deleted', (req, res, next) => {
-    const { poiID, deleted } = req.params;
-    if (!poiID || typeof deleted === 'undefined') {
+router.post('/:poiID', (req, res, next) => {
+    const { poiID } = req.params;
+    const { deleted } = req.body;
+    if (!poiID || typeof deleted !== 'boolean') {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;

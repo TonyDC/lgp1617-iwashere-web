@@ -14,6 +14,7 @@ import { GOOGLE_MAPS_API_KEY } from '../../../../../../config/index';
 import SelectedLocation from '../../../map/SelectedLocation';
 import Tags from '../../../utils/MyTags';
 import Alerts from '../../../utils/Alerts';
+import Image from '../../../utils/Image';
 
 import 'styles/utils.scss';
 import 'styles/map.scss';
@@ -68,6 +69,8 @@ export default class POIForm extends Component {
             descriptionError: false,
             dropzoneActive: false,
             files: [],
+            filesDeleted: [],
+            filesOnFirebase: [],
             location: null,
             metaInfo: '',
             name: '',
@@ -93,7 +96,8 @@ export default class POIForm extends Component {
         };
         const { initialValues } = props;
         if (initialValues) {
-            this.state = { ...initialValues };
+            // Component did not render yet
+            Object.assign(this.state, initialValues);
         }
     }
 
@@ -127,8 +131,13 @@ export default class POIForm extends Component {
             if (types.length === NO_ELEMENTS) {
                 this.setState({ selectedType: -2 });
             } else {
+                const { initialValues } = this.props.initialValues;
+                let initialSelectedType = 1;
+                if (initialValues) {
+                    initialSelectedType = initialValues.selectedType;
+                }
                 this.setState({
-                    selectedType: 1,
+                    selectedType: initialSelectedType,
                     types
                 });
             }
@@ -184,6 +193,12 @@ export default class POIForm extends Component {
                 }
             });
         });
+
+        // Center map if location is provided (edit mode)
+        const { location } = this.state;
+        if (location) {
+            map.setCenter(location);
+        }
     }
 
     handleAddTag(tag) {
@@ -287,34 +302,68 @@ export default class POIForm extends Component {
         event.preventDefault();
 
         this.setState({ submitInProgress: true });
-
         if (!this.checkParams()) {
             return;
         }
 
         const { onSave } = this.props;
-        if (typeof onSave === 'function') {
-            onSave(this.state).
-            then(() => {
-                if (this.componentIsMounted) {
-                    this.setState({ submitInProgress: false });
-                    this.resetFields();
-                }
-
-                Alerts.createInfoAlert('POI created successfully');
-            }).
-            catch(() => {
-                if (this.componentIsMounted) {
-                    this.setState({ submitInProgress: false });
-                }
-
-                if (this.formFetchError) {
-                    Alerts.close(this.formFetchError);
-                    this.formFetchError = null;
-                }
-                this.formFetchError = Alerts.createErrorAlert('Error in submitting the information. Please, try again later.');
-            });
+        if (typeof onSave !== 'function') {
+            this.setState({ submitInProgress: false });
+            throw new Error('onSave function not defined');
         }
+
+        onSave(this.state).
+        then(() => {
+            if (this.componentIsMounted) {
+                this.resetFields();
+            }
+            Alerts.createInfoAlert('POI created successfully');
+        }).
+        catch(() => {
+            if (this.formFetchError) {
+                Alerts.close(this.formFetchError);
+                this.formFetchError = null;
+            }
+            this.formFetchError = Alerts.createErrorAlert('Error in submitting the information. Please, try again later.');
+        }).
+        then(() => {
+            if (this.componentIsMounted) {
+                this.setState({ submitInProgress: false });
+            }
+        });
+    }
+
+    handleDelete(event) {
+        event.preventDefault();
+        this.setState({ submitInProgress: true });
+        const { onDelete } = this.props;
+        if (typeof onDelete !== 'function') {
+            this.setState({ submitInProgress: false });
+            throw new Error('onDelete function not defined');
+        }
+
+        const { deleted } = this.state;
+        if (typeof deleted !== 'boolean') {
+            this.setState({ submitInProgress: false });
+            throw new Error('Edit mode not activated');
+        }
+
+        onDelete(!deleted).
+        then(() => {
+            Alerts.createInfoAlert('POI deleted');
+        }).
+        catch(() => {
+            if (this.formFetchError) {
+                Alerts.close(this.formFetchError);
+                this.formFetchError = null;
+            }
+            this.formFetchError = Alerts.createErrorAlert('An error has occurred while toggling the POI deleted status');
+        }).
+        then(() => {
+            if (this.componentIsMounted) {
+                this.setState({ submitInProgress: false });
+            }
+        });
     }
 
     resetFields() {
@@ -338,7 +387,7 @@ export default class POIForm extends Component {
     // TODO campo para colocar o parent do POI
     // TODO campo para colocar o contexto do utilizador
     render() {
-        const { location, metaInfo, name, nameError, address, addressError, description, descriptionError, selectedType, selectedTypeError, submitInProgress } = this.state;
+        const { location, metaInfo, name, nameError, address, addressError, description, descriptionError, selectedType, selectedTypeError, submitInProgress, deleted } = this.state;
 
         let selectedLocationPin = null;
         if (location) {
@@ -348,53 +397,30 @@ export default class POIForm extends Component {
             );
         }
 
+        let deleteButton = null;
+        if (this.props.onDelete) {
+            let label = "Hide POI";
+            if (deleted) {
+                label = "Show POI";
+            }
+            deleteButton = <RaisedButton label={label} secondary disabled={ submitInProgress } onTouchTap={ this.handleDelete.bind(this) } />;
+        }
+
         return (<div style={mainStyle}>
-            <form onSubmit={ this.handleSubmit.bind(this) }>
-                <TextField
-                    id="name"
-                    hintText="Name"
-                    floatingLabelText="Name of Point of Interest"
-                    fullWidth
-                    errorText={ nameError? nameError : null }
-                    value={name}
-                    onChange={ this.handleName.bind(this) }
+                <TextField id="name" hintText="Name" floatingLabelText="Name of Point of Interest" fullWidth
+                    errorText={ nameError? nameError : null } value={name} onChange={ this.handleName.bind(this) }
                 />
-                <TextField
-                    id="address"
-                    hintText="Address"
-                    floatingLabelText="Address of Point of Interest"
-                    fullWidth
-                    multiLine
-                    errorText={ addressError? addressError : null }
-                    value={address}
-                    onChange={ this.handleAddress.bind(this) }
+                <TextField id="address" hintText="Address" floatingLabelText="Address of Point of Interest" fullWidth multiLine
+                    errorText={ addressError? addressError : null } value={address} onChange={ this.handleAddress.bind(this) }
                 />
-                <TextField
-                    id="description"
-                    hintText="Description"
-                    floatingLabelText="Description of Point of Interest"
-                    fullWidth
-                    multiLine
-                    errorText={ descriptionError? descriptionError : null }
-                    value={description}
-                    onChange={ this.handleDescription.bind(this) }
+                <TextField id="description" hintText="Description" floatingLabelText="Description of Point of Interest" fullWidth multiLine
+                    errorText={ descriptionError? descriptionError : null } value={description} onChange={ this.handleDescription.bind(this) }
                 />
-                <TextField
-                    id="additional-info"
-                    hintText="Additional information"
-                    floatingLabelText="Additional information"
-                    fullWidth
-                    multiLine
-                    value={metaInfo}
-                    onChange={ this.handleMetaInfo.bind(this) }
+                <TextField id="additional-info" hintText="Additional information" floatingLabelText="Additional information" fullWidth multiLine
+                    value={metaInfo} onChange={ this.handleMetaInfo.bind(this) }
                 />
-                <SelectField
-                    floatingLabelText="POI Type"
-                    value={selectedType}
-                    errorText={ selectedTypeError? selectedTypeError : null }
-                    fullWidth
-                    onChange={ this.handlePOIType.bind(this) }
-                    disabled={ this.state.selectedType < POI_TYPE_FIRST_ID }
+                <SelectField floatingLabelText="POI Type" fullWidth
+                    value={selectedType} errorText={ selectedTypeError? selectedTypeError : null } onChange={ this.handlePOIType.bind(this) } disabled={ this.state.selectedType < POI_TYPE_FIRST_ID }
                 >
                     {
                         this.state.types.map((element, index) => {
@@ -448,11 +474,38 @@ export default class POIForm extends Component {
                                 </span>);
                             })
                         }
+                        {
+                            this.state.filesOnFirebase &&
+                            this.state.filesOnFirebase.map((file, index) => {
+                                const offset = this.state.files? this.state.files.length : NO_ELEMENTS;
+                                const { poiContentId, urlXs } = file;
+
+                                return (<span key={index + offset} onClick={(event) => {
+                                    event.preventDefault();
+                                    // Stop event propagation to Dropzone event handler
+                                    event.stopPropagation();
+
+                                    const files = this.state.files.slice(FIRST_ELEMENT_INDEX),
+                                        filesDeleted = this.state.filesDeleted.slice(FIRST_ELEMENT_INDEX);
+                                    files.splice(index, ONE_ELEMENT);
+                                    filesDeleted.push(poiContentId);
+                                    this.setState({
+                                        files,
+                                        filesDeleted
+                                    });
+                                }}>
+                                            <div className="dropzone-thumbnail-container">
+                                                <Image url={urlXs} className="dropzone-thumbnail"/>
+                                                <i className="fa fa-trash dropzone-delete-icon" aria-hidden="true"/>
+                                            </div>
+                                </span>);
+                            })
+                        }
                     </Dropzone>
                 </Paper>
                 { /* onTouchTap is not required: the button is inside a form, with a defined submit behaviour */ }
-                <RaisedButton type="submit" label="Submit" primary disabled={ submitInProgress } />
-            </form>
+                <RaisedButton label="Submit" primary disabled={ submitInProgress } onTouchTap={ this.handleSubmit.bind(this) }/>
+                { deleteButton }
         </div>
         );
     }

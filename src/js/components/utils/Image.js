@@ -41,10 +41,10 @@ export default class Image extends Component {
 
     render() {
         if (this.state.url) {
-            return <img src={this.state.url}/>;
+            return <img src={this.state.url} {...this.props} />;
         }
 
-        return <div/>;
+        return <div {...this.props} />;
     }
 }
 
