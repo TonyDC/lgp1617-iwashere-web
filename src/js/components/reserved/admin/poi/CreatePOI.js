@@ -45,14 +45,14 @@ export default class POIArea extends Component {
             form.append('address', address.trim());
             form.append('description', description.trim());
             form.append('tags', JSON.stringify(tags));
-            form.append('metaInfo', metaInfo.trim());
+            form.append('metaInfo', metaInfo.trim());                   // TODO database
             form.append('latitude', location.lat);
             form.append('longitude', location.lng);
             form.append('poiTypeId', selectedType);
             form.append('context', 3);                                  // TODO Obter a lista de contextos disponíveis para o utilizador
             for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
                 // Note: In order to detect the array of files in the server, each file, individually, must be appended to the same form key.
-                form.append('postFiles', files[fileIndex]);
+                form.append('poiFiles', files[fileIndex]);
             }
 
             // 'Content-Type': `multipart/form-data` must not be added; the 'boundary' token must be provided automatically
@@ -86,7 +86,7 @@ export default class POIArea extends Component {
                 </Helmet>
 
                 <h3 style={titleStyle}>Create POI</h3>
-                <POIForm onSave={ this.handleSave.bind(this) } />
+                <POIForm onSave={ this.handleSave.bind(this) } resetAfterSubmit/>
             </Paper>
         );
     }

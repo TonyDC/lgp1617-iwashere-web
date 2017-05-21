@@ -313,7 +313,7 @@ export default class POIForm extends Component {
             return;
         }
 
-        const { onSave } = this.props;
+        const { onSave, resetAfterSubmit } = this.props;
         if (typeof onSave !== 'function') {
             this.setState({ submitInProgress: false });
             throw new Error('onSave function not defined');
@@ -322,10 +322,10 @@ export default class POIForm extends Component {
         nProgress.start();
         onSave(this.state).
         then(() => {
-            if (this.componentIsMounted) {
+            if (this.componentIsMounted && resetAfterSubmit) {
                 this.resetFields();
             }
-            Alerts.createInfoAlert('POI created successfully');
+            Alerts.createInfoAlert('POI information successfully submitted');
         }).
         catch(() => {
             if (this.formFetchError) {
@@ -556,7 +556,7 @@ POIForm.propTypes = {
     }),
     initialValues: PropTypes.object,
     onDelete: PropTypes.func,
-    onEdit: PropTypes.func,
     onSave: PropTypes.func,
+    resetAfterSubmit: PropTypes.bool,
     zoom: PropTypes.number
 };
