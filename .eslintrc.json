@@ -98,7 +98,7 @@
     "max-params": "warn",
     "max-statements": ["error", 15],
     "max-statements-per-line": "error",
-    "multiline-ternary": "error",
+    "multiline-ternary": "off",
     "new-parens": "error",
     "newline-after-var": "off",
     "newline-before-return": "error",

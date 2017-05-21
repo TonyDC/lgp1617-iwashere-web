@@ -430,13 +430,13 @@ export default class POIForm extends Component {
 
         return (<div style={mainStyle}>
                 <TextField id="name" hintText="Name" floatingLabelText="Name of Point of Interest" fullWidth
-                    errorText={ nameError? nameError : null } value={name} onChange={ this.handleName.bind(this) }
+                    errorText={ nameError ? nameError : null } value={name} onChange={ this.handleName.bind(this) }
                 />
                 <TextField id="address" hintText="Address" floatingLabelText="Address of Point of Interest" fullWidth multiLine
-                    errorText={ addressError? addressError : null } value={address} onChange={ this.handleAddress.bind(this) }
+                    errorText={ addressError ? addressError : null } value={address} onChange={ this.handleAddress.bind(this) }
                 />
                 <TextField id="description" hintText="Description" floatingLabelText="Description of Point of Interest" fullWidth multiLine
-                    errorText={ descriptionError? descriptionError : null } value={description} onChange={ this.handleDescription.bind(this) }
+                    errorText={ descriptionError ? descriptionError : null } value={description} onChange={ this.handleDescription.bind(this) }
                 />
                 <TextField id="additional-info" hintText="Additional information" floatingLabelText="Additional information" fullWidth multiLine
                     value={metaInfo} onChange={ this.handleMetaInfo.bind(this) }
@@ -470,16 +470,49 @@ export default class POIForm extends Component {
                         { selectedLocationPin }
                     </GoogleMapReact>
                 </Paper>
-                <h5>Files to upload</h5>
+                <h5>Files to upload (Drag and drop files - png, jpeg)</h5>
                 <Paper>
                     <Dropzone className="custom-dropzone" style={dropzoneContainerStyle} onDrop={this.onDrop.bind(this)} accept="image/jpeg, image/png" onDragEnter={this.onDragEnter.bind(this)} onDragLeave={this.onDragLeave.bind(this)}>
                         { this.state.dropzoneActive && <div className="overlay">Drop files...</div> }
-                        <div className="dropzone-info">Drag and drop files here (png, jpeg)</div>
                         { this.state.files.length === NO_ELEMENTS && this.state.filesOnFirebase.length === NO_ELEMENTS && <p className="dropzone-info">No files to upload yet</p> }
+                        {
+                            this.state.filesOnFirebase &&
+                            this.state.filesOnFirebase.map((file, index) => {
+                                const { poiContentId, urlXs } = file;
+
+                                return (<span key={index} onClick={(event) => {
+                                    event.preventDefault();
+                                    // Stop event propagation to Dropzone event handler
+                                    event.stopPropagation();
+
+                                    const filesDeleted = this.state.filesDeleted.slice(FIRST_ELEMENT_INDEX),
+                                        filesOnFirebase = this.state.filesOnFirebase.slice(FIRST_ELEMENT_INDEX);
+
+                                    filesOnFirebase.splice(index, ONE_ELEMENT);
+                                    filesDeleted.push(poiContentId);
+                                    this.setState({
+                                        filesDeleted,
+                                        filesOnFirebase
+                                    });
+                                }}>
+                                            <div className="dropzone-thumbnail-container">
+                                                <Image url={urlXs} className="dropzone-thumbnail" withLoader/>
+                                                <i className="fa fa-trash dropzone-delete-icon" aria-hidden="true"/>
+                                            </div>
+                                </span>);
+                            })
+                        }
                         {
                             this.state.files &&
                             this.state.files.map((file, index) => {
-                                return (<span key={index} onClick={(event) => {
+
+                                /*
+                                 * Children components must have a unique key, due to re-render purposes.
+                                 * If offset is switched with the above, unnecessary re-renders are performed.
+                                 */
+                                const offset = this.state.filesOnFirebase ? this.state.filesOnFirebase.length : NO_ELEMENTS;
+
+                                return (<span key={index + offset} onClick={(event) => {
                                     event.preventDefault();
                                     // Stop event propagation to Dropzone event handler
                                     event.stopPropagation();
@@ -496,38 +529,11 @@ export default class POIForm extends Component {
                                 </span>);
                             })
                         }
-                        {
-                            this.state.filesOnFirebase &&
-                            this.state.filesOnFirebase.map((file, index) => {
-                                const offset = this.state.files? this.state.files.length : NO_ELEMENTS;
-                                const { poiContentId, urlXs } = file;
-
-                                return (<span key={index + offset} onClick={(event) => {
-                                    event.preventDefault();
-                                    // Stop event propagation to Dropzone event handler
-                                    event.stopPropagation();
-
-                                    const files = this.state.files.slice(FIRST_ELEMENT_INDEX),
-                                        filesDeleted = this.state.filesDeleted.slice(FIRST_ELEMENT_INDEX);
-                                    files.splice(index, ONE_ELEMENT);
-                                    filesDeleted.push(poiContentId);
-                                    this.setState({
-                                        files,
-                                        filesDeleted
-                                    });
-                                }}>
-                                            <div className="dropzone-thumbnail-container">
-                                                <Image url={urlXs} className="dropzone-thumbnail" withLoader/>
-                                                <i className="fa fa-trash dropzone-delete-icon" aria-hidden="true"/>
-                                            </div>
-                                </span>);
-                            })
-                        }
                     </Dropzone>
                 </Paper>
                 { /* onTouchTap is not required: the button is inside a form, with a defined submit behaviour */ }
                 <div style={buttonContainerStyle}>
-                <RaisedButton style={buttonStyle} label="Submit" primary disabled={ submitInProgress } onTouchTap={ this.handleSubmit.bind(this) }/>
+                <RaisedButton style={ buttonStyle } label="Submit" primary disabled={ submitInProgress } onTouchTap={ this.handleSubmit.bind(this) }/>
                 { deleteButton }
                 </div>
         </div>

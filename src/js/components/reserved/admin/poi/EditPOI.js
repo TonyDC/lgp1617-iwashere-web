@@ -21,6 +21,8 @@ const mainStyle = {
     paddingTop: 5
 };
 
+const titleStyle = { marginLeft: 40 };
+
 export default class EditPOI extends Component {
 
     constructor(props) {
@@ -92,7 +94,6 @@ export default class EditPOI extends Component {
         if (!currentUser) {
             throw new Error('Bad user object');
         }
-        nProgress.start();
 
         return currentUser.getToken().then((token) => {
             const { poiID } = this;
@@ -128,20 +129,10 @@ export default class EditPOI extends Component {
                 return Promise.reject(new Error(response.statusText));
             }
 
-            Alerts.createInfoAlert('POI created successfully');
-            nProgress.done();
-
             // The API will return the ID of the newly created POI
             return null;
         }).
         catch((err) => {
-            nProgress.done();
-            if (this.formFetchError) {
-                Alerts.close(this.formFetchError);
-                this.formFetchError = null;
-            }
-            this.formFetchError = Alerts.createErrorAlert('Error in submitting the information. Please, try again later.');
-
             return Promise.reject(new Error(err));
         });
     }
@@ -190,6 +181,7 @@ export default class EditPOI extends Component {
                 <Helmet>
                     <title>#iwashere - Edit POI</title>
                 </Helmet>
+                <h3 style={titleStyle}>Edit POI</h3>
                 { poiForm }
             </Paper>
         );
