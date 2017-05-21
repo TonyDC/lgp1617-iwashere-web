@@ -2,6 +2,16 @@
 
 const db = require('../index');
 
+module.exports.getPOIByID = (id) => {
+    // language=POSTGRES-SQL
+    return db.query(`SELECT pois.*, poi_types.name AS type 
+    FROM pois INNER JOIN poi_types ON pois.poi_type_id = poi_types.poi_type_id 
+    WHERE pois.poi_id = :id`, {
+        replacements: { id },
+        type: db.QueryTypes.SELECT
+    });
+};
+
 module.exports.getPOIDetailByID = (id, deleted = false) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT pois.*, poi_types.name AS type 
@@ -47,7 +57,7 @@ module.exports.getPOITags = (poiID) => {
 };
 
 module.exports.getPOIsWithin = (minLat, maxLat, minLng, maxLng) => {
-    // language=POSTGRES-SQL
+    // language=POSTGRES-PSQL
     return db.query(`WITH poi_ratings AS 
     (SELECT AVG(rating) AS rating, poi_id
     FROM (SELECT DISTINCT ON (user_id) poi_id, rating FROM poi_ratings
@@ -236,11 +246,11 @@ module.exports.getContentEditorPOI = (userID, poiID) => {
     });
 };
 
-module.exports.setPOIDeleted = (userID, poiID, deleted = true) => {
+module.exports.setPOIDeleted = (poiID, userID, deleted = true) => {
     // language=POSTGRES-PSQL
     return db.query(`UPDATE pois
-    SET deleted = :deleted
-    WHERE poi_id = :poiID AND user_id = :userID`, {
+    SET deleted = :deleted, update_content_editor_id = :userID  
+    WHERE poi_id = :poiID`, {
         replacements: {
             deleted,
             poiID,

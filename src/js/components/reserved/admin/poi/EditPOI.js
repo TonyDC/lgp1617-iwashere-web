@@ -42,7 +42,10 @@ export default class EditPOI extends Component {
         const { router } = this.props;
         const { poiID } = router.params;
         nProgress.start();
-        fetch(`/api/poi/${encodeURIComponent(poiID)}`).
+
+        const headers = { 'Accept': 'application/json' };
+
+        return authenticatedFetch(`/api/reserved/content-editor/poi/${encodeURIComponent(poiID)}`, {}, headers, 'GET').
         then(checkFetchResponse).
         then((json) => {
             const { name, address, description, poiTypeId, tags, latitude, longitude, deleted } = json;
@@ -159,7 +162,13 @@ export default class EditPOI extends Component {
         }
 
         // TODO obter o context seleccionado pelo utilizador
-        return authenticatedFetch(`/api/reserved/content-editor/poi/${poiID}`, JSON.stringify({ deleted: toDelete }), { 'X-user-context': 1 }, 'POST').
+        const body = JSON.stringify({ deleted: toDelete }),
+            headers = {
+                'Content-Type': 'application/json',
+                'X-user-context': 1
+            };
+
+        return authenticatedFetch(`/api/reserved/content-editor/poi/${encodeURIComponent(poiID)}`, body, headers, 'POST').
         then(checkFetchResponse);
     }
 

@@ -53,9 +53,11 @@ export default class App extends Component {
     }
 
     hookListeners() {
+        // TODO remove all getToken(true)
+        // TODO set initial container state
         this.firebaseObserverUnsubscriber = firebase.auth().onAuthStateChanged((user) => {
             if (user) {
-                firebase.auth().currentUser.getToken(true).then((token) => console.log(token));
+                firebase.auth().currentUser.getToken().then((token) => console.log(token));
                 this.context.store.dispatch(loginActionCreator(user));
             } else {
                 this.context.store.dispatch(logoutActionCreator());
@@ -63,34 +65,24 @@ export default class App extends Component {
         });
     }
 
-    /*
-     * Note:
-     *  Firebase stores, in the local storage, information regarding the current logged in user.
-     *  Since Firebase has a delay as to confirm the identity of the user, it is required if a user is already logged in. Hence, the usage of the local storage.
-     */
     redirectIfLoggedIn(nextState, replace) {
-        const currentState = this.context.store.getState();
+        const { currentUser } = firebase.auth();
         // { pathname: '/', state: <anyState> }
-        const localStorageProperty = `firebase:authUser:${firebase.app().options.apiKey}:[DEFAULT]`;
-        if (currentState.userStatus.isLogged || localStorage[localStorageProperty]) {
+        if (currentUser) {
             replace({ pathname: '/' });
         }
     }
 
     redirectIfReservedLoggedIn(nextState, replace) {
-        const currentState = this.context.store.getState();
-        // { pathname: '/', state: <anyState> }
-        const localStorageProperty = `firebase:authUser:${firebase.app().options.apiKey}:[DEFAULT]`;
-        if ((currentState.userStatus.isLogged || localStorage[localStorageProperty]) && typeof localStorage.res === 'number') {
+        const { currentUser } = firebase.auth();
+        if (currentUser) {
             replace({ pathname: '/reserved/dash' });
         }
     }
 
     redirectIfReservedNotLoggedIn(nextState, replace) {
-        const currentState = this.context.store.getState();
-        // { pathname: '/', state: <anyState> }
-        const localStorageProperty = `firebase:authUser:${firebase.app().options.apiKey}:[DEFAULT]`;
-        if ((!currentState.userStatus.isLogged && !localStorage[localStorageProperty]) || typeof localStorage.res !== 'number') {
+        const { currentUser } = firebase.auth();
+        if (!currentUser) {
             replace({ pathname: '/reserved' });
             Alerts.createErrorAlert('User without enough permissions');
         }

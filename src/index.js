@@ -6,6 +6,7 @@ import { createStore } from 'redux';
 import reducers from './js/redux/reducers';
 
 import App from './js/App';
+import Checker from './js/Checker';
 
 // Font Awesome
 import 'font-awesome-webpack';
@@ -42,7 +43,9 @@ const store = createStore(reducers);
 render(
     <MuiThemeProvider muiTheme={getMuiTheme()}>
     <Provider store={store}>
-        <App/>
+        <Checker>
+            <App/>
+        </Checker>
     </Provider>
     </MuiThemeProvider>,
     document.getElementById('main'));

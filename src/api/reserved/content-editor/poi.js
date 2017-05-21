@@ -20,7 +20,36 @@ const THREE_INDEX = 3;
 const NO_ELEMENT_SIZE = 0;
 const TWO_SIZE = 2;
 
+const HTTP_ALREADY_REPORTED = 208;
+
 const bodyTemplate = upload.fields([{ name: 'postFiles' }]);
+
+router.get('/:id', (req, res, next) => {
+    const { id } = req.params;
+    if (!id) {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    const { poiDB } = db;
+    const promisesToFulfill = [poiDB.getPOIDetailByID(id, true), poiDB.getPOITags(id), poiDB.getPOIAllMedia(id)];
+    Promise.all(promisesToFulfill).
+    then((results) => {
+        if (utils.checkResultList(results, [promisesToFulfill.length], true)) {
+            const poi = utils.convertObjectToCamelCase(results[ZERO_INDEX][ZERO_INDEX]);
+            poi.tags = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
+            poi.contents = utils.convertObjectsToCamelCase(results[TWO_INDEX]);
+
+            res.json(poi).end();
+        } else {
+            res.sendStatus(httpCodes.NO_CONTENT).end();
+        }
+    }).
+    catch((error) => {
+        next(error);
+    });
+});
 
 // Create new POI
 router.post('/', bodyTemplate, (req, res, next) => {
@@ -186,38 +215,48 @@ router.put('/:poiID', bodyTemplate, (req, res, next) => {
     });
 });
 
+// To separate POI information update from POI deletion
 router.post('/:poiID', (req, res, next) => {
     const { poiID } = req.params;
     const { deleted } = req.body;
+
     if (!poiID || typeof deleted !== 'boolean') {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
 
-    const userID = req.auth.token.uid;
+    const { uid: userID } = req.auth.token;
+    const { contextID: userContextID } = req.auth;
 
-    const { poiDB, userDB } = db;
-    const primaryChecks = [userDB.getContentEditorByUID(userID),
-        poiDB.getPOIDetailByID(poiID, true)];
-    primaryChecks.
-    then((results) => {
+    const { poiDB, userContextDB } = db;
+    poiDB.getPOIByID(poiID).
+    then((result) => {
+        if (!result || result.length === NO_ELEMENT_SIZE) {
+            return res.status(httpCodes.BAD_REQUEST).json({ message: 'Invalid POI' }).
+            end();
+        }
 
-        if (utils.checkResultList(results, [primaryChecks.length], true)) {
+        const [{ context_id: contextID, deleted: poiDeletedStatus }] = result;
 
-            return poiDB.setPOIDeleted(poiID, deleted).
+        return userContextDB.verifyContextUnderUserJurisdiction(userContextID, contextID).
+        then((contextResult) => {
+            if (!contextResult || contextResult.length === NO_ELEMENT_SIZE) {
+                return res.status(httpCodes.BAD_REQUEST).json({ message: 'User does not belong to the POI context' }).
+                end();
+            } else if (poiDeletedStatus === deleted) {
+                return res.sendStatus(HTTP_ALREADY_REPORTED).
+                end();
+            }
+
+            return poiDB.setPOIDeleted(poiID, userID, deleted).
             then(() => {
                 res.end();
             });
-        }
-
-        res.status(httpCodes.BAD_REQUEST).json({ message: '(userID, poiID) not found' }).
-        end();
-
-        return null;
+        });
     }).
-    catch((error) => {
-        next(error);
+    catch((err) => {
+        next(err);
     });
 });
 

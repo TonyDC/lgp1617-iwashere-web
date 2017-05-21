@@ -90,7 +90,7 @@ module.exports.convertArrayToString = (objects) => {
 };
 
 /**
- * Ensures the resultList has an acceptable size and that .
+ * Ensures the resultList has an acceptable size and that all promise results are the ones expected.
  * @param {[][]} resultList list of results
  * @param {[]} acceptableLengths acceptable lengths of the result list
  * @param {boolean} containsLists tells if the result list contains lists
