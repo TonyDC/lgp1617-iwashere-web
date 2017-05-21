@@ -43,17 +43,23 @@ export default class EditPOI extends Component {
         const { poiID } = router.params;
         nProgress.start();
 
-        const headers = { 'Accept': 'application/json' };
+        const headers = {
+            'Accept': 'application/json',
+            'X-user-context': 1                  // TODO get user context
+        };
+        const body = {};
 
-        return authenticatedFetch(`/api/reserved/content-editor/poi/${encodeURIComponent(poiID)}`, {}, headers, 'GET').
+        return authenticatedFetch(`/api/reserved/content-editor/poi/${encodeURIComponent(poiID)}`, body, headers, 'GET').
         then(checkFetchResponse).
         then((json) => {
-            const { name, address, description, poiTypeId, tags, latitude, longitude, deleted } = json;
+            const { name, address, description, poiTypeId, tags, latitude, longitude, deleted, contents } = json;
             this.setState({
+                fetchInProgress: false,
                 poi: {
                     address,
                     deleted,
                     description,
+                    filesOnFirebase: contents,
                     location: {
                         lat: latitude,
                         lng: longitude
@@ -69,18 +75,7 @@ export default class EditPOI extends Component {
             // Note: so that the fetched information and the submitted information are related to the same POI
             this.poiID = poiID;
 
-            return fetch(`/api/poi/media/${encodeURIComponent(poiID)}`);
-        }).
-        then(checkFetchResponse).
-        then((json) => {
-            console.log(json);
-            this.setState({
-                fetchInProgress: false,
-                poi: {
-                    ...this.state.poi,
-                    filesOnFirebase: json
-                }
-            });
+            return null;
         }).
         catch((err) => {
             console.error(err);

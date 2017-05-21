@@ -6,6 +6,9 @@ import firebase from 'firebase';
 
 import 'styles/utils.scss';
 
+/**
+ * Ensures that a set of conditions are met before the application is rendered
+ */
 export default class Checker extends Component {
 
     constructor(props) {

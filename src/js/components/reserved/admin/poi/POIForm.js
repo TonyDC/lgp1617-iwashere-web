@@ -344,22 +344,27 @@ export default class POIForm extends Component {
 
     handleDelete(event) {
         event.preventDefault();
-        this.setState({ submitInProgress: true });
+
         const { onDelete } = this.props;
         if (typeof onDelete !== 'function') {
-            this.setState({ submitInProgress: false });
             throw new Error('onDelete function not defined');
         }
 
         const { deleted } = this.state;
         if (typeof deleted !== 'boolean') {
-            this.setState({ submitInProgress: false });
             throw new Error('Edit mode not activated');
         }
 
+        this.setState({ submitInProgress: true });
+        nProgress.start();
         onDelete(!deleted).
         then(() => {
-            Alerts.createInfoAlert('POI deleted');
+            const statusMessage = deleted? 'visible' : 'hidden';
+            if (this.deleteInfoAlert) {
+                Alerts.close(this.deleteInfoAlert);
+                this.deleteInfoAlert = null;
+            }
+            this.deleteInfoAlert = Alerts.createInfoAlert(`POI is now ${statusMessage}`);
             if (this.componentIsMounted) {
                 this.setState({
                     deleted: !deleted,
@@ -367,7 +372,8 @@ export default class POIForm extends Component {
                 });
             }
         }).
-        catch(() => {
+        catch((err) => {
+            console.error(err);
             if (this.componentIsMounted) {
                 this.setState({ submitInProgress: false });
             }
@@ -376,6 +382,9 @@ export default class POIForm extends Component {
                 this.formFetchError = null;
             }
             this.formFetchError = Alerts.createErrorAlert('An error has occurred while toggling the POI deleted status');
+        }).
+        then(() => {
+            nProgress.done();
         });
     }
 

@@ -245,13 +245,13 @@ router.post('/:poiID', (req, res, next) => {
                 return res.status(httpCodes.BAD_REQUEST).json({ message: 'User does not belong to the POI context' }).
                 end();
             } else if (poiDeletedStatus === deleted) {
-                return res.sendStatus(HTTP_ALREADY_REPORTED).
+                return res.status(HTTP_ALREADY_REPORTED).json({ message: 'Same POI delete status. No information has been modified' }).
                 end();
             }
 
             return poiDB.setPOIDeleted(poiID, userID, deleted).
             then(() => {
-                res.end();
+                res.json({ message: 'OK' }).end();
             });
         });
     }).
