@@ -88,7 +88,8 @@ router.post('/', bodyTemplate, (req, res, next) => {
     then((results) => {
         if (utils.checkResultList(results, [primaryChecks.length], true)) {
             const createPOI = [poiDB.createPOI(name, description, address, latitude, longitude, poiTypeId, userID, context, parentId)];
-            if (poiFiles && poiFiles.length > NO_ELEMENT_SIZE) {
+            const filesToUpload = poiFiles && poiFiles.length > NO_ELEMENT_SIZE;
+            if (filesToUpload) {
                 createPOI.push(uploadAux.handleFileUpload(poiFiles, userID));
             }
 
@@ -101,7 +102,7 @@ router.post('/', bodyTemplate, (req, res, next) => {
                         createAdditionalPoiInfo.push(poiDB.setPOITags(poiId, tagList));
                     }
 
-                    if (poiFiles && poiFiles.length > NO_ELEMENT_SIZE) {
+                    if (filesToUpload) {
                         poiCreationResults[ONE_INDEX].forEach((fileCreated) => {
                             const { contentUrls, contentTypeId } = fileCreated.fileInfo;
                             const urlXs = contentUrls[ZERO_INDEX];
