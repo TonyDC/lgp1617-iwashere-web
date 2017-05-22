@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import firebase from 'firebase';
 import httpCodes from 'http-status-codes';
 
@@ -8,6 +9,8 @@ import Paper from 'material-ui/Paper';
 
 import POIForm from './POIForm';
 
+import { checkFetchResponse, authenticatedFetch } from '../../../../functions/fetch';
+
 const mainStyle = {
     margin: 20,
     paddingBottom: 10,
@@ -16,7 +19,7 @@ const mainStyle = {
 
 const titleStyle = { marginLeft: 40 };
 
-export default class POIArea extends Component {
+export default class CreatePOI extends Component {
 
     constructor(props) {
         super(props);
@@ -37,45 +40,34 @@ export default class POIArea extends Component {
             throw new Error('Bad user object');
         }
 
-        return currentUser.getToken().then((token) => {
-            const { name, address, description, tags, metaInfo, location, files, selectedType } = data;
+        const { reserved: reservedPropStore } = this.context.store.getState();
+        const { contexts, selectedIndex: selectedContextIndex } = reservedPropStore;
+        if (!contexts || !Array.isArray(contexts) || typeof selectedContextIndex !== 'number' || contexts.length <= selectedContextIndex) {
+            throw new Error('Bad user context selected');
+        }
 
-            const form = new FormData();
-            form.append('name', name.trim());
-            form.append('address', address.trim());
-            form.append('description', description.trim());
-            form.append('tags', JSON.stringify(tags));
-            form.append('metaInfo', metaInfo.trim());                   // TODO database
-            form.append('latitude', location.lat);
-            form.append('longitude', location.lng);
-            form.append('poiTypeId', selectedType);
-            form.append('context', 3);                                  // TODO Obter a lista de contextos disponíveis para o utilizador
-            for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
-                // Note: In order to detect the array of files in the server, each file, individually, must be appended to the same form key.
-                form.append('poiFiles', files[fileIndex]);
-            }
+        const { name, address, description, tags, metaInfo, location, files, selectedType } = data;
 
-            // 'Content-Type': `multipart/form-data` must not be added; the 'boundary' token must be provided automatically
-            return fetch('/api/reserved/content-editor/poi/', {
-                body: form,
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'X-user-context': 1                                 // TODO obter o context seleccionado pelo utilizador
-                },
-                method: 'POST'
-            });
-        }).
-        then((response) => {
-            if (response.status >= httpCodes.BAD_REQUEST) {
-                return Promise.reject(new Error(response.statusText));
-            }
+        const form = new FormData();
+        form.append('name', name.trim());
+        form.append('address', address.trim());
+        form.append('description', description.trim());
+        form.append('tags', JSON.stringify(tags));
+        form.append('metaInfo', metaInfo.trim());                   // TODO database
+        form.append('latitude', location.lat);
+        form.append('longitude', location.lng);
+        form.append('poiTypeId', selectedType);
+        form.append('context', 3);                                  // TODO Obter a lista de contextos disponíveis para o utilizador
+        for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
+            // Note: In order to detect the array of files in the server, each file, individually, must be appended to the same form key.
+            form.append('poiFiles', files[fileIndex]);
+        }
 
-            // The API will return the ID of the newly created POI
-            return null;
-        }).
-        catch((err) => {
-            return Promise.reject(new Error(err));
-        });
+        // 'Content-Type': `multipart/form-data` must not be added; the 'boundary' token must be provided automatically
+        const headers = { 'X-user-context': contexts[selectedContextIndex].contextId };
+
+        return authenticatedFetch('/api/reserved/content-editor/poi/', form, headers, 'POST').
+        then(checkFetchResponse);
     }
 
     render() {
@@ -91,3 +83,5 @@ export default class POIArea extends Component {
         );
     }
 }
+
+CreatePOI.contextTypes = { store: PropTypes.object };

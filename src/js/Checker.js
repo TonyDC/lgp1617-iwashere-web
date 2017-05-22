@@ -5,9 +5,12 @@ import { GridLoader as Loader } from 'halogen';
 import firebase from 'firebase';
 
 import { authenticatedFetch, checkFetchResponse } from './functions/fetch';
-import { addReservedContents } from './redux/action creators/reserved';
+import { addReservedContexts } from './redux/action creators/reserved';
 
 import 'styles/utils.scss';
+
+const NO_ELEMENTS = 0;
+const ZERO_INDEX = 0;
 
 /**
  * Ensures that a set of conditions are met before the application is rendered
@@ -45,7 +48,11 @@ export default class Checker extends Component {
                         authenticatedFetch('/api/reserved/user-type', {}, { 'Accept': 'application/json' }, 'GET').
                         then(checkFetchResponse).
                         then((contexts) => {
-                            this.context.store.dispatch(addReservedContents(contexts));
+                            let index = null;
+                            if (contexts && Array.isArray(contexts) && contexts.length > NO_ELEMENTS) {
+                                index = ZERO_INDEX;
+                            }
+                            this.context.store.dispatch(addReservedContexts(contexts, index));
                             resolve();
                         }).
                         catch((error) => {

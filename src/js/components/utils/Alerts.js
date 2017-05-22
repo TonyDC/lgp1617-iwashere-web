@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
 import Alert from 'react-s-alert';
+
+import { LOG_IN_ACTION, LOG_OUT_ACTION } from '../../redux/actionTypes';
 
 import 'react-s-alert/dist/s-alert-default.css';
 import 'react-s-alert/dist/s-alert-css-effects/slide.css';
+
+const NOT_FOUND = -1;
 
 export default class Alerts extends Component {
 
@@ -48,8 +51,10 @@ export default class Alerts extends Component {
     componentDidMount() {
         this.reduxListenerUnsubscribe = this.context.store.subscribe(() => {
             const reduxState = this.context.store.getState();
-
-            this.alertUserLog(reduxState.userStatus);
+            const { action, userStatus } = reduxState;
+            if ([LOG_IN_ACTION, LOG_OUT_ACTION].indexOf(action) !== NOT_FOUND) {
+                this.alertUserLog(userStatus);
+            }
         });
     }
 

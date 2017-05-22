@@ -2,7 +2,7 @@ import * as ActionTypes from '../actionTypes';
 
 const initialState = {
     contexts: [],
-    selected: null
+    selectedIndex: null
 };
 
 /**
@@ -22,7 +22,7 @@ export default function (state = initialState, action) {
         case ActionTypes.NEW_RESERVED_CONTEXTS:
             return {
                 ...state,
-                contexts: action.payload
+                ...action.payload
             };
 
         default:

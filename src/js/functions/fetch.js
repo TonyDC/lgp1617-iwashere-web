@@ -7,8 +7,12 @@ import firebase from 'firebase';
  * @returns {Promise<R>|Promise.<*>} a thenable Promise, if OK; a catchable Promise, if an error occurred (status code >= BAD_REQUEST)
  */
 function checkFetchResponse(response) {
-    if (response.status >= httpCodes.BAD_REQUEST) {
-        return Promise.reject(new Error('Error while fetching POI information'));
+    const { status, statusText } = response;
+    if (status >= httpCodes.BAD_REQUEST) {
+        const error = new Error(statusText);
+        error.status = status;
+
+        return Promise.reject(error);
     }
 
     return response.json();

@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as firebase from 'firebase';
 import IconButton from 'material-ui/IconButton';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
 import { Toolbar, ToolbarGroup, ToolbarSeparator } from 'material-ui/Toolbar';
 
 import ActionHome from 'material-ui/svg-icons/action/home';
@@ -22,8 +20,6 @@ const styles = {
     hoveredButtons: { color: '#333' }
 };
 
-const NO_ELEMENTS_SIZE = 0;
-const ZERO_INDEX = 0;
 
 export default class NavBar extends Component {
 
@@ -34,20 +30,10 @@ export default class NavBar extends Component {
 
     componentDidMount() {
         this.reduxListenerUnsubscribe = this.context.store.subscribe(() => {
-            // TODO verificar se houve mudancas
+            // possível problema em verificar se houve mudancas: os objectos podem não ser o mesmo (embora tenham o mesmo conteúdo)
             const reduxState = this.context.store.getState();
-            const { userStatus, reserved } = reduxState;
-            const { contexts } = reserved;
-            let selectedReservedContext = null;
-            console.log(Array.isArray(contexts));
-            if (contexts && Array.isArray(contexts) && contexts.length > NO_ELEMENTS_SIZE) {
-                selectedReservedContext = ZERO_INDEX;
-            }
-            this.setState({
-                reserved,
-                selectedReservedContext,
-                userStatus
-            });
+            const { userStatus } = reduxState;
+            this.setState({ userStatus });
         });
     }
 
@@ -78,37 +64,14 @@ export default class NavBar extends Component {
         this.props.router.push(url);
     }
 
-    handleSelectedContextChange(event, index, value) {
-        this.setState({ selectedReservedContext: value });
-    }
-
-    renderSelectStatus() {
-        let result = null;
-        const { reserved, selectedReservedContext } = this.state;
-        if (typeof selectedReservedContext === 'number') {
-            result = <SelectField
-                floatingLabelText="Frequency"
-                value={this.state.selectedReservedContext}
-                onChange={this.handleSelectedContextChange.bind(this)}
-            >
-                { reserved.contexts.map((element, index) => {
-                    const { roleName, contextName } = element;
-
-                    return <MenuItem value={index} primaryText={`${contextName} - ${roleName}`} />;
-                }) }
-            </SelectField>;
-        }
-
-        return result;
-    }
-
     render() {
+        const { userStatus } = this.state;
         let userActionButton =
             <IconButton iconStyle={styles.buttons} onTouchTap={this.toggleUserStatus.bind(this)} tooltip={<div>Log in</div>}>
                 <SocialPerson hoverColor={grey100}/>
             </IconButton>;
 
-        if (this.state.userStatus && this.state.userStatus.isLogged) {
+        if (userStatus && userStatus.isLogged) {
             userActionButton =
                 <IconButton iconStyle={styles.buttons} onTouchTap={this.toggleUserStatus.bind(this)} tooltip={<div>Log out</div>}>
                     <ActionExitToApp hoverColor={grey100}/>
@@ -127,7 +90,6 @@ export default class NavBar extends Component {
                 <Toolbar className="toolbar-custom-style">
                     <img src={logoCompact} className="app-logo"/>
                     <ToolbarGroup>
-                        { this.renderSelectStatus() }
                         <IconButton iconStyle={styles.buttons} onTouchTap={this.goToPage.bind(this, '/')} tooltip={<div>Home</div>}>
                             <ActionHome hoverColor={grey100}/>
                         </IconButton>

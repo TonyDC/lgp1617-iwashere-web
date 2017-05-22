@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import nProgress from 'nprogress';
 import firebase from 'firebase';
 import Alerts from '../../../utils/Alerts';
-import httpCodes from 'http-status-codes';
 import Helmet from 'react-helmet';
 import { GridLoader as Loader } from 'halogen';
 
@@ -45,9 +44,15 @@ export default class EditPOI extends Component {
         const { poiID } = router.params;
         nProgress.start();
 
+        const { reserved: reservedPropStore } = this.context.store.getState();
+        const { contexts, selectedIndex: selectedContextIndex } = reservedPropStore;
+        if (!contexts || !Array.isArray(contexts) || typeof selectedContextIndex !== 'number' || contexts.length <= selectedContextIndex) {
+            throw new Error('Bad user context selected');
+        }
+
         const headers = {
             'Accept': 'application/json',
-            'X-user-context': 1                  // TODO get user context
+            'X-user-context': contexts[selectedContextIndex].contextId
         };
         const body = {};
 
@@ -95,6 +100,12 @@ export default class EditPOI extends Component {
             throw new Error('Bad user object');
         }
 
+        const { reserved: reservedPropStore } = this.context.store.getState();
+        const { contexts, selectedIndex: selectedContextIndex } = reservedPropStore;
+        if (!contexts || !Array.isArray(contexts) || typeof selectedContextIndex !== 'number' || contexts.length <= selectedContextIndex) {
+            throw new Error('Bad user context selected');
+        }
+
         const { poiID } = this;
         const { name, address, description, tags, metaInfo, location, files, selectedType, filesDeleted } = data;
 
@@ -116,8 +127,7 @@ export default class EditPOI extends Component {
         }
 
         // 'Content-Type': `multipart/form-data` must not be added; the 'boundary' token must be provided automatically
-        // TODO obter o context seleccionado pelo utilizador
-        const headers = { 'X-user-context': 1 };
+        const headers = { 'X-user-context': contexts[selectedContextIndex].contextId };
 
         return authenticatedFetch(`/api/reserved/content-editor/poi/${encodeURIComponent(poiID)}`, form, headers, 'PUT').
         then(checkFetchResponse);
@@ -133,11 +143,16 @@ export default class EditPOI extends Component {
             throw new Error('Bad parameter (it should be a boolean value)');
         }
 
-        // TODO obter o context seleccionado pelo utilizador
+        const { reserved: reservedPropStore } = this.context.store.getState();
+        const { contexts, selectedIndex: selectedContextIndex } = reservedPropStore;
+        if (!contexts || !Array.isArray(contexts) || typeof selectedContextIndex !== 'number' || contexts.length <= selectedContextIndex) {
+            throw new Error('Bad user context selected');
+        }
+
         const body = JSON.stringify({ deleted: toDelete }),
             headers = {
                 'Content-Type': 'application/json',
-                'X-user-context': 1
+                'X-user-context': contexts[selectedContextIndex].contextId
             };
 
         return authenticatedFetch(`/api/reserved/content-editor/poi/${encodeURIComponent(poiID)}`, body, headers, 'POST').
@@ -175,3 +190,4 @@ export default class EditPOI extends Component {
 }
 
 EditPOI.propTypes = { router: PropTypes.object.isRequired };
+EditPOI.contextTypes = { store: PropTypes.object };
