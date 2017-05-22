@@ -98,12 +98,20 @@ export default class POIForm extends Component {
                 }
             ]
         };
+
+        this.lastMediaIndex = 0;
+
         const { initialValues } = props;
         if (initialValues) {
             // Component did not render yet
             Object.assign(this.state, initialValues);
+            // Note that children must have a unique 'key' value. Due to render implementations, keys cannot be reused.
+            this.state.filesOnFirebase.map((element) => {
+                Object.assign(element, { _idx: this.lastMediaIndex++ });
+
+                return element;
+            });
         }
-        this.lastMediaIndex = 0;
     }
 
     componentDidMount() {
@@ -252,6 +260,7 @@ export default class POIForm extends Component {
         const cloneFilesArray = this.state.files.slice(ZERO_INDEX);
         // TODO index files array by file hash
         files.forEach((file) => {
+            Object.assign(file, { _idx: this.lastMediaIndex++ });
             cloneFilesArray.push(file);
         });
         this.setState({ files: cloneFilesArray });
@@ -479,9 +488,9 @@ export default class POIForm extends Component {
                         {
                             this.state.filesOnFirebase &&
                             this.state.filesOnFirebase.map((file, index) => {
-                                const { poiContentId, urlXs } = file;
+                                const { poiContentId, urlXs, _idx } = file;
 
-                                return (<span key={this.lastMediaIndex++} onClick={(event) => {
+                                return (<span key={_idx} onClick={(event) => {
                                     event.preventDefault();
                                     // Stop event propagation to Dropzone event handler
                                     event.stopPropagation();
@@ -506,23 +515,24 @@ export default class POIForm extends Component {
                         {
                             this.state.files &&
                             this.state.files.map((file, index) => {
+                                const { preview, _idx } = file;
 
                                 /*
                                  * Children components must have a unique key, due to re-render purposes.
                                  * If offset is switched with the above, unnecessary re-renders are performed.
                                  */
-                                return (<span key={this.lastMediaIndex++} onClick={(event) => {
+                                return (<span key={_idx} onClick={(event) => {
                                     event.preventDefault();
                                     // Stop event propagation to Dropzone event handler
                                     event.stopPropagation();
 
                                     const files = this.state.files.slice(FIRST_ELEMENT_INDEX);
                                     files.splice(index, ONE_ELEMENT);
-                                    window.URL.revokeObjectURL(file.preview);
+                                    window.URL.revokeObjectURL(preview);
                                     this.setState({ files });
                                 }}>
                                             <div className="dropzone-thumbnail-container">
-                                                <img src={file.preview} className="dropzone-thumbnail" />
+                                                <img src={preview} className="dropzone-thumbnail" />
                                                 <i className="fa fa-trash dropzone-delete-icon" aria-hidden="true"/>
                                             </div>
                                 </span>);

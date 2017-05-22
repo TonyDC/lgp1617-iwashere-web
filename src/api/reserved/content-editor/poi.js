@@ -196,7 +196,7 @@ router.put('/:poiID', bodyTemplate, (req, res, next) => {
                 return null;
             }
 
-            const POIUpdatePromises = [poiDB.updatePOI(poiID, name, description, address, latitude, longitude, poiTypeId, parentId)];
+            const POIUpdatePromises = [poiDB.updatePOI(poiID, userID, name, description, address, latitude, longitude, poiTypeId, parentId)];
             const filesToUpload = poiFiles && poiFiles.length > NO_ELEMENT_SIZE;
             if (filesToUpload) {
                 POIUpdatePromises.push(uploadAux.handleFileUpload(poiFiles, userID));

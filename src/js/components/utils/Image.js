@@ -81,7 +81,7 @@ export default class Image extends Component {
                 let loader = null;
                 if (error) {
                     loader = <i className="fa fa-exclamation-triangle" aria-hidden="true"/>;
-                } else if (!imageStatus) {
+                } else {
                     loader = <Loader color="#012935" className="loader"/>;
                 }
 
