@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import firebase from 'firebase';
-import httpCodes from 'http-status-codes';
 
 import Helmet from 'react-helmet';
 

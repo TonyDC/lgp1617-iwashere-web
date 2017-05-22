@@ -45,6 +45,8 @@ export default class Checker extends Component {
                     if (user) {
                         this.firebaseObserverUnsubscriber();
                         // TODO to think: innefficiency?
+
+                        // TODO only perform when accessing reserved area only
                         authenticatedFetch('/api/reserved/user-type', {}, { 'Accept': 'application/json' }, 'GET').
                         then(checkFetchResponse).
                         then((contexts) => {

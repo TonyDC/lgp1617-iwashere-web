@@ -60,3 +60,19 @@ module.exports.verifyContextUnderUserJurisdiction = (contextID, childContextID) 
             type: db.QueryTypes.SELECT
         });
 };
+
+module.exports.getChildContexts = (rootContextID) => {
+    // language=POSTGRES-PSQL
+    return db.query(`
+        WITH RECURSIVE children(context_id, parent_id, name) AS (
+            SELECT context_id, parent_id, name FROM contexts WHERE context_id = :rootContextID
+                UNION
+            SELECT c.context_id, c.parent_id, c.name
+            FROM children p, contexts c
+            WHERE p.context_id = c.parent_id
+        ) SELECT * FROM children;`,
+        {
+            replacements: { rootContextID },
+            type: db.QueryTypes.SELECT
+        });
+};

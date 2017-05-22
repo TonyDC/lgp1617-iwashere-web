@@ -41,6 +41,8 @@ injectTapEventPlugin();
 // Initialize Redux container
 const store = process.env.NODE_ENV === 'production' ? createStore(reducers) : createStore(reducers, applyMiddleware(logger));
 
+import Tree from './js/components/utils/ContextTree';
+
 render(
     <MuiThemeProvider muiTheme={getMuiTheme()}>
     <Provider store={store}>

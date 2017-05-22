@@ -66,11 +66,12 @@ function firebaseAuth (req, res, next) {
  */
 function verifyUserPermissions (minimumRank) {
     return (req, res, next) => {
+        console.log(req.auth.contextID);
         const { uid } = req.auth.token;
         if (!uid || typeof uid !== 'string') {
             res.sendStatus(httpCodes.BAD_REQUEST).end();
 
-            return;
+            return null;
         }
 
         let context = req.header('X-user-context');
@@ -78,12 +79,13 @@ function verifyUserPermissions (minimumRank) {
             res.status(httpCodes.BAD_REQUEST).json({ message: '\'X-user-context\' header must be provided' }).
             end();
 
-            return;
+            return null;
         }
 
         context = context.trim();
         const { userContextDB } = db;
-        userContextDB.getContextByUserIDAndMinimumRank(uid, context, minimumRank).
+
+        return userContextDB.getContextByUserIDAndMinimumRank(uid, context, minimumRank).
         then((results) => {
             if (results && results.length > NO_ELEMENTS) {
                 req.auth.contextID = context;

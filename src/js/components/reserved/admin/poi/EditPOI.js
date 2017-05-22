@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import nProgress from 'nprogress';
 import firebase from 'firebase';
+import httpCodes from 'http-status-codes';
 import Alerts from '../../../utils/Alerts';
 import Helmet from 'react-helmet';
 import { GridLoader as Loader } from 'halogen';
@@ -85,8 +86,12 @@ export default class EditPOI extends Component {
             return null;
         }).
         catch((err) => {
-            console.error(err);
-            Alerts.createErrorAlert('Error while fetching POI information. Please, try again later.');
+            const { status } = err;
+            let text = 'Error while fetching POI information. Please, try again later.';
+            if (status === httpCodes.UNAUTHORIZED) {
+                text = 'You are not allowed to edit the information of this POI.';
+            }
+            Alerts.createErrorAlert(text);
             this.props.router.push('/reserved/dash/poi');
         }).
         then(() => {

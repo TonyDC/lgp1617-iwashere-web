@@ -16,7 +16,7 @@ module.exports = {
             CREATE TABLE contexts (
                 context_id SERIAL PRIMARY KEY,
                 name TEXT NOT NULL UNIQUE,
-                parent_id BIGINT REFERENCES contexts (context_id) CHECK (parent_id IS NULL OR parent_id != context_id),
+                parent_id INTEGER REFERENCES contexts (context_id) CHECK (parent_id IS NULL OR parent_id != context_id),
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP
             );
