@@ -4,6 +4,9 @@ import nProgress from 'nprogress';
 import { GridLoader as Loader } from 'halogen';
 import firebase from 'firebase';
 
+import { authenticatedFetch, checkFetchResponse } from './functions/fetch';
+import { addReservedContents } from './redux/action creators/reserved';
+
 import 'styles/utils.scss';
 
 /**
@@ -31,14 +34,24 @@ export default class Checker extends Component {
      *  Since Firebase has a delay as to confirm the identity of the user, it is required if a user is already logged in. Hence, the usage of the local storage.
      */
     checkFirebase() {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             const localStorageProperty = `firebase:authUser:${firebase.app().options.apiKey}:[DEFAULT]`;
             if (localStorage[localStorageProperty]) {
                 // The user is already logged in -> wait for Firebase refresh
                 this.firebaseObserverUnsubscriber = firebase.auth().onAuthStateChanged((user) => {
                     if (user) {
                         this.firebaseObserverUnsubscriber();
-                        resolve();
+                        // TODO to think: innefficiency?
+                        authenticatedFetch('/api/reserved/user-type', {}, { 'Accept': 'application/json' }, 'GET').
+                        then(checkFetchResponse).
+                        then((contexts) => {
+                            this.context.store.dispatch(addReservedContents(contexts));
+                            resolve();
+                        }).
+                        catch((error) => {
+                            console.error(error);
+                            reject(error);
+                        });
                     }
                 });
             } else {
@@ -79,3 +92,8 @@ export default class Checker extends Component {
 }
 
 Checker.propTypes = { children: PropTypes.any };
+
+Checker.contextTypes = {
+    muiTheme: PropTypes.object,
+    store: PropTypes.object
+};

@@ -2,7 +2,8 @@ import React from 'react';
 import { render } from 'react-dom';
 import * as firebase from 'firebase';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import logger from 'redux-logger';
+import { createStore, applyMiddleware } from 'redux';
 import reducers from './js/redux/reducers';
 
 import App from './js/App';
@@ -38,7 +39,7 @@ import Test from './js/components/reserved/Dashboard';
 injectTapEventPlugin();
 
 // Initialize Redux container
-const store = createStore(reducers);
+const store = process.env.NODE_ENV === 'production' ? createStore(reducers) : createStore(reducers, applyMiddleware(logger));
 
 render(
     <MuiThemeProvider muiTheme={getMuiTheme()}>

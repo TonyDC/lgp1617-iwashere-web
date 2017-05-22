@@ -24,7 +24,6 @@ function checkFetchResponse(response) {
  */
 function authenticatedFetch(url, body, headers, method) {
     const { currentUser } = firebase.auth();
-    // TODO atenção quen nos primeiros instantes o currentUser está a null
     if (!currentUser) {
         return Promise.reject(new Error('Current user not defined'));
     }

@@ -11,7 +11,7 @@ import Paper from 'material-ui/Paper';
 
 import POIForm from './POIForm';
 
-import { checkFetchResponse, authenticatedFetch } from '../../../utils/functions';
+import { checkFetchResponse, authenticatedFetch } from '../../../../functions/fetch';
 
 import 'styles/utils.scss';
 

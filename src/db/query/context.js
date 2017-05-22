@@ -19,8 +19,8 @@ module.exports.getContextByUserIDAndMinimumRank = (userID, contextID, minimumRan
 
 module.exports.getContextsByUserID = (userID) => {
     // language=POSTGRES-PSQL
-    return db.query(`SELECT * 
-            FROM user_contexts INNER JOIN roles ON (user_contexts.role_id = roles.role_id) 
+    return db.query(`SELECT user_contexts.user_id, user_contexts.context_id, roles.name AS role_name, contexts.name AS context_name, user_contexts.role_id, active, rank
+            FROM user_contexts INNER JOIN roles ON (user_contexts.role_id = roles.role_id) INNER JOIN contexts ON (user_contexts.context_id = contexts.context_id)
             WHERE user_id = :userID AND user_contexts.active IS TRUE`,
         {
             replacements: { userID },

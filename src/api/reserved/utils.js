@@ -6,6 +6,7 @@ const router = express.Router();
 const httpCodes = require('http-status-codes');
 
 const db = root_require('src/db/query');
+const utils = require('../utils/misc');
 
 const NO_ELEMENTS = 0;
 
@@ -21,7 +22,7 @@ router.get('/user-type', (req, res, next) => {
     userContextDB.getContextsByUserID(uid).
     then((results) => {
         if (results && results.length > NO_ELEMENTS) {
-            res.json(results).end();
+            res.json(utils.convertObjectsToCamelCase(results)).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
         }

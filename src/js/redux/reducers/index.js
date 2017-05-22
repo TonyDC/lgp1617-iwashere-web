@@ -1,5 +1,9 @@
 import { combineReducers } from 'redux';
 
 import userStatus from './userStatus';
+import reserved from './reserved';
 
-export default combineReducers({ userStatus });
+export default combineReducers({
+    reserved,
+    userStatus
+});

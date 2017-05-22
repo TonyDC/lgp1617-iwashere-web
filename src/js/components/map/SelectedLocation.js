@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import IconButton from 'material-ui/IconButton';
 import CommunicationLocationOn from 'material-ui/svg-icons/communication/location-on';
-import { blue500 as POIColor } from 'material-ui/styles/colors';
+import { red500 as POIColor } from 'material-ui/styles/colors';
 
 import Pin from './Pin';
 
