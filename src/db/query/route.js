@@ -14,12 +14,15 @@ module.exports.getRouteDetailByID = (id, deleted = false) => {
     });
 };
 
-module.exports.getPOIsByRouteID = (id) => {
+module.exports.getPOIsByRouteID = (id, deleted = false) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT * 
     FROM route_pois INNER JOIN pois ON route_pois.poi_id = pois.poi_id
-    WHERE route_id = :id`, {
-        replacements: { id },
+    WHERE route_id = :id AND (deleted = FALSE OR :deleted)`, {
+        replacements: {
+            deleted,
+            id
+        },
         type: db.QueryTypes.SELECT
     });
 };
