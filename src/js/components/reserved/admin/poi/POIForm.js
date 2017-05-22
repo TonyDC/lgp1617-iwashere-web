@@ -103,6 +103,7 @@ export default class POIForm extends Component {
             // Component did not render yet
             Object.assign(this.state, initialValues);
         }
+        this.lastMediaIndex = 0;
     }
 
     componentDidMount() {
@@ -480,7 +481,7 @@ export default class POIForm extends Component {
                             this.state.filesOnFirebase.map((file, index) => {
                                 const { poiContentId, urlXs } = file;
 
-                                return (<span key={index} onClick={(event) => {
+                                return (<span key={this.lastMediaIndex++} onClick={(event) => {
                                     event.preventDefault();
                                     // Stop event propagation to Dropzone event handler
                                     event.stopPropagation();
@@ -510,9 +511,7 @@ export default class POIForm extends Component {
                                  * Children components must have a unique key, due to re-render purposes.
                                  * If offset is switched with the above, unnecessary re-renders are performed.
                                  */
-                                const offset = this.state.filesOnFirebase ? this.state.filesOnFirebase.length : NO_ELEMENTS;
-
-                                return (<span key={index + offset} onClick={(event) => {
+                                return (<span key={this.lastMediaIndex++} onClick={(event) => {
                                     event.preventDefault();
                                     // Stop event propagation to Dropzone event handler
                                     event.stopPropagation();
@@ -523,7 +522,7 @@ export default class POIForm extends Component {
                                     this.setState({ files });
                                 }}>
                                             <div className="dropzone-thumbnail-container">
-                                                <img src={file.preview} className="dropzone-thumbnail"/>
+                                                <img src={file.preview} className="dropzone-thumbnail" />
                                                 <i className="fa fa-trash dropzone-delete-icon" aria-hidden="true"/>
                                             </div>
                                 </span>);
