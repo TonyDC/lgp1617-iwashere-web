@@ -54,9 +54,7 @@ export default class RouteSearch extends Component {
             throw new Error('Bad query parameter');
         }
 
-        const headers = {
-            'X-user-context': this.getContext()
-        };
+        const headers = { 'X-user-context': this.getContext() };
 
         return authenticatedFetch(`${API_ROUTE_URL}search?query=${query}`, {}, headers, 'GET').
         then(checkFetchResponse);

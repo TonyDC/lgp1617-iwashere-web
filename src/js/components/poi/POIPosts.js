@@ -12,7 +12,6 @@ import CancelIcon from "material-ui/svg-icons/navigation/close";
 import ViewPost from "../utils/ViewPost";
 import Tags from '../utils/MyTags';
 import Post from '../utils/Post';
-import Alerts from '../utils/Alerts';
 
 import 'styles/timeline.scss';
 
@@ -211,8 +210,8 @@ export default class POIPosts extends Component {
         if (this.state.tagsFilter.length) {
             filteredPosts = filteredPosts.filter((post) => {
                 return post.tags.filter((postTag) => {
-                        return this.state.tagsFilter.indexOf(postTag.tagId) !== NOT_FOUND;
-                    }).length > NO_ELEMENT_SIZE;
+                    return this.state.tagsFilter.indexOf(postTag.tagId) !== NOT_FOUND;
+                }).length > NO_ELEMENT_SIZE;
             });
         }
 
