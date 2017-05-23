@@ -4,13 +4,7 @@ const express = require('express');
 const router = express.Router();
 
 const httpCodes = require('http-status-codes');
-const utils = require('../utils/misc');
-const uploadAux = require('../utils/upload_aux');
-const upload = require('../middleware/upload');
-
 const db = root_require('src/db/query');
-
-const DECIMAL_BASE = 10;
 
 const ZERO_RATING = 0;
 const ONE_RATING = 1;
@@ -20,15 +14,12 @@ const FOUR_RATING = 4;
 const FIVE_RATING = 5;
 const RATING_VALUES = [ZERO_RATING, ONE_RATING, TWO_RATING, THREE_RATING, FOUR_RATING, FIVE_RATING];
 
+const DECIMAL_BASE = 10;
 const VALUE_NOT_FOUND = -1;
+const NO_ELEMENT_SIZE = 0;
 const ZERO_INDEX = 0;
 const ONE_INDEX = 1;
-const TWO_INDEX = 2;
-const THREE_INDEX = 3;
-const NO_ELEMENT_SIZE = 0;
 const TWO_SIZE = 2;
-
-
 
 router.post('/rating', (req, res, next) => {
     const { poiID, rating } = req.body;

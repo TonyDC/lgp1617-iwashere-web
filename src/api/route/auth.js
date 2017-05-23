@@ -4,8 +4,6 @@ const express = require('express');
 const router = express.Router();
 
 const httpCodes = require('http-status-codes');
-const utils = require('../utils/misc');
-
 const db = root_require('src/db/query');
 
 const DECIMAL_BASE = 10;

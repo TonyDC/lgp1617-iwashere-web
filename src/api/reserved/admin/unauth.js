@@ -5,7 +5,7 @@ const router = express.Router();
 
 const firebaseAdmin = require('firebase-admin');
 
-router.post('/login', (req, res, next) => {
+router.post('/login', (req, res) => {
     const authModule = firebaseAdmin.auth();
     const token = authModule.createCustomToken('123', { userType: 1 });
 

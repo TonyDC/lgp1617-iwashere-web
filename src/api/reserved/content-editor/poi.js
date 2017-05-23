@@ -3,7 +3,6 @@
 const utils = require('../../utils/misc');
 const uploadAux = require('../../utils/upload_aux');
 const upload = require('../../middleware/upload');
-
 const httpCodes = require('http-status-codes');
 const validator = require('validator');
 
