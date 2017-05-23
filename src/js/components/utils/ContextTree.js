@@ -163,7 +163,6 @@ export default class ContextTree extends Component {
 
     handleExpandChange(expanded) {
         if (this.Network) {
-            console.log('124987');
             this.Network.selectNodes([this.props.selectedContext]);
         }
 
