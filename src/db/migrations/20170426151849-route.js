@@ -25,7 +25,7 @@ module.exports = {
                 description TEXT NOT NULL,
                 text TEXT NOT NULL,
                 deleted BOOL NOT NULL DEFAULT FALSE,
-                context_id BIGINT NOT NULL REFERENCES contexts(context_id) ON DELETE RESTRICT,
+                context_id INTEGER NOT NULL REFERENCES contexts(context_id) ON DELETE RESTRICT,
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP
             );

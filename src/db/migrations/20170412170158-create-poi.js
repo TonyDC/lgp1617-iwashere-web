@@ -33,7 +33,7 @@ module.exports = {
                 parent_id BIGINT REFERENCES pois (poi_id) ON DELETE RESTRICT CHECK (parent_id IS NULL OR parent_id != poi_id),
                 content_editor_id TEXT NOT NULL REFERENCES users(uid) ON DELETE RESTRICT,
                 update_content_editor_id TEXT REFERENCES users(uid) ON DELETE RESTRICT,
-                context_id BIGINT NOT NULL REFERENCES contexts(context_id) ON DELETE RESTRICT,
+                context_id INTEGER NOT NULL REFERENCES contexts(context_id) ON DELETE RESTRICT,
                 deleted BOOL NOT NULL DEFAULT FALSE,
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP

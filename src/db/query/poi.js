@@ -289,22 +289,23 @@ module.exports.setPOIContentDeleted = (poiContentIdList, deleted = true) => {
     });
 };
 
-module.exports.updatePOI = (poiId, contentEditorID, name, description, address, latitude, longitude, poiTypeId, parentId = null) => {
+module.exports.updatePOI = (poiID, contentEditorID, name, description, address, latitude, longitude, poiTypeId, contextID, parentID = null) => {
     // language=POSTGRES-SQL
     return db.query(`UPDATE pois SET 
     name = :name, description = :description, address = :address, latitude = :latitude, longitude = :longitude,
-    poi_type_id = :poiTypeId, parent_id = :parentId,
+    poi_type_id = :poiTypeId, context_id = :contextID, parent_id = :parentID,
     update_content_editor_id = :contentEditorID 
-    WHERE poi_id = :poiId`, {
+    WHERE poi_id = :poiID`, {
         replacements: {
             address,
             contentEditorID,
+            contextID,
             description,
             latitude,
             longitude,
             name,
-            parentId,
-            poiId,
+            parentID,
+            poiID,
             poiTypeId
         },
         type: db.QueryTypes.UPDATE
