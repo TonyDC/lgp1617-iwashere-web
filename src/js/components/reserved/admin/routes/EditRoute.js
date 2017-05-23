@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import httpCodes from 'http-status-codes';
+import nProgress from 'nprogress';
 import * as firebase from 'firebase';
 import { GridLoader as Loader } from 'halogen';
 import Alerts from '../../../utils/Alerts';
@@ -28,6 +29,7 @@ export default class EditRoute extends Component {
         super(props);
 
         this.state = {
+            inProgress: false,
             routeInfoLoaded: false,
             routePoisLoaded: false
         };
@@ -156,6 +158,8 @@ export default class EditRoute extends Component {
 
             this.setState({ inProgress: true });
             route.context = 3; // TODO remove
+
+            nProgress.start();
             currentUser.getToken().then((token) => {
                 return fetch(API_ROUTE_URL, {
                     body: JSON.stringify(route),
@@ -174,10 +178,12 @@ export default class EditRoute extends Component {
 
                 return response.json();
             }).
-            then((newRoute) => {
-                this.props.router.push(`/route/${newRoute.routeId}`);
+            then(() => {
+                nProgress.done();
+                Alerts.createInfoAlert('Changes to the route saved.');
             }).
             catch(() => {
+                nProgress.done();
                 if (this.componentIsMounted) {
                     this.setState({ inProgress: false });
                     this.errorAlert = Alerts.createErrorAlert('Error while saving the changes to the route.');
@@ -224,7 +230,8 @@ export default class EditRoute extends Component {
     render() {
         let routeForm = <Loader color="#012935" className="loader"/>;
         if (this.state.routeInfoLoaded && this.state.routePoisLoaded) {
-            routeForm = <RouteForm onSave={this.saveRoute.bind(this)}
+            routeForm = <RouteForm inProgress={this.state.inProgress}
+                                   onSave={this.saveRoute.bind(this)}
                                    onDelete={this.deleteRoute.bind(this)}
                                    route={this.state.route}
                                    router={this.props.router}
@@ -232,12 +239,14 @@ export default class EditRoute extends Component {
         }
 
         return (
-            <Paper zDepth={2} style={mainStyle}>
-                <Helmet>
-                    <title>#iwashere - Reserved - Route</title>
-                </Helmet>
-                {routeForm}
-            </Paper>
+            <div className="wrapper-fill vert-align hor-align">
+                <Paper className="paper-min-width" zDepth={2} style={mainStyle}>
+                    <Helmet>
+                        <title>#iwashere - Reserved - Route</title>
+                    </Helmet>
+                    {routeForm}
+                </Paper>
+            </div>
         );
     }
 }

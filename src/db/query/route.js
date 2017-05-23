@@ -2,25 +2,28 @@
 
 const db = require('../index');
 
-module.exports.getRouteDetailByID = (id, deleted = false) => {
+module.exports.getRouteDetailByID = (id, includeDeleted = false) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT * FROM routes 
-    WHERE route_id = :id AND (deleted = FALSE OR :deleted)`, {
+    WHERE route_id = :id AND (deleted = FALSE OR :includeDeleted)`, {
         replacements: {
-            deleted,
-            id
+            id,
+            includeDeleted
         },
         type: db.QueryTypes.SELECT
     });
 };
 
-module.exports.getPOIsByRouteID = (id) => {
+module.exports.getPOIsByRouteID = (id, includeDeleted = false) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT * 
     FROM route_pois INNER JOIN pois ON route_pois.poi_id = pois.poi_id
-    WHERE route_id = :id
+    WHERE route_id = :id AND (pois.deleted = FALSE OR :includeDeleted)
     ORDER BY route_pois.poi_order`, {
-        replacements: { id },
+        replacements: {
+            id,
+            includeDeleted
+        },
         type: db.QueryTypes.SELECT
     });
 };

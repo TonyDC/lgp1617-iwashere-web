@@ -30,6 +30,7 @@ import AdminLogin from './components/reserved/AdminLogin';
 import POIArea from './components/reserved/admin/poi/POIArea';
 import CreatePOI from './components/reserved/admin/poi/CreatePOI';
 import EditPOI from './components/reserved/admin/poi/EditPOI';
+import RouteArea from './components/reserved/admin/routes/RouteArea';
 import CreateRoute from './components/reserved/admin/routes/CreateRoute';
 import EditRoute from './components/reserved/admin/routes/EditRoute';
 
@@ -118,6 +119,7 @@ export default class App extends Component {
                                 <Route path=":poiID" component={ EditPOI } />
                             </Route>
                             <Route path="route" >
+                                <IndexRoute component={ RouteArea } />
                                 <Route path="create" component={ CreateRoute } />
                                 <Route path=":id" component={ EditRoute } />
                             </Route>

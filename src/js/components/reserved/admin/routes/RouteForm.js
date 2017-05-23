@@ -11,6 +11,7 @@ import TextField from 'material-ui/TextField';
 import Checkbox from 'material-ui/Checkbox';
 import Visibility from 'material-ui/svg-icons/action/visibility';
 import VisibilityOff from 'material-ui/svg-icons/action/visibility-off';
+import { Card, CardHeader } from "material-ui/Card";
 import RaisedButton from 'material-ui/RaisedButton';
 
 import 'styles/utils.scss';
@@ -19,22 +20,13 @@ import 'styles/map.scss';
 const ONE_ELEMENT = 1;
 const NOT_FOUND = -1;
 
-const buttonStyle = {
-    float: "right",
-    margin: 20
-};
-
 const mainStyle = {
     margin: 20,
     paddingBottom: 10,
-    paddingTop: 5,
-    width: "70%"
+    paddingTop: 5
 };
 
-const titleStyle = { marginLeft: 30 };
-
 const titleDividerStyle = {
-    marginLeft: 30,
     width: 300
 };
 
@@ -49,8 +41,6 @@ export default class ReservedRoute extends Component {
         super(props);
         this.state = {
             allPois: [],
-            location: null,
-            mapCoords: null,
             route: this.props.route
         };
     }
@@ -86,6 +76,8 @@ export default class ReservedRoute extends Component {
                 return;
             }
         }
+
+        // TODO pass context?
 
         fetch(`/api/poi/range/${currentMinLat}/${currentMaxLat}/${currentMinLng}/${currentMaxLng}`).
         then((response) => {
@@ -143,8 +135,8 @@ export default class ReservedRoute extends Component {
             const tagIndex = route.tags.indexOf(tagId);
             if (tagIndex === NOT_FOUND) {
                 route.tags.push(tagId);
+                this.setState({ route });
             }
-            this.setState({ route });
         }
     }
 
@@ -154,8 +146,8 @@ export default class ReservedRoute extends Component {
             const tagIndex = route.tags.indexOf(tagId);
             if (tagIndex !== NOT_FOUND) {
                 route.tags.splice(tagIndex, ONE_ELEMENT);
+                this.setState({ route });
             }
-            this.setState({ route });
         }
     }
 
@@ -165,8 +157,8 @@ export default class ReservedRoute extends Component {
             const poiIndex = route.pois.indexOf(poiId);
             if (poiIndex === NOT_FOUND) {
                 route.pois.push(poiId);
+                this.setState({ route });
             }
-            this.setState({ route });
         }
     }
 
@@ -215,15 +207,6 @@ export default class ReservedRoute extends Component {
         }
     }
 
-    handleMetaInfo(event) {
-        event.preventDefault();
-        if (this.componentIsMounted) {
-            const { route } = this.state;
-            route.metaInfo = event.target.value;
-            this.setState({ route });
-        }
-    }
-
     render() {
         const route = this.state.route
             ? this.state.route
@@ -256,8 +239,9 @@ export default class ReservedRoute extends Component {
         return (
             <div style={mainStyle}>
                 <div style={mainStyle}>
-                    <h3 style={titleStyle}>{this.props.title}</h3>
+                    <h3>{this.props.title}</h3>
                     <Divider style={titleDividerStyle}/>
+
                     {visibilityElement}
                     <TextField hintText="Name"
                                floatingLabelText="Name of the route"
@@ -274,26 +258,33 @@ export default class ReservedRoute extends Component {
                           tags={route.tags}
                           onAddTag={this.handleAddTag.bind(this)}
                           onRemoveTag={this.handleRemoveTag.bind(this)}/>
-                    <TextField hintText="Additional information"
-                               floatingLabelText="Additional information"
-                               fullWidth
-                               multiLine
-                               onChange={ this.handleMetaInfo.bind(this) }/>
-                    <h5>Select points of interest</h5>
-                    <Paper zDepth={2} style={mapContainerStyle}>
-                        {routeMap}
-                    </Paper>
-                    <POIList pois={routePois}
-                             onSelectMosaic={this.handleAddPoi.bind(this)}
-                             onDismissMosaic={this.handleRemovePoi.bind(this)}
-                             onMoveMosaic={this.handleReorderPoi.bind(this)}/>
+
+                    <Card>
+                        <CardHeader subtitle={ "Add Points of Interest..." }/>
+                        <Paper zDepth={2} style={mapContainerStyle}>
+                            {routeMap}
+                        </Paper>
+
+                        <POIList pois={routePois}
+                                 onSelectMosaic={this.handleAddPoi.bind(this)}
+                                 onDismissMosaic={this.handleRemovePoi.bind(this)}
+                                 onMoveMosaic={this.handleReorderPoi.bind(this)}/>
+                    </Card>
                 </div>
 
-                <div>
+                <div className="button-container">
                     <RaisedButton label="Save"
-                                  style={buttonStyle}
+                                  disabled={this.props.inProgress}
+                                  className="button-style"
                                   onTouchTap={() => {
                                       this.props.onSave(this.state.route);
+                                  }} />
+
+                    <RaisedButton label="Cancel"
+                                  className="button-style"
+                                  disabled={this.props.inProgress}
+                                  onTouchTap={() => {
+                                      this.props.router.push('/reserved/dash/route');
                                   }} />
                 </div>
             </div>
@@ -306,19 +297,13 @@ ReservedRoute.defaultProps = {
         lat: 41.14792237,
         lng: -8.61129427
     },
-    route: {
-        description: '',
-        metaInfo: '',
-        name: '',
-        pois: [],
-        routeId: null,
-        tags: []
-    },
+    inProgress: false,
     zoom: 10
 };
 
 ReservedRoute.propTypes = {
     center: PropTypes.object.isRequired,
+    inProgress: PropTypes.bool.isRequired,
     onDelete: PropTypes.func.isRequired,
     onSave: PropTypes.func.isRequired,
     route: PropTypes.object.isRequired,

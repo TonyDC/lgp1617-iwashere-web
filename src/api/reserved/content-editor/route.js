@@ -1,6 +1,7 @@
 'use strict';
 
 const utils = require('../../utils/misc');
+const aux = require('../../utils/poi_aux');
 
 const httpCodes = require('http-status-codes');
 const validator = require('validator');
@@ -15,6 +16,7 @@ const ZERO_INDEX = 0;
 const ONE_INDEX = 1;
 const NO_ELEMENT_SIZE = 0;
 const ONE_SIZE = 1;
+const TWO_SIZE = 2;
 
 // Create new Route
 router.post('/', (req, res, next) => {
@@ -184,6 +186,65 @@ router.post('/:routeID/:deleted', (req, res, next) => {
         end();
 
         return null;
+    }).
+    catch((error) => {
+        next(error);
+    });
+});
+
+router.get('/:id', (req, res, next) => {
+    const { id } = req.params;
+    if (!id || isNaN(parseInt(id, DECIMAL_BASE))) {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    const { routeDB } = db;
+
+    Promise.all([routeDB.getRouteDetailByID(id, true), routeDB.getTagsByRouteID(id)]).
+    then((results) => {
+        if (utils.checkResultList(results, [TWO_SIZE], true)) {
+
+            const route = utils.convertObjectToCamelCase(results[ZERO_INDEX][ZERO_INDEX]);
+            route.tags = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
+
+            res.json(route).end();
+        } else {
+            res.sendStatus(httpCodes.NO_CONTENT).end();
+        }
+    }).
+    catch((error) => {
+        next(error);
+    });
+});
+
+router.get('/pois/:id', (req, res, next) => {
+    const { id } = req.params;
+    if (!id || isNaN(parseInt(id, DECIMAL_BASE))) {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    const { routeDB } = db;
+    routeDB.getRouteDetailByID(id, true).
+    then((routes) => {
+        if (routes && routes.length > NO_ELEMENT_SIZE) {
+            routeDB.getPOIsByRouteID(id, true).
+            then((results) => {
+                aux.handlePOIResults(results).
+                then((poiList) => {
+                    if (poiList.length === NO_ELEMENT_SIZE) {
+                        res.sendStatus(httpCodes.NO_CONTENT).end();
+                    } else {
+                        res.json(poiList).end();
+                    }
+                });
+            });
+        } else {
+            res.sendStatus(httpCodes.NO_CONTENT).end();
+        }
     }).
     catch((error) => {
         next(error);

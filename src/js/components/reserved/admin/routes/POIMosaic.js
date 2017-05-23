@@ -6,7 +6,7 @@ import Image from '../../../utils/Image';
 import { GridTile } from 'material-ui/GridList';
 import IconButton from 'material-ui/IconButton';
 import StarBorder from 'material-ui/svg-icons/toggle/star-border';
-import ActionDelete from 'material-ui/svg-icons/action/delete';
+import ContentClear from 'material-ui/svg-icons/content/clear';
 
 import 'styles/poi_mosaic.scss';
 import 'styles/utils.scss';
@@ -15,6 +15,12 @@ const MEDIA_TYPE = "image;imagem";
 const MAX_RATING_SCALE = 5;
 const RATING_PRECISION = 1;
 const POI_BUTTON_MESSAGE = 'Remove the point of interest';
+
+const mosaicStyle =  {
+    height: 200,
+    margin: 20,
+    width: 300
+}
 
 export default class POIMosaic extends Component {
 
@@ -36,7 +42,7 @@ export default class POIMosaic extends Component {
         if (this.props.dismissible) {
             poiButton =
                 <IconButton tooltipPosition="top-left" tooltip={POI_BUTTON_MESSAGE}>
-                    <ActionDelete color="white" />
+                    <ContentClear color="white" />
                 </IconButton>;
         }
 
@@ -54,6 +60,7 @@ export default class POIMosaic extends Component {
                 title={poi.name}
                 subtitle={<div className="vert-align"><span>{poi.rating.toFixed(RATING_PRECISION)}/{MAX_RATING_SCALE}</span> <StarBorder color="white" className="rating-star" /></div>}
                 actionIcon={poiButton}
+                style={mosaicStyle}
             >
                 {poiMedia}
             </GridTile>

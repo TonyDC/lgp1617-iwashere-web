@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import DragSortableList from 'react-drag-sortable';
-import { Card, CardTitle } from "material-ui/Card";
 import POIMosaic from "./POIMosaic";
 
 import 'styles/route_pois.scss';
@@ -40,22 +39,16 @@ export default class POIList extends Component {
         });
 
         return (
-            <Card>
-                <CardTitle title={ this.props.title }/>
                 <DragSortableList items={poiList}
                                   type="grid"
                                   onSort={(newList) => {
                                       this.props.onMoveMosaic(newList.map((entry) => {
                                           return entry.poi;
                                       }));
-                                  }}
-                />
-            </Card>
+                                  }}/>
         );
     }
 }
-
-POIList.defaultProps = { title: "Points of Interest" };
 
 POIList.propTypes = {
     onDismissMosaic: PropTypes.func,
