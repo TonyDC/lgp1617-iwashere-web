@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import httpCodes from 'http-status-codes';
 import nProgress from 'nprogress';
-import * as firebase from 'firebase';
+import { checkFetchResponse, authenticatedFetch } from '../../../../functions/fetch';
 import Alerts from '../../../utils/Alerts';
 
 import Helmet from 'react-helmet';
@@ -60,36 +59,32 @@ export default class CreateRoute extends Component {
         return !errorFound;
     }
 
+    getContext() {
+        const { reserved: reservedPropStore } = this.context.store.getState();
+        const { contexts, selectedIndex: selectedContextIndex } = reservedPropStore;
+        if (!contexts || !Array.isArray(contexts) || typeof selectedContextIndex !== 'number' || contexts.length <= selectedContextIndex) {
+            throw new Error('Bad user context selected.');
+        }
+
+        return contexts[selectedContextIndex].contextId;
+    }
+
     createRoute(route) {
-        const { currentUser } = firebase.auth();
-        if (this.componentIsMounted && currentUser) {
-            if (!this.checkRoute(route)) {
+        if (this.componentIsMounted) {
+            if (this.checkRoute(route)) {
                 return;
             }
 
-            // TODO change this:
-            route.context = 3;
-
-            this.setState({ inProgress: true });
             nProgress.start();
-            currentUser.getToken().then((token) => {
-                return fetch(API_ROUTE_URL, {
-                    body: JSON.stringify(route),
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'X-user-context': 1, // TODO obter o context seleccionado pelo utilizador
-                        'Content-Type': 'application/json'
-                    },
-                    method: 'POST'
-                });
-            }).
-            then((response) => {
-                if (response.status >= httpCodes.BAD_REQUEST || response.status === httpCodes.NO_CONTENT) {
-                    return Promise.reject(new Error(response.statusText));
-                }
+            this.setState({ inProgress: true });
 
-                return response.json();
-            }).
+            const headers = {
+                'Content-Type': 'application/json',
+                'X-user-context': this.getContext()
+            };
+
+            authenticatedFetch(API_ROUTE_URL, JSON.stringify(route), headers, 'POST').
+            then(checkFetchResponse).
             then((newRoute) => {
                 nProgress.done();
                 Alerts.createInfoAlert('Route created.');
