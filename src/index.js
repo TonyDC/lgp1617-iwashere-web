@@ -47,10 +47,7 @@ render(
     <MuiThemeProvider muiTheme={getMuiTheme()}>
     <Provider store={store}>
         <Checker>
-            <Tree userContext={1} onSelect={(event) => {
-                const { nodes, edges } = event;
-                console.log(nodes);
-            }}/>
+            <App/>
         </Checker>
     </Provider>
     </MuiThemeProvider>,

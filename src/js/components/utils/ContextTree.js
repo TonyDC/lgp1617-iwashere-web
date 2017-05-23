@@ -107,17 +107,6 @@ export default class ContextTree extends Component {
         this.Network = graphRef.Network;
     }
 
-    /*
-    getGraphEvents() {
-        return {
-            select: function(event) {
-                const { nodes, edges } = event;
-                console.log(nodes);
-            }
-        };
-    }
-    */
-
     getGraphEvents() {
         const { onSelect } = this.props;
         if (!onSelect) {
