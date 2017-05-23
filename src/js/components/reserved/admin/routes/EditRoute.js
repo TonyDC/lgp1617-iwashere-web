@@ -180,6 +180,7 @@ export default class EditRoute extends Component {
             then(checkFetchResponse).
             then(() => {
                 nProgress.done();
+                this.setState({ inProgress: false });
                 Alerts.createInfoAlert('Changes to the route saved.');
             }).
             catch(() => {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import httpCodes from 'http-status-codes';
+import { checkFetchResponse } from '../../../../functions/fetch';
 import Tags from '../../../utils/MyTags';
 import RouteMap from '../../../route/RouteMap';
 import POIList from './POIList';
@@ -69,17 +69,10 @@ export default class ReservedRoute extends Component {
             }
         }
 
-        // TODO pass context?
         fetch(`/api/poi/range/${currentMinLat}/${currentMaxLat}/${currentMinLng}/${currentMaxLng}`).
-        then((response) => {
-            if (response.status >= httpCodes.BAD_REQUEST) {
-                return Promise.reject(new Error(response.statusText));
-            }
-
-            return response.json();
-        }).
+        then(checkFetchResponse).
         then((pois) => {
-            if (this.componentIsMounted) {
+            if (pois && this.componentIsMounted) {
                 const { allPois } = this.state;
                 const poiIds = this.state.allPois.map((poi) => {
                     return poi.poiId;
@@ -167,8 +160,8 @@ export default class ReservedRoute extends Component {
             const poiIndex = route.pois.indexOf(poiId);
             if (poiIndex !== NOT_FOUND) {
                 route.pois.splice(poiIndex, ONE_ELEMENT);
+                this.setState({ route });
             }
-            this.setState({ route });
         }
     }
 
@@ -185,12 +178,10 @@ export default class ReservedRoute extends Component {
         if (this.componentIsMounted) {
             const { route } = this.state;
             route.deleted = !deletedStatus;
-
             this.props.onDelete(route, (success) => {
                 if (!success) {
                     route.deleted = !route.deleted;
                 }
-
                 this.setState({ route });
             });
         }
@@ -201,8 +192,15 @@ export default class ReservedRoute extends Component {
             ? this.state.route
             : this.props.route;
 
-        const routePois = this.state.allPois.filter((poi) => {
-            return route.pois.indexOf(poi.poiId) !== NOT_FOUND;
+        const routePois = [];
+        route.pois.forEach((poiId) => {
+            this.state.allPois.some((poi) => {
+                if (poiId === poi.poiId) {
+                    routePois.push(poi);
+                }
+
+                return poiId === poi.poiId;
+            });
         });
 
         const routeMap = <RouteMap onPoiSelected={this.handleAddPoi.bind(this)}
