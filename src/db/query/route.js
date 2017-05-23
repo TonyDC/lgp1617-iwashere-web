@@ -72,11 +72,14 @@ module.exports.addRouteRating = (routeID, userID, rating) => {
     });
 };
 
-module.exports.searchRoute = (query) => {
+module.exports.searchRoute = (query, includeDeleted = false) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT * FROM routes 
-    WHERE text @@ to_tsquery(:query) AND deleted = FALSE`, {
-        replacements: { query },
+    WHERE text @@ to_tsquery(:query) AND (deleted = FALSE OR :includeDeleted)`, {
+        replacements: {
+            includeDeleted,
+            query
+        },
         type: db.QueryTypes.SELECT
     });
 };

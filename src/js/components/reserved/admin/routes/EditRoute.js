@@ -29,6 +29,7 @@ export default class EditRoute extends Component {
 
         this.state = {
             inProgress: false,
+            route: {},
             routeInfoLoaded: false,
             routePoisLoaded: false
         };
@@ -42,6 +43,17 @@ export default class EditRoute extends Component {
 
     componentWillUnmount() {
         this.componentIsMounted = false;
+        Alerts.closeAll();
+    }
+
+    getContext() {
+        const { reserved: reservedPropStore } = this.context.store.getState();
+        const { contexts, selectedIndex: selectedContextIndex } = reservedPropStore;
+        if (!contexts || !Array.isArray(contexts) || typeof selectedContextIndex !== 'number' || contexts.length <= selectedContextIndex) {
+            throw new Error('Bad user context selected.');
+        }
+
+        return contexts[selectedContextIndex].contextId;
     }
 
     fetchRouteInfo() {
@@ -53,10 +65,12 @@ export default class EditRoute extends Component {
             return;
         }
 
-        fetch(`${API_ROUTE_URL}${this.props.params.id}`, {
-            headers: { 'Content-Type': 'application/json' },
-            method: 'GET'
-        }).
+        const headers = {
+            'Content-Type': 'application/json',
+            'X-user-context': this.getContext()
+        };
+
+        authenticatedFetch(`${API_ROUTE_URL}${this.props.params.id}`, {}, headers, 'GET').
         then(checkFetchResponse).
         then((route) => {
             if (route && this.componentIsMounted) {
@@ -80,16 +94,18 @@ export default class EditRoute extends Component {
     fetchRoutePois() {
         if (isNaN(parseInt(this.props.params.id, DECIMAL_BASE))) {
             if (this.componentIsMounted) {
-                this.setState({error: true});
+                this.setState({ error: true });
             }
 
             return;
         }
 
-        fetch(`${API_ROUTE_URL}pois/${this.props.params.id}`, {
-            headers: { 'Content-Type': 'application/json' },
-            method: 'GET'
-        }).
+        const headers = {
+            'Content-Type': 'application/json',
+            'X-user-context': this.getContext()
+        };
+
+        authenticatedFetch(`${API_ROUTE_URL}pois/${this.props.params.id}`, {}, headers, 'GET').
         then(checkFetchResponse).
         then((routePois) => {
             if (routePois && this.componentIsMounted) {
@@ -126,16 +142,6 @@ export default class EditRoute extends Component {
         }
 
         return !errorFound;
-    }
-
-    getContext() {
-        const { reserved: reservedPropStore } = this.context.store.getState();
-        const { contexts, selectedIndex: selectedContextIndex } = reservedPropStore;
-        if (!contexts || !Array.isArray(contexts) || typeof selectedContextIndex !== 'number' || contexts.length <= selectedContextIndex) {
-            throw new Error('Bad user context selected.');
-        }
-
-        return contexts[selectedContextIndex].contextId;
     }
 
     saveRoute(route) {
@@ -178,12 +184,13 @@ export default class EditRoute extends Component {
                 'X-user-context': this.getContext()
             };
 
-            authenticatedFetch(`${API_ROUTE_URL}${route.routeId}/${route.deleted}`,
-                JSON.stringify({ context: route.context }), headers, 'POST').
+            authenticatedFetch(`${API_ROUTE_URL}${route.routeId}`,
+                JSON.stringify(route), headers, 'POST').
             then(checkFetchResponse).
             catch(() => {
                 if (this.componentIsMounted) {
                     this.setState({ inProgress: false });
+                    Alerts.close(this.errorAlert);
                     this.errorAlert = Alerts.createErrorAlert("Error while setting the route's visibility.");
                 }
 
@@ -215,6 +222,8 @@ export default class EditRoute extends Component {
         );
     }
 }
+
+EditRoute.contextTypes = { store: PropTypes.object };
 
 EditRoute.propTypes = {
     params: PropTypes.any,

@@ -38,8 +38,8 @@ export default class RouteArea extends Component {
         this.props.router.push('/reserved/dash/route/create');
     }
 
-    handleEditRoute(route) {
-        this.props.router.push(`/reserved/dash/route/${route.routeId}`);
+    handleEditRoute(routeId) {
+        this.props.router.push(`/reserved/dash/route/${routeId}`);
     }
 
     render() {

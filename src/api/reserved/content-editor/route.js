@@ -11,6 +11,7 @@ const router = express.Router();
 
 const db = root_require('src/db/query');
 
+const NOT_FOUND = -1;
 const DECIMAL_BASE = 10;
 const ZERO_INDEX = 0;
 const ONE_INDEX = 1;
@@ -156,9 +157,9 @@ router.put('/', (req, res, next) => {
 });
 
 // Set Route deleted
-router.post('/:routeID/:deleted', (req, res, next) => {
-    const { context } = utils.trimStringProperties(req.body);
-    const { routeID, deleted } = utils.trimStringProperties(req.params);
+router.post('/:routeID', (req, res, next) => {
+    const { context, deleted } = utils.trimStringProperties(req.body);
+    const { routeID } = utils.trimStringProperties(req.params);
     const { uid: userID } = req.auth.token;
     const { contextID: userContext } = req.auth;
 
@@ -192,24 +193,75 @@ router.post('/:routeID/:deleted', (req, res, next) => {
     });
 });
 
-router.get('/:id', (req, res, next) => {
+router.get('/pois/:id', (req, res, next) => {
     const { id } = req.params;
+    const { contextID: userContext } = req.auth;
+
     if (!id || isNaN(parseInt(id, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
 
-    const { routeDB } = db;
+    const { userContextDB, routeDB } = db;
+    routeDB.getRouteDetailByID(id, true).
+    then((routes) => {
+        if (routes && routes.length > NO_ELEMENT_SIZE) {
+            const route = utils.convertObjectToCamelCase(routes[ZERO_INDEX]);
 
-    Promise.all([routeDB.getRouteDetailByID(id, true), routeDB.getTagsByRouteID(id)]).
+            return userContextDB.getChildContexts(userContext, route.contextId).
+            then((contextCheck) => {
+                if (!route.deleted || (contextCheck && contextCheck.length > NO_ELEMENT_SIZE)) {
+                    routeDB.getPOIsByRouteID(id, true).then((results) => {
+                        aux.handlePOIResults(results).then((poiList) => {
+                            if (poiList.length === NO_ELEMENT_SIZE) {
+                                res.sendStatus(httpCodes.NO_CONTENT).end();
+                            } else {
+                                res.json(poiList).end();
+                            }
+                        });
+                    });
+                } else {
+                    res.sendStatus(httpCodes.UNAUTHORIZED).end();
+                }
+            });
+        }
+
+        res.sendStatus(httpCodes.NO_CONTENT).end();
+
+        return null;
+    }).
+    catch((error) => {
+        next(error);
+    });
+});
+
+router.get('/search', (req, res, next) => {
+    let { query } = req.query;
+    const { contextID: userContext } = req.auth;
+
+    if (!query || typeof query !== 'string') {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    query = query.trim().split(/\s+/).
+    join(' & ');
+
+    const { userContextDB, routeDB } = db;
+
+    Promise.all([routeDB.searchRoute(query, true), userContextDB.getChildContexts(userContext)]).
     then((results) => {
-        if (utils.checkResultList(results, [TWO_SIZE], true)) {
+        if (utils.checkResultList(results, [TWO_SIZE])) {
+            const userContexts = utils.convertObjectsToCamelCase(results[ONE_INDEX]).map((context) => {
+                return context.contextId;
+            });
+            const routes = utils.convertObjectsToCamelCase(results[ZERO_INDEX]).filter((route) => {
+                return !route.deleted || userContexts.indexOf(route.contextId) !== NOT_FOUND;
+            });
 
-            const route = utils.convertObjectToCamelCase(results[ZERO_INDEX][ZERO_INDEX]);
-            route.tags = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
-
-            res.json(route).end();
+            res.json(routes).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
         }
@@ -219,32 +271,38 @@ router.get('/:id', (req, res, next) => {
     });
 });
 
-router.get('/pois/:id', (req, res, next) => {
+router.get('/:id', (req, res, next) => {
     const { id } = req.params;
+    const { contextID: userContext } = req.auth;
+
     if (!id || isNaN(parseInt(id, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
 
-    const { routeDB } = db;
-    routeDB.getRouteDetailByID(id, true).
-    then((routes) => {
-        if (routes && routes.length > NO_ELEMENT_SIZE) {
-            routeDB.getPOIsByRouteID(id, true).
-            then((results) => {
-                aux.handlePOIResults(results).
-                then((poiList) => {
-                    if (poiList.length === NO_ELEMENT_SIZE) {
-                        res.sendStatus(httpCodes.NO_CONTENT).end();
-                    } else {
-                        res.json(poiList).end();
-                    }
-                });
+    const { userContextDB, routeDB } = db;
+
+    Promise.all([routeDB.getRouteDetailByID(id, true), routeDB.getTagsByRouteID(id)]).
+    then((results) => {
+        if (utils.checkResultList(results, [TWO_SIZE], true)) {
+            const route = utils.convertObjectToCamelCase(results[ZERO_INDEX][ZERO_INDEX]);
+
+            return userContextDB.verifyContextUnderUserJurisdiction(userContext, route.contextId).
+            then((contextCheck) => {
+                if (!route.deleted || (contextCheck && contextCheck.length > NO_ELEMENT_SIZE)) {
+                    route.tags = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
+
+                    res.json(route).end();
+                } else {
+                    res.sendStatus(httpCodes.UNAUTHORIZED).end();
+                }
             });
-        } else {
-            res.sendStatus(httpCodes.NO_CONTENT).end();
         }
+
+        res.sendStatus(httpCodes.NO_CONTENT).end();
+
+        return null;
     }).
     catch((error) => {
         next(error);
@@ -252,3 +310,4 @@ router.get('/pois/:id', (req, res, next) => {
 });
 
 module.exports = router;
+

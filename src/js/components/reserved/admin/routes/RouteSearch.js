@@ -6,13 +6,14 @@ import { List, ListItem } from 'material-ui/List';
 import Divider from 'material-ui/Divider';
 import RaisedButton from 'material-ui/RaisedButton';
 import ActionSearch from 'material-ui/svg-icons/action/search';
-import httpCodes from 'http-status-codes';
+import { checkFetchResponse, authenticatedFetch } from '../../../../functions/fetch';
 
 import Alerts from '../../../utils/Alerts';
 
 import 'styles/panel.scss';
 import 'styles/utils.scss';
 
+const API_ROUTE_URL = '/api/reserved/content-editor/route/';
 const NO_ELEMENTS = 0;
 
 export default class RouteSearch extends Component {
@@ -38,22 +39,28 @@ export default class RouteSearch extends Component {
         }
     }
 
+    getContext() {
+        const { reserved: reservedPropStore } = this.context.store.getState();
+        const { contexts, selectedIndex: selectedContextIndex } = reservedPropStore;
+        if (!contexts || !Array.isArray(contexts) || typeof selectedContextIndex !== 'number' || contexts.length <= selectedContextIndex) {
+            throw new Error('Bad user context selected.');
+        }
+
+        return contexts[selectedContextIndex].contextId;
+    }
+
     performSearch(query) {
         if (!query || typeof query !== 'string') {
             throw new Error('Bad query parameter');
         }
 
-        return fetch(`/api/route/search?query=${query}`, {
-            headers: { 'Accept': 'application/json' },
-            method: 'GET'
-        }).
-        then((response) => {
-            if (response.status >= httpCodes.BAD_REQUEST) {
-                return Promise.reject(new Error(response.statusText));
-            }
+        const headers = {
+            'X-user-context': this.getContext()
+        };
 
-            return response.json();
-        });
+        console.log(query);
+        return authenticatedFetch(`${API_ROUTE_URL}search?query=${query}`, {}, headers, 'GET').
+        then(checkFetchResponse);
     }
 
     submitSearch(event) {
@@ -80,24 +87,19 @@ export default class RouteSearch extends Component {
             this.setState({ inProgress: 'Searching...' });
             this.performSearch(search).
             then((results) => {
-                if (!this.componentIsMounted) {
-                    return;
+                if (this.componentIsMounted) {
+                    this.setState({
+                        inProgress: false,
+                        results
+                    });
                 }
-
-                // TODO: filter results by user context?
-
-                this.setState({
-                    inProgress: false,
-                    results
-                });
             }).
             catch(() => {
-                if (!this.componentIsMounted) {
-                    return;
+                if (this.componentIsMounted) {
+                    this.setState({ inProgress: false });
+                    Alerts.closeAll();
+                    Alerts.createErrorAlert('Error while searching for routes.');
                 }
-
-                this.setState({ inProgress: false });
-                Alerts.createErrorAlert('Error while searching for routes.');
             });
 
         }
@@ -173,6 +175,8 @@ export default class RouteSearch extends Component {
         );
     }
 }
+
+RouteSearch.contextTypes = { store: PropTypes.object };
 
 RouteSearch.propTypes = {
     onRouteSelected: PropTypes.func.isRequired,

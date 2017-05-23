@@ -31,6 +31,7 @@ export default class CreateRoute extends Component {
 
     componentDidMount() {
         this.componentIsMounted = true;
+        Alerts.closeAll();
     }
 
     componentWillUnmount() {
@@ -126,5 +127,7 @@ export default class CreateRoute extends Component {
         );
     }
 }
+
+CreateRoute.contextTypes = { store: PropTypes.object };
 
 CreateRoute.propTypes = { router: PropTypes.object };

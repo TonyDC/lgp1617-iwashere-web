@@ -289,7 +289,7 @@ ReservedRoute.defaultProps = {
 ReservedRoute.propTypes = {
     center: PropTypes.object.isRequired,
     inProgress: PropTypes.bool.isRequired,
-    onDelete: PropTypes.func.isRequired,
+    onDelete: PropTypes.func,
     onSave: PropTypes.func.isRequired,
     route: PropTypes.object.isRequired,
     router: PropTypes.object,

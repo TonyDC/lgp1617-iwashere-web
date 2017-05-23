@@ -12,7 +12,6 @@ const router = express.Router();
 
 const db = root_require('src/db/query');
 
-const VALUE_NOT_FOUND = -1;
 const ZERO_INDEX = 0;
 const ONE_INDEX = 1;
 const TWO_INDEX = 2;
@@ -20,8 +19,6 @@ const THREE_INDEX = 3;
 
 const NO_ELEMENT_SIZE = 0;
 const ONE_SIZE = 1;
-const TWO_SIZE = 2;
-const THREE_SIZE = 3;
 
 const HTTP_ALREADY_REPORTED = 208;
 
