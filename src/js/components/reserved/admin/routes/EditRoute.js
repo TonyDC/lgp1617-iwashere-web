@@ -226,6 +226,7 @@ export default class EditRoute extends Component {
         let routeForm = <Loader color="#012935" className="loader"/>;
         if (this.state.routeInfoLoaded && this.state.routePoisLoaded) {
             routeForm = <RouteForm inProgress={this.state.inProgress}
+                                   userContext={this.getContext()}
                                    onSave={this.saveRoute.bind(this)}
                                    onDelete={this.deleteRoute.bind(this)}
                                    route={this.state.route}

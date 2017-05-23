@@ -114,6 +114,7 @@ export default class CreateRoute extends Component {
                         <title>#iwashere - Reserved - Route</title>
                     </Helmet>
                     <RouteForm inProgress={this.state.inProgress}
+                               userContext={this.getContext()}
                                onSave={this.createRoute.bind(this)}
                                router={this.props.router}
                                route={defaultRoute}

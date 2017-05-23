@@ -392,7 +392,7 @@ export default class POIForm extends Component {
         nProgress.start();
         onDelete(!deleted).
         then(() => {
-            const statusMessage = deleted? 'visible' : 'hidden';
+            const statusMessage = deleted ? 'visible' : 'hidden';
             if (this.deleteInfoAlert) {
                 Alerts.close(this.deleteInfoAlert);
                 this.deleteInfoAlert = null;

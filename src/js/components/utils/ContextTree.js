@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { GridLoader as Loader } from 'halogen';
 import Graph from 'react-graph-vis';
+import { Card, CardHeader, CardMedia } from "material-ui/Card";
 import RaisedButton from 'material-ui/RaisedButton';
 
 import { checkFetchResponse, authenticatedFetch } from '../../functions/fetch';
@@ -21,7 +22,7 @@ export default class ContextTree extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = { expanded: false };
     }
 
     componentDidMount() {
@@ -67,7 +68,7 @@ export default class ContextTree extends Component {
     }
 
     fetchData() {
-        const { userContext, initialSelectedNode } = this.props;
+        const { userContext, selectedContext } = this.props;
         if (['number', 'string'].indexOf(typeof userContext) === NOT_FOUND) {
             throw new Error('Bad user context');
         }
@@ -84,19 +85,41 @@ export default class ContextTree extends Component {
                 this.setState({
                     fetchOK: true,
                     graph
+                }, () => {
+                    if (typeof selectedContext === 'number') {
+                        this.setSelected(selectedContext);
+                    }
                 });
-
-                if (typeof initialSelectedNode === 'number') {
-                    this.Network.selectNodes([initialSelectedNode]);
-                }
             }
         }).
-        catch((error) => {
-            console.log(error);
+        catch(() => {
             if (this.componentIsMounted) {
                 this.setState({ fetchOK: false });
             }
         });
+    }
+
+    getContentName(contextId) {
+        let selectedContext = null;
+
+        if (this.state.graph) {
+            this.state.graph.nodes.some((context) => {
+                if (context.id === contextId) {
+                    selectedContext = context.label;
+                }
+
+                return selectedContext !== null;
+            });
+        }
+
+        return selectedContext;
+    }
+
+    setSelected(contextId) {
+        if (this.Network && this.componentIsMounted) {
+            this.setState({ selectedContext: this.getContentName(contextId) });
+            this.Network.selectNodes([contextId]);
+        }
     }
 
     clearSelection() {
@@ -116,6 +139,7 @@ export default class ContextTree extends Component {
             return;
         }
         this.Network = graphRef.Network;
+        this.Network.selectNodes([this.props.selectedContext]);
     }
 
     getGraphEvents() {
@@ -137,14 +161,32 @@ export default class ContextTree extends Component {
         };
     }
 
+    handleExpandChange(expanded) {
+        if (this.Network) {
+            this.Network.selectNodes([this.props.selectedContext]);
+        }
+
+        if (this.componentIsMounted) {
+            this.setState({ expanded });
+        }
+    }
+
     render() {
         const { graph, fetchOK } = this.state;
+
         if (fetchOK) {
             return (
+            <Card expanded={this.state.expanded} onExpandChange={this.handleExpandChange.bind(this)}>
+                <CardHeader title="Context"
+                            subtitle={this.getContentName(this.props.selectedContext)}
+                            actAsExpander showExpandableButton/>
+                <CardMedia expandable>
                 <div style={containerStyle}>
                     <RaisedButton label="Center" style={buttonStyle} onTouchTap={ this.handleButton.bind(this) }/>
                     <Graph ref={ this.handleGraphRef.bind(this) } graph={graph} options={ this.getGraphOptions() } events={ this.getGraphEvents() } />
                 </div>
+                    </CardMedia>
+            </Card>
             );
         }
 
@@ -159,8 +201,8 @@ export default class ContextTree extends Component {
 }
 
 ContextTree.propTypes = {
-    initialSelectedNode: PropTypes.number,
     onSelect: PropTypes.func,
+    selectedContext: PropTypes.number,
     userContext: PropTypes.oneOfType([
         PropTypes.number,
         PropTypes.string
