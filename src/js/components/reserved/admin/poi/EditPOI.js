@@ -60,7 +60,7 @@ export default class EditPOI extends Component {
         return authenticatedFetch(`/api/reserved/content-editor/poi/${encodeURIComponent(poiID)}`, body, headers, 'GET').
         then(checkFetchResponse).
         then((json) => {
-            const { name, address, description, poiTypeId, tags, latitude, longitude, deleted, contents } = json;
+            const { name, address, description, poiTypeId, tags, latitude, longitude, deleted, contents, contextId } = json;
             this.setState({
                 fetchInProgress: false,
                 poi: {
@@ -73,6 +73,7 @@ export default class EditPOI extends Component {
                         lng: longitude
                     },
                     name,
+                    selectedContext: contextId,
                     selectedType: poiTypeId,
                     tags: tags.map((element) => {
                         return element.tagId;
@@ -98,7 +99,7 @@ export default class EditPOI extends Component {
             nProgress.done();
         });
     }
-
+// TODO buscar o parent
     handleSave(data) {
         const { currentUser } = firebase.auth();
         if (!currentUser) {
@@ -112,7 +113,7 @@ export default class EditPOI extends Component {
         }
 
         const { poiID } = this;
-        const { name, address, description, tags, metaInfo, location, files, selectedType, filesDeleted } = data;
+        const { name, address, description, tags, metaInfo, location, files, selectedType, selectedContext, filesDeleted } = data;
 
         const form = new FormData();
         form.append('name', name.trim());
@@ -124,7 +125,7 @@ export default class EditPOI extends Component {
         form.append('longitude', location.lng);
         form.append('poiTypeId', selectedType);
         form.append('filesDeleted', JSON.stringify(filesDeleted));
-        form.append('context', 3);                                  // TODO Obter a lista de contextos disponíveis para o utilizador
+        form.append('context', selectedContext);
         // New files to be added
         for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
             // Note: In order to detect the array of files in the server, each file, individually, must be appended to the same form key.

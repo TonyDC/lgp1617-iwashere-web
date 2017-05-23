@@ -45,7 +45,7 @@ export default class CreatePOI extends Component {
             throw new Error('Bad user context selected');
         }
 
-        const { name, address, description, tags, metaInfo, location, files, selectedType } = data;
+        const { name, address, description, tags, metaInfo, location, files, selectedType, selectedContext } = data;
 
         const form = new FormData();
         form.append('name', name.trim());
@@ -56,7 +56,7 @@ export default class CreatePOI extends Component {
         form.append('latitude', location.lat);
         form.append('longitude', location.lng);
         form.append('poiTypeId', selectedType);
-        form.append('context', 3);                                  // TODO Obter a lista de contextos disponíveis para o utilizador
+        form.append('context', selectedContext);
         for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
             // Note: In order to detect the array of files in the server, each file, individually, must be appended to the same form key.
             form.append('poiFiles', files[fileIndex]);

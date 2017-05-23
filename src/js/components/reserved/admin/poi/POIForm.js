@@ -80,6 +80,7 @@ export default class POIForm extends Component {
             metaInfo: '',
             name: '',
             nameError: false,
+            selectedContext: null,
             selectedType: -1,
             selectedTypeError: false,
             submitInProgress: false,
@@ -236,6 +237,12 @@ export default class POIForm extends Component {
         });
     }
 
+    handleContextSelection(event) {
+        const { nodes, edges } = event;
+        const [selectedIndex] = nodes;
+        this.setState({ selectedContext: selectedIndex });
+    }
+
     onDragEnter() {
         this.setState({ dropzoneActive: true });
     }
@@ -270,7 +277,7 @@ export default class POIForm extends Component {
     checkParams() {
         let error = false;
         let { name, address, description } = this.state;
-        const { selectedType, location } = this.state;
+        const { selectedType, location, selectedContext } = this.state;
 
         name = name.trim();
         if (name.length === NO_ELEMENTS) {
@@ -313,16 +320,26 @@ export default class POIForm extends Component {
             error = true;
         }
 
+        if (selectedContext === null) {
+            if (this.contextErrorAlert) {
+                Alerts.close(this.contextErrorAlert);
+                this.contextErrorAlert = null;
+            }
+            this.contextErrorAlert = Alerts.createErrorAlert('A context must be chosen from the tree');
+            error = true;
+        }
+
         return !error;
     }
 
     handleSubmit(event) {
         event.preventDefault();
 
-        this.setState({ submitInProgress: true });
         if (!this.checkParams()) {
             return;
         }
+
+        this.setState({ submitInProgress: true });
 
         const { onSave, resetAfterSubmit } = this.props;
         if (typeof onSave !== 'function') {
@@ -411,16 +428,19 @@ export default class POIForm extends Component {
             metaInfo: '',
             name: '',
             nameError: false,
+            selectedContext: null,
             selectedType: POI_TYPE_FIRST_ID,
             selectedTypeError: false,
             tags: []
         });
+        const { tree } = this.refs;
+        tree.clearSelection();
     }
 
     // TODO campo para colocar o parent do POI
     // TODO campo para colocar o contexto do utilizador
     render() {
-        const { location, metaInfo, name, nameError, address, addressError, description, descriptionError, selectedType, selectedTypeError, submitInProgress, deleted } = this.state;
+        const { location, metaInfo, name, nameError, address, addressError, description, descriptionError, selectedContext, selectedType, selectedTypeError, submitInProgress, deleted } = this.state;
 
         let selectedLocationPin = null;
         if (location) {
@@ -481,10 +501,9 @@ export default class POIForm extends Component {
                         { selectedLocationPin }
                     </GoogleMapReact>
                 </Paper>
-                <Tree userContext={1} onSelect={(event) => {
-                    const { nodes, edges } = event;
-                    console.log(nodes);
-                }}/>
+                <Paper zDepth={2}>
+                    <Tree ref="tree" userContext={1} initialSelectedNode={selectedContext} onSelect={ this.handleContextSelection.bind(this) }/>
+                </Paper>
                 <h5>Files to upload (Drag and drop files - png, jpeg)</h5>
                 <Paper>
                     <Dropzone className="custom-dropzone" style={dropzoneContainerStyle} onDrop={this.onDrop.bind(this)} accept="image/jpeg, image/png" onDragEnter={this.onDragEnter.bind(this)} onDragLeave={this.onDragLeave.bind(this)}>
