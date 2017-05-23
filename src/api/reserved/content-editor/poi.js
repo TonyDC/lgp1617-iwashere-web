@@ -24,24 +24,23 @@ const HTTP_ALREADY_REPORTED = 208;
 
 const bodyTemplate = upload.fields([{ name: 'poiFiles' }]);
 
-router.get('/:id', (req, res, next) => {
-    const { id } = req.params;
-    if (!id) {
+router.get('/search', (req, res, next) => {
+    const { contextID } = req.auth;
+    let { query } = req.query;
+    if (!query || typeof query !== 'string') {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
 
-    const { poiDB } = db;
-    const promisesToFulfill = [poiDB.getPOIDetailByID(id, true), poiDB.getPOITags(id), poiDB.getPOIAllMedia(id)];
-    Promise.all(promisesToFulfill).
-    then((results) => {
-        if (utils.checkResultList(results, [promisesToFulfill.length], true)) {
-            const poi = utils.convertObjectToCamelCase(results[ZERO_INDEX][ZERO_INDEX]);
-            poi.tags = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
-            poi.contents = utils.convertObjectsToCamelCase(results[TWO_INDEX]);
+    query = query.trim().split(/\s+/).
+    join(' & ');
 
-            res.json(poi).end();
+    const { poiDB } = db;
+    poiDB.searchPOIsUnderContexts(query, contextID).
+    then((results) => {
+        if (results) {
+            res.json(utils.convertObjectsToCamelCase(results)).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
         }
@@ -161,7 +160,8 @@ router.put('/:poiID', bodyTemplate, (req, res, next) => {
         return;
     }
 
-    if (typeof userID !== 'string' || typeof name !== 'string' || validator.isEmpty(name) ||
+    if (!poiID || typeof poiID !== 'string' || !validator.isNumeric(poiID) ||
+        typeof userID !== 'string' || typeof name !== 'string' || validator.isEmpty(name) ||
         typeof description !== 'string' || validator.isEmpty(description) || typeof address !== 'string' ||
         validator.isEmpty(address) || isNaN(parseFloat(latitude)) || isNaN(parseFloat(longitude)) ||
         typeof poiTypeId !== 'string' ||
@@ -243,7 +243,7 @@ router.post('/:poiID', (req, res, next) => {
     const { poiID } = req.params;
     const { deleted } = req.body;
 
-    if (!poiID || typeof deleted !== 'boolean') {
+    if (!poiID || typeof poiID !== 'string' || !validator.isNumeric(poiID) || typeof deleted !== 'boolean') {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
@@ -280,6 +280,33 @@ router.post('/:poiID', (req, res, next) => {
     }).
     catch((err) => {
         next(err);
+    });
+});
+
+router.get('/:poiID', (req, res, next) => {
+    const { poiID } = req.params;
+    if (!poiID || typeof poiID !== 'string' || !validator.isNumeric(poiID)) {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    const { poiDB } = db;
+    const promisesToFulfill = [poiDB.getPOIDetailByID(poiID, true), poiDB.getPOITags(poiID), poiDB.getPOIAllMedia(poiID)];
+    Promise.all(promisesToFulfill).
+    then((results) => {
+        if (utils.checkResultList(results, [promisesToFulfill.length], true)) {
+            const poi = utils.convertObjectToCamelCase(results[ZERO_INDEX][ZERO_INDEX]);
+            poi.tags = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
+            poi.contents = utils.convertObjectsToCamelCase(results[TWO_INDEX]);
+
+            res.json(poi).end();
+        } else {
+            res.sendStatus(httpCodes.NO_CONTENT).end();
+        }
+    }).
+    catch((error) => {
+        next(error);
     });
 });
 

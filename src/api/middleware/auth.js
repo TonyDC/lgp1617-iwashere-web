@@ -66,7 +66,6 @@ function firebaseAuth (req, res, next) {
  */
 function verifyUserPermissions (minimumRank) {
     return (req, res, next) => {
-        console.log(req.auth.contextID);
         const { uid } = req.auth.token;
         if (!uid || typeof uid !== 'string') {
             res.sendStatus(httpCodes.BAD_REQUEST).end();
