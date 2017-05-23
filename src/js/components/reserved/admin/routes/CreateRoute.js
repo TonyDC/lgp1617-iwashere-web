@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import httpCodes from 'http-status-codes';
+import nProgress from 'nprogress';
 import * as firebase from 'firebase';
 import Alerts from '../../../utils/Alerts';
 
@@ -21,6 +22,13 @@ const mainStyle = {
 };
 
 export default class CreateRoute extends Component {
+
+
+    constructor(props) {
+        super(props);
+
+        this.state = { inProgress: false };
+    }
 
     componentDidMount() {
         this.componentIsMounted = true;
@@ -63,7 +71,7 @@ export default class CreateRoute extends Component {
             route.context = 3;
 
             this.setState({ inProgress: true });
-
+            nProgress.start();
             currentUser.getToken().then((token) => {
                 return fetch(API_ROUTE_URL, {
                     body: JSON.stringify(route),
@@ -83,29 +91,43 @@ export default class CreateRoute extends Component {
                 return response.json();
             }).
             then((newRoute) => {
-                this.props.router.push(`/route/${newRoute.routeId}`);
+                nProgress.done();
+                Alerts.createInfoAlert('Route created.');
+                this.props.router.push(`/reserved/route/${newRoute.routeId}`);
             }).
-            catch((error) => {
-                if (!this.componentIsMounted) {
-                    return;
+            catch(() => {
+                nProgress.done();
+                if (this.componentIsMounted) {
+                    this.setState({ inProgress: false });
+                    this.errorAlert = Alerts.createErrorAlert('Error while creating the new route.');
                 }
-
-                this.setState({ inProgress: false });
-                this.errorAlert = Alerts.createErrorAlert('Error while creating the new route.');
             });
         }
     }
 
     render() {
+        const defaultRoute = {
+            description: '',
+            metaInfo: '',
+            name: '',
+            pois: [],
+            routeId: null,
+            tags: []
+        };
+
         return (
-            <Paper zDepth={2} style={mainStyle}>
-                <Helmet>
-                    <title>#iwashere - Reserved - Route</title>
-                </Helmet>
-                <RouteForm onSave={this.createRoute.bind(this)}
-                           router={this.props.router}
-                           title="Create a route" />
-            </Paper>
+            <div className="wrapper-fill vert-align hor-align">
+                <Paper className="paper-min-width" zDepth={2} style={mainStyle}>
+                    <Helmet>
+                        <title>#iwashere - Reserved - Route</title>
+                    </Helmet>
+                    <RouteForm inProgress={this.state.inProgress}
+                               onSave={this.createRoute.bind(this)}
+                               router={this.props.router}
+                               route={defaultRoute}
+                               title="Create a route" />
+                </Paper>
+            </div>
         );
     }
 }

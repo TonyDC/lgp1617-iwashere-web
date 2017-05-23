@@ -2,14 +2,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { GridLoader as Loader } from 'halogen';
 import TextField from 'material-ui/TextField';
-import Paper from 'material-ui/Paper';
 import { List, ListItem } from 'material-ui/List';
 import Divider from 'material-ui/Divider';
 import RaisedButton from 'material-ui/RaisedButton';
 import ActionSearch from 'material-ui/svg-icons/action/search';
 import httpCodes from 'http-status-codes';
 
-import Alerts from '../utils/Alerts';
+import Alerts from '../../../utils/Alerts';
 
 import 'styles/panel.scss';
 import 'styles/utils.scss';
@@ -17,6 +16,11 @@ import 'styles/utils.scss';
 const NO_ELEMENTS = 0;
 
 export default class RouteSearch extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {};
+    }
 
     componentDidMount() {
         this.componentIsMounted = true;
@@ -106,6 +110,7 @@ export default class RouteSearch extends Component {
         </div>;
         if (!this.state.inProgress) {
             searchButton = <RaisedButton
+                label="Search"
                 icon={<ActionSearch />}
                 onTouchTap={ this.submitSearch.bind(this) }
             />;
@@ -149,27 +154,22 @@ export default class RouteSearch extends Component {
         }
 
         return (
-            <div className="wrapper-fill vert-align hor-align">
-                <Paper className="paper-min-width" zDepth={2}>
-                    <div className="paper-content">
-                        <form onSubmit={ this.state.inProgress
-                            ? null
-                            : this.submitSearch.bind(this) } >
-                            <TextField
-                                hintText="Keywords"
-                                floatingLabelText="Search routes"
-                                value={ this.state.search }
-                                onChange={ this.handleSearchInput.bind(this) }
-                                fullWidth
-                                errorText={ null }
-                            />
-                            <br />
-                            { resultsArea }
-                            { searchButton }
-                        </form>
-                    </div>
-                </Paper>
-            </div>
+            <form onSubmit={ this.state.inProgress
+                ? null
+                : this.submitSearch.bind(this) } >
+                <TextField
+                    hintText="Keywords"
+                    floatingLabelText="Search route"
+                    value={ this.state.search }
+                    onChange={ this.handleSearchInput.bind(this) }
+                    fullWidth
+                    errorText={ null }
+                />
+                <br />
+                { resultsArea }
+                { searchButton }
+            </form>
+
         );
     }
 }
