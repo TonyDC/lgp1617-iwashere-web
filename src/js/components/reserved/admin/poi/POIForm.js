@@ -13,6 +13,7 @@ import MenuItem from 'material-ui/MenuItem';
 import { GOOGLE_MAPS_API_KEY } from '../../../../../../config/index';
 
 import SelectedLocation from '../../../map/SelectedLocation';
+import Tree from '../../../utils/ContextTree';
 import Tags from '../../../utils/MyTags';
 import Alerts from '../../../utils/Alerts';
 import Image from '../../../utils/Image';
@@ -47,10 +48,10 @@ const titleDividerStyle = {
 };
 
 const mapContainerStyle = {
-    position: 'relative',
     height: 400,
-    width: 'auto',
-    marginBottom: 40
+    marginBottom: 40,
+    position: 'relative',
+    width: 'auto'
 };
 
 const mapStyle = {
@@ -58,8 +59,8 @@ const mapStyle = {
 };
 
 const dropzoneContainerStyle = {
-    position: 'relative',
-    minHeight: 100
+    minHeight: 100,
+    position: 'relative'
 };
 
 export default class POIForm extends Component {
@@ -480,6 +481,10 @@ export default class POIForm extends Component {
                         { selectedLocationPin }
                     </GoogleMapReact>
                 </Paper>
+                <Tree userContext={1} onSelect={(event) => {
+                    const { nodes, edges } = event;
+                    console.log(nodes);
+                }}/>
                 <h5>Files to upload (Drag and drop files - png, jpeg)</h5>
                 <Paper>
                     <Dropzone className="custom-dropzone" style={dropzoneContainerStyle} onDrop={this.onDrop.bind(this)} accept="image/jpeg, image/png" onDragEnter={this.onDragEnter.bind(this)} onDragLeave={this.onDragLeave.bind(this)}>
