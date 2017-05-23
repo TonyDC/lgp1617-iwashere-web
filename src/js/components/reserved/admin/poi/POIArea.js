@@ -7,7 +7,6 @@ import RaisedButton from 'material-ui/RaisedButton';
 
 import POISearch from './POISearch';
 
-import ActionSearch from 'material-ui/svg-icons/action/search';
 import MapsAddLocation from 'material-ui/svg-icons/maps/add-location';
 
 const mainStyle = {

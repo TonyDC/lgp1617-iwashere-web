@@ -129,7 +129,7 @@ export default class POISearch extends Component {
                 this.setState({ inProgress: false });
                 let alertText = 'Error while searching for routes. Please, try again later.';
                 if (status === httpCodes.BAD_REQUEST) {
-                    alertText = 'Bad search input. Please, provide the keywords to search for';
+                    alertText = 'Bad search input. Please, provide the keywords to search for.';
                 }
                 this.searchErrorAlert = Alerts.createErrorAlert(alertText);
             }
