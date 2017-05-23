@@ -12,6 +12,7 @@ import Paper from 'material-ui/Paper';
 import POIForm from './POIForm';
 
 import { checkFetchResponse, authenticatedFetch } from '../../../../functions/fetch';
+import { getContext } from '../../../../functions/store';
 
 import 'styles/utils.scss';
 
@@ -113,7 +114,7 @@ export default class EditPOI extends Component {
         }
 
         const { poiID } = this;
-        const { name, address, description, tags, metaInfo, location, files, selectedType, selectedContext, filesDeleted } = data;
+        const { name, address, description, tags, metaInfo, location, files, selectedType, contextId, filesDeleted } = data;
 
         const form = new FormData();
         form.append('name', name.trim());
@@ -125,7 +126,9 @@ export default class EditPOI extends Component {
         form.append('longitude', location.lng);
         form.append('poiTypeId', selectedType);
         form.append('filesDeleted', JSON.stringify(filesDeleted));
-        form.append('context', selectedContext);
+        form.append('context', contextId);
+
+        console.log(contextId);
         // New files to be added
         for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
             // Note: In order to detect the array of files in the server, each file, individually, must be appended to the same form key.
@@ -175,7 +178,7 @@ export default class EditPOI extends Component {
                     initialValues={ this.state.poi }
                     onSave={ this.handleSave.bind(this) }
                     onDelete={ this.handleDelete.bind(this) }
-                />
+                    userContext={ getContext(this.context.store) }/>
             );
         } else {
             poiForm = (<div className="hor-align">

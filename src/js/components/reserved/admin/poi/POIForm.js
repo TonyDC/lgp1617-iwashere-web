@@ -29,7 +29,7 @@ const ONE_ELEMENT = 1;
 const FIRST_ELEMENT_INDEX = 0;
 const POI_TYPE_LANG_SEPARATOR = ';';
 
-const DECIMAL_RADIX = 10;
+const DECIMAL_BASE = 10;
 
 const buttonContainerStyle = { marginTop: 20 };
 const buttonStyle = { marginRight: 20 };
@@ -143,7 +143,7 @@ export default class POIForm extends Component {
                 const { initialValues } = this.props;
                 let initialSelectedType = POI_TYPE_FIRST_ID;
                 if (initialValues) {
-                    initialSelectedType = parseInt(initialValues.selectedType, DECIMAL_RADIX);
+                    initialSelectedType = parseInt(initialValues.selectedType, DECIMAL_BASE);
                     if (isNaN(initialSelectedType)) {
                         initialSelectedType = POI_TYPE_FIRST_ID;
                     }
@@ -272,7 +272,7 @@ export default class POIForm extends Component {
     checkParams() {
         let error = false;
         let { name, address, description } = this.state;
-        const { selectedType, location, selectedContext } = this.state;
+        const { selectedType, location, contextId } = this.state;
 
         name = name.trim();
         if (name.length === NO_ELEMENTS) {
@@ -315,7 +315,7 @@ export default class POIForm extends Component {
             error = true;
         }
 
-        if (selectedContext === null) {
+        if (contextId === null) {
             if (this.contextErrorAlert) {
                 Alerts.close(this.contextErrorAlert);
                 this.contextErrorAlert = null;
@@ -415,6 +415,7 @@ export default class POIForm extends Component {
         this.setState({
             address: '',
             addressError: false,
+            contextId: null,
             description: '',
             descriptionError: false,
             dropzoneActive: false,
@@ -423,7 +424,6 @@ export default class POIForm extends Component {
             metaInfo: '',
             name: '',
             nameError: false,
-            selectedContext: null,
             selectedType: POI_TYPE_FIRST_ID,
             selectedTypeError: false,
             tags: []
@@ -432,22 +432,10 @@ export default class POIForm extends Component {
         tree.clearSelection();
     }
 
-    getContext() {
-        const { reserved: reservedPropStore } = this.context.store.getState();
-        const { contexts, selectedIndex: selectedContextIndex } = reservedPropStore;
-        if (!contexts || !Array.isArray(contexts) || contexts.length === NO_ELEMENTS) {
-            throw new Error('No contexts available.');
-        } else if (typeof selectedContextIndex !== 'number' || contexts.length <= selectedContextIndex) {
-            throw new Error('Bad user context selected.');
-        }
-
-        return contexts[selectedContextIndex].contextId;
-    }
-
     // TODO campo para colocar o parent do POI
     // TODO campo para colocar o contexto do utilizador
     render() {
-        const { location, metaInfo, name, nameError, address, addressError, description, descriptionError, contextId, selectedType, selectedTypeError, submitInProgress, deleted } = this.state;
+        const { location, metaInfo, name, nameError, address, addressError, description, descriptionError, selectedType, selectedTypeError, submitInProgress, deleted } = this.state;
 
         let selectedLocationPin = null;
         if (location) {
@@ -465,6 +453,8 @@ export default class POIForm extends Component {
             }
             deleteButton = <RaisedButton style={buttonStyle} label={label} secondary disabled={ submitInProgress } onTouchTap={ this.handleDelete.bind(this) } />;
         }
+
+        const contextId = this.state.contextId ? this.state.contextId : this.props.userContext;
 
         return (
             <div style={mainStyle}>
@@ -486,7 +476,7 @@ export default class POIForm extends Component {
                     value={metaInfo} onChange={ this.handleMetaInfo.bind(this) }
                 />
                 <SelectField floatingLabelText="POI Type" fullWidth
-                    value={selectedType} errorText={ selectedTypeError? selectedTypeError : null } onChange={ this.handlePOIType.bind(this) } disabled={ this.state.selectedType < POI_TYPE_FIRST_ID }
+                    value={selectedType} errorText={ selectedTypeError ? selectedTypeError : null } onChange={ this.handlePOIType.bind(this) } disabled={ this.state.selectedType < POI_TYPE_FIRST_ID }
                 >
                     {
                         this.state.types.map((element, index) => {
