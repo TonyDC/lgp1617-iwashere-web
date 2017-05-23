@@ -67,7 +67,7 @@ export default class ContextTree extends Component {
     }
 
     fetchData() {
-        const { userContext } = this.props;
+        const { userContext, selectedNode } = this.props;
         if (['number', 'string'].indexOf(typeof userContext) === NOT_FOUND) {
             throw new Error('Bad user context');
         }
@@ -85,6 +85,10 @@ export default class ContextTree extends Component {
                     fetchOK: true,
                     graph
                 });
+
+                if (typeof selectedNode === 'number') {
+                    this.Network.selectNodes([selectedNode]);
+                }
             }
         }).
         catch((error) => {
@@ -149,6 +153,7 @@ export default class ContextTree extends Component {
 
 ContextTree.propTypes = {
     onSelect: PropTypes.func,
+    selectedNode: PropTypes.number,
     userContext: PropTypes.oneOfType([
         PropTypes.number,
         PropTypes.string
