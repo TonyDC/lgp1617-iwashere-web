@@ -6,8 +6,9 @@ import Helmet from 'react-helmet';
 
 import Paper from 'material-ui/Paper';
 
-import POIForm from './POIForm';
+import UserForm from './UserForm';
 
+import { getContext } from '../../../../functions/store';
 import { checkFetchResponse, authenticatedFetch } from '../../../../functions/fetch';
 
 const mainStyle = {
@@ -19,11 +20,6 @@ const mainStyle = {
 const titleStyle = { marginLeft: 40 };
 
 export default class CreateUser extends Component {
-
-    constructor(props) {
-        super(props);
-        this.state = { searchText: '' };
-    }
 
     componentDidMount() {
         this.componentIsMounted = true;
@@ -39,33 +35,19 @@ export default class CreateUser extends Component {
             throw new Error('Bad user object');
         }
 
-        const { reserved: reservedPropStore } = this.context.store.getState();
-        const { contexts, selectedIndex: selectedContextIndex } = reservedPropStore;
-        if (!contexts || !Array.isArray(contexts) || typeof selectedContextIndex !== 'number' || contexts.length <= selectedContextIndex) {
-            throw new Error('Bad user context selected');
-        }
+        const { email, password, name, role, context } = data;
+        const { store } = this.context;
 
-        const { name, address, description, tags, metaInfo, location, files, selectedType, selectedContext } = data;
+        const body = {
+                context,
+                email,
+                name,
+                password,
+                role
+            },
+            headers = { 'X-user-context': getContext(store) };
 
-        const form = new FormData();
-        form.append('name', name.trim());
-        form.append('address', address.trim());
-        form.append('description', description.trim());
-        form.append('tags', JSON.stringify(tags));
-        form.append('metaInfo', metaInfo.trim());                   // TODO database
-        form.append('latitude', location.lat);
-        form.append('longitude', location.lng);
-        form.append('poiTypeId', selectedType);
-        form.append('context', selectedContext);
-        for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
-            // Note: In order to detect the array of files in the server, each file, individually, must be appended to the same form key.
-            form.append('poiFiles', files[fileIndex]);
-        }
-
-        // 'Content-Type': `multipart/form-data` must not be added; the 'boundary' token must be provided automatically
-        const headers = { 'X-user-context': contexts[selectedContextIndex].contextId };
-
-        return authenticatedFetch('/api/reserved/content-editor/poi/', form, headers, 'POST').
+        return authenticatedFetch('/api/reserved/admin/user/', body, headers, 'POST').
         then(checkFetchResponse);
     }
 
@@ -73,11 +55,11 @@ export default class CreateUser extends Component {
         return (
             <Paper zDepth={2} style={mainStyle}>
                 <Helmet>
-                    <title>#iwashere - Create POI</title>
+                    <title>#iwashere - Create User</title>
                 </Helmet>
 
-                <h3 style={titleStyle}>Create POI</h3>
-                <POIForm onSave={ this.handleSave.bind(this) } resetAfterSubmit/>
+                <h3 style={titleStyle}>Create User</h3>
+                <UserForm onSave={ this.handleSave.bind(this) } resetAfterSubmit/>
             </Paper>
         );
     }

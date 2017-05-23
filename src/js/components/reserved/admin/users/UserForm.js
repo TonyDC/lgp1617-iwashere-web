@@ -1,36 +1,21 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import GoogleMapReact from 'google-map-react';
-import Dropzone from 'react-dropzone';
 import httpCodes from 'http-status-codes';
 import nProgress from 'nprogress';
-import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
 
-import { GOOGLE_MAPS_API_KEY } from '../../../../../../config/index';
-
-import SelectedLocation from '../../../map/SelectedLocation';
+import { getContext } from '../../../../functions/store';
 import Tree from '../../../utils/ContextTree';
-import Tags from '../../../utils/MyTags';
 import Alerts from '../../../utils/Alerts';
-import Image from '../../../utils/Image';
+import RoleSelector from './RoleSelector';
 
 import 'styles/utils.scss';
 import 'styles/map.scss';
 import 'styles/dropzone.scss';
 
-const POI_TYPE_FIRST_ID = 1;
-const ZERO_INDEX = 0;
+const ROLE_FIRST_ID = 1;
 const NO_ELEMENTS = 0;
-const ONE_ELEMENT = 1;
-const FIRST_ELEMENT_INDEX = 0;
-const POI_TYPE_LANG_SEPARATOR = ';';
-
-const DECIMAL_RADIX = 10;
-
 const MINIMUM_PASSWORD_SIZE = 6;
 
 // TODO refactor
@@ -39,7 +24,6 @@ const mainStyle = {
     paddingBottom: 10,
     paddingTop: 5
 };
-
 const buttonContainerStyle = { marginTop: 20 };
 const buttonStyle = { marginRight: 20 };
 
@@ -100,6 +84,12 @@ export default class UserForm extends Component {
         }
     }
 
+    handleRoleSelector(roleID) {
+        if (this.componentIsMounted) {
+            this.setState({ role: roleID });
+        }
+    }
+
     checkParams() {
         let error = false;
         let { email, name } = this.state;
@@ -132,7 +122,7 @@ export default class UserForm extends Component {
             error = true;
         }
 
-        if (role < POI_TYPE_FIRST_ID) {
+        if (role < ROLE_FIRST_ID) {
             this.setState({ selectedTypeError: 'Bad selected type' });
             error = true;
         }
@@ -168,14 +158,20 @@ export default class UserForm extends Component {
             if (this.componentIsMounted && resetAfterSubmit) {
                 this.resetFields();
             }
-            Alerts.createInfoAlert('POI information successfully submitted');
+            Alerts.createInfoAlert('User information successfully submitted');
         }).
-        catch(() => {
+        catch((error) => {
             if (this.formFetchError) {
                 Alerts.close(this.formFetchError);
                 this.formFetchError = null;
             }
-            this.formFetchError = Alerts.createErrorAlert('Error in submitting the information. Please, try again later.');
+
+            const { status } = error;
+            let alertText = 'Error in submitting the information. Please, try again later.';
+            if (status === httpCodes.UNAUTHORIZED) {
+                alertText = 'You are not authorized to submit the request';
+            }
+            this.formFetchError = Alerts.createErrorAlert(alertText);
         }).
         then(() => {
             if (this.componentIsMounted) {
@@ -209,24 +205,28 @@ export default class UserForm extends Component {
             }
             this.deleteInfoAlert = Alerts.createInfoAlert(`User is now ${statusMessage}`);
             if (this.componentIsMounted) {
-                this.setState({
-                    suspended: !suspended,
-                    submitInProgress: false
-                });
+                this.setState({ suspended: !suspended });
             }
         }).
-        catch((err) => {
-            console.error(err);
-            if (this.componentIsMounted) {
-                this.setState({ submitInProgress: false });
-            }
+        catch((error) => {
+            console.error(error);
+
             if (this.formFetchError) {
                 Alerts.close(this.formFetchError);
                 this.formFetchError = null;
             }
-            this.formFetchError = Alerts.createErrorAlert('An error has occurred while toggling the user suspension status');
+
+            const { status } = error;
+            let alertText = 'Error in submitting the information. Please, try again later.';
+            if (status === httpCodes.UNAUTHORIZED) {
+                alertText = 'You are not authorized to submit the request';
+            }
+            this.formFetchError = Alerts.createErrorAlert(alertText);
         }).
         then(() => {
+            if (this.componentIsMounted) {
+                this.setState({ submitInProgress: false });
+            }
             nProgress.done();
         });
     }
@@ -248,20 +248,9 @@ export default class UserForm extends Component {
         tree.clearSelection();
     }
 
-    getContext() {
-        const { reserved: reservedPropStore } = this.context.store.getState();
-        const { contexts, selectedIndex: selectedContextIndex } = reservedPropStore;
-        if (!contexts || !Array.isArray(contexts) || contexts.length === NO_ELEMENTS) {
-            throw new Error('No contexts available.');
-        } else if (typeof selectedContextIndex !== 'number' || contexts.length <= selectedContextIndex) {
-            throw new Error('Bad user context selected.');
-        }
-
-        return contexts[selectedContextIndex].contextId;
-    }
-
     render() {
         const { email, emailError, password, passwordError, name, nameError, role, context, submitInProgress, suspended } = this.state;
+        const { store } = this.context;
 
         let deleteButton = null;
         if (this.props.onDelete) {
@@ -283,8 +272,8 @@ export default class UserForm extends Component {
                 <TextField id="email" type="email" hintText="Email" floatingLabelText="User email" fullWidth
                            errorText={ emailError ? emailError : null } value={email} onChange={ this.handleEmail.bind(this) }
                 />
-                <Tree userContext={ this.getContext() } initialSelectedNode={context} onSelect={ this.handleContextSelection.bind(this) }/>
-
+                <Tree userContext={ getContext(store) } initialSelectedNode={context} onSelect={ this.handleContextSelection.bind(this) }/>
+                <RoleSelector onSelect={ this.handleRoleSelector.bind(this) } initialRoleValue={role} />
                 <div style={buttonContainerStyle}>
                     <RaisedButton style={ buttonStyle } label="Submit" primary disabled={ submitInProgress } onTouchTap={ this.handleSubmit.bind(this) }/>
                     { deleteButton }
