@@ -34,6 +34,7 @@ const DECIMAL_RADIX = 10;
 const buttonContainerStyle = { marginTop: 20 };
 const buttonStyle = { marginRight: 20 };
 
+// TODO refactor
 const mainStyle = {
     margin: 20,
     paddingBottom: 10,
@@ -441,8 +442,21 @@ export default class POIForm extends Component {
         tree.clearSelection();
     }
 
+    getContext() {
+        const { reserved: reservedPropStore } = this.context.store.getState();
+        const { contexts, selectedIndex: selectedContextIndex } = reservedPropStore;
+        if (!contexts || !Array.isArray(contexts) || contexts.length === NO_ELEMENTS) {
+            throw new Error('No contexts available.');
+        } else if (typeof selectedContextIndex !== 'number' || contexts.length <= selectedContextIndex) {
+            throw new Error('Bad user context selected.');
+        }
+
+        return contexts[selectedContextIndex].contextId;
+    }
+
     // TODO campo para colocar o parent do POI
     // TODO campo para colocar o contexto do utilizador
+    // TODO dar o user context para a árvore
     render() {
         const { location, metaInfo, name, nameError, address, addressError, description, descriptionError, selectedContext, selectedType, selectedTypeError, submitInProgress, deleted } = this.state;
 
@@ -463,7 +477,8 @@ export default class POIForm extends Component {
             deleteButton = <RaisedButton style={buttonStyle} label={label} secondary disabled={ submitInProgress } onTouchTap={ this.handleDelete.bind(this) } />;
         }
 
-        return (<div style={mainStyle}>
+        return (
+            <div style={mainStyle}>
                 <TextField id="name" hintText="Name" floatingLabelText="Name of Point of Interest" fullWidth
                     errorText={ nameError ? nameError : null } value={name} onChange={ this.handleName.bind(this) }
                 />
@@ -506,7 +521,7 @@ export default class POIForm extends Component {
                     </GoogleMapReact>
                 </Paper>
                 <Paper zDepth={2}>
-                    <Tree ref="tree" userContext={1} initialSelectedNode={selectedContext} onSelect={ this.handleContextSelection.bind(this) }/>
+                    <Tree ref="tree" userContext={ this.getContext() } initialSelectedNode={selectedContext} onSelect={ this.handleContextSelection.bind(this) }/>
                 </Paper>
                 <h5>Files to upload (Drag and drop files - png, jpeg)</h5>
                 <Paper>
