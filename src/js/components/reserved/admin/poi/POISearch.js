@@ -17,6 +17,7 @@ import 'styles/utils.scss';
 
 const POI_API_URL = '/api/reserved/content-editor/poi/';
 const NO_ELEMENTS = 0;
+const TWO_SIZE = 2;
 
 export default class POISearch extends Component {
 
@@ -145,33 +146,41 @@ export default class POISearch extends Component {
         let resultsArea = null;
         if (results && Array.isArray(results)) {
             if (results.length > NO_ELEMENTS) {
-                resultsArea = (
-                    <List>
-                    <InfiniteScroll containerHeight={200} elementHeight={40}>
-                        {
-                            results.map((element) => {
-                                // NOTE: poiId is primary key -> unique and not null
-                                const { name, address, poiId } = element;
+                const resultsList = results.map((element) => {
+                    // NOTE: poiId is primary key -> unique and not null
+                    const { name, address, poiId } = element;
 
-                                return (
-                                    <div key={poiId}>
-                                        <ListItem
-                                            primaryText={ name }
-                                            secondaryText={ <p>{ address }</p> }
-                                            secondaryTextLines={2}
-                                            onTouchTap={(event) => {
-                                                event.preventDefault();
-                                                this.handlePOISelection(element);
-                                            }}
-                                        />
-                                        <Divider inset/>
-                                    </div>
-                                );
-                            })
-                        }
-                    </InfiniteScroll>
-                    </List>
-                );
+                    return (
+                        <div key={poiId}>
+                            <ListItem
+                                primaryText={ name }
+                                secondaryText={ <p>{ address }</p> }
+                                secondaryTextLines={2}
+                                onTouchTap={(event) => {
+                                    event.preventDefault();
+                                    this.handlePOISelection(element);
+                                }}
+                            />
+                            <Divider inset/>
+                        </div>
+                    );
+                });
+
+                if (results.length > TWO_SIZE) {
+                    resultsArea = (
+                        <List>
+                            <InfiniteScroll containerHeight={200} elementHeight={40}>
+                                { resultsList }
+                            </InfiniteScroll>
+                        </List>
+                    );
+                } else {
+                    resultsArea = (
+                        <List>
+                            { resultsList }
+                        </List>
+                    );
+                }
             } else {
                 resultsArea = (
                     <List>

@@ -120,7 +120,7 @@ export default class EditPOI extends Component {
         form.append('address', address.trim());
         form.append('description', description.trim());
         form.append('tags', JSON.stringify(tags));
-        form.append('metaInfo', metaInfo.trim());
+        form.append('metaInfo', metaInfo.trim());               // TODO database
         form.append('latitude', location.lat);
         form.append('longitude', location.lng);
         form.append('poiTypeId', selectedType);

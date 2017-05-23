@@ -223,7 +223,7 @@ router.put('/:poiID', bodyTemplate, (req, res, next) => {
 
                 return Promise.all(newPOIFiles).
                 then((filesResults) => {
-                    if (utils.checkResultList(filesResults, [newPOIFiles.length], true)) {
+                    if (utils.checkResultList(filesResults, [newPOIFiles.length], true)) {      // TODO falha caso alguma das listas for vazia
                         res.json({ message: 'OK' }).end();
                     } else {
                         res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error while submitting the files' }).
@@ -282,7 +282,7 @@ router.post('/:poiID', (req, res, next) => {
         next(err);
     });
 });
-
+// TODO verificar se o utilizador pode ver a informação
 router.get('/:poiID', (req, res, next) => {
     const { poiID } = req.params;
     if (!poiID || typeof poiID !== 'string' || !validator.isNumeric(poiID)) {
@@ -295,15 +295,11 @@ router.get('/:poiID', (req, res, next) => {
     const promisesToFulfill = [poiDB.getPOIDetailByID(poiID, true), poiDB.getPOITags(poiID), poiDB.getPOIAllMedia(poiID)];
     Promise.all(promisesToFulfill).
     then((results) => {
-        if (utils.checkResultList(results, [promisesToFulfill.length], true)) {
-            const poi = utils.convertObjectToCamelCase(results[ZERO_INDEX][ZERO_INDEX]);
-            poi.tags = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
-            poi.contents = utils.convertObjectsToCamelCase(results[TWO_INDEX]);
+        const poi = utils.convertObjectToCamelCase(results[ZERO_INDEX][ZERO_INDEX]);
+        poi.tags = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
+        poi.contents = utils.convertObjectsToCamelCase(results[TWO_INDEX]);
 
-            res.json(poi).end();
-        } else {
-            res.sendStatus(httpCodes.NO_CONTENT).end();
-        }
+        res.json(poi).end();
     }).
     catch((error) => {
         next(error);
