@@ -2,7 +2,7 @@
 
 const utils = require('../../utils/misc');
 const poiAux = require('../../utils/poi_aux');
-const routeAux = require('../../utils/poi_aux');
+const routeAux = require('../../utils/route_aux');
 const httpCodes = require('http-status-codes');
 const validator = require('validator');
 const express = require('express');
@@ -20,20 +20,20 @@ const TWO_SIZE = 2;
 
 // Create new Route
 router.post('/', (req, res, next) => {
-    const { name, description, tags, pois, context } = utils.trimStringProperties(req.body);
+    const { name, description, tags, pois, contextId } = utils.trimStringProperties(req.body);
     const { uid: userID } = req.auth.token;
     const { contextID: userContext } = req.auth;
 
     if (typeof userID !== 'string' || validator.isEmpty(userID) || typeof name !== 'string' || validator.isEmpty(name) ||
         typeof description !== 'string' || validator.isEmpty(description) || !tags || !pois || pois.length < ONE_SIZE ||
-        typeof context === 'undefined' || validator.isEmpty(`${context}`)) {
+        typeof contextId === 'undefined' || validator.isEmpty(`${contextId}`)) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
 
     const { userContextDB, poiDB, routeDB } = db;
-    const primaryChecks = [userContextDB.verifyContextUnderUserJurisdiction(userContext, context),
+    const primaryChecks = [userContextDB.verifyContextUnderUserJurisdiction(userContext, contextId),
         poiDB.getPOIsByID(utils.convertArrayToString(pois))];
     Promise.all(primaryChecks).
     then((results) => {
@@ -70,21 +70,21 @@ router.post('/', (req, res, next) => {
 
 // Update Route
 router.put('/', (req, res, next) => {
-    const { routeId, name, description, tags, pois, context } = utils.trimStringProperties(req.body);
+    const { routeId, name, description, tags, pois, contextId } = utils.trimStringProperties(req.body);
     const { uid: userID } = req.auth.token;
     const { contextID: userContext } = req.auth;
 
     if (typeof userID !== 'string' || validator.isEmpty(userID) || typeof name !== 'string' || validator.isEmpty(name) ||
         typeof description !== 'string' || validator.isEmpty(description) || !tags || !pois || pois.length < ONE_SIZE ||
         typeof routeId === 'undefined' || validator.isEmpty(`${routeId}`) ||
-        typeof context === 'undefined' || validator.isEmpty(`${context}`)) {
+        typeof contextId === 'undefined' || validator.isEmpty(`${contextId}`)) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
 
     const { userContextDB, poiDB, routeDB } = db;
-    const primaryChecks = [userContextDB.verifyContextUnderUserJurisdiction(userContext, context),
+    const primaryChecks = [userContextDB.verifyContextUnderUserJurisdiction(userContext, contextId),
         poiDB.getPOIsByID(utils.convertArrayToString(pois)), routeDB.getRouteDetailByID(routeId, true)];
     Promise.all(primaryChecks).
     then((results) => {
