@@ -142,13 +142,14 @@ module.exports.getContentEditorRoute = (userID, routeID) => {
     });
 };
 
-module.exports.updateRoute = (routeId, name, description) => {
+module.exports.updateRoute = (routeId, name, description, contextId) => {
     // language=POSTGRES-SQL
     return db.query(`UPDATE routes
-    SET name = :name, description = :description
+    SET name = :name, description = :description, context_id = :contextId
     WHERE route_id = :routeId
     RETURNING route_id`, {
         replacements: {
+            contextId,
             description,
             name,
             routeId

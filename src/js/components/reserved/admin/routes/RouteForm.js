@@ -5,6 +5,7 @@ import Tags from '../../../utils/MyTags';
 import RouteMap from '../../../route/RouteMap';
 import POIList from './POIList';
 import Alerts from '../../../utils/Alerts';
+import ContextTree from '../../../utils/ContextTree';
 import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
@@ -33,7 +34,8 @@ export default class ReservedRoute extends Component {
         super(props);
         this.state = {
             allPois: [],
-            route: this.props.route
+            route: this.props.route,
+            selectedContext: null
         };
     }
 
@@ -187,10 +189,20 @@ export default class ReservedRoute extends Component {
         }
     }
 
+    handleContextSelection(event) {
+        if (this.componentIsMounted) {
+            const { nodes } = event;
+            const [selectedIndex] = nodes;
+            const { route } = this.state;
+            if (typeof selectedIndex === 'number') {
+                route.contextId = selectedIndex;
+                this.setState({ route });
+            }
+        }
+    }
+
     render() {
-        const route = this.state.route
-            ? this.state.route
-            : this.props.route;
+        const route = this.state.route ? this.state.route : this.props.route;
 
         const routePois = [];
         route.pois.forEach((poiId) => {
@@ -223,12 +235,18 @@ export default class ReservedRoute extends Component {
                     onCheck={this.handleDeleteStatus.bind(this)}/>;
         }
 
+        const contextId = route.contextId ? route.contextId : this.props.userContext;
+
         return (
             <div style={mainStyle}>
                 <div>
                     <h3>{this.props.title}</h3>
                     <Divider style={titleDividerStyle}/>
                     {visibilityElement}
+                    <ContextTree expandable ref="tree"
+                                 userContext={this.props.userContext}
+                                 selectedContext={contextId}
+                                 onSelect={ this.handleContextSelection.bind(this) }/>
                     <TextField hintText="Name"
                                floatingLabelText="Name of the route"
                                fullWidth
@@ -245,7 +263,7 @@ export default class ReservedRoute extends Component {
                           onAddTag={this.handleAddTag.bind(this)}
                           onRemoveTag={this.handleRemoveTag.bind(this)}/>
                     <Card>
-                        <CardHeader subtitle={ "Add Points of Interest..." }/>
+                        <CardHeader title="Points of Interest"/>
                         <Paper zDepth={2} className="route-map">
                             {routeMap}
                         </Paper>
@@ -262,7 +280,6 @@ export default class ReservedRoute extends Component {
                                   onTouchTap={() => {
                                       this.props.onSave(this.state.route);
                                   }} />
-
                     <RaisedButton label="Cancel"
                                   className="button-style"
                                   disabled={this.props.inProgress}
@@ -292,5 +309,9 @@ ReservedRoute.propTypes = {
     route: PropTypes.object.isRequired,
     router: PropTypes.object,
     title: PropTypes.string.isRequired,
+    userContext: PropTypes.oneOfType([
+        PropTypes.number,
+        PropTypes.string
+    ]).isRequired,
     zoom: PropTypes.number.isRequired
 };

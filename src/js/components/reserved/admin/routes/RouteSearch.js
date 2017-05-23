@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { GridLoader as Loader } from 'halogen';
 import TextField from 'material-ui/TextField';
+import InfiniteScroll from 'react-infinite';
 import { List, ListItem } from 'material-ui/List';
 import Divider from 'material-ui/Divider';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -15,6 +16,7 @@ import 'styles/utils.scss';
 
 const API_ROUTE_URL = '/api/reserved/content-editor/route/';
 const NO_ELEMENTS = 0;
+const TWO_SIZE = 2;
 
 export default class RouteSearch extends Component {
 
@@ -102,6 +104,22 @@ export default class RouteSearch extends Component {
         }
     }
 
+    getResultItem(element) {
+        return <div key={element.routeId}>
+            <ListItem
+                primaryText={ element.name }
+                secondaryText={
+                    <p>{ element.description }</p>
+                }
+                secondaryTextLines={2}
+                onTouchTap={() => {
+                    this.props.onRouteSelected(element.routeId);
+                }}
+            />
+            <Divider inset/>
+        </div>;
+    }
+
     render() {
         let searchButton = <div className="hor-align vert-align">
             <Loader color="#012935" className="loader"/>
@@ -117,27 +135,26 @@ export default class RouteSearch extends Component {
 
         let resultsArea = null;
         const { results } = this.state;
-        if (results && !this.state.inProgress) {
+        if (results && Array.isArray(results)) {
             if (results.length > NO_ELEMENTS) {
-                resultsArea = <List>
-                    { results.map((element, index) => {
-                        return (
-                            <div key={index}>
-                                <ListItem
-                                    primaryText={ element.name }
-                                    secondaryText={
-                                        <p>{ element.description }</p>
-                                    }
-                                    secondaryTextLines={2}
-                                    onTouchTap={() => {
-                                        this.props.onRouteSelected(element.routeId);
-                                    }}
-                                />
-                                <Divider inset/>
-                            </div>
-                        );
-                    }) }
-                </List>;
+                if (results.length > TWO_SIZE) {
+                    resultsArea =
+                        <InfiniteScroll containerHeight={200} elementHeight={40}>
+                            {
+                                results.map((item) => {
+                                    return this.getResultItem(item);
+                                })
+                            }
+                        </InfiniteScroll>;
+                } else {
+                    resultsArea = <List>
+                        {
+                            results.map((item) => {
+                                return this.getResultItem(item);
+                            })
+                        }
+                    </List>;
+                }
             } else {
                 resultsArea = <List>
                     <ListItem

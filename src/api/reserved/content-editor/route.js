@@ -40,7 +40,7 @@ router.post('/', (req, res, next) => {
         if (utils.checkResultList(results, [primaryChecks.length], true) &&
             results[ONE_INDEX].length === pois.length) {
 
-            return routeDB.createRoute(name, description, userID, context).
+            return routeDB.createRoute(name, description, userID, contextId).
             then((routeCreationResults) => {
                 if (utils.checkResultList(routeCreationResults, [ONE_SIZE])) {
                     const { routeId } = utils.convertObjectToCamelCase(routeCreationResults[ZERO_INDEX]);
@@ -91,7 +91,7 @@ router.put('/', (req, res, next) => {
         if (utils.checkResultList(results, [primaryChecks.length], true) &&
             results[ONE_INDEX].length === pois.length) {
 
-            return routeDB.updateRoute(routeId, name, description).
+            return routeDB.updateRoute(routeId, name, description, contextId).
             then((routeUpdateResults) => {
                 if (utils.checkResultList(routeUpdateResults, [ONE_SIZE])) {
 
