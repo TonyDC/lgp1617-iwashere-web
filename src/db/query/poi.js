@@ -135,7 +135,7 @@ module.exports.addPOIRating = (poiID, userID, rating) => {
 module.exports.searchPOI = (query) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT * FROM pois 
-    WHERE text @@ to_tsquery(:query) AND pois.deleted = FALSE`, {
+    WHERE text @@ to_tsquery(:query) AND pois.deleted IS FALSE`, {
         replacements: { query },
         type: db.QueryTypes.SELECT
     });
@@ -144,7 +144,7 @@ module.exports.searchPOI = (query) => {
 module.exports.searchNearbyPOI = (query, lat, lng) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT *, get_distance_function(latitude::real, longitude::real, :lat::real, :lng::real) as distance 
-    FROM pois WHERE text @@ to_tsquery(:query) AND pois.deleted = FALSE 
+    FROM pois WHERE text @@ to_tsquery(:query) AND pois.deleted IS FALSE 
     ORDER BY distance DESC`, {
         replacements: {
             lat,
@@ -310,4 +310,30 @@ module.exports.updatePOI = (poiID, contentEditorID, name, description, address, 
         },
         type: db.QueryTypes.UPDATE
     });
+};
+
+module.exports.searchPOIsUnderContexts = (query, rootContextID, simplified = false) => {
+    let projection = '*';
+    if (simplified) {
+        projection = 'poi_id, name, description, address';
+    }
+
+    // language=POSTGRES-SQL
+    return db.query(`SELECT ${projection} FROM pois WHERE text @@ to_tsquery(:query) AND 
+                context_id IN (
+                    WITH RECURSIVE children(context_id, parent_id, name) AS (
+                        SELECT context_id, parent_id, name FROM contexts WHERE context_id = :rootContextID
+                            UNION
+                        SELECT c.context_id, c.parent_id, c.name
+                        FROM children p, contexts c
+                        WHERE p.context_id = c.parent_id
+                    ) SELECT context_id FROM children
+                )`,
+        {
+            replacements: {
+                query,
+                rootContextID
+            },
+            type: db.QueryTypes.SELECT
+        });
 };
