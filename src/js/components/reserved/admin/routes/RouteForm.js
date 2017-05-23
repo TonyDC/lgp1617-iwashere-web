@@ -21,19 +21,11 @@ const ONE_ELEMENT = 1;
 const NOT_FOUND = -1;
 
 const mainStyle = {
-    margin: 20,
-    paddingBottom: 10,
-    paddingTop: 5
+    margin: 40,
+    paddingBottom: 40
 };
 
-const titleDividerStyle = {
-    width: 300
-};
-
-const mapContainerStyle = {
-    height: 400,
-    position: 'relative'
-};
+const titleDividerStyle = { width: "auto" };
 
 export default class ReservedRoute extends Component {
 
@@ -78,7 +70,6 @@ export default class ReservedRoute extends Component {
         }
 
         // TODO pass context?
-
         fetch(`/api/poi/range/${currentMinLat}/${currentMaxLat}/${currentMinLng}/${currentMaxLng}`).
         then((response) => {
             if (response.status >= httpCodes.BAD_REQUEST) {
@@ -88,29 +79,27 @@ export default class ReservedRoute extends Component {
             return response.json();
         }).
         then((pois) => {
-            if (!this.componentIsMounted) {
-                return;
+            if (this.componentIsMounted) {
+                const { allPois } = this.state;
+                const poiIds = this.state.allPois.map((poi) => {
+                    return poi.poiId;
+                });
+                pois.forEach((poi) => {
+                    if (poiIds.indexOf(poi.poiId) === NOT_FOUND) {
+                        allPois.push(poi);
+                    }
+                });
+
+                this.setState({
+                    allPois,
+                    area: {
+                        maxLat: currentMaxLat,
+                        maxLng: currentMaxLng,
+                        minLat: currentMinLat,
+                        minLng: currentMinLng
+                    }
+                });
             }
-
-            const { allPois } = this.state;
-            const poiIds = this.state.allPois.map((poi) => {
-                return poi.poiId;
-            });
-            pois.forEach((poi) => {
-                if (poiIds.indexOf(poi.poiId) === NOT_FOUND) {
-                    allPois.push(poi);
-                }
-            });
-
-            this.setState({
-                allPois,
-                area: {
-                    maxLat: currentMaxLat,
-                    maxLng: currentMaxLng,
-                    minLat: currentMinLat,
-                    minLng: currentMinLng
-                }
-            });
         }).
         catch(() => {
             if (!this.isPOIsErrorsLaunched) {
@@ -238,10 +227,9 @@ export default class ReservedRoute extends Component {
 
         return (
             <div style={mainStyle}>
-                <div style={mainStyle}>
+                <div>
                     <h3>{this.props.title}</h3>
                     <Divider style={titleDividerStyle}/>
-
                     {visibilityElement}
                     <TextField hintText="Name"
                                floatingLabelText="Name of the route"
@@ -258,20 +246,17 @@ export default class ReservedRoute extends Component {
                           tags={route.tags}
                           onAddTag={this.handleAddTag.bind(this)}
                           onRemoveTag={this.handleRemoveTag.bind(this)}/>
-
                     <Card>
                         <CardHeader subtitle={ "Add Points of Interest..." }/>
-                        <Paper zDepth={2} style={mapContainerStyle}>
+                        <Paper zDepth={2} className="route-map">
                             {routeMap}
                         </Paper>
-
                         <POIList pois={routePois}
                                  onSelectMosaic={this.handleAddPoi.bind(this)}
                                  onDismissMosaic={this.handleRemovePoi.bind(this)}
                                  onMoveMosaic={this.handleReorderPoi.bind(this)}/>
                     </Card>
                 </div>
-
                 <div className="button-container">
                     <RaisedButton label="Save"
                                   disabled={this.props.inProgress}

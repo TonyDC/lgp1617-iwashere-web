@@ -16,11 +16,11 @@ const MAX_RATING_SCALE = 5;
 const RATING_PRECISION = 1;
 const POI_BUTTON_MESSAGE = 'Remove the point of interest';
 
-const mosaicStyle =  {
+const mosaicStyle = {
     height: 200,
     margin: 20,
     width: 300
-}
+};
 
 export default class POIMosaic extends Component {
 
