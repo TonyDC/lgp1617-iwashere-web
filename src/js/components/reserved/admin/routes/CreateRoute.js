@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import nProgress from 'nprogress';
+import firebase from 'firebase';
 import { checkFetchResponse, authenticatedFetch } from '../../../../functions/fetch';
 import Alerts from '../../../utils/Alerts';
 
@@ -71,7 +72,8 @@ export default class CreateRoute extends Component {
     }
 
     createRoute(route) {
-        if (this.componentIsMounted && this.checkRoute(route)) {
+        const { currentUser } = firebase.auth();
+        if (currentUser && this.componentIsMounted && this.checkRoute(route)) {
             nProgress.start();
             this.setState({ inProgress: true });
 

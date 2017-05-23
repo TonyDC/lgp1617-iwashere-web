@@ -13,7 +13,7 @@ import MenuItem from 'material-ui/MenuItem';
 import { GOOGLE_MAPS_API_KEY } from '../../../../../../config/index';
 
 import SelectedLocation from '../../../map/SelectedLocation';
-import Tree from '../../../utils/ContextTree';
+import ContextTree from '../../../utils/ContextTree';
 import Tags from '../../../utils/MyTags';
 import Alerts from '../../../utils/Alerts';
 import Image from '../../../utils/Image';
@@ -39,13 +39,6 @@ const mainStyle = {
     margin: 20,
     paddingBottom: 10,
     paddingTop: 5
-};
-
-const titleStyle = { marginLeft: 30 };
-
-const titleDividerStyle = {
-    marginLeft: 30,
-    width: 300
 };
 
 const mapContainerStyle = {
@@ -239,12 +232,9 @@ export default class POIForm extends Component {
     }
 
     handleContextSelection(event) {
-        const { nodes, edges } = event;
-        const [selectedIndex] = nodes;
-        if (typeof selectedIndex === 'number') {
-            this.setState({ selectedContext: selectedIndex });
-        } else {
-            this.setState({ selectedContext: null });
+        const [selectedIndex] = event.nodes;
+        if (this.componentIsMounted && typeof selectedIndex === 'number') {
+            this.setState({ contextId: selectedIndex });
         }
     }
 
@@ -456,9 +446,8 @@ export default class POIForm extends Component {
 
     // TODO campo para colocar o parent do POI
     // TODO campo para colocar o contexto do utilizador
-    // TODO dar o user context para a árvore
     render() {
-        const { location, metaInfo, name, nameError, address, addressError, description, descriptionError, selectedContext, selectedType, selectedTypeError, submitInProgress, deleted } = this.state;
+        const { location, metaInfo, name, nameError, address, addressError, description, descriptionError, contextId, selectedType, selectedTypeError, submitInProgress, deleted } = this.state;
 
         let selectedLocationPin = null;
         if (location) {
@@ -479,6 +468,11 @@ export default class POIForm extends Component {
 
         return (
             <div style={mainStyle}>
+                <ContextTree expandable ref="tree"
+                             userContext={this.props.userContext}
+                             selectedContext={contextId}
+                             onSelect={ this.handleContextSelection.bind(this) }/>
+
                 <TextField id="name" hintText="Name" floatingLabelText="Name of Point of Interest" fullWidth
                     errorText={ nameError ? nameError : null } value={name} onChange={ this.handleName.bind(this) }
                 />
@@ -519,9 +513,6 @@ export default class POIForm extends Component {
                     >
                         { selectedLocationPin }
                     </GoogleMapReact>
-                </Paper>
-                <Paper zDepth={2}>
-                    <Tree ref="tree" userContext={ this.getContext() } initialSelectedNode={selectedContext} onSelect={ this.handleContextSelection.bind(this) }/>
                 </Paper>
                 <h5>Files to upload (Drag and drop files - png, jpeg)</h5>
                 <Paper>
@@ -610,5 +601,9 @@ POIForm.propTypes = {
     onDelete: PropTypes.func,
     onSave: PropTypes.func,
     resetAfterSubmit: PropTypes.bool,
+    userContext: PropTypes.oneOfType([
+        PropTypes.number,
+        PropTypes.string
+    ]).isRequired,
     zoom: PropTypes.number
 };

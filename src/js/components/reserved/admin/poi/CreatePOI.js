@@ -77,7 +77,7 @@ export default class CreatePOI extends Component {
                 </Helmet>
 
                 <h3 style={titleStyle}>Create POI</h3>
-                <POIForm onSave={ this.handleSave.bind(this) } resetAfterSubmit/>
+                <POIForm onSave={ this.handleSave.bind(this) } resetAfterSubmit userContext={ utils }/>
             </Paper>
         );
     }
