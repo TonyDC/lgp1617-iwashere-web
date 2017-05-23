@@ -94,6 +94,7 @@ export default class UserForm extends Component {
         let error = false;
         let { email, name } = this.state;
         const { password, role, context } = this.state;
+        const { onDelete } = this.props;
 
         name = name.trim();
         if (name.length === NO_ELEMENTS) {
@@ -114,12 +115,15 @@ export default class UserForm extends Component {
         }
 
         // TODO password strenght
-        if (password.length === NO_ELEMENTS) {
-            this.setState({ passwordError: 'A password must be provided' });
-            error = true;
-        } else if (password.length < MINIMUM_PASSWORD_SIZE) {
-            this.setState({ passwordError: `A password must have, at least, ${MINIMUM_PASSWORD_SIZE} characters` });
-            error = true;
+        // Edit mode activated
+        if (typeof onDelete === 'function') {
+            if (password.length === NO_ELEMENTS) {
+                this.setState({ passwordError: 'A password must be provided' });
+                error = true;
+            } else if (password.length < MINIMUM_PASSWORD_SIZE) {
+                this.setState({ passwordError: `A password must have, at least, ${MINIMUM_PASSWORD_SIZE} characters` });
+                error = true;
+            }
         }
 
         if (role < ROLE_FIRST_ID) {

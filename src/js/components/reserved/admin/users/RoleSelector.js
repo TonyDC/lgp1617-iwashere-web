@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 
-const ROLE_API_ENDPOINT = '/api/reserved/admin';
+const ROLE_API_ENDPOINT = '/api/reserved/admin/available-roles';
 const ROLE_LANG_SEPARATOR = ';';
 
 import { checkFetchResponse, authenticatedFetch } from '../../../../functions/fetch';
