@@ -4,9 +4,11 @@ import firebase from 'firebase';
 /**
  * Utility function to check the fetch response
  * @param {object} response the response from the server
+ * @param bool checkContent if set, an error will be thrown if the response status is NO_CONTENT
+ * @param bool parseContent if not set, the content will not be parsed
  * @returns {Promise<R>|Promise.<*>} a thenable Promise, if OK; a catchable Promise, if an error occurred (status code >= BAD_REQUEST)
  */
-function checkFetchResponse(response) {
+function checkFetchResponse(response, checkContent = false, parseContent = true) {
     const { status, statusText } = response;
     if (status >= httpCodes.BAD_REQUEST) {
         const error = new Error(statusText);
@@ -15,7 +17,22 @@ function checkFetchResponse(response) {
         return Promise.reject(error);
     }
 
-    return response.json();
+    if (status === httpCodes.NO_CONTENT) {
+        if (checkContent) {
+            const error = new Error("No content");
+            error.status = status;
+
+            return Promise.reject(error);
+        }
+
+        return null;
+    }
+
+    if (parseContent) {
+        return response.json();
+    }
+
+    return Promise.resolve(true);
 }
 
 /**

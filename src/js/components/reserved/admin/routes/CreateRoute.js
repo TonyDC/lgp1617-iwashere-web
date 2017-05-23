@@ -71,11 +71,7 @@ export default class CreateRoute extends Component {
     }
 
     createRoute(route) {
-        if (this.componentIsMounted) {
-            if (this.checkRoute(route)) {
-                return;
-            }
-
+        if (this.componentIsMounted && this.checkRoute(route)) {
             nProgress.start();
             this.setState({ inProgress: true });
 

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+const httpCodes = require('http-status-codes');
 import nProgress from 'nprogress';
 import { checkFetchResponse, authenticatedFetch } from '../../../../functions/fetch';
 import { GridLoader as Loader } from 'halogen';
@@ -29,7 +30,7 @@ export default class EditRoute extends Component {
 
         this.state = {
             inProgress: false,
-            route: {},
+            route: { pois: [] },
             routeInfoLoaded: false,
             routePoisLoaded: false
         };
@@ -71,10 +72,16 @@ export default class EditRoute extends Component {
         };
 
         authenticatedFetch(`${API_ROUTE_URL}${this.props.params.id}`, {}, headers, 'GET').
-        then(checkFetchResponse).
-        then((route) => {
-            if (route && this.componentIsMounted) {
-                route.tags = route.tags.map((tag) => {
+        then((response) => {
+            return checkFetchResponse(response, true);
+        }).
+        then((routeInfo) => {
+            if (routeInfo && this.componentIsMounted) {
+                const route = {
+                    ...this.state.route,
+                    ...routeInfo
+                };
+                route.tags = routeInfo.tags.map((tag) => {
                     return parseInt(tag.tagId, DECIMAL_BASE);
                 });
 
@@ -106,7 +113,9 @@ export default class EditRoute extends Component {
         };
 
         authenticatedFetch(`${API_ROUTE_URL}pois/${this.props.params.id}`, {}, headers, 'GET').
-        then(checkFetchResponse).
+        then((response) => {
+            return checkFetchResponse(response, true);
+        }).
         then((routePois) => {
             if (routePois && this.componentIsMounted) {
                 const { route } = this.state;
@@ -118,6 +127,15 @@ export default class EditRoute extends Component {
                     route,
                     routePoisLoaded: true
                 });
+            }
+        }).
+        catch((error) => {
+            if (this.componentIsMounted) {
+                if (error.status === httpCodes.NO_CONTENT) {
+                    this.setState({ routePoisLoaded: true });
+                } else {
+                    this.setState({ error: true });
+                }
             }
         });
     }
@@ -162,6 +180,7 @@ export default class EditRoute extends Component {
             then(checkFetchResponse).
             then(() => {
                 nProgress.done();
+                this.setState({ inProgress: false });
                 Alerts.createInfoAlert('Changes to the route saved.');
             }).
             catch(() => {
@@ -186,7 +205,11 @@ export default class EditRoute extends Component {
 
             authenticatedFetch(`${API_ROUTE_URL}${route.routeId}`,
                 JSON.stringify(route), headers, 'POST').
-            then(checkFetchResponse).
+            then((response) => {
+                checkFetchResponse(response, true, false).then(() => {
+                    this.setState({ inProgress: false });
+                });
+            }).
             catch(() => {
                 if (this.componentIsMounted) {
                     this.setState({ inProgress: false });
