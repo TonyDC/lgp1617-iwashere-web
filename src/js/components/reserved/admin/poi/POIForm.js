@@ -240,7 +240,11 @@ export default class POIForm extends Component {
     handleContextSelection(event) {
         const { nodes, edges } = event;
         const [selectedIndex] = nodes;
-        this.setState({ selectedContext: selectedIndex });
+        if (typeof selectedIndex === 'number') {
+            this.setState({ selectedContext: selectedIndex });
+        } else {
+            this.setState({ selectedContext: null });
+        }
     }
 
     onDragEnter() {
