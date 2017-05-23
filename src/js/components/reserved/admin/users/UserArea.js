@@ -23,7 +23,7 @@ const dividerStyle = {
     width: 'auto'
 };
 
-export default class RouteArea extends Component {
+export default class UserArea extends Component {
 
     componentDidMount() {
         this.componentIsMounted = true;
@@ -47,14 +47,11 @@ export default class RouteArea extends Component {
             <div className="wrapper-fill vert-align hor-align">
             <Paper className="paper-min-width" zDepth={2} style={mainStyle}>
                 <Helmet>
-                    <title>#iwashere - Route area</title>
+                    <title>#iwashere - User area</title>
                 </Helmet>
                 <div style={mainStyle}>
-                    <h4>Change an existing route...</h4>
+                    <h4>Change an existing user...</h4>
                     <RouteSearch onRouteSelected={ this.handleEditRoute.bind(this) } router={this.props.router} />
-                    <Divider style={dividerStyle}/>
-                    <h4>... or create a new route</h4>
-                    <RaisedButton label="Create Route" icon={<EditorLinearScale/>} onTouchTap={ this.handleCreateRoute.bind(this) } />
                 </div>
             </Paper>
                 </div>
@@ -62,4 +59,4 @@ export default class RouteArea extends Component {
     }
 }
 
-RouteArea.propTypes = { router: PropTypes.object.isRequired };
+UserArea.propTypes = { router: PropTypes.object.isRequired };
