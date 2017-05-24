@@ -8,7 +8,7 @@ module.exports = {
             DROP TABLE user_contexts;
         `);
     },
-
+// TODO change BIGINT to INTEGER
     up: (queryInterface) => {
         return queryInterface.sequelize.query(`
             CREATE TABLE user_contexts (

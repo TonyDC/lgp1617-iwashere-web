@@ -15,8 +15,8 @@ module.exports = {
             CREATE TABLE users (
                 -- user_id BIGSERIAL PRIMARY KEY,
                 uid TEXT PRIMARY KEY,
-                email TEXT NOT NULL,    -- may not be unique
-                name TEXT NOT NULL,
+                email TEXT NOT NULL,    -- may not be unique (it can be the same among providers). The registration of users by admins checks whether there exists the email
+                name TEXT NOT NULL,     -- TODO should we consider it, since user may change it?
                 -- provider 
                 suspended BOOL NOT NULL DEFAULT FALSE,
                 created_at TIMESTAMP NOT NULL,

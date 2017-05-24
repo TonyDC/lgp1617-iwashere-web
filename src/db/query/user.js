@@ -38,6 +38,61 @@ module.exports.insertUser = (uid, name, email) => {
     });
 };
 
+module.exports.insertUserWithContextAndRole = (uid, name, email, contextID, roleID) => {
+    // language=POSTGRES-SQL
+    return db.query(`
+        INSERT INTO users(uid, name, email) VALUES (:uid, :name, :email);
+        INSERT INTO user_contexts(user_id, context_id, role_id) VALUES (:uid, :contextID, :roleID);
+    `, {
+        replacements: {
+            contextID,
+            email,
+            name,
+            roleID,
+            uid
+        },
+        type: db.QueryTypes.INSERT
+    });
+};
+
+module.exports.updateUser = (uid, name) => {
+    // language=POSTGRES-SQL
+    return db.query(`UPDATE users SET name = :name WHERE uid = :uid`, {
+        replacements: {
+            name,
+            uid
+        },
+        type: db.QueryTypes.INSERT
+    });
+};
+
+module.exports.updateUserWithContextAndRole = (uid, name, contextID, roleID) => {
+    // language=POSTGRES-SQL
+    return db.query(`
+        UPDATE users SET name = :name WHERE uid = :uid;
+        UPDATE user_contexts SET context_id = :contextID, role_id = :roleID WHERE uid = :uid;
+    `, {
+        replacements: {
+            contextID,
+            name,
+            roleID,
+            uid
+        },
+        type: db.QueryTypes.INSERT
+    });
+};
+
+module.exports.updateUserSuspension = (uid, suspended) => {
+    // language=POSTGRES-SQL
+    return db.query(`UPDATE users SET suspended = :suspended WHERE uid = :uid`, {
+        replacements: {
+            suspended,
+            uid
+        },
+        type: db.QueryTypes.INSERT
+    });
+};
+
 module.exports.insertContentEditor = (uid) => {
     // language=POSTGRES-SQL
     return db.query(`INSERT INTO content_editors(uid) VALUES (:uid)`, {
