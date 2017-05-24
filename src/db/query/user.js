@@ -55,9 +55,16 @@ module.exports.insertUserWithContextAndRole = (uid, name, email, contextID, role
     });
 };
 
-module.exports.updateUser = (uid, name) => {
+module.exports.updateUser = (uid, name, removeContext = false) => {
+    let withContextRemove = '';
+    if (removeContext) {
+        withContextRemove = `UPDATE user_contexts SET active`
+    }
     // language=POSTGRES-SQL
-    return db.query(`UPDATE users SET name = :name WHERE uid = :uid`, {
+    return db.query(`
+        UPDATE users SET name = :name WHERE uid = :uid;
+        ${withContextRemove}
+`, {
         replacements: {
             name,
             uid
@@ -70,7 +77,7 @@ module.exports.updateUserWithContextAndRole = (uid, name, contextID, roleID) => 
     // language=POSTGRES-SQL
     return db.query(`
         UPDATE users SET name = :name WHERE uid = :uid;
-        UPDATE user_contexts SET context_id = :contextID, role_id = :roleID WHERE uid = :uid;
+        UPDATE user_contexts SET context_id = :contextID, role_id = :roleID WHERE user_id = :uid;
     `, {
         replacements: {
             contextID,
@@ -103,7 +110,7 @@ module.exports.insertContentEditor = (uid) => {
 
 module.exports.getUsersByEmailWithinContextAndRank = (email, rootContext, upperBoundRank) => {
     // language=POSTGRES-PSQL
-    return db.query(`SELECT users.uid, users.name, users.email, user_contexts.context_id, roles.role_id, roles.rank, roles.name FROM users 
+    return db.query(`SELECT users.uid, users.name as name, users.email, user_contexts.context_id, roles.role_id, roles.rank, roles.name as role_name FROM users 
             INNER JOIN user_contexts ON (users.uid = user_contexts.user_id)
             INNER JOIN roles ON (user_contexts.role_id = roles.role_id)
             WHERE users.email = :email AND roles.rank >= :upperBoundRank
@@ -128,7 +135,7 @@ module.exports.getUsersByEmailWithinContextAndRank = (email, rootContext, upperB
 
 module.exports.getUserWithinContextAndRank = (uid, rootContext, upperBoundRank) => {
     // language=POSTGRES-PSQL
-    return db.query(`SELECT users.uid, users.name, users.email, user_contexts.context_id, roles.role_id, roles.rank, roles.name 
+    return db.query(`SELECT users.uid, users.name, users.email, user_contexts.context_id, roles.role_id, roles.rank, roles.name, users.suspended, 
             FROM users 
                 INNER JOIN user_contexts ON (users.uid = user_contexts.user_id)
                 INNER JOIN roles ON (user_contexts.role_id = roles.role_id)
