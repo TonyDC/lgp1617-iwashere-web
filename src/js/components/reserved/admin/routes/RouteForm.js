@@ -42,13 +42,6 @@ export default class ReservedRoute extends Component {
         this.componentIsMounted = true;
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (this.componentIsMounted && !this.propsReceived) {
-            this.propsReceived = true;
-            this.setState({ route: nextProps.route });
-        }
-    }
-
     componentWillUnmount() {
         this.componentIsMounted = false;
     }
@@ -209,8 +202,7 @@ export default class ReservedRoute extends Component {
         const routeMap = <RouteMap onPoiSelected={this.handleAddPoi.bind(this)}
                                    onMapChanged={this.fetchPOIs.bind(this)}
                                    poiList={this.state.allPois}
-                                   router={this.props.router}
-                                   zoom={0}/>;
+                                   router={this.props.router}/>;
 
         let visibilityElement = null;
         if (route.routeId) {

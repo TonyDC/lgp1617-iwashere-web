@@ -8,6 +8,9 @@ import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import SelectField from 'material-ui/SelectField';
+import Checkbox from 'material-ui/Checkbox';
+import Visibility from 'material-ui/svg-icons/action/visibility';
+import VisibilityOff from 'material-ui/svg-icons/action/visibility-off';
 import MenuItem from 'material-ui/MenuItem';
 
 import { GOOGLE_MAPS_API_KEY } from '../../../../../../config/index';
@@ -28,11 +31,8 @@ const NO_ELEMENTS = 0;
 const ONE_ELEMENT = 1;
 const FIRST_ELEMENT_INDEX = 0;
 const POI_TYPE_LANG_SEPARATOR = ';';
-
+const NOT_FOUND = -1;
 const DECIMAL_BASE = 10;
-
-const buttonContainerStyle = { marginTop: 20 };
-const buttonStyle = { marginRight: 20 };
 
 // TODO refactor
 const mainStyle = {
@@ -220,8 +220,13 @@ export default class POIForm extends Component {
     }
 
     handleRemoveTag(tag) {
-        const cloneTagsArray = this.state.tags.slice(ZERO_INDEX);
-        this.setState({ tags: cloneTagsArray.splice(tag, ONE_ELEMENT) });
+        if (this.componentIsMounted) {
+            const { tags } = this.state;
+            const tagIndex = tags.indexOf(tag);
+            if (tagIndex !== NOT_FOUND) {
+                this.setState({ tags: tags.splice(tagIndex, ONE_ELEMENT) });
+            }
+        }
     }
 
     handlePOIType(event, index, selectedType) {
@@ -433,9 +438,19 @@ export default class POIForm extends Component {
     }
 
     // TODO campo para colocar o parent do POI
-    // TODO campo para colocar o contexto do utilizador
     render() {
-        const { location, metaInfo, name, nameError, address, addressError, description, descriptionError, selectedType, selectedTypeError, submitInProgress, deleted } = this.state;
+        const { poiId, location, metaInfo, name, nameError, address, addressError, description, descriptionError, selectedType, selectedTypeError, submitInProgress, deleted } = this.state;
+
+        let visibilityElement = null;
+        if (poiId) {
+            visibilityElement =
+                <Checkbox label={deleted ? "Hidden" : "Visible"}
+                          checked={!deleted}
+                          checkedIcon={<Visibility />}
+                          uncheckedIcon={<VisibilityOff />}
+                          onCheck={this.handleDelete.bind(this)}/>;
+        }
+
 
         let selectedLocationPin = null;
         if (location) {
@@ -445,19 +460,11 @@ export default class POIForm extends Component {
             );
         }
 
-        let deleteButton = null;
-        if (this.props.onDelete) {
-            let label = "Hide POI";
-            if (deleted) {
-                label = "Show POI";
-            }
-            deleteButton = <RaisedButton style={buttonStyle} label={label} secondary disabled={ submitInProgress } onTouchTap={ this.handleDelete.bind(this) } />;
-        }
-
         const contextId = this.state.contextId ? this.state.contextId : this.props.userContext;
 
         return (
             <div style={mainStyle}>
+                {visibilityElement}
                 <ContextTree expandable ref="tree"
                              userContext={this.props.userContext}
                              selectedContext={contextId}
@@ -564,10 +571,18 @@ export default class POIForm extends Component {
                         }
                     </Dropzone>
                 </Paper>
-                { /* onTouchTap is not required: the button is inside a form, with a defined submit behaviour */ }
-                <div style={buttonContainerStyle}>
-                <RaisedButton style={ buttonStyle } label="Submit" primary disabled={ submitInProgress } onTouchTap={ this.handleSubmit.bind(this) }/>
-                { deleteButton }
+                <div className="button-container">
+                    <RaisedButton label="Save"
+                                  disabled={submitInProgress}
+                                  className="button-style"
+                                  primary
+                                  onTouchTap={this.handleSubmit.bind(this)} />
+                    <RaisedButton label="Cancel"
+                                  className="button-style"
+                                  disabled={submitInProgress}
+                                  onTouchTap={() => {
+                                      this.props.router.push('/reserved/dash/poi');
+                                  }} />
                 </div>
         </div>
         );
@@ -591,6 +606,7 @@ POIForm.propTypes = {
     onDelete: PropTypes.func,
     onSave: PropTypes.func,
     resetAfterSubmit: PropTypes.bool,
+    router: PropTypes.object,
     userContext: PropTypes.oneOfType([
         PropTypes.number,
         PropTypes.string

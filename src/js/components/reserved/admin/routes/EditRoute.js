@@ -4,6 +4,7 @@ import httpCodes from 'http-status-codes';
 import firebase from 'firebase';
 import nProgress from 'nprogress';
 import { checkFetchResponse, authenticatedFetch } from '../../../../functions/fetch';
+import { getContext } from '../../../../functions/store';
 import { GridLoader as Loader } from 'halogen';
 import Alerts from '../../../utils/Alerts';
 
@@ -48,16 +49,6 @@ export default class EditRoute extends Component {
         Alerts.closeAll();
     }
 
-    getContext() {
-        const { reserved: reservedPropStore } = this.context.store.getState();
-        const { contexts, selectedIndex: selectedContextIndex } = reservedPropStore;
-        if (!contexts || !Array.isArray(contexts) || typeof selectedContextIndex !== 'number' || contexts.length <= selectedContextIndex) {
-            throw new Error('Bad user context selected.');
-        }
-
-        return contexts[selectedContextIndex].contextId;
-    }
-
     fetchRouteInfo() {
         if (isNaN(parseInt(this.props.params.id, DECIMAL_BASE))) {
             if (this.componentIsMounted) {
@@ -69,7 +60,7 @@ export default class EditRoute extends Component {
 
         const headers = {
             'Content-Type': 'application/json',
-            'X-user-context': this.getContext()
+            'X-user-context': getContext(this.context.store)
         };
 
         authenticatedFetch(`${API_ROUTE_URL}${this.props.params.id}`, {}, headers, 'GET').
@@ -110,7 +101,7 @@ export default class EditRoute extends Component {
 
         const headers = {
             'Content-Type': 'application/json',
-            'X-user-context': this.getContext()
+            'X-user-context': getContext(this.context.store)
         };
 
         authenticatedFetch(`${API_ROUTE_URL}pois/${this.props.params.id}`, {}, headers, 'GET').
@@ -175,7 +166,7 @@ export default class EditRoute extends Component {
 
             const headers = {
                 'Content-Type': 'application/json',
-                'X-user-context': this.getContext()
+                'X-user-context': getContext(this.context.store)
             };
 
             authenticatedFetch(API_ROUTE_URL, JSON.stringify(route), headers, 'PUT').
@@ -197,13 +188,14 @@ export default class EditRoute extends Component {
 
     deleteRoute(route, callback) {
         const { currentUser } = firebase.auth();
-        if (currentUser && this.componentIsMounted) {
+        const userContext = getContext(this.context.store);
+        if (currentUser && userContext && this.componentIsMounted) {
 
             this.setState({ inProgress: true });
 
             const headers = {
                 'Content-Type': 'application/json',
-                'X-user-context': this.getContext()
+                'X-user-context': userContext
             };
 
             authenticatedFetch(`${API_ROUTE_URL}${route.routeId}`,
@@ -211,6 +203,8 @@ export default class EditRoute extends Component {
             then((response) => {
                 checkFetchResponse(response, true, false).then(() => {
                     this.setState({ inProgress: false });
+
+                    return callback(true);
                 });
             }).
             catch(() => {
@@ -229,7 +223,7 @@ export default class EditRoute extends Component {
         let routeForm = <Loader color="#012935" className="loader"/>;
         if (this.state.routeInfoLoaded && this.state.routePoisLoaded) {
             routeForm = <RouteForm inProgress={this.state.inProgress}
-                                   userContext={this.getContext()}
+                                   userContext={getContext(this.context.store)}
                                    onSave={this.saveRoute.bind(this)}
                                    onDelete={this.deleteRoute.bind(this)}
                                    route={this.state.route}

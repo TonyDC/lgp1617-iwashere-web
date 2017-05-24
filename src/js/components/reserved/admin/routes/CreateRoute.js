@@ -26,7 +26,6 @@ export default class CreateRoute extends Component {
 
     constructor(props) {
         super(props);
-
         this.state = { inProgress: false };
     }
 
@@ -79,7 +78,7 @@ export default class CreateRoute extends Component {
             then((newRoute) => {
                 nProgress.done();
                 Alerts.createInfoAlert('Route created.');
-                this.props.router.push(`/reserved/route/${newRoute.routeId}`);
+                this.props.router.push(`/reserved/dash/route/${newRoute.routeId}`);
             }).
             catch(() => {
                 nProgress.done();

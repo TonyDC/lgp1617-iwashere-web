@@ -84,59 +84,53 @@ export default class POISearch extends Component {
     submitSearch(event) {
         event.preventDefault();
 
-        const { inProgress } = this.state;
-        if (!this.componentIsMounted || inProgress) {
-            return;
-        }
-
-        if (this.searchErrorAlert) {
-            Alerts.close(this.searchErrorAlert);
-            this.searchErrorAlert = null;
-        }
-
-        let { search } = this.state;
-        if (typeof search !== 'string') {
-            this.setState({ searchError: true });
-
-            return;
-        }
-
-        search = search.trim();
-        this.setState({ search });
-        if (search.length === NO_ELEMENTS) {
-            this.setState({ searchError: true });
-
-            return;
-        }
-
-        this.setState({
-            inProgress: true,
-            searchError: false
-        });
-        nProgress.start();
-        this.performSearch(search).
-        then((results) => {
-            if (this.componentIsMounted) {
-                this.setState({
-                    inProgress: false,
-                    results
-                });
+        if (this.componentIsMounted && !this.state.inProgress) {
+            if (this.searchErrorAlert) {
+                Alerts.close(this.searchErrorAlert);
+                this.searchErrorAlert = null;
             }
-        }).
-        catch((error) => {
-            const { status } = error;
-            if (this.componentIsMounted) {
-                this.setState({ inProgress: false });
-                let alertText = 'Error while searching for routes. Please, try again later.';
-                if (status === httpCodes.BAD_REQUEST) {
-                    alertText = 'Bad search input. Please, provide the keywords to search for.';
+
+            if (typeof this.state.search !== 'string') {
+                this.setState({ searchError: true });
+
+                return;
+            }
+
+            const search = this.state.search.trim();
+            if (search.length === NO_ELEMENTS) {
+                this.setState({ searchError: true });
+
+                return;
+            }
+
+            this.setState({
+                inProgress: true,
+                search,
+                searchError: false
+            });
+            nProgress.start();
+            this.performSearch(search).then((results) => {
+                if (this.componentIsMounted) {
+                    this.setState({
+                        inProgress: false,
+                        results
+                    });
                 }
-                this.searchErrorAlert = Alerts.createErrorAlert(alertText);
-            }
-        }).
-        then(() => {
-            nProgress.done();
-        });
+            }).
+            catch((error) => {
+                if (this.componentIsMounted) {
+                    this.setState({ inProgress: false });
+                    const alertText = error.status === httpCodes.BAD_REQUEST
+                        ? 'Error while searching for Points of Interest. Please, try again later.'
+                        : 'Bad search input. Please, provide the keywords to search for.';
+
+                    this.searchErrorAlert = Alerts.createErrorAlert(alertText);
+                }
+            }).
+            then(() => {
+                nProgress.done();
+            });
+        }
     }
 
     renderResultsArea() {
@@ -207,7 +201,7 @@ export default class POISearch extends Component {
                 <TextField
                     autoComplete="off"
                     hintText="Keywords"
-                    floatingLabelText="Search POI"
+                    floatingLabelText="Search Point of Interest"
                     value={ search }
                     onChange={ this.handleSearchInput.bind(this) }
                     fullWidth

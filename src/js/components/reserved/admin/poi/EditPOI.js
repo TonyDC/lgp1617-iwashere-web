@@ -6,7 +6,7 @@ import httpCodes from 'http-status-codes';
 import Alerts from '../../../utils/Alerts';
 import Helmet from 'react-helmet';
 import { GridLoader as Loader } from 'halogen';
-
+import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
 
 import POIForm from './POIForm';
@@ -24,6 +24,8 @@ const mainStyle = {
 
 const titleStyle = { marginLeft: 40 };
 
+const titleDividerStyle = { width: "auto" };
+
 export default class EditPOI extends Component {
 
     constructor(props) {
@@ -40,7 +42,6 @@ export default class EditPOI extends Component {
         this.componentIsMounted = false;
     }
 
-    // TODO ao buscar a informação, ver se o utilizador está autorizado a acedê-la
     fetchPOIInfo() {
         const { router } = this.props;
         const { poiID } = router.params;
@@ -61,12 +62,12 @@ export default class EditPOI extends Component {
         return authenticatedFetch(`/api/reserved/content-editor/poi/${encodeURIComponent(poiID)}`, body, headers, 'GET').
         then(checkFetchResponse).
         then((json) => {
-            // TODO verificar se json é vazio -> considerar como NOT_FOUND -> redireccionar
-            const { name, address, description, poiTypeId, tags, latitude, longitude, deleted, contents, contextId } = json;
+            const { poiId, name, address, description, poiTypeId, tags, latitude, longitude, deleted, contents, contextId } = json;
             this.setState({
                 fetchInProgress: false,
                 poi: {
                     address,
+                    contextId,
                     deleted,
                     description,
                     filesOnFirebase: contents,
@@ -75,7 +76,7 @@ export default class EditPOI extends Component {
                         lng: longitude
                     },
                     name,
-                    contextId,
+                    poiId,
                     selectedType: poiTypeId,
                     tags: tags.map((element) => {
                         return element.tagId;
@@ -90,17 +91,17 @@ export default class EditPOI extends Component {
         }).
         catch((err) => {
             const { status } = err;
-            let text = 'Error while fetching POI information. Please, try again later.';
-            if (status === httpCodes.UNAUTHORIZED) {
-                text = 'You are not allowed to edit the information of this POI.';
-            }
+            const text = (status === httpCodes.UNAUTHORIZED)
+                    ? 'Error while fetching POI information. Please, try again later.'
+                    : 'You are not allowed to edit the information of this POI.';
+
             Alerts.createErrorAlert(text);
-            this.props.router.push('/reserved/dash/poi');
         }).
         then(() => {
             nProgress.done();
         });
     }
+
 // TODO buscar o parent
     handleSave(data) {
         const { currentUser } = firebase.auth();
@@ -187,13 +188,16 @@ export default class EditPOI extends Component {
         }
 
         return (
-            <Paper zDepth={2} style={mainStyle}>
-                <Helmet>
-                    <title>#iwashere - Edit POI</title>
-                </Helmet>
-                <h3 style={titleStyle}>Edit POI</h3>
-                { poiForm }
-            </Paper>
+            <div className="wrapper-fill vert-align hor-align">
+                <Paper className="paper-min-width" zDepth={2} style={mainStyle}>
+                    <Helmet>
+                        <title>#iwashere - Edit POI</title>
+                    </Helmet>
+                    <h3 style={titleStyle}>Edit POI</h3>
+                    <Divider style={titleDividerStyle}/>
+                    { poiForm }
+                </Paper>
+            </div>
         );
     }
 }
