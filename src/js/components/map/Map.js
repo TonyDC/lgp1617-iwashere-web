@@ -109,7 +109,7 @@ export default class Map extends Component {
             return;
         }
 
-        fetch(`/api/poi/range/${currentMinLat}/${currentMaxLat}/${currentMinLng}/${currentMaxLng}`).then((response) => {
+        fetch(` /api/poi/range/${currentMinLat}/${currentMaxLat}/${currentMinLng}/${currentMaxLng}`).then((response) => {
             if (response.status >= httpCodes.BAD_REQUEST) {
                 return Promise.reject(new Error(response.statusText));
             }

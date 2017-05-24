@@ -302,7 +302,7 @@ router.get('/:poiID', (req, res, next) => {
 
         return userContextDB.verifyContextUnderUserJurisdiction(userContext, poi.contextId).
         then((contextCheck) => {
-            if (contextCheck && contextCheck.length > NO_ELEMENT_SIZE) {
+            if (contextCheck && contextCheck.length > NO_ELEMENT_SIZE)) {
                 res.json(poi).end();
             } else {
                 res.sendStatus(httpCodes.UNAUTHORIZED).end();
