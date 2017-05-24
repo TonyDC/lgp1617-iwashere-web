@@ -33,6 +33,10 @@ import EditPOI from './components/reserved/admin/poi/EditPOI';
 import RouteArea from './components/reserved/admin/routes/RouteArea';
 import CreateRoute from './components/reserved/admin/routes/CreateRoute';
 import EditRoute from './components/reserved/admin/routes/EditRoute';
+import UserArea from './components/reserved/admin/users/UserArea';
+import CreateUser from './components/reserved/admin/users/CreateUser';
+import EditUser from './components/reserved/admin/users/EditUser';
+
 
 import Alerts from './components/utils/Alerts';
 
@@ -118,13 +122,17 @@ export default class App extends Component {
                                 <Route path="create" component={ CreatePOI } />
                                 <Route path=":poiID" component={ EditPOI } />
                             </Route>
-                            <Route path="route" >
+                            <Route path="route">
                                 <IndexRoute component={ RouteArea } />
                                 <Route path="create" component={ CreateRoute } />
                                 <Route path=":id" component={ EditRoute } />
                             </Route>
                             { /* TODO */ }
-                            <Route path="user" component={ NoMatch } />
+                            <Route path="user">
+                                <IndexRoute component={ UserArea } />
+                                <Route path="create" component={ CreateUser } />
+                                <Route path=":id" component={ EditUser } />
+                            </Route>
                         </Route>
                     </Route>
                     <Route path="*" component={ NoMatch }/>

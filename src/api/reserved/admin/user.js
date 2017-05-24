@@ -1,8 +1,9 @@
 'use strict';
 
-const utils = require('../utils/misc');
+const utils = require('../../utils/misc');
 
 const httpCodes = require('http-status-codes');
+const validator = require('validator');
 
 const express = require('express');
 const router = express.Router();
@@ -13,21 +14,17 @@ const ZERO_INDEX = 0;
 const ONE_INDEX = 1;
 const TWO_INDEX = 2;
 
-const ONE_SIZE = 1;
 const THREE_SIZE = 3;
 
 router.get('/search', (req, res, next) => {
-    let { query } = req.query;
-    if (!query || typeof query !== 'string') {
+    const { email } = req.query;
+    if (!email || typeof email !== 'string' || validator.isEmpty(email)) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
-// TODO check if empty
-    query = query.trim().split(/\s+/).
-    join(' & ');
 
-    const { poiDB, routeDB, tagDB } = db;
+    const { userDB, contextDB } = db;
     Promise.all([poiDB.searchPOI(query), routeDB.searchRoute(query), tagDB.searchTag(query)]).
     then((results) => {
         if (results && results.length === THREE_SIZE) {
@@ -45,23 +42,5 @@ router.get('/search', (req, res, next) => {
     });
 });
 
-
-router.get('/fortune', (req, res, next) => {
-    const { fortuneCookieDB } = db;
-    fortuneCookieDB.getRandomFortuneCookie().
-    then((cookie) => {
-        if (!cookie || typeof cookie !== 'object' || cookie.length < ONE_SIZE) {
-            res.sendStatus(httpCodes.NO_CONTENT).end();
-
-            return;
-        }
-
-        res.json({ fortune: cookie[ZERO_INDEX].description }).
-        end();
-    }).
-    catch((error) => {
-        next(error);
-    });
-});
 
 module.exports = router;
