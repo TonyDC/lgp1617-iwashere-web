@@ -26,10 +26,14 @@ module.exports.getContentEditorByUID = (uid) => {
     });
 };
 
-module.exports.insertUser = (uid) => {
+module.exports.insertUser = (uid, name, email) => {
     // language=POSTGRES-SQL
-    return db.query(`INSERT INTO users(uid) VALUES (:uid)`, {
-        replacements: { uid },
+    return db.query(`INSERT INTO users(uid, name, email) VALUES (:uid, :name, :email)`, {
+        replacements: {
+            email,
+            name,
+            uid
+        },
         type: db.QueryTypes.INSERT
     });
 };
