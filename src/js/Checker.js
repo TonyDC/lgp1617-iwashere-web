@@ -50,7 +50,7 @@ export default class Checker extends Component {
                         then(checkFetchResponse).
                         then((contexts) => {
                             let index = null;
-                            if (contexts && Array.isArray(contexts) && contexts.length > NO_ELEMENTS) {
+                            if (Array.isArray(contexts) && contexts.length > NO_ELEMENTS) {
                                 index = ZERO_INDEX;
                             }
                             this.context.store.dispatch(addReservedContexts(contexts, index));
