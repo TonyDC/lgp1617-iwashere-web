@@ -124,7 +124,9 @@ export default class ContextTree extends Component {
     }
 
     clearSelection() {
-        this.Network.selectNodes([]);
+        if (this.Network) {
+            this.Network.selectNodes([]);
+        }
     }
 
     handleButton() {
