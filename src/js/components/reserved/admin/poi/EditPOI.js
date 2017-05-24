@@ -62,7 +62,7 @@ export default class EditPOI extends Component {
         return authenticatedFetch(`/api/reserved/content-editor/poi/${encodeURIComponent(poiID)}`, body, headers, 'GET').
         then(checkFetchResponse).
         then((json) => {
-            const { name, address, description, poiTypeId, tags, latitude, longitude, deleted, contents, contextId } = json;
+            const { poiId, name, address, description, poiTypeId, tags, latitude, longitude, deleted, contents, contextId } = json;
             this.setState({
                 fetchInProgress: false,
                 poi: {
@@ -76,6 +76,7 @@ export default class EditPOI extends Component {
                         lng: longitude
                     },
                     name,
+                    poiId,
                     selectedType: poiTypeId,
                     tags: tags.map((element) => {
                         return element.tagId;
@@ -100,6 +101,7 @@ export default class EditPOI extends Component {
             nProgress.done();
         });
     }
+
 // TODO buscar o parent
     handleSave(data) {
         const { currentUser } = firebase.auth();

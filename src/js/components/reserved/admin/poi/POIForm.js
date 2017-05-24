@@ -8,6 +8,9 @@ import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import SelectField from 'material-ui/SelectField';
+import Checkbox from 'material-ui/Checkbox';
+import Visibility from 'material-ui/svg-icons/action/visibility';
+import VisibilityOff from 'material-ui/svg-icons/action/visibility-off';
 import MenuItem from 'material-ui/MenuItem';
 
 import { GOOGLE_MAPS_API_KEY } from '../../../../../../config/index';
@@ -28,10 +31,8 @@ const NO_ELEMENTS = 0;
 const ONE_ELEMENT = 1;
 const FIRST_ELEMENT_INDEX = 0;
 const POI_TYPE_LANG_SEPARATOR = ';';
-
+const NOT_FOUND = -1;
 const DECIMAL_BASE = 10;
-
-const buttonStyle = { marginRight: 20 };
 
 // TODO refactor
 const mainStyle = {
@@ -219,8 +220,13 @@ export default class POIForm extends Component {
     }
 
     handleRemoveTag(tag) {
-        const cloneTagsArray = this.state.tags.slice(ZERO_INDEX);
-        this.setState({ tags: cloneTagsArray.splice(tag, ONE_ELEMENT) });
+        if (this.componentIsMounted) {
+            const { tags } = this.state;
+            const tagIndex = tags.indexOf(tag);
+            if (tagIndex !== NOT_FOUND) {
+                this.setState({ tags: tags.splice(tagIndex, ONE_ELEMENT) });
+            }
+        }
     }
 
     handlePOIType(event, index, selectedType) {
@@ -432,9 +438,19 @@ export default class POIForm extends Component {
     }
 
     // TODO campo para colocar o parent do POI
-    // TODO campo para colocar o contexto do utilizador
     render() {
-        const { location, metaInfo, name, nameError, address, addressError, description, descriptionError, selectedType, selectedTypeError, submitInProgress, deleted } = this.state;
+        const { poiId, location, metaInfo, name, nameError, address, addressError, description, descriptionError, selectedType, selectedTypeError, submitInProgress, deleted } = this.state;
+
+        let visibilityElement = null;
+        if (poiId) {
+            visibilityElement =
+                <Checkbox label={deleted ? "Hidden" : "Visible"}
+                          checked={!deleted}
+                          checkedIcon={<Visibility />}
+                          uncheckedIcon={<VisibilityOff />}
+                          onCheck={this.handleDelete.bind(this)}/>;
+        }
+
 
         let selectedLocationPin = null;
         if (location) {
@@ -448,6 +464,7 @@ export default class POIForm extends Component {
 
         return (
             <div style={mainStyle}>
+                {visibilityElement}
                 <ContextTree expandable ref="tree"
                              userContext={this.props.userContext}
                              selectedContext={contextId}
@@ -558,9 +575,8 @@ export default class POIForm extends Component {
                     <RaisedButton label="Save"
                                   disabled={submitInProgress}
                                   className="button-style"
-                                  onTouchTap={() => {
-                                      this.props.onSave(this.state.route);
-                                  }} />
+                                  primary
+                                  onTouchTap={this.handleSubmit.bind(this)} />
                     <RaisedButton label="Cancel"
                                   className="button-style"
                                   disabled={submitInProgress}

@@ -26,7 +26,6 @@ export default class CreateRoute extends Component {
 
     constructor(props) {
         super(props);
-
         this.state = { inProgress: false };
     }
 
