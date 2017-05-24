@@ -25,6 +25,9 @@ export default function (state = initialState, action) {
                 ...action.payload
             };
 
+        case ActionTypes.LOG_OUT_ACTION:
+            return initialState;
+
         default:
             return state;
     }

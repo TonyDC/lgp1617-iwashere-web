@@ -185,7 +185,6 @@ export default class AdminLogin extends Component {
                             type="password"
                             onChange={this.handlePassword.bind(this)}
                         />
-
                         <div>
                             <RaisedButton type="submit" label="Login" primary style={styles.loginBtn} onTouchTap={this.handleSubmit.bind(this)} disabled={this.state.inProgress}/>
                         </div>
