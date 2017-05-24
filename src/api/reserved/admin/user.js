@@ -17,6 +17,7 @@ const TWO_INDEX = 2;
 const THREE_SIZE = 3;
 
 router.get('/search', (req, res, next) => {
+    // ExpressJS automatically does URL decoding
     const { email } = utils.trimStringProperties(req.query);
     if (!email || typeof email !== 'string' || validator.isEmpty(email)) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
@@ -24,15 +25,13 @@ router.get('/search', (req, res, next) => {
         return;
     }
 
+    const { contextID, rank } = req.auth;
+
     const { userDB } = db;
-    Promise.all([poiDB.searchPOI(query), routeDB.searchRoute(query), tagDB.searchTag(query)]).
+    userDB.getUsersByEmailWithinContextAndRank(email, contextID, rank).
     then((results) => {
-        if (results && results.length === THREE_SIZE) {
-            res.json({
-                poi: utils.convertObjectsToCamelCase(results[ZERO_INDEX]),
-                route: utils.convertObjectsToCamelCase(results[ONE_INDEX]),
-                tag: utils.convertObjectsToCamelCase(results[TWO_INDEX])
-            }).end();
+        if (results) {
+            res.json(utils.convertObjectsToCamelCase(results)).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
         }
