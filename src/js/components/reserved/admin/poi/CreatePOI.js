@@ -60,7 +60,7 @@ export default class CreatePOI extends Component {
         form.append('latitude', location.lat);
         form.append('longitude', location.lng);
         form.append('poiTypeId', selectedType);
-        form.append('contextId', contextId ? contextId : getContext(this.context.store));
+        form.append('context', contextId ? contextId : getContext(this.context.store));
         for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
             // Note: In order to detect the array of files in the server, each file, individually, must be appended to the same form key.
             form.append('poiFiles', files[fileIndex]);

@@ -46,18 +46,20 @@ export default class UserArea extends Component {
 
     render() {
         return (
-            <Paper zDepth={2} style={mainStyle}>
-                <Helmet>
-                    <title>#iwashere - User area</title>
-                </Helmet>
-                <div style={mainStyle}>
-                    <h4>Search for an existing user</h4>
-                    <UserSearch onUserSelected={ this.handleUserSelection.bind(this) }/>
-                    <Divider style={dividerStyle}/>
-                    <h4>or create a new Point of Interest</h4>
-                    <RaisedButton label="Create User" icon={<SocialPersonAdd/>} onTouchTap={ this.handleCreateUser.bind(this) } />
-                </div>
-            </Paper>
+            <div className="wrapper-fill vert-align hor-align">
+                <Paper className="paper-min-width" zDepth={2} style={mainStyle}>
+                    <Helmet>
+                        <title>#iwashere - User area</title>
+                    </Helmet>
+                    <div style={mainStyle}>
+                        <h4>Search for an existing User...</h4>
+                        <UserSearch onUserSelected={ this.handleUserSelection.bind(this) }/>
+                        <Divider style={dividerStyle}/>
+                        <h4>... or create a new User</h4>
+                        <RaisedButton label="Create User" icon={<SocialPersonAdd/>} onTouchTap={ this.handleCreateUser.bind(this) } />
+                    </div>
+                </Paper>
+            </div>
         );
     }
 }

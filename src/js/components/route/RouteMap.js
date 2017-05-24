@@ -3,32 +3,10 @@ import { GOOGLE_MAPS_API_KEY } from '../../../../config';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import GoogleMapReact from 'google-map-react';
-import IconButton from 'material-ui/IconButton';
-
-import Pin from '../map/Pin';
-
-import CommunicationLocationOn from 'material-ui/svg-icons/communication/location-on';
-
-import { blue500 as POIColor } from 'material-ui/styles/colors';
+import POIComponent from '../map/SelectedLocation';
 
 import 'styles/utils.scss';
 import 'styles/map.scss';
-
-const POIComponent = (props) => {
-    return <Pin lat={props.lat} lng={props.lng} onClick={props.clickHandler}>
-        <div className="pin">
-            <IconButton>
-                <CommunicationLocationOn color={ POIColor }/>
-            </IconButton>
-        </div>
-    </Pin>;
-};
-
-POIComponent.propTypes = {
-    clickHandler: PropTypes.any.isRequired,
-    lat: PropTypes.number.isRequired,
-    lng: PropTypes.number.isRequired
-};
 
 export default class RouteMap extends Component {
 
@@ -98,14 +76,12 @@ export default class RouteMap extends Component {
             poisList = [];
         }
 
-        const poisInViewport = poisList.map((element, index) => {
+        const poisInViewport = poisList.map((element) => {
             return <POIComponent lat={ element.latitude }
                                  lng={ element.longitude }
-                                 clickHandler={ () => {
+                                 onClick={ () => {
                                      this.props.onPoiSelected(element.poiId);
-                                 }}
-                                 key={ index }
-                    />;
+                                 }}/>;
         });
 
         return (

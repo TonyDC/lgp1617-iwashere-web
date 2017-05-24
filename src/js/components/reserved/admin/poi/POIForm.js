@@ -355,7 +355,8 @@ export default class POIForm extends Component {
             }
             Alerts.createInfoAlert('POI information successfully submitted');
         }).
-        catch(() => {
+        catch((error) => {
+            console.log(error);
             if (this.formFetchError) {
                 Alerts.close(this.formFetchError);
                 this.formFetchError = null;

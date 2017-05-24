@@ -202,7 +202,7 @@ export default class UserSearch extends Component {
                 <TextField
                     autoComplete="off"
                     hintText="email"
-                    floatingLabelText="Search users"
+                    floatingLabelText="Search User"
                     value={ search }
                     onChange={ this.handleSearchInput.bind(this) }
                     fullWidth

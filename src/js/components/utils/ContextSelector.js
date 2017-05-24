@@ -52,7 +52,7 @@ export default class ContextSelector extends Component {
         let result = null;
         const { contexts, selectedIndex } = this.state;
         if (typeof selectedIndex === typeof ZERO_INDEX) {
-            result = <SelectField floatingLabelText="Selected Context" value={selectedIndex}
+            result = <SelectField floatingLabelText="Context" value={selectedIndex}
                                   onChange={this.handleSelectedContextChange.bind(this)}>
                 {
                     contexts.map((element, index) => {

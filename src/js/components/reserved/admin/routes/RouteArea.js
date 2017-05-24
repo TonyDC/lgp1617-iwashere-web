@@ -45,7 +45,7 @@ export default class RouteArea extends Component {
     render() {
         return (
             <div className="wrapper-fill vert-align hor-align">
-                <Paper className="paper-min-width" zDepth={2} style={mainStyle}>
+                <Paper className="paper-min-width" style={mainStyle} zDepth={2}>
                     <Helmet>
                         <title>#iwashere - Route area</title>
                     </Helmet>

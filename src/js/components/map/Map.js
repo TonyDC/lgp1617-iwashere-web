@@ -90,12 +90,13 @@ export default class Map extends Component {
     }
 
     fetchPoints(borders) {
-        const latitudeRange = borders.f,
-            longitudeRange = borders.b;
-        const currentMaxLat = latitudeRange.b,
-            currentMaxLng = longitudeRange.f,
-            currentMinLat = latitudeRange.f,
-            currentMinLng = longitudeRange.b;
+        const eastCorner = borders.getNorthEast(),
+            westCorner = borders.getSouthWest();
+
+        const currentMaxLat = eastCorner.lat(),
+            currentMaxLng = eastCorner.lng(),
+            currentMinLat = westCorner.lat(),
+            currentMinLng = westCorner.lng();
 
         if (typeof this.state.response === 'object') {
             const { maxLat, maxLng, minLat, minLng } = this.state.response.area;
@@ -109,7 +110,8 @@ export default class Map extends Component {
             return;
         }
 
-        fetch(`/api/poi/range/${currentMinLat}/${currentMaxLat}/${currentMinLng}/${currentMaxLng}`).then((response) => {
+        fetch(` /api/poi/range/${currentMinLat}/${currentMaxLat}/${currentMinLng}/${currentMaxLng}`).
+        then((response) => {
             if (response.status >= httpCodes.BAD_REQUEST) {
                 return Promise.reject(new Error(response.statusText));
             }
@@ -117,21 +119,19 @@ export default class Map extends Component {
             return response.json();
         }).
         then((response) => {
-            if (!this.componentIsMounted) {
-                return;
+            if (this.componentIsMounted) {
+                this.setState({
+                    response: {
+                        area: {
+                            maxLat: currentMaxLat,
+                            maxLng: currentMaxLng,
+                            minLat: currentMinLat,
+                            minLng: currentMinLng
+                        },
+                        content: response
+                    }
+                });
             }
-
-            this.setState({
-                response: {
-                    area: {
-                        maxLat: currentMaxLat,
-                        maxLng: currentMaxLng,
-                        minLat: currentMinLat,
-                        minLng: currentMinLng
-                    },
-                    content: response
-                }
-            });
         }).
         catch(() => {
             if (!this.isPOIsErrorsLaunched) {

@@ -47,12 +47,13 @@ export default class ReservedRoute extends Component {
     }
 
     fetchPOIs(borders) {
-        const latitudeRange = borders.f,
-            longitudeRange = borders.b;
-        const currentMaxLat = latitudeRange.b,
-            currentMaxLng = longitudeRange.f,
-            currentMinLat = latitudeRange.f,
-            currentMinLng = longitudeRange.b;
+        const eastCorner = borders.getNorthEast(),
+            westCorner = borders.getSouthWest();
+
+        const currentMaxLat = eastCorner.lat(),
+            currentMaxLng = eastCorner.lng(),
+            currentMinLat = westCorner.lat(),
+            currentMinLng = westCorner.lng();
 
         if (typeof this.state.area === 'object') {
             const { maxLat, maxLng, minLat, minLng } = this.state.area;

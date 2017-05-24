@@ -2,12 +2,19 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { BottomNavigation, BottomNavigationItem } from 'material-ui/BottomNavigation';
 import Paper from 'material-ui/Paper';
+import ContextSelector from './ContextSelector';
 
 import IconLocationOn from 'material-ui/svg-icons/communication/location-on';
 import ActionAccountBox from 'material-ui/svg-icons/action/account-box';
 import EditorLinearScale from 'material-ui/svg-icons/editor/linear-scale';
 
+import 'styles/panel.scss';
+import 'styles/utils.scss';
+
 const ZERO_INDEX = 0;
+const POI_INDEX = 0;
+const ROUTE_INDEX = 1;
+const USER_INDEX = 2;
 
 /**
  * A simple example of `BottomNavigation`, with three labels and icons
@@ -27,8 +34,8 @@ export default class AdminNavigator extends Component {
         const index = this.paths.indexOf(pathname.toLowerCase());
         this.state = {
             selectedIndex: index < ZERO_INDEX
-            ? ZERO_INDEX
-            : index
+                ? ZERO_INDEX
+                : index
         };
     }
 
@@ -43,25 +50,36 @@ export default class AdminNavigator extends Component {
 
     render() {
         return (
-            <Paper zDepth={1}>
-                <BottomNavigation selectedIndex={this.state.selectedIndex}>
-                    <BottomNavigationItem
-                        label="POI"
-                        icon={<IconLocationOn/>}
-                        onTouchTap={() => this.select(0)}
-                    />
-                    <BottomNavigationItem
-                        label="Routes"
-                        icon={<EditorLinearScale/>}
-                        onTouchTap={() => this.select(1)}
-                    />
-                    <BottomNavigationItem
-                        label="Accounts"
-                        icon={<ActionAccountBox/>}
-                        onTouchTap={() => this.select(2)}
-                    />
-                </BottomNavigation>
-            </Paper>
+            <div>
+                <Paper>
+                    <BottomNavigation selectedIndex={this.state.selectedIndex}>
+                        <BottomNavigationItem
+                            label="POIs"
+                            icon={<IconLocationOn/>}
+                            onTouchTap={() => {
+                                this.select(POI_INDEX);
+                            }}
+                        />
+                        <BottomNavigationItem
+                            label="Routes"
+                            icon={<EditorLinearScale/>}
+                            onTouchTap={() => {
+                                this.select(ROUTE_INDEX);
+                            }}
+                        />
+                        <BottomNavigationItem
+                            label="Users"
+                            icon={<ActionAccountBox/>}
+                            onTouchTap={() => {
+                                this.select(USER_INDEX);
+                            }}
+                        />
+                    </BottomNavigation>
+                </Paper>
+                <Paper className="context-selector">
+                    <ContextSelector />
+                </Paper>
+            </div>
         );
     }
 }
