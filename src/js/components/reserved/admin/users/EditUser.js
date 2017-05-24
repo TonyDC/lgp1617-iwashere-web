@@ -125,7 +125,7 @@ export default class EditUser extends Component {
         const { userID } = this;
         const { store } = this.context;
 
-        const body = { deleted: toDelete };
+        const body = { suspended: toDelete };
         const headers = { 'X-user-context': getContext(store) };
 
         return authenticatedFetch(`${USER_API_URL}/${encodeURIComponent(userID)}`, body, headers, 'POST').

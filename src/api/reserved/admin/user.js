@@ -13,6 +13,7 @@ const db = root_require('src/db/query');
 
 const NO_ELEMENTS = 0;
 const ONE_ELEMENT_SIZE = 1;
+const TWO_ELEMENT_SIZE = 2;
 const NOT_FOUND = -1;
 
 const ZERO_INDEX = 0;
@@ -54,9 +55,7 @@ router.post('/', (req, res, next) => {
 
     if (typeof email !== 'string' || !validator.isEmail(email) ||
         typeof name !== 'string' || validator.isEmpty(name) ||
-        typeof password !== 'string' || password.length < MINIMUM_PASSWORD_SIZE ||
-        ['string', 'number'].indexOf(context) === NOT_FOUND ||
-        ['string', 'number'].indexOf(role) === NOT_FOUND) {
+        typeof password !== 'string' || password.length < MINIMUM_PASSWORD_SIZE) {
         res.status(httpCodes.BAD_REQUEST).json({ message: 'Bad arguments ' }).
         end();
 
@@ -138,6 +137,147 @@ router.post('/', (req, res, next) => {
     }).
     catch((error) => {
         next(error);
+    });
+});
+
+// Update user information
+router.put('/:userID', (req, res, next) => {
+    const { rank, contextID } = req.auth;
+    const { userID } = req.params;
+    const { context, name, password, role } = utils.trimStringProperties(req.body);
+
+    if (typeof userID !== 'string' || validator.isEmpty(userID) ||
+        typeof name !== 'string' || validator.isEmpty(name) ||
+        (password !== null && (typeof password !== 'string' || password.length < MINIMUM_PASSWORD_SIZE))) {
+        res.status(httpCodes.BAD_REQUEST).json({ message: 'Bad arguments' }).
+        end();
+
+        return;
+    }
+
+    const withContextAndRole = ['string', 'number'].indexOf(typeof context) !== NOT_FOUND && ['string', 'number'].indexOf(typeof role) !== NOT_FOUND;
+
+    const { roleDB, contextDB, userDB } = db;
+
+    const checkUserPromises = [userDB.getUserByUID(userID), userDB.getUserWithinContextAndRank(userID, contextID, rank), firebaseAdmin.auth().getUser(userID)];
+
+    Promise.all(checkUserPromises).
+    then((results) => {
+        const userRecords = results[ZERO_INDEX];
+        const userInContext = results[ONE_INDEX];
+        if (!Array.isArray(userRecords) || !Array.isArray(userInContext) || userRecords.length === NO_ELEMENTS || userInContext.length === NO_ELEMENTS) {
+            res.status(httpCodes.BAD_REQUEST).send({ message: 'User not found' }).
+            end();
+
+            return null;
+        }
+
+        const checkContextAndRole = withContextAndRole ? [roleDB.getRoleByID(role), contextDB.verifyContextUnderUserJurisdiction(contextID, context)] : [];
+
+        return checkContextAndRole.then((checks) => {
+            let contextToInsert = null,
+                roleToInsert = null;
+
+            if (withContextAndRole && Array.isArray(checks) && checks.length > ONE_ELEMENT_SIZE) {
+                const contextResult = checks[ONE_INDEX],
+                    roleResult = checks[ZERO_INDEX];
+
+                if (Array.isArray(contextResult) && contextResult.length > NO_ELEMENTS &&
+                    Array.isArray(roleResult) && roleResult.length > NO_ELEMENTS && roleResult[ZERO_INDEX] && roleResult[ZERO_INDEX].rank >= rank) {
+                    contextToInsert = context;
+                    roleToInsert = role;
+                } else {
+                    res.status(httpCodes.BAD_REQUEST).json({ message: 'Invalid context/role' }).
+                    end();
+
+                    return null;
+                }
+            }
+
+            const firebaseObject = { displayName: name };
+            if (password !== null) {
+                firebaseObject.password = password;
+            }
+
+            return firebaseAdmin.auth().updateUser(userID, firebaseObject).
+            then(() => {
+                const insertUserPromise = withContextAndRole && contextToInsert !== null && roleToInsert !== null
+                    ? userDB.updateUserWithContextAndRole(userID, name, contextToInsert, roleToInsert)
+                    : userDB.updateUser(userID, name);
+
+                return insertUserPromise.
+                then(() => {
+                    // See the UserRecord reference doc for the contents of userRecord.
+                    res.end();
+                });
+            });
+        });
+    }).
+    catch((error) => {
+        const { errorInfo } = error;
+        if (typeof errorInfo !== 'object') {
+            return next(error);
+        }
+
+        const { code } = error.errorInfo;
+        // Check https://firebase.google.com/docs/auth/admin/errors
+        if (['auth/user-not-found'].indexOf(code) !== NOT_FOUND) {
+            return res.status(httpCodes.BAD_REQUEST).
+            json({ message: 'User not found' }).
+            end();
+        }
+
+        return next(error);
+    });
+});
+
+// Disable user information
+router.post('/:userID', (req, res, next) => {
+    const { rank, contextID } = req.auth;
+    const { userID } = req.params;
+    const { suspended } = utils.trimStringProperties(req.body);
+
+    if (typeof suspended !== 'boolean') {
+        res.status(httpCodes.BAD_REQUEST).json({ message: 'Bad arguments' }).
+        end();
+
+        return;
+    }
+    const { roleDB, contextDB, userDB } = db;
+
+    const checkUserPromises = [userDB.getUserByUID(userID), userDB.getUserWithinContextAndRank(userID, contextID, rank), firebaseAdmin.auth().getUser(userID)];
+
+    Promise.all(checkUserPromises).
+    then((results) => {
+        const userRecords = results[ZERO_INDEX];
+        const userInContext = results[ONE_INDEX];
+        if (!Array.isArray(userRecords) || !Array.isArray(userInContext) || userRecords.length === NO_ELEMENTS || userInContext.length === NO_ELEMENTS) {
+            res.status(httpCodes.BAD_REQUEST).send({ message: 'User not found' }).
+            end();
+
+            return null;
+        }
+
+        return userDB.updateUserSuspension(userID, suspended).
+        then(() => {
+            res.end();
+        });
+    }).
+    catch((error) => {
+        const { errorInfo } = error;
+        if (typeof errorInfo !== 'object') {
+            return next(error);
+        }
+
+        const { code } = error.errorInfo;
+        // Check https://firebase.google.com/docs/auth/admin/errors
+        if (['auth/user-not-found'].indexOf(code) !== NOT_FOUND) {
+            return res.status(httpCodes.BAD_REQUEST).
+            json({ message: 'User not found' }).
+            end();
+        }
+
+        return next(error);
     });
 });
 
