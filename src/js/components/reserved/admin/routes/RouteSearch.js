@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { GridLoader as Loader } from 'halogen';
+import nProgress from 'nprogress';
+import httpCodes from 'http-status-codes';
 import TextField from 'material-ui/TextField';
 import InfiniteScroll from 'react-infinite';
 import { List, ListItem } from 'material-ui/List';
@@ -65,27 +66,32 @@ export default class RouteSearch extends Component {
     submitSearch(event) {
         event.preventDefault();
 
-        if (this.componentIsMounted) {
-            this.setState({ inProgress: 'Searching...' });
+        if (this.componentIsMounted && !this.state.inProgress) {
+            if (this.searchErrorAlert) {
+                Alerts.close(this.searchErrorAlert);
+                this.searchErrorAlert = null;
+            }
 
-            let { search } = this.state;
-            if (typeof search !== 'string') {
-                this.setState({ inProgress: false });
+            if (typeof this.state.search !== 'string') {
+                this.setState({ searchError: true });
 
                 return;
             }
 
-            search = search.trim();
-            this.setState({ search });
-            if (!search) {
-                this.setState({ inProgress: false });
+            const search = this.state.search.trim();
+            if (search.length === NO_ELEMENTS) {
+                this.setState({ searchError: true });
 
                 return;
             }
 
-            this.setState({ inProgress: 'Searching...' });
-            this.performSearch(search).
-            then((results) => {
+            this.setState({
+                inProgress: true,
+                search,
+                searchError: false
+            });
+            nProgress.start();
+            this.performSearch(search).then((results) => {
                 if (this.componentIsMounted) {
                     this.setState({
                         inProgress: false,
@@ -93,97 +99,100 @@ export default class RouteSearch extends Component {
                     });
                 }
             }).
-            catch(() => {
+            catch((error) => {
                 if (this.componentIsMounted) {
                     this.setState({ inProgress: false });
-                    Alerts.closeAll();
-                    Alerts.createErrorAlert('Error while searching for routes.');
+                    const alertText = error.status === httpCodes.BAD_REQUEST
+                        ? 'Error while searching for Routes. Please, try again later.'
+                        : 'Bad search input. Please, provide the keywords to search for.';
+
+                    this.searchErrorAlert = Alerts.createErrorAlert(alertText);
                 }
+            }).
+            then(() => {
+                nProgress.done();
             });
-
         }
     }
 
-    getResultItem(element) {
-        return <div key={element.routeId}>
-            <ListItem
-                primaryText={ element.name }
-                secondaryText={
-                    <p>{ element.description }</p>
-                }
-                secondaryTextLines={2}
-                onTouchTap={() => {
-                    this.props.onRouteSelected(element.routeId);
-                }}
-            />
-            <Divider inset/>
-        </div>;
-    }
-
-    render() {
-        let searchButton = <div className="hor-align vert-align">
-            <Loader color="#012935" className="loader"/>
-            <em>{ this.state.inProgress }</em>
-        </div>;
-        if (!this.state.inProgress) {
-            searchButton = <RaisedButton
-                label="Search"
-                icon={<ActionSearch />}
-                onTouchTap={ this.submitSearch.bind(this) }
-            />;
-        }
+    renderResultsArea() {
+        // Show the results while search may be in place
+        const { results } = this.state;
 
         let resultsArea = null;
-        const { results } = this.state;
         if (results && Array.isArray(results)) {
             if (results.length > NO_ELEMENTS) {
-                if (results.length > TWO_SIZE) {
-                    resultsArea =
-                        <InfiniteScroll containerHeight={200} elementHeight={40}>
-                            {
-                                results.map((item) => {
-                                    return this.getResultItem(item);
-                                })
+                const resultsList = results.map((element) => {
+                    return <div key={element.routeId}>
+                        <ListItem
+                            primaryText={ element.name }
+                            secondaryText={
+                                <p>{ element.description }</p>
                             }
-                        </InfiniteScroll>;
+                            secondaryTextLines={2}
+                            onTouchTap={() => {
+                                this.props.onRouteSelected(element.routeId);
+                            }}
+                        />
+                        <Divider inset/>
+                    </div>;
+                });
+
+                if (results.length > TWO_SIZE) {
+                    resultsArea = (
+                        <List>
+                            <InfiniteScroll containerHeight={200} elementHeight={40}>
+                                { resultsList }
+                            </InfiniteScroll>
+                        </List>
+                    );
                 } else {
-                    resultsArea = <List>
-                        {
-                            results.map((item) => {
-                                return this.getResultItem(item);
-                            })
-                        }
-                    </List>;
+                    resultsArea = (
+                        <List>
+                            { resultsList }
+                        </List>
+                    );
                 }
             } else {
-                resultsArea = <List>
-                    <ListItem
-                        primaryText="No results were found."
-                        secondaryText={
-                            <p>Try a different search...</p>
-                        }
-                        disabled
-                        secondaryTextLines={2}
-                    />
-                </List>;
+                resultsArea = (
+                    <List>
+                        <ListItem
+                            primaryText="No results were found."
+                            secondaryText={ <p>Try a different search...</p> }
+                            disabled
+                            secondaryTextLines={2}
+                        />
+                    </List>
+                );
             }
         }
 
+        return resultsArea;
+    }
+
+    render() {
+        const { inProgress, search, searchError } = this.state;
+
         return (
-            <form onSubmit={ this.state.inProgress
-                ? null
-                : this.submitSearch.bind(this) } >
+            <form onSubmit={ inProgress ? null : this.submitSearch.bind(this) } >
+                <input type="hidden" value="something"/>
                 <TextField
+                    autoComplete="off"
                     hintText="Keywords"
-                    floatingLabelText="Search route"
-                    value={ this.state.search }
+                    floatingLabelText="Search Route"
+                    value={ search }
                     onChange={ this.handleSearchInput.bind(this) }
                     fullWidth
-                    errorText={ null }
+                    errorText={ searchError ? "Invalid search terms" : null }
                 />
                 <br />
-                { resultsArea }
-                { searchButton }
+                <RaisedButton
+                    label="Search"
+                    icon={<ActionSearch />}
+                    onTouchTap={ this.submitSearch.bind(this) }
+                    disabled={inProgress}
+                />
+                { this.renderResultsArea() }
             </form>
 
         );

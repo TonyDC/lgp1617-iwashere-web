@@ -2,12 +2,15 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import firebase from 'firebase';
 import Helmet from 'react-helmet';
-import Paper from 'material-ui/Paper';
-
 import POIForm from './POIForm';
+import Divider from 'material-ui/Divider';
+import Paper from 'material-ui/Paper';
 
 import { checkFetchResponse, authenticatedFetch } from '../../../../functions/fetch';
 import { getContext } from '../../../../functions/store';
+
+import 'styles/utils.scss';
+import 'styles/map.scss';
 
 const mainStyle = {
     margin: 20,
@@ -16,6 +19,8 @@ const mainStyle = {
 };
 
 const titleStyle = { marginLeft: 40 };
+
+const titleDividerStyle = { width: "auto" };
 
 export default class CreatePOI extends Component {
 
@@ -55,7 +60,7 @@ export default class CreatePOI extends Component {
         form.append('latitude', location.lat);
         form.append('longitude', location.lng);
         form.append('poiTypeId', selectedType);
-        form.append('contextId', contextId ? contextId : getContext(this.context.store) );
+        form.append('contextId', contextId ? contextId : getContext(this.context.store));
         for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
             // Note: In order to detect the array of files in the server, each file, individually, must be appended to the same form key.
             form.append('poiFiles', files[fileIndex]);
@@ -70,14 +75,16 @@ export default class CreatePOI extends Component {
 
     render() {
         return (
-            <Paper zDepth={2} style={mainStyle}>
-                <Helmet>
-                    <title>#iwashere - Create POI</title>
-                </Helmet>
-
-                <h3 style={titleStyle}>Create POI</h3>
-                <POIForm onSave={ this.handleSave.bind(this) } resetAfterSubmit userContext={ getContext(this.context.store) }/>
-            </Paper>
+            <div className="wrapper-fill vert-align hor-align">
+                <Paper className="paper-min-width" zDepth={2} style={mainStyle}>
+                    <Helmet>
+                        <title>#iwashere - Create POI</title>
+                    </Helmet>
+                    <h3 style={titleStyle}>Create POI</h3>
+                    <Divider style={titleDividerStyle}/>
+                    <POIForm onSave={ this.handleSave.bind(this) } resetAfterSubmit userContext={ getContext(this.context.store) }/>
+                </Paper>
+            </div>
         );
     }
 }

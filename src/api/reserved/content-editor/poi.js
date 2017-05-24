@@ -77,8 +77,7 @@ router.post('/', bodyTemplate, (req, res, next) => {
     }
 
     const { userContextDB, poiDB } = db;
-    const primaryChecks = [userContextDB.verifyContextUnderUserJurisdiction(userContext, context),
-        poiDB.getPOITypeByID(poiTypeId)];
+    const primaryChecks = [userContextDB.verifyContextUnderUserJurisdiction(userContext, context), poiDB.getPOITypeByID(poiTypeId)];
     Promise.all(primaryChecks).
     then((results) => {
         if (utils.checkResultList(results, [primaryChecks.length], true)) {
@@ -282,6 +281,7 @@ router.post('/:poiID', (req, res, next) => {
     });
 });
 
+// TODO check juridiction !!!SOLVED!!!
 router.get('/:poiID', (req, res, next) => {
     const { poiID } = req.params;
     const { contextID: userContext } = req.auth;
@@ -302,8 +302,7 @@ router.get('/:poiID', (req, res, next) => {
 
         return userContextDB.verifyContextUnderUserJurisdiction(userContext, poi.contextId).
         then((contextCheck) => {
-            if (!poi.deleted || (contextCheck && contextCheck.length > NO_ELEMENT_SIZE)) {
-
+            if (contextCheck && contextCheck.length > NO_ELEMENT_SIZE) {
                 res.json(poi).end();
             } else {
                 res.sendStatus(httpCodes.UNAUTHORIZED).end();

@@ -250,12 +250,11 @@ router.get('/:id', (req, res, next) => {
     then((results) => {
         if (utils.checkResultList(results, [TWO_SIZE]) && results[ZERO_INDEX].length > NO_ELEMENT_SIZE) {
             const route = utils.convertObjectToCamelCase(results[ZERO_INDEX][ZERO_INDEX]);
+            route.tags = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
 
             return userContextDB.verifyContextUnderUserJurisdiction(userContext, route.contextId).
             then((contextCheck) => {
-                if (!route.deleted || (contextCheck && contextCheck.length > NO_ELEMENT_SIZE)) {
-                    route.tags = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
-
+                if (contextCheck && contextCheck.length > NO_ELEMENT_SIZE) {
                     res.json(route).end();
                 } else {
                     res.sendStatus(httpCodes.UNAUTHORIZED).end();

@@ -45,19 +45,19 @@ export default class RouteArea extends Component {
     render() {
         return (
             <div className="wrapper-fill vert-align hor-align">
-            <Paper className="paper-min-width" zDepth={2} style={mainStyle}>
-                <Helmet>
-                    <title>#iwashere - Route area</title>
-                </Helmet>
-                <div style={mainStyle}>
-                    <h4>Change an existing route...</h4>
-                    <RouteSearch onRouteSelected={ this.handleEditRoute.bind(this) } router={this.props.router} />
-                    <Divider style={dividerStyle}/>
-                    <h4>... or create a new route</h4>
-                    <RaisedButton label="Create Route" icon={<EditorLinearScale/>} onTouchTap={ this.handleCreateRoute.bind(this) } />
-                </div>
-            </Paper>
-                </div>
+                <Paper className="paper-min-width" zDepth={2} style={mainStyle}>
+                    <Helmet>
+                        <title>#iwashere - Route area</title>
+                    </Helmet>
+                    <div style={mainStyle}>
+                        <h4>Change an existing Route...</h4>
+                        <RouteSearch onRouteSelected={ this.handleEditRoute.bind(this) } router={this.props.router} />
+                        <Divider style={dividerStyle}/>
+                        <h4>... or create a new Route</h4>
+                        <RaisedButton label="Create Route" icon={<EditorLinearScale/>} onTouchTap={ this.handleCreateRoute.bind(this) } />
+                    </div>
+                </Paper>
+            </div>
         );
     }
 }

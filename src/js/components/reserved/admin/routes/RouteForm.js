@@ -42,13 +42,6 @@ export default class ReservedRoute extends Component {
         this.componentIsMounted = true;
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (this.componentIsMounted && !this.propsReceived) {
-            this.propsReceived = true;
-            this.setState({ route: nextProps.route });
-        }
-    }
-
     componentWillUnmount() {
         this.componentIsMounted = false;
     }

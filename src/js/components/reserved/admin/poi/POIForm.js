@@ -31,7 +31,6 @@ const POI_TYPE_LANG_SEPARATOR = ';';
 
 const DECIMAL_BASE = 10;
 
-const buttonContainerStyle = { marginTop: 20 };
 const buttonStyle = { marginRight: 20 };
 
 // TODO refactor
@@ -445,15 +444,6 @@ export default class POIForm extends Component {
             );
         }
 
-        let deleteButton = null;
-        if (this.props.onDelete) {
-            let label = "Hide POI";
-            if (deleted) {
-                label = "Show POI";
-            }
-            deleteButton = <RaisedButton style={buttonStyle} label={label} secondary disabled={ submitInProgress } onTouchTap={ this.handleDelete.bind(this) } />;
-        }
-
         const contextId = this.state.contextId ? this.state.contextId : this.props.userContext;
 
         return (
@@ -564,10 +554,19 @@ export default class POIForm extends Component {
                         }
                     </Dropzone>
                 </Paper>
-                { /* onTouchTap is not required: the button is inside a form, with a defined submit behaviour */ }
-                <div style={buttonContainerStyle}>
-                <RaisedButton style={ buttonStyle } label="Submit" primary disabled={ submitInProgress } onTouchTap={ this.handleSubmit.bind(this) }/>
-                { deleteButton }
+                <div className="button-container">
+                    <RaisedButton label="Save"
+                                  disabled={submitInProgress}
+                                  className="button-style"
+                                  onTouchTap={() => {
+                                      this.props.onSave(this.state.route);
+                                  }} />
+                    <RaisedButton label="Cancel"
+                                  className="button-style"
+                                  disabled={submitInProgress}
+                                  onTouchTap={() => {
+                                      this.props.router.push('/reserved/dash/poi');
+                                  }} />
                 </div>
         </div>
         );
@@ -591,6 +590,7 @@ POIForm.propTypes = {
     onDelete: PropTypes.func,
     onSave: PropTypes.func,
     resetAfterSubmit: PropTypes.bool,
+    router: PropTypes.object,
     userContext: PropTypes.oneOfType([
         PropTypes.number,
         PropTypes.string
