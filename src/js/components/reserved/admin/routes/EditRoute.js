@@ -101,7 +101,7 @@ export default class EditRoute extends Component {
 
         const headers = {
             'Content-Type': 'application/json',
-            'X-user-context': this.getContext()
+            'X-user-context': getContext(this.context.store)
         };
 
         authenticatedFetch(`${API_ROUTE_URL}pois/${this.props.params.id}`, {}, headers, 'GET').
@@ -166,7 +166,7 @@ export default class EditRoute extends Component {
 
             const headers = {
                 'Content-Type': 'application/json',
-                'X-user-context': this.getContext()
+                'X-user-context': getContext(this.context.store)
             };
 
             authenticatedFetch(API_ROUTE_URL, JSON.stringify(route), headers, 'PUT').
