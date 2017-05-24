@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import * as firebase from 'firebase';
 import IconButton from 'material-ui/IconButton';
 import { Toolbar, ToolbarGroup, ToolbarSeparator } from 'material-ui/Toolbar';
-
 import ActionHome from 'material-ui/svg-icons/action/home';
+import ActionSearch from 'material-ui/svg-icons/action/search';
 import CommunicationFeed from 'material-ui/svg-icons/communication/rss-feed';
 import SocialPerson from 'material-ui/svg-icons/social/person';
 import ActionExitToApp from 'material-ui/svg-icons/action/exit-to-app';
@@ -25,7 +25,7 @@ export default class NavBar extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = { };
     }
 
     componentDidMount() {
@@ -88,10 +88,13 @@ export default class NavBar extends Component {
         return (
             <div className="navbar-container">
                 <Toolbar className="toolbar-custom-style">
-                    <img src={logoCompact} className="app-logo"/>
+                    <a href="/" className="vert-align"><img src={logoCompact} className="app-logo"/></a>
                     <ToolbarGroup>
                         <IconButton iconStyle={styles.buttons} onTouchTap={this.goToPage.bind(this, '/')} tooltip={<div>Home</div>}>
                             <ActionHome hoverColor={grey100}/>
+                        </IconButton>
+                        <IconButton iconStyle={styles.buttons} onTouchTap={this.goToPage.bind(this, '/search')} tooltip={<div>Search</div>}>
+                            <ActionSearch hoverColor={grey100}/>
                         </IconButton>
                         <IconButton iconStyle={styles.buttons} onTouchTap={this.goToPage.bind(this, '/feed')} tooltip={<div>Feed</div>}>
                             <CommunicationFeed hoverColor={grey100}/>

@@ -11,12 +11,6 @@ import EditorLinearScale from 'material-ui/svg-icons/editor/linear-scale';
 import 'styles/panel.scss';
 import 'styles/utils.scss';
 
-const mainStyle = {
-    margin: 20,
-    paddingBottom: 10,
-    paddingTop: 5
-};
-
 const dividerStyle = {
     marginBottom: 40,
     marginTop: 40,
@@ -45,11 +39,11 @@ export default class RouteArea extends Component {
     render() {
         return (
             <div className="wrapper-fill vert-align hor-align">
-                <Paper className="paper-min-width" style={mainStyle} zDepth={2}>
+                <Paper className="paper-min-width main-style" zDepth={2}>
                     <Helmet>
                         <title>#iwashere - Route area</title>
                     </Helmet>
-                    <div style={mainStyle}>
+                    <div className="main-style">
                         <h4>Change an existing Route...</h4>
                         <RouteSearch onRouteSelected={ this.handleEditRoute.bind(this) } router={this.props.router} />
                         <Divider style={dividerStyle}/>

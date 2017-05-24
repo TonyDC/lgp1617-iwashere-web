@@ -28,6 +28,20 @@ module.exports.getPOIsByRouteID = (id, includeDeleted = false) => {
     });
 };
 
+module.exports.getRoutesByPoiID = (id, includeDeleted = false) => {
+    // language=POSTGRES-SQL
+    return db.query(`SELECT * 
+    FROM route_pois INNER JOIN routes ON route_pois.poi_id = routes.route_id
+    WHERE poi_id = :id AND (routes.deleted = FALSE OR :includeDeleted)
+    ORDER BY route.rating DESC`, {
+        replacements: {
+            id,
+            includeDeleted
+        },
+        type: db.QueryTypes.SELECT
+    });
+};
+
 module.exports.getTagsByRouteID = (id) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT * 

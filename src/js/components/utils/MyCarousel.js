@@ -41,12 +41,10 @@ export default class MyCarousel extends Component {
             return response.json();
         }).
         then((response) => {
-            if (!this.componentIsMounted) {
-                return;
+            if (this.componentIsMounted) {
+                const media = this.getMedia(response);
+                this.setState({ media });
             }
-
-            const media = this.getMedia(response);
-            this.setState({ media });
         });
     }
 
