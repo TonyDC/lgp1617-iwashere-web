@@ -87,7 +87,9 @@ function verifyUserPermissions (minimumRank) {
         return userContextDB.getContextByUserIDAndMinimumRank(uid, context, minimumRank).
         then((results) => {
             if (results && results.length > NO_ELEMENTS) {
+                const [{ rank }] = results;
                 req.auth.contextID = context;
+                req.auth.rank = rank;
 
                 return next();
             }

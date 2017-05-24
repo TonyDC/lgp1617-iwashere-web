@@ -1,5 +1,7 @@
 'use strict';
 
+const utils = require('../utils/misc');
+
 const express = require('express');
 const router = express.Router();
 
@@ -15,6 +17,8 @@ const ONE_INDEX = 1,
 const NO_ELEMENTS_SIZE = 0,
     TWO_ELEMENTS_SIZE = 2;
 
+const UNAVAILABLE_ENTRY = '--Unavailable--';
+
 /**
  * Register endpoint
  * Body properties:
@@ -27,7 +31,8 @@ const NO_ELEMENTS_SIZE = 0,
  */
 
 router.post('/register', (req, res) => {
-    const { email, password, confirmPassword, username } = req.body;
+    const { email, username } = utils.trimStringProperties(req.body);
+    const { password, confirmPassword } = req.body;
 
     if (typeof password !== 'string' || typeof confirmPassword !== 'string' || password !== confirmPassword) {
         res.status(httpStatus.BAD_REQUEST).send({
@@ -47,7 +52,7 @@ router.post('/register', (req, res) => {
 
         return;
 
-    } else if (typeof username !== 'string' || validator.isEmpty(username.trim())) {
+    } else if (typeof username !== 'string' || validator.isEmpty(username)) {
         res.status(httpStatus.BAD_REQUEST).send({
             code: 'bad-username',
             message: 'Bad username'
@@ -66,7 +71,7 @@ router.post('/register', (req, res) => {
         password
     }).
     then((user) => {
-        userDB.insertUser(user.uid).
+        userDB.insertUser(user.uid, username, email).
         then(() => {
             // See the UserRecord reference doc for the contents of userRecord.
             res.send({
@@ -96,7 +101,15 @@ router.post('/register-by-provider', (req, res, next) => {
             res.status(httpStatus.BAD_REQUEST).json({ message: 'the user is not authenticated by provider' }).
             end();
         } else if (results[ONE_INDEX].length === NO_ELEMENTS_SIZE) {
-            return userDB.insertUser(uid).
+            let { displayName, email } = results[ZERO_INDEX];
+            if (typeof displayName !== 'string') {
+                displayName = UNAVAILABLE_ENTRY;
+            }
+            if (typeof email !== 'string') {
+                email = UNAVAILABLE_ENTRY;
+            }
+
+            return userDB.insertUser(uid, displayName, email).
             then(() => {
                 res.sendStatus(httpStatus.CREATED).end();
             });

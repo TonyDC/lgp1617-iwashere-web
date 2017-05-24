@@ -61,7 +61,7 @@ module.exports.convertObjectToCamelCase = (object) => {
  * @return {Object[]} array with converted objects
  */
 module.exports.convertObjectsToCamelCase = (objects) => {
-    if (objects) {
+    if (objects && Array.isArray(objects)) {
         return objects.map(convertObjectToCamelCase);
     }
 
