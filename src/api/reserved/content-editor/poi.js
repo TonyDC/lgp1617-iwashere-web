@@ -281,16 +281,18 @@ router.post('/:poiID', (req, res, next) => {
         next(err);
     });
 });
-// TODO verificar se o utilizador pode ver a informação
+
 router.get('/:poiID', (req, res, next) => {
     const { poiID } = req.params;
+    const { contextID: userContext } = req.auth;
+
     if (!poiID || typeof poiID !== 'string' || !validator.isNumeric(poiID)) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
 
-    const { poiDB } = db;
+    const { userContextDB, poiDB } = db;
     const promisesToFulfill = [poiDB.getPOIDetailByID(poiID, true), poiDB.getPOITags(poiID), poiDB.getPOIAllMedia(poiID)];
     Promise.all(promisesToFulfill).
     then((results) => {
@@ -298,7 +300,15 @@ router.get('/:poiID', (req, res, next) => {
         poi.tags = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
         poi.contents = utils.convertObjectsToCamelCase(results[TWO_INDEX]);
 
-        res.json(poi).end();
+        return userContextDB.verifyContextUnderUserJurisdiction(userContext, poi.contextId).
+        then((contextCheck) => {
+            if (!poi.deleted || (contextCheck && contextCheck.length > NO_ELEMENT_SIZE)) {
+
+                res.json(poi).end();
+            } else {
+                res.sendStatus(httpCodes.UNAUTHORIZED).end();
+            }
+        });
     }).
     catch((error) => {
         next(error);

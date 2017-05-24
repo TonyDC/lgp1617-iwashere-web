@@ -74,7 +74,7 @@ export default class EditPOI extends Component {
                         lng: longitude
                     },
                     name,
-                    selectedContext: contextId,
+                    contextId,
                     selectedType: poiTypeId,
                     tags: tags.map((element) => {
                         return element.tagId;
@@ -128,7 +128,6 @@ export default class EditPOI extends Component {
         form.append('filesDeleted', JSON.stringify(filesDeleted));
         form.append('context', contextId);
 
-        console.log(contextId);
         // New files to be added
         for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
             // Note: In order to detect the array of files in the server, each file, individually, must be appended to the same form key.
