@@ -61,6 +61,7 @@ export default class EditPOI extends Component {
         return authenticatedFetch(`/api/reserved/content-editor/poi/${encodeURIComponent(poiID)}`, body, headers, 'GET').
         then(checkFetchResponse).
         then((json) => {
+            // TODO verificar se json é vazio -> considerar como NOT_FOUND -> redireccionar
             const { name, address, description, poiTypeId, tags, latitude, longitude, deleted, contents, contextId } = json;
             this.setState({
                 fetchInProgress: false,

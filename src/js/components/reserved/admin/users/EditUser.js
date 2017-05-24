@@ -83,6 +83,8 @@ export default class EditUser extends Component {
             let text = 'Error while fetching the user information. Please, try again later.';
             if (status === httpCodes.UNAUTHORIZED) {
                 text = 'You are not allowed to edit the information of this user.';
+            } else if (status === httpCodes.NO_CONTENT) {
+                text = 'User not found.';
             }
             Alerts.createErrorAlert(text);
             this.props.router.push('/reserved/dash/user');

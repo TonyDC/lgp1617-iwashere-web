@@ -131,6 +131,8 @@ export default class UserForm extends Component {
             error = true;
         }
 
+        /*
+        A user may not have a context
         if (context === null) {
             if (this.contextErrorAlert) {
                 Alerts.close(this.contextErrorAlert);
@@ -139,6 +141,7 @@ export default class UserForm extends Component {
             this.contextErrorAlert = Alerts.createErrorAlert('A context must be chosen from the tree');
             error = true;
         }
+        */
 
         return !error;
     }

@@ -38,6 +38,23 @@ module.exports.insertUser = (uid, name, email) => {
     });
 };
 
+module.exports.insertUserWithContextAndRole = (uid, name, email, contextID, roleID) => {
+    // language=POSTGRES-SQL
+    return db.query(`
+        INSERT INTO users(uid, name, email) VALUES (:uid, :name, :email);
+        INSERT INTO user_contexts(user_id, context_id, role_id) VALUES (:uid, :contextID, :roleID);
+    `, {
+        replacements: {
+            contextID,
+            email,
+            name,
+            roleID,
+            uid
+        },
+        type: db.QueryTypes.INSERT
+    });
+};
+
 module.exports.insertContentEditor = (uid) => {
     // language=POSTGRES-SQL
     return db.query(`INSERT INTO content_editors(uid) VALUES (:uid)`, {
