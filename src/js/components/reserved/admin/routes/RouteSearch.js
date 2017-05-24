@@ -9,6 +9,7 @@ import Divider from 'material-ui/Divider';
 import RaisedButton from 'material-ui/RaisedButton';
 import ActionSearch from 'material-ui/svg-icons/action/search';
 import { checkFetchResponse, authenticatedFetch } from '../../../../functions/fetch';
+import { getContext } from '../../../../functions/store';
 
 import Alerts from '../../../utils/Alerts';
 
@@ -42,22 +43,12 @@ export default class RouteSearch extends Component {
         }
     }
 
-    getContext() {
-        const { reserved: reservedPropStore } = this.context.store.getState();
-        const { contexts, selectedIndex: selectedContextIndex } = reservedPropStore;
-        if (!contexts || !Array.isArray(contexts) || typeof selectedContextIndex !== 'number' || contexts.length <= selectedContextIndex) {
-            throw new Error('Bad user context selected.');
-        }
-
-        return contexts[selectedContextIndex].contextId;
-    }
-
     performSearch(query) {
         if (!query || typeof query !== 'string') {
             throw new Error('Bad query parameter');
         }
 
-        const headers = { 'X-user-context': this.getContext() };
+        const headers = { 'X-user-context': getContext(this.context.store) };
 
         return authenticatedFetch(`${API_ROUTE_URL}search?query=${query}`, {}, headers, 'GET').
         then(checkFetchResponse);

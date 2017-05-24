@@ -18,7 +18,7 @@ import Register from './components/user/Register';
 import PasswordReset from './components/user/PasswordReset';
 import POIDetail from './components/poi/POIDetail';
 import RouteDetail from './components/route/RouteDetail';
-import POISearch from './components/poi/POISearch';
+import Search from './components/search/Search';
 import Feed from './components/feed/Feed';
 import POICreatePost from './components/poi/POICreatePost';
 
@@ -59,7 +59,6 @@ export default class App extends Component {
     }
 
     hookListeners() {
-        // TODO remove all getToken(true)
         // TODO set initial container state
         this.firebaseObserverUnsubscriber = firebase.auth().onAuthStateChanged((user) => {
             if (user) {
@@ -94,9 +93,9 @@ export default class App extends Component {
             <Router history={ browserHistory }>
                 <Route path="/" component={ MainRoutes }>
                     <IndexRoute component={ Map } />
+                    <Route path="search" component={ Search }/>
                     <Route path="feed" component={ Feed }/>
                     <Route path="poi" component={ POIRoutes }>
-                        <Route path="search" component={ POISearch } />
                         <Route path=":id" component={ POIDetail } />
                         <Route path="post" component={ POICreatePost } />
                     </Route>
@@ -120,6 +119,11 @@ export default class App extends Component {
                                 <IndexRoute component={ RouteArea } />
                                 <Route path="create" component={ CreateRoute } />
                                 <Route path=":id" component={ EditRoute } />
+                            </Route>
+                            <Route path="user">
+                                <IndexRoute component={ UserArea } />
+                                <Route path="create" component={ CreateUser } />
+                                <Route path=":id" component={ EditUser } />
                             </Route>
                         </Route>
                     </Route>
