@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { RouteTransition, presets } from 'react-router-transition';
-import Paper from 'material-ui/Paper';
 
 import AdminNavigator from './AdminNavigator';
-import ContextSelector from './ContextSelector';
 
 import 'styles/utils.scss';
 
@@ -14,7 +12,6 @@ const childrenStyle = {
     width: '100%'
 };
 
-// TODO change ContextSelector location
 export default class AdminShell extends Component {
 
     render() {
@@ -26,9 +23,6 @@ export default class AdminShell extends Component {
                     {...presets.fade}
                 >
                     <div style={childrenStyle}>
-                        <Paper style={{display: 'inline-block'}}>
-                            <ContextSelector/>
-                        </Paper>
                         {this.props.children}
                     </div>
                 </RouteTransition>
