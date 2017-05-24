@@ -24,6 +24,7 @@ const THREE_SIZE = 3;
 
 const MINIMUM_PASSWORD_SIZE = 6;
 
+// Search for users by email
 router.get('/search', (req, res, next) => {
     // ExpressJS automatically does URL decoding
     const { email } = utils.trimStringProperties(req.query);
@@ -49,6 +50,7 @@ router.get('/search', (req, res, next) => {
     });
 });
 
+// Create a new user
 router.post('/', (req, res, next) => {
     const { rank, contextID } = req.auth;
     const { context, email, name, password, role } = utils.trimStringProperties(req.body);
@@ -56,7 +58,7 @@ router.post('/', (req, res, next) => {
     if (typeof email !== 'string' || !validator.isEmail(email) ||
         typeof name !== 'string' || validator.isEmpty(name) ||
         typeof password !== 'string' || password.length < MINIMUM_PASSWORD_SIZE) {
-        res.status(httpCodes.BAD_REQUEST).json({ message: 'Bad arguments ' }).
+        res.status(httpCodes.BAD_REQUEST).json({ message: 'Bad arguments' }).
         end();
 
         return;
@@ -64,15 +66,17 @@ router.post('/', (req, res, next) => {
 
     const withContextAndRole = ['string', 'number'].indexOf(typeof context) !== NOT_FOUND && ['string', 'number'].indexOf(typeof role) !== NOT_FOUND;
 
-    const { roleDB, contextDB, userDB } = db;
+    const { roleDB, userContextDB, userDB } = db;
     // Do not admit the custom registration of users having the same email
     userDB.getUserByEmail(email).
     then((results) => {
         if (Array.isArray(results) && results.length > NO_ELEMENTS) {
             res.sendStatus(httpCodes.CONFLICT).end();
+
+            return null;
         }
 
-        const checkContextAndRole = withContextAndRole ? [roleDB.getRoleByID(role), contextDB.verifyContextUnderUserJurisdiction(contextID, context)] : [];
+        const checkContextAndRole = withContextAndRole ? [roleDB.getRoleByID(role), userContextDB.verifyContextUnderUserJurisdiction(contextID, context)] : [];
 
         return firebaseAdmin.auth().getUserByEmail(email).
         then((result) => {
@@ -82,7 +86,7 @@ router.post('/', (req, res, next) => {
                 return null;
             }
 
-            return checkContextAndRole;
+            return Promise.all(checkContextAndRole);
         }).
         catch((error) => {
             const { code } = error.errorInfo;
@@ -92,17 +96,20 @@ router.post('/', (req, res, next) => {
                 return Promise.reject(error);
             }
 
-            return checkContextAndRole;
+            return Promise.all(checkContextAndRole);
         });
     }).
     then((checks) => {
+        // CONFLICT
+        if (!Array.isArray(checks)) {
+            return null;
+        }
+
         let contextToInsert = null,
             roleToInsert = null;
 
-        if (withContextAndRole && Array.isArray(checks) && checks.length > ONE_ELEMENT_SIZE) {
-            const contextResult = checks[ONE_INDEX],
-                roleResult = checks[ZERO_INDEX];
-
+        if (withContextAndRole && checks.length > ONE_ELEMENT_SIZE) {
+            const [roleResult, contextResult] = checks;
             if (Array.isArray(contextResult) && contextResult.length > NO_ELEMENTS &&
                 Array.isArray(roleResult) && roleResult.length > NO_ELEMENTS && roleResult[ZERO_INDEX] && roleResult[ZERO_INDEX].rank >= rank) {
                 contextToInsert = context;
