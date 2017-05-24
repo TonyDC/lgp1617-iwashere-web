@@ -32,11 +32,7 @@ export default class AdminNavigator extends Component {
             '/reserved/dash/user'
         ];
         const index = this.paths.indexOf(pathname.toLowerCase());
-        this.state = {
-            selectedIndex: index < ZERO_INDEX
-                ? ZERO_INDEX
-                : index
-        };
+        this.state = { selectedIndex: index < ZERO_INDEX ? ZERO_INDEX : index };
     }
 
     select(selectedIndex) {
@@ -67,6 +63,7 @@ export default class AdminNavigator extends Component {
                                 this.select(ROUTE_INDEX);
                             }}
                         />
+                        { /*
                         <BottomNavigationItem
                             label="Users"
                             icon={<ActionAccountBox/>}
@@ -74,6 +71,7 @@ export default class AdminNavigator extends Component {
                                 this.select(USER_INDEX);
                             }}
                         />
+                        */ }
                     </BottomNavigation>
                 </Paper>
                 <Paper className="context-selector">

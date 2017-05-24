@@ -37,12 +37,13 @@ import UserArea from './components/reserved/admin/users/UserArea';
 import CreateUser from './components/reserved/admin/users/CreateUser';
 import EditUser from './components/reserved/admin/users/EditUser';
 
-
 import Alerts from './components/utils/Alerts';
 
 import { loginActionCreator, logoutActionCreator } from './redux/action creators/login';
 
 import 'styles/app.scss';
+
+const NO_ELEMENTS = 0;
 
 export default class App extends Component {
 
@@ -78,17 +79,12 @@ export default class App extends Component {
         }
     }
 
-    redirectIfReservedLoggedIn(nextState, replace) {
-        const { currentUser } = firebase.auth();
-        if (currentUser) {
-            replace({ pathname: '/reserved/dash' });
-        }
-    }
-
     redirectIfReservedNotLoggedIn(nextState, replace) {
-        const { currentUser } = firebase.auth();
-        if (!currentUser) {
-            replace({ pathname: '/reserved' });
+        const reduxState = this.context.store.getState();
+        const { reserved } = reduxState;
+        const { contexts } = reserved;
+        if (!Array.isArray(contexts) || contexts.length === NO_ELEMENTS) {
+            replace({ pathname: '/' });
             Alerts.createErrorAlert('User without enough permissions');
         }
     }
@@ -112,9 +108,7 @@ export default class App extends Component {
                         <Route path="register" component={ Register }/>
                         <Route path="recover" component={ PasswordReset }/>
                     </Route>
-                    { /* TODO */ }
-                    <Route path="reserved" component={ AppShell }>
-                        <IndexRoute component={ AdminLogin } />
+                    <Route path="reserved" onEnter={ this.redirectIfReservedNotLoggedIn.bind(this) }>
                         <Route path="dash" component={ AdminShell }>
                             <IndexRedirect to="poi" />
                             <Route path="poi">
@@ -126,12 +120,6 @@ export default class App extends Component {
                                 <IndexRoute component={ RouteArea } />
                                 <Route path="create" component={ CreateRoute } />
                                 <Route path=":id" component={ EditRoute } />
-                            </Route>
-                            { /* TODO */ }
-                            <Route path="user">
-                                <IndexRoute component={ UserArea } />
-                                <Route path="create" component={ CreateUser } />
-                                <Route path=":id" component={ EditUser } />
                             </Route>
                         </Route>
                     </Route>

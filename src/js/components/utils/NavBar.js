@@ -8,6 +8,7 @@ import ActionHome from 'material-ui/svg-icons/action/home';
 import CommunicationFeed from 'material-ui/svg-icons/communication/rss-feed';
 import SocialPerson from 'material-ui/svg-icons/social/person';
 import ActionExitToApp from 'material-ui/svg-icons/action/exit-to-app';
+import ActionBuild from 'material-ui/svg-icons/action/build';
 
 import logoCompact from 'img/logo-compact.png';
 
@@ -20,6 +21,10 @@ const styles = {
     hoveredButtons: { color: '#333' }
 };
 
+import { LOG_IN_ACTION, LOG_OUT_ACTION, NEW_RESERVED_CONTEXTS } from '../../redux/actionTypes';
+
+const NOT_FOUND = -1;
+const NO_ELEMENTS = 0;
 
 export default class NavBar extends Component {
 
@@ -30,10 +35,15 @@ export default class NavBar extends Component {
 
     componentDidMount() {
         this.reduxListenerUnsubscribe = this.context.store.subscribe(() => {
-            // possível problema em verificar se houve mudancas: os objectos podem não ser o mesmo (embora tenham o mesmo conteúdo)
             const reduxState = this.context.store.getState();
-            const { userStatus } = reduxState;
-            this.setState({ userStatus });
+            const { action, userStatus, reserved } = reduxState;
+            if ([LOG_IN_ACTION, LOG_OUT_ACTION, NEW_RESERVED_CONTEXTS].indexOf(action) === NOT_FOUND) {
+                return;
+            }
+            this.setState({
+                reserved,
+                userStatus
+            });
         });
     }
 
@@ -65,7 +75,7 @@ export default class NavBar extends Component {
     }
 
     render() {
-        const { userStatus } = this.state;
+        const { userStatus, reserved } = this.state;
         let userActionButton =
             <IconButton iconStyle={styles.buttons} onTouchTap={this.toggleUserStatus.bind(this)} tooltip={<div>Log in</div>}>
                 <SocialPerson hoverColor={grey100}/>
@@ -76,6 +86,15 @@ export default class NavBar extends Component {
                 <IconButton iconStyle={styles.buttons} onTouchTap={this.toggleUserStatus.bind(this)} tooltip={<div>Log out</div>}>
                     <ActionExitToApp hoverColor={grey100}/>
                 </IconButton>;
+        }
+
+        let reservedAreaButton = null;
+        if (reserved && Array.isArray(reserved.contexts) && reserved.contexts.length > NO_ELEMENTS) {
+            reservedAreaButton = (
+                <IconButton iconStyle={styles.buttons} onTouchTap={this.goToPage.bind(this, '/reserved/dash')} tooltip={<div>Reserved Area</div>}>
+                    <ActionBuild hoverColor={grey100}/>
+                </IconButton>
+            );
         }
 
         /*
@@ -96,6 +115,7 @@ export default class NavBar extends Component {
                         <IconButton iconStyle={styles.buttons} onTouchTap={this.goToPage.bind(this, '/feed')} tooltip={<div>Feed</div>}>
                             <CommunicationFeed hoverColor={grey100}/>
                         </IconButton>
+                        { reservedAreaButton }
                         <ToolbarSeparator className="toolbar-separator-custom-style"/>
                         { userActionButton }
                     </ToolbarGroup>
