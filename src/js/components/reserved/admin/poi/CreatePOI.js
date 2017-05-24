@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import firebase from 'firebase';
-
 import Helmet from 'react-helmet';
-
 import Paper from 'material-ui/Paper';
 
 import POIForm from './POIForm';
 
 import { checkFetchResponse, authenticatedFetch } from '../../../../functions/fetch';
+import { getContext } from '../../../../functions/store';
 
 const mainStyle = {
     margin: 20,
@@ -45,7 +44,7 @@ export default class CreatePOI extends Component {
             throw new Error('Bad user context selected');
         }
 
-        const { name, address, description, tags, metaInfo, location, files, selectedType, selectedContext } = data;
+        const { name, address, description, tags, metaInfo, location, files, selectedType, contextId } = data;
 
         const form = new FormData();
         form.append('name', name.trim());
@@ -56,7 +55,7 @@ export default class CreatePOI extends Component {
         form.append('latitude', location.lat);
         form.append('longitude', location.lng);
         form.append('poiTypeId', selectedType);
-        form.append('context', selectedContext);
+        form.append('contextId', contextId ? contextId : getContext(this.context.store) );
         for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
             // Note: In order to detect the array of files in the server, each file, individually, must be appended to the same form key.
             form.append('poiFiles', files[fileIndex]);
@@ -77,7 +76,7 @@ export default class CreatePOI extends Component {
                 </Helmet>
 
                 <h3 style={titleStyle}>Create POI</h3>
-                <POIForm onSave={ this.handleSave.bind(this) } resetAfterSubmit/>
+                <POIForm onSave={ this.handleSave.bind(this) } resetAfterSubmit userContext={ getContext(this.context.store) }/>
             </Paper>
         );
     }

@@ -10,6 +10,7 @@ import { checkFetchResponse, authenticatedFetch } from '../../functions/fetch';
 import 'styles/utils.scss';
 
 const NO_ELEMENTS = 0;
+const DECIMAL_BASE = 10;
 const NOT_FOUND = -1;
 
 const containerStyle = {
@@ -104,7 +105,7 @@ export default class ContextTree extends Component {
 
         if (this.state.graph) {
             this.state.graph.nodes.some((context) => {
-                if (context.id === contextId) {
+                if (parseInt(context.id, DECIMAL_BASE) === parseInt(contextId, DECIMAL_BASE)) {
                     selectedContext = context.label;
                 }
 
@@ -139,7 +140,7 @@ export default class ContextTree extends Component {
             return;
         }
         this.Network = graphRef.Network;
-        this.Network.selectNodes([this.props.selectedContext]);
+        this.Network.selectNodes([parseInt(this.props.selectedContext, DECIMAL_BASE)]);
     }
 
     getGraphEvents() {
@@ -162,10 +163,6 @@ export default class ContextTree extends Component {
     }
 
     handleExpandChange(expanded) {
-        if (this.Network) {
-            this.Network.selectNodes([this.props.selectedContext]);
-        }
-
         if (this.componentIsMounted) {
             this.setState({ expanded });
         }
@@ -202,7 +199,10 @@ export default class ContextTree extends Component {
 
 ContextTree.propTypes = {
     onSelect: PropTypes.func,
-    selectedContext: PropTypes.number,
+    selectedContext: PropTypes.oneOfType([
+        PropTypes.number,
+        PropTypes.string
+    ]).isRequired,
     userContext: PropTypes.oneOfType([
         PropTypes.number,
         PropTypes.string

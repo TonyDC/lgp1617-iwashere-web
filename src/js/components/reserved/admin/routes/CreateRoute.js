@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import nProgress from 'nprogress';
+import firebase from 'firebase';
 import { checkFetchResponse, authenticatedFetch } from '../../../../functions/fetch';
+import { getContext } from '../../../../functions/store';
 import Alerts from '../../../utils/Alerts';
 
 import Helmet from 'react-helmet';
@@ -21,7 +23,6 @@ const mainStyle = {
 };
 
 export default class CreateRoute extends Component {
-
 
     constructor(props) {
         super(props);
@@ -60,24 +61,17 @@ export default class CreateRoute extends Component {
         return !errorFound;
     }
 
-    getContext() {
-        const { reserved: reservedPropStore } = this.context.store.getState();
-        const { contexts, selectedIndex: selectedContextIndex } = reservedPropStore;
-        if (!contexts || !Array.isArray(contexts) || typeof selectedContextIndex !== 'number' || contexts.length <= selectedContextIndex) {
-            throw new Error('Bad user context selected.');
-        }
-
-        return contexts[selectedContextIndex].contextId;
-    }
-
     createRoute(route) {
-        if (this.componentIsMounted && this.checkRoute(route)) {
+        const { currentUser } = firebase.auth();
+        if (currentUser && this.componentIsMounted && this.checkRoute(route)) {
             nProgress.start();
             this.setState({ inProgress: true });
 
+            route.contextId = route.contextId ? route.contextId : getContext(this.context.store);
+
             const headers = {
                 'Content-Type': 'application/json',
-                'X-user-context': this.getContext()
+                'X-user-context': getContext(this.context.store)
             };
 
             authenticatedFetch(API_ROUTE_URL, JSON.stringify(route), headers, 'POST').
@@ -114,7 +108,7 @@ export default class CreateRoute extends Component {
                         <title>#iwashere - Reserved - Route</title>
                     </Helmet>
                     <RouteForm inProgress={this.state.inProgress}
-                               userContext={this.getContext()}
+                               userContext={getContext(this.context.store)}
                                onSave={this.createRoute.bind(this)}
                                router={this.props.router}
                                route={defaultRoute}

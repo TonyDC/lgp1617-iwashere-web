@@ -14,7 +14,6 @@ import { blue500 as POIColor } from 'material-ui/styles/colors';
 import 'styles/utils.scss';
 import 'styles/map.scss';
 
-// TODO cahange
 const POIComponent = (props) => {
     return <Pin lat={props.lat} lng={props.lng} onClick={props.clickHandler}>
         <div className="pin">

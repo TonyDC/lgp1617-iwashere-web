@@ -17,14 +17,14 @@ const TWO_INDEX = 2;
 const THREE_SIZE = 3;
 
 router.get('/search', (req, res, next) => {
-    const { email } = req.query;
+    const { email } = utils.trimStringProperties(req.query);
     if (!email || typeof email !== 'string' || validator.isEmpty(email)) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
 
-    const { userDB, contextDB } = db;
+    const { userDB } = db;
     Promise.all([poiDB.searchPOI(query), routeDB.searchRoute(query), tagDB.searchTag(query)]).
     then((results) => {
         if (results && results.length === THREE_SIZE) {

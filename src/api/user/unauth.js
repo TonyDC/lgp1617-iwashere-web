@@ -17,6 +17,8 @@ const ONE_INDEX = 1,
 const NO_ELEMENTS_SIZE = 0,
     TWO_ELEMENTS_SIZE = 2;
 
+const UNAVAILABLE_ENTRY = '--Unavailable--';
+
 /**
  * Register endpoint
  * Body properties:
@@ -101,10 +103,10 @@ router.post('/register-by-provider', (req, res, next) => {
         } else if (results[ONE_INDEX].length === NO_ELEMENTS_SIZE) {
             let { displayName, email } = results[ZERO_INDEX];
             if (typeof displayName !== 'string') {
-                displayName = '--Unavailable--';
+                displayName = UNAVAILABLE_ENTRY;
             }
             if (typeof email !== 'string') {
-                email = '--Unavailable--';
+                email = UNAVAILABLE_ENTRY;
             }
 
             return userDB.insertUser(uid, displayName, email).

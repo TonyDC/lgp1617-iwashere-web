@@ -4,9 +4,8 @@ const db = require('../index');
 
 module.exports.getPOIByID = (id) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT pois.*, poi_types.name AS type 
-    FROM pois INNER JOIN poi_types ON pois.poi_type_id = poi_types.poi_type_id 
-    WHERE pois.poi_id = :id`, {
+    return db.query(`SELECT pois.*, poi_types.name AS type
+    FROM pois INNER JOIN poi_types ON pois.poi_type_id = poi_types.poi_type_id WHERE pois.poi_id = :id`, {
         replacements: { id },
         type: db.QueryTypes.SELECT
     });
@@ -14,8 +13,7 @@ module.exports.getPOIByID = (id) => {
 
 module.exports.getPOIDetailByID = (id, deleted = false) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT pois.*, poi_types.name AS type 
-    FROM pois INNER JOIN poi_types ON pois.poi_type_id = poi_types.poi_type_id 
+    return db.query(`SELECT pois.*, poi_types.name AS type FROM pois INNER JOIN poi_types ON pois.poi_type_id = poi_types.poi_type_id 
     WHERE pois.poi_id = :id AND (pois.deleted = FALSE OR :deleted)`, {
         replacements: {
             deleted,
@@ -35,8 +33,7 @@ module.exports.getPOITypeByID = (id) => {
 
 module.exports.getPOIsByID = (poiIdList, deleted = false) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT pois.*, poi_types.name AS type 
-    FROM pois INNER JOIN poi_types ON pois.poi_type_id = poi_types.poi_type_id 
+    return db.query(`SELECT pois.*, poi_types.name AS type FROM pois INNER JOIN poi_types ON pois.poi_type_id = poi_types.poi_type_id 
     WHERE pois.poi_id = ANY(:poiIdList) AND (pois.deleted = FALSE OR :deleted)`, {
         replacements: {
             deleted,
@@ -48,8 +45,7 @@ module.exports.getPOIsByID = (poiIdList, deleted = false) => {
 
 module.exports.getPOITags = (poiID) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT tags.name, tags.tag_id 
-    FROM poi_tags INNER JOIN tags ON poi_tags.tag_id = tags.tag_id 
+    return db.query(`SELECT tags.name, tags.tag_id FROM poi_tags INNER JOIN tags ON poi_tags.tag_id = tags.tag_id 
     WHERE poi_tags.poi_id = :poiID`, {
         replacements: { poiID },
         type: db.QueryTypes.SELECT
@@ -61,8 +57,7 @@ module.exports.getPOIsWithin = (minLat, maxLat, minLng, maxLng) => {
     return db.query(`WITH poi_ratings AS 
     (SELECT AVG(rating) AS rating, poi_id
     FROM (SELECT DISTINCT ON (user_id) poi_id, rating FROM poi_ratings
-    ORDER BY user_id, created_at DESC) current_ratings
-    GROUP BY poi_id)
+    ORDER BY user_id, created_at DESC) current_ratings GROUP BY poi_id)
     SELECT *, CASE WHEN rating IS NULL THEN 0 ELSE rating END AS rating, pois.poi_id
     FROM pois LEFT JOIN poi_ratings ON pois.poi_id = poi_ratings.poi_id
     WHERE latitude >= :minLat AND latitude <= :maxLat AND longitude >= :minLng AND longitude <= :maxLng
@@ -110,8 +105,7 @@ module.exports.getPOIRating = (poiID) => {
 
 module.exports.getPOIRatingByUser = (poiID, userID) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT rating FROM poi_ratings  WHERE poi_id = :poiID AND user_id = :userID 
-    ORDER BY created_at DESC LIMIT 1`, {
+    return db.query(`SELECT rating FROM poi_ratings  WHERE poi_id = :poiID AND user_id = :userID ORDER BY created_at DESC LIMIT 1`, {
         replacements: {
             poiID,
             userID
@@ -134,8 +128,7 @@ module.exports.addPOIRating = (poiID, userID, rating) => {
 
 module.exports.searchPOI = (query) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT * FROM pois 
-    WHERE text @@ to_tsquery(:query) AND pois.deleted IS FALSE`, {
+    return db.query(`SELECT * FROM pois WHERE text @@ to_tsquery(:query) AND pois.deleted IS FALSE`, {
         replacements: { query },
         type: db.QueryTypes.SELECT
     });
@@ -144,8 +137,7 @@ module.exports.searchPOI = (query) => {
 module.exports.searchNearbyPOI = (query, lat, lng) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT *, get_distance_function(latitude::real, longitude::real, :lat::real, :lng::real) as distance 
-    FROM pois WHERE text @@ to_tsquery(:query) AND pois.deleted IS FALSE 
-    ORDER BY distance DESC`, {
+    FROM pois WHERE text @@ to_tsquery(:query) AND pois.deleted IS FALSE ORDER BY distance DESC`, {
         replacements: {
             lat,
             lng,
@@ -182,8 +174,7 @@ module.exports.getTopRatedPOIs = (limit) => {
     FROM (SELECT DISTINCT ON (user_id) poi_id, rating FROM poi_ratings
     ORDER BY user_id, created_at DESC) current_ratings
     GROUP BY poi_id)
-    SELECT *
-    FROM pois LEFT JOIN poi_ratings ON pois.poi_id = poi_ratings.poi_id
+    SELECT * FROM pois LEFT JOIN poi_ratings ON pois.poi_id = poi_ratings.poi_id
     WHERE pois.deleted = FALSE
     ORDER BY rating NULLS LAST LIMIT :limit`, {
         replacements: { limit },
@@ -201,10 +192,8 @@ module.exports.getAllPOITypes = () => {
 
 module.exports.createPOI = (name, description, address, latitude, longitude, poiTypeId, editorId, contextId, parentId = null) => {
     // language=POSTGRES-PSQL
-    return db.query(`INSERT INTO 
-    pois(name, description, address, latitude, longitude, poi_type_id, parent_id, content_editor_id, context_id) 
-    VALUES (:name, :description, :address, :latitude, :longitude, :poiTypeId, :parentId, :editorId, :contextId) 
-    RETURNING poi_id`, {
+    return db.query(`INSERT INTO pois(name, description, address, latitude, longitude, poi_type_id, parent_id, content_editor_id, context_id) 
+    VALUES (:name, :description, :address, :latitude, :longitude, :poiTypeId, :parentId, :editorId, :contextId) RETURNING poi_id`, {
         replacements: {
             address,
             contextId,
@@ -222,10 +211,8 @@ module.exports.createPOI = (name, description, address, latitude, longitude, poi
 
 module.exports.setPOITags = (poiId, tagIdList) => {
     // language=POSTGRES-PSQL
-    return db.query(`
-    DELETE FROM poi_tags WHERE poi_id = :poiId;
-    INSERT INTO poi_tags(poi_id, tag_id)
-    VALUES (:poiId, unnest(array[:tagIdList])) ON CONFLICT DO NOTHING RETURNING tag_id`, {
+    return db.query(`DELETE FROM poi_tags WHERE poi_id = :poiId;
+    INSERT INTO poi_tags(poi_id, tag_id) VALUES (:poiId, unnest(array[:tagIdList])) ON CONFLICT DO NOTHING RETURNING tag_id`, {
         replacements: {
             poiId,
             tagIdList
@@ -236,8 +223,7 @@ module.exports.setPOITags = (poiId, tagIdList) => {
 
 module.exports.getContentEditorPOI = (userID, poiID) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT * FROM pois
-    WHERE pois.deleted = FALSE AND poi_id = :poiID AND user_id = :userID`, {
+    return db.query(`SELECT * FROM pois WHERE pois.deleted = FALSE AND poi_id = :poiID AND user_id = :userID`, {
         replacements: {
             poiID,
             userID
@@ -248,9 +234,7 @@ module.exports.getContentEditorPOI = (userID, poiID) => {
 
 module.exports.setPOIDeleted = (poiID, userID, deleted = true) => {
     // language=POSTGRES-PSQL
-    return db.query(`UPDATE pois
-    SET deleted = :deleted, update_content_editor_id = :userID  
-    WHERE poi_id = :poiID`, {
+    return db.query(`UPDATE pois SET deleted = :deleted, update_content_editor_id = :userID WHERE poi_id = :poiID`, {
         replacements: {
             deleted,
             poiID,
@@ -278,9 +262,7 @@ module.exports.addPOIContent = (poiId, contentTypeId, urlXs, urlS, urlM, urlL) =
 
 module.exports.setPOIContentDeleted = (poiContentIdList, deleted = true) => {
     // language=POSTGRES-PSQL
-    return db.query(`UPDATE poi_contents
-    SET deleted = :deleted
-    WHERE poi_content_id = ANY(array[:poiContentIdList]::bigint[])`, {
+    return db.query(`UPDATE poi_contents SET deleted = :deleted WHERE poi_content_id = ANY(array[:poiContentIdList]::bigint[])`, {
         replacements: {
             deleted,
             poiContentIdList
@@ -291,10 +273,8 @@ module.exports.setPOIContentDeleted = (poiContentIdList, deleted = true) => {
 
 module.exports.updatePOI = (poiID, contentEditorID, name, description, address, latitude, longitude, poiTypeId, contextID, parentID = null) => {
     // language=POSTGRES-SQL
-    return db.query(`UPDATE pois SET 
-    name = :name, description = :description, address = :address, latitude = :latitude, longitude = :longitude,
-    poi_type_id = :poiTypeId, context_id = :contextID, parent_id = :parentID,
-    update_content_editor_id = :contentEditorID 
+    return db.query(`UPDATE pois SET name = :name, description = :description, address = :address, latitude = :latitude, longitude = :longitude,
+    poi_type_id = :poiTypeId, context_id = :contextID, parent_id = :parentID, update_content_editor_id = :contentEditorID 
     WHERE poi_id = :poiID`, {
         replacements: {
             address,
@@ -313,27 +293,18 @@ module.exports.updatePOI = (poiID, contentEditorID, name, description, address, 
 };
 
 module.exports.searchPOIsUnderContexts = (query, rootContextID, simplified = false) => {
-    let projection = '*';
-    if (simplified) {
-        projection = 'poi_id, name, description, address';
-    }
+    const projection = simplified ? '*' : 'poi_id, name, description, address';
 
     // language=POSTGRES-SQL
-    return db.query(`SELECT ${projection} FROM pois WHERE text @@ to_tsquery(:query) AND 
-                context_id IN (
-                    WITH RECURSIVE children(context_id, parent_id, name) AS (
-                        SELECT context_id, parent_id, name FROM contexts WHERE context_id = :rootContextID
-                            UNION
-                        SELECT c.context_id, c.parent_id, c.name
-                        FROM children p, contexts c
-                        WHERE p.context_id = c.parent_id
-                    ) SELECT context_id FROM children
-                )`,
-        {
-            replacements: {
-                query,
-                rootContextID
-            },
-            type: db.QueryTypes.SELECT
-        });
+    return db.query(`SELECT ${projection} FROM pois WHERE text @@ to_tsquery(:query) AND context_id IN (
+    WITH RECURSIVE children(context_id, parent_id, name) AS (
+    SELECT context_id, parent_id, name FROM contexts WHERE context_id = :rootContextID
+    UNION SELECT c.context_id, c.parent_id, c.name
+    FROM children p, contexts c WHERE p.context_id = c.parent_id) SELECT context_id FROM children)`, {
+        replacements: {
+            query,
+            rootContextID
+        },
+        type: db.QueryTypes.SELECT
+    });
 };

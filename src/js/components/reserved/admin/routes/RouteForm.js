@@ -34,8 +34,7 @@ export default class ReservedRoute extends Component {
         super(props);
         this.state = {
             allPois: [],
-            route: this.props.route,
-            selectedContext: null
+            route: this.props.route
         };
     }
 
@@ -44,10 +43,9 @@ export default class ReservedRoute extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        const { route } = nextProps;
         if (this.componentIsMounted && !this.propsReceived) {
             this.propsReceived = true;
-            this.setState({ route });
+            this.setState({ route: nextProps.route });
         }
     }
 
@@ -65,7 +63,6 @@ export default class ReservedRoute extends Component {
 
         if (typeof this.state.area === 'object') {
             const { maxLat, maxLng, minLat, minLng } = this.state.area;
-
             if (currentMinLat >= minLat && currentMaxLat <= maxLat && currentMinLng >= minLng && currentMaxLng <= maxLng) {
                 return;
             }
@@ -116,8 +113,7 @@ export default class ReservedRoute extends Component {
     handleAddTag(tagId) {
         if (this.componentIsMounted) {
             const { route } = this.state;
-            const tagIndex = route.tags.indexOf(tagId);
-            if (tagIndex === NOT_FOUND) {
+            if (route.tags.indexOf(tagId) === NOT_FOUND) {
                 route.tags.push(tagId);
                 this.setState({ route });
             }
@@ -138,8 +134,7 @@ export default class ReservedRoute extends Component {
     handleAddPoi(poiId) {
         if (this.componentIsMounted) {
             const { route } = this.state;
-            const poiIndex = route.pois.indexOf(poiId);
-            if (poiIndex === NOT_FOUND) {
+            if (route.pois.indexOf(poiId) === NOT_FOUND) {
                 route.pois.push(poiId);
                 this.setState({ route });
             }
@@ -190,20 +185,16 @@ export default class ReservedRoute extends Component {
     }
 
     handleContextSelection(event) {
-        if (this.componentIsMounted) {
-            const { nodes } = event;
-            const [selectedIndex] = nodes;
-            const { route } = this.state;
-            if (typeof selectedIndex === 'number') {
-                route.contextId = selectedIndex;
-                this.setState({ route });
-            }
+        const [selectedIndex] = event.nodes;
+        const { route } = this.state;
+        if (this.componentIsMounted && typeof selectedIndex === 'number') {
+            route.contextId = selectedIndex;
+            this.setState({ route });
         }
     }
 
     render() {
         const route = this.state.route ? this.state.route : this.props.route;
-
         const routePois = [];
         route.pois.forEach((poiId) => {
             this.state.allPois.some((poi) => {
@@ -223,16 +214,12 @@ export default class ReservedRoute extends Component {
 
         let visibilityElement = null;
         if (route.routeId) {
-            const visibilityLabel = route.deleted
-                                  ? "Hidden"
-                                  : "Visible";
             visibilityElement =
-                <Checkbox
-                    label={visibilityLabel}
-                    checked={!route.deleted}
-                    checkedIcon={<Visibility />}
-                    uncheckedIcon={<VisibilityOff />}
-                    onCheck={this.handleDeleteStatus.bind(this)}/>;
+                <Checkbox label={route.deleted ? "Hidden" : "Visible"}
+                          checked={!route.deleted}
+                          checkedIcon={<Visibility />}
+                          uncheckedIcon={<VisibilityOff />}
+                          onCheck={this.handleDeleteStatus.bind(this)}/>;
         }
 
         const contextId = route.contextId ? route.contextId : this.props.userContext;
@@ -293,16 +280,11 @@ export default class ReservedRoute extends Component {
 }
 
 ReservedRoute.defaultProps = {
-    center: {
-        lat: 41.14792237,
-        lng: -8.61129427
-    },
     inProgress: false,
     zoom: 10
 };
 
 ReservedRoute.propTypes = {
-    center: PropTypes.object.isRequired,
     inProgress: PropTypes.bool.isRequired,
     onDelete: PropTypes.func,
     onSave: PropTypes.func.isRequired,

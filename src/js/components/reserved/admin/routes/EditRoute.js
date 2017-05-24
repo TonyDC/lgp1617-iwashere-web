@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-const httpCodes = require('http-status-codes');
+import httpCodes from 'http-status-codes';
+import firebase from 'firebase';
 import nProgress from 'nprogress';
 import { checkFetchResponse, authenticatedFetch } from '../../../../functions/fetch';
 import { GridLoader as Loader } from 'halogen';
@@ -163,7 +164,8 @@ export default class EditRoute extends Component {
     }
 
     saveRoute(route) {
-        if (this.componentIsMounted) {
+        const { currentUser } = firebase.auth();
+        if (currentUser && this.componentIsMounted) {
             if (!this.checkRoute(route)) {
                 return;
             }
@@ -194,7 +196,8 @@ export default class EditRoute extends Component {
     }
 
     deleteRoute(route, callback) {
-        if (this.componentIsMounted) {
+        const { currentUser } = firebase.auth();
+        if (currentUser && this.componentIsMounted) {
 
             this.setState({ inProgress: true });
 
