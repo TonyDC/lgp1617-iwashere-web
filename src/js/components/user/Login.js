@@ -1,23 +1,22 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import Alert from "react-s-alert";
-import {Helmet} from "react-helmet";
+import { Helmet } from "react-helmet";
 import * as firebase from "firebase";
 import nProgress from "nprogress";
-import {FormGroup} from "react-bootstrap";
+import { FormGroup } from "react-bootstrap";
 import httpStatus from "http-status-codes";
-import {GridLoader as Loader} from "halogen";
+import { GridLoader as Loader } from "halogen";
 import Alerts from "../utils/Alerts";
 import LoginForm from "../presentation/LoginComponent";
 
-import {authenticatedFetch, checkFetchResponse} from "../../functions/fetch";
-import {addReservedContexts} from "../../redux/action creators/reserved";
+import { authenticatedFetch, checkFetchResponse } from "../../functions/fetch";
+import { addReservedContexts } from "../../redux/action creators/reserved";
 
 import "styles/app.scss";
 import "styles/login.scss";
 import "styles/utils.scss";
 
-const NO_ERROR = 0;
 const ZERO_INDEX = 0;
 const NO_ELEMENTS = 0;
 
@@ -26,7 +25,6 @@ export default class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            email: '',  // TODO delete
             errors: [],
             inProgress: false,
             password: ''
@@ -99,7 +97,6 @@ export default class Login extends Component {
         }).
         then(this.handleUserTypeFetch.bind(this)).
         then(() => {
-            console.log('asdasd');
             this.props.router.push('/');
             if (this.componentIsMounted) {
                 this.setState({ inProgress: false });
@@ -166,7 +163,7 @@ export default class Login extends Component {
     }
 
     handleRegister() {
-        this.props.router.push('/user/recover');
+        this.props.router.push('/user/register');
     }
 
     handleForgotPassword() {
@@ -191,14 +188,12 @@ export default class Login extends Component {
                     <title>#iwashere - Sign in</title>
                 </Helmet>
 
-                <LoginForm
-                    disableButtons={inProgress}
-                    handleRegister={ this.handleRegister.bind(this) }
-                    handleForgotPassword={ this.handleForgotPassword.bind(this) }
-                    handleLogin={this.loginUser.bind(this)}
-                    handleFacebook={this.loginFacebook.bind(this)}
-                    handleGoogle={this.loginGoogle.bind(this)}
-                />
+                <LoginForm disableButtons={inProgress}
+                           handleRegister={ this.handleRegister.bind(this) }
+                           handleForgotPassword={ this.handleForgotPassword.bind(this) }
+                           handleLogin={this.loginUser.bind(this)}
+                           handleFacebook={this.loginFacebook.bind(this)}
+                           handleGoogle={this.loginGoogle.bind(this)} />
 
                 { signInInProgress }
             </div>

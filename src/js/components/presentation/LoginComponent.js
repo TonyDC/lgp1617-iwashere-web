@@ -1,79 +1,60 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
-import Alerts from '../utils/Alerts';
-
+import validator from 'validator';
 import Paper from 'material-ui/Paper';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
-
 import { grey500, white } from 'material-ui/styles/colors';
 import PersonAdd from 'material-ui/svg-icons/social/person-add';
 import Help from 'material-ui/svg-icons/action/help';
 import TextField from 'material-ui/TextField';
 
-import validator from 'validator';
-
 const styles = {
-    loginContainer: {
-        minWidth: 320,
-        maxWidth: 400,
-        height: 'auto',
-        position: 'absolute',
-        top: '20%',
-        left: 0,
-        right: 0,
-        margin: 'auto'
+    btn: {
+        background: '#4f81e9',
+        borderRadius: 2,
+        color: white,
+        fontSize: 13,
+        margin: 2,
+        padding: 7
     },
-    paper: {
-        padding: 20,
-        overflow: 'auto'
-    },
+    btnDisabled: { background: '#7d7d7d' },
+    btnFacebook: { background: '#4f81e9' },
+    btnGoogle: { background: '#e14441' },
+    btnSpan: { marginLeft: 5 },
     buttonsDiv: {
-        textAlign: 'center',
-        padding: 10
-    },
-    flatButton: {
-        color: grey500
+        padding: 10,
+        textAlign: 'center'
     },
     checkRemember: {
+        iconStyle: {
+            borderColor: grey500,
+            color: grey500,
+            fill: grey500
+        },
+        labelStyle: { color: grey500 },
         style: {
             float: 'left',
             maxWidth: 180,
             paddingTop: 5
-        },
-        labelStyle: {
-            color: grey500
-        },
-        iconStyle: {
-            color: grey500,
-            borderColor: grey500,
-            fill: grey500
         }
     },
-    loginBtn: {
-        float: 'right'
+    flatButton: { color: grey500 },
+    loginBtn: { float: 'right' },
+    loginContainer: {
+        height: 'auto',
+        left: 0,
+        margin: 'auto',
+        maxWidth: 400,
+        minWidth: 320,
+        position: 'absolute',
+        right: 0,
+        top: '20%'
     },
-    btn: {
-        background: '#4f81e9',
-        color: white,
-        padding: 7,
-        borderRadius: 2,
-        margin: 2,
-        fontSize: 13
-    },
-    btnFacebook: {
-        background: '#4f81e9'
-    },
-    btnGoogle: {
-        background: '#e14441'
-    },
-    btnDisabled: {
-        background: '#7d7d7d'
-    },
-    btnSpan: {
-        marginLeft: 5
-    },
+    paper: {
+        overflow: 'auto',
+        padding: 20
+    }
 };
 
 export default class LoginComponent extends Component {
@@ -134,132 +115,122 @@ export default class LoginComponent extends Component {
             error = true;
         }
 
-        return error;
+        return !error;
     }
 
     handleSubmit(event) {
         event.preventDefault();
-
         if (this.checkForm()) {
-            return;
-        }
-
-        const { handleLogin } = this.props;
-        const { email, password } = this.state;
-        if (typeof handleLogin === 'function') {
-            handleLogin(email, password);
+            const { handleLogin } = this.props;
+            const { email, password } = this.state;
+            if (typeof handleLogin === 'function') {
+                handleLogin(email, password);
+            }
         }
     }
 
     renderLoginButton() {
-        const { disableButtons, handleFacebook, handleGoogle, handleLogin, handleRegister, handleForgotPassword } = this.props;
-        if (typeof handleLogin !== 'function') {
-            return null;
+        const { disableButtons, handleLogin } = this.props;
+        if (typeof handleLogin === 'function') {
+            return (
+                <RaisedButton type="submit"
+                              label="Login"
+                              primary
+                              style={styles.loginBtn}
+                              disabled={disableButtons}/>
+            );
         }
 
-        return (
-            <RaisedButton type="submit"
-                          label="Login"
-                          primary
-                          style={styles.loginBtn}
-                          disabled={disableButtons}
-            />
-        );
+        return null;
     }
 
     renderRegisterButton() {
-        const { disableButtons, handleFacebook, handleGoogle, handleLogin, handleRegister, handleForgotPassword } = this.props;
-        if (typeof handleRegister !== 'function') {
-            return null;
+        const { disableButtons, handleRegister } = this.props;
+        if (typeof handleRegister === 'function') {
+            return (
+                <FlatButton label="Register"
+                            style={styles.flatButton}
+                            icon={<PersonAdd />}
+                            onTouchTap={handleRegister}
+                            disabled={disableButtons}/>
+            );
         }
 
-        const { email, password } = this.state;
-
-        return (
-            <FlatButton
-                label="Register"
-                style={styles.flatButton}
-                icon={<PersonAdd />}
-                onTouchTap={handleRegister}
-                disabled={disableButtons}
-            />
-        );
+        return null;
     }
 
     renderForgotPasswordButton() {
-        const { disableButtons, handleFacebook, handleGoogle, handleLogin, handleRegister, handleForgotPassword } = this.props;
-        if (typeof handleForgotPassword !== 'function') {
-            return null;
+        const { disableButtons, handleForgotPassword } = this.props;
+        if (typeof handleForgotPassword === 'function') {
+            return (
+                <FlatButton label="Forgot Password?"
+                            style={styles.flatButton}
+                            icon={<Help />}
+                            onTouchTap={ handleForgotPassword }
+                            disabled={disableButtons}/>
+            );
         }
 
-        return (
-            <FlatButton
-                label="Forgot Password?"
-                style={styles.flatButton}
-                icon={<Help />}
-                onTouchTap={ handleForgotPassword }
-                disabled={disableButtons}
-            />
-        );
+        return null;
     }
 
     renderFacebookButton() {
-        const { disableButtons, handleFacebook, handleGoogle, handleLogin, handleRegister, handleForgotPassword } = this.props;
-        if (typeof handleFacebook !== 'function') {
-            return null;
+        const { disableButtons, handleFacebook } = this.props;
+        if (typeof handleFacebook === 'function') {
+
+            let effectiveButtonStyle = { ...styles.btn };
+            if (disableButtons) {
+                effectiveButtonStyle = {
+                    ...effectiveButtonStyle,
+                    ...styles.btnDisabled
+                };
+            } else {
+                effectiveButtonStyle = {
+                    ...effectiveButtonStyle,
+                    ...styles.btnFacebook
+                };
+            }
+
+            return (
+                <FlatButton onTouchTap={handleFacebook} disabled={disableButtons}>
+                    <span style={effectiveButtonStyle}>
+                        <i className="fa fa-facebook fa-lg"/>
+                        <span style={styles.btnSpan}>Log in with Facebook</span>
+                    </span>
+                </FlatButton>
+            );
         }
 
-        let effectiveButtonStyle = { ...styles.btn };
-        if (disableButtons) {
-            effectiveButtonStyle = {
-                ...effectiveButtonStyle,
-                ...styles.btnDisabled
-            };
-        } else {
-            effectiveButtonStyle = {
-                ...effectiveButtonStyle,
-                ...styles.btnFacebook
-            };
-        }
-
-        return (
-            <FlatButton onTouchTap={handleFacebook} disabled={disableButtons}>
-                <span style={effectiveButtonStyle}>
-                    <i className="fa fa-facebook fa-lg"/>
-                    <span style={styles.btnSpan}>Log in with Facebook</span>
-                </span>
-            </FlatButton>
-        );
+        return null;
     }
 
     renderGoogleButton() {
-        const { disableButtons, handleFacebook, handleGoogle, handleLogin, handleRegister, handleForgotPassword } = this.props;
-        if (typeof handleGoogle !== 'function') {
-            return null;
+        const { disableButtons, handleGoogle } = this.props;
+        if (typeof handleGoogle === 'function') {
+            let effectiveButtonStyle = { ...styles.btn };
+            if (disableButtons) {
+                effectiveButtonStyle = {
+                    ...effectiveButtonStyle,
+                    ...styles.btnDisabled
+                };
+            } else {
+                effectiveButtonStyle = {
+                    ...effectiveButtonStyle,
+                    ...styles.btnGoogle
+                };
+            }
+
+            return (
+                <FlatButton onTouchTap={handleGoogle} disabled={disableButtons}>
+                    <span style={effectiveButtonStyle}>
+                    <i className="fa fa-google-plus fa-lg"/>
+                    <span style={styles.btnSpan}>Log in with Google</span>
+                    </span>
+                </FlatButton>
+            );
         }
 
-        let effectiveButtonStyle = { ...styles.btn };
-        if (disableButtons) {
-            effectiveButtonStyle = {
-                ...effectiveButtonStyle,
-                ...styles.btnDisabled
-            };
-        } else {
-            effectiveButtonStyle = {
-                ...effectiveButtonStyle,
-                ...styles.btnGoogle
-            };
-        }
-
-
-        return (
-            <FlatButton onTouchTap={handleGoogle} disabled={disableButtons}>
-                <span style={effectiveButtonStyle}>
-                <i className="fa fa-google-plus fa-lg"/>
-                <span style={styles.btnSpan}>Log in with Google</span>
-                </span>
-            </FlatButton>
-        );
+        return null;
     }
 
     render() {
@@ -269,22 +240,17 @@ export default class LoginComponent extends Component {
             <div style={styles.loginContainer}>
                 <Paper style={styles.paper}>
                     <form onSubmit={this.handleSubmit.bind(this)}>
-                        <TextField
-                            errorText={emailError}
-                            hintText="E-mail"
-                            floatingLabelText="E-mail"
-                            fullWidth
-                            value={email} onChange={ this.handleEmail.bind(this) }
-                        />
-                        <TextField
-                            errorText={passwordError}
-                            hintText="Password"
-                            floatingLabelText="Password"
-                            fullWidth
-                            type="password"
-                            value={password} onChange={ this.handlePassword.bind(this) }
-                        />
-
+                        <TextField errorText={emailError}
+                                   hintText="E-mail"
+                                   floatingLabelText="E-mail"
+                                   fullWidth
+                                   value={email} onChange={ this.handleEmail.bind(this) } />
+                        <TextField errorText={passwordError}
+                                   hintText="Password"
+                                   floatingLabelText="Password"
+                                   fullWidth
+                                   type="password"
+                                   value={password} onChange={ this.handlePassword.bind(this) } />
                         <div>
                             { this.renderLoginButton() }
                         </div>
