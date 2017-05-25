@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import validator from 'validator';
-import Paper from 'material-ui/Paper';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import { grey500, white } from 'material-ui/styles/colors';
@@ -23,7 +22,9 @@ const styles = {
     btnGoogle: { background: '#e14441' },
     btnSpan: { marginLeft: 5 },
     buttonsDiv: {
-        padding: 10,
+        clear: 'both',
+        paddingBottom: 10,
+        paddingTop: 15,
         textAlign: 'center'
     },
     checkRemember: {
@@ -149,6 +150,7 @@ export default class LoginComponent extends Component {
         if (typeof handleRegister === 'function') {
             return (
                 <FlatButton label="Register"
+                            fullWidth
                             style={styles.flatButton}
                             icon={<PersonAdd />}
                             onTouchTap={handleRegister}
@@ -164,6 +166,7 @@ export default class LoginComponent extends Component {
         if (typeof handleForgotPassword === 'function') {
             return (
                 <FlatButton label="Forgot Password?"
+                            fullWidth
                             style={styles.flatButton}
                             icon={<Help />}
                             onTouchTap={ handleForgotPassword }
@@ -192,7 +195,7 @@ export default class LoginComponent extends Component {
             }
 
             return (
-                <FlatButton onTouchTap={handleFacebook} disabled={disableButtons}>
+                <FlatButton onTouchTap={handleFacebook} disabled={disableButtons} fullWidth>
                     <span style={effectiveButtonStyle}>
                         <i className="fa fa-facebook fa-lg"/>
                         <span style={styles.btnSpan}>Log in with Facebook</span>
@@ -221,7 +224,7 @@ export default class LoginComponent extends Component {
             }
 
             return (
-                <FlatButton onTouchTap={handleGoogle} disabled={disableButtons}>
+                <FlatButton onTouchTap={handleGoogle} disabled={disableButtons} fullWidth>
                     <span style={effectiveButtonStyle}>
                     <i className="fa fa-google-plus fa-lg"/>
                     <span style={styles.btnSpan}>Log in with Google</span>
@@ -237,25 +240,23 @@ export default class LoginComponent extends Component {
         const { email, emailError, password, passwordError } = this.state;
 
         return (
-            <div style={styles.loginContainer}>
-                <Paper style={styles.paper}>
-                    <form onSubmit={this.handleSubmit.bind(this)}>
-                        <TextField errorText={emailError}
-                                   hintText="E-mail"
-                                   floatingLabelText="E-mail"
-                                   fullWidth
-                                   value={email} onChange={ this.handleEmail.bind(this) } />
-                        <TextField errorText={passwordError}
-                                   hintText="Password"
-                                   floatingLabelText="Password"
-                                   fullWidth
-                                   type="password"
-                                   value={password} onChange={ this.handlePassword.bind(this) } />
-                        <div>
-                            { this.renderLoginButton() }
-                        </div>
-                    </form>
-                </Paper>
+            <div>
+                <form onSubmit={this.handleSubmit.bind(this)} className="form-group">
+                    <TextField errorText={emailError}
+                               hintText="E-mail"
+                               floatingLabelText="E-mail"
+                               fullWidth
+                               value={email} onChange={ this.handleEmail.bind(this) } />
+                    <TextField errorText={passwordError}
+                               hintText="Password"
+                               floatingLabelText="Password"
+                               fullWidth
+                               type="password"
+                               value={password} onChange={ this.handlePassword.bind(this) } />
+                    <div style={styles.buttonsDiv}>
+                        { this.renderLoginButton() }
+                    </div>
+                </form>
 
                 <div style={styles.buttonsDiv}>
                     { this.renderRegisterButton() }

@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import Alert from "react-s-alert";
 import { Helmet } from "react-helmet";
 import * as firebase from "firebase";
 import nProgress from "nprogress";
@@ -42,7 +41,7 @@ export default class Login extends Component {
 
     closePreviousErrors() {
         this.state.errors.forEach((error) => {
-            Alert.close(error);
+            Alerts.close(error);
         });
 
         if (this.componentIsMounted) {
