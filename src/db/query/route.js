@@ -88,8 +88,14 @@ module.exports.addRouteRating = (routeID, userID, rating) => {
 
 module.exports.searchRoute = (query, includeDeleted = false) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT * FROM routes 
-    WHERE text @@ to_tsquery(:query) AND (deleted = FALSE OR :includeDeleted)`, {
+    return db.query(`WITH route_ratings AS 
+    (SELECT AVG(rating) AS rating, route_id
+    FROM (SELECT DISTINCT ON (user_id) route_id, rating FROM route_ratings
+    ORDER BY user_id, created_at DESC) current_ratings GROUP BY route_id)
+    SELECT *, CASE WHEN rating IS NULL THEN 0 ELSE rating END AS rating, routes.route_id
+    FROM routes LEFT JOIN route_ratings ON routes.route_id = route_ratings.route_id
+    WHERE text @@ to_tsquery(:query) AND (deleted = FALSE OR :includeDeleted) 
+    ORDER BY route_ratings.rating DESC NULLS LAST, name`, {
         replacements: {
             includeDeleted,
             query

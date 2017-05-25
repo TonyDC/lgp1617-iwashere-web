@@ -1,6 +1,11 @@
 "use strict";
 
 const db = require('../index');
+const withPoiRatings = `WITH poi_ratings AS (SELECT AVG(rating) AS rating, poi_id
+                    FROM (SELECT DISTINCT ON (user_id) poi_id, rating FROM poi_ratings
+                    ORDER BY user_id, created_at DESC) current_ratings GROUP BY poi_id)`;
+const orderByRatingAndName = `ORDER BY poi_ratings.rating DESC NULLS LAST, name`;
+const orderByDistanceRatingAndName = `ORDER BY distance, poi_ratings.rating DESC NULLS LAST, name`;
 
 module.exports.getPOIByID = (id) => {
     // language=POSTGRES-SQL
@@ -54,14 +59,9 @@ module.exports.getPOITags = (poiID) => {
 
 module.exports.getPOIsWithin = (minLat, maxLat, minLng, maxLng) => {
     // language=POSTGRES-PSQL
-    return db.query(`WITH poi_ratings AS 
-    (SELECT AVG(rating) AS rating, poi_id
-    FROM (SELECT DISTINCT ON (user_id) poi_id, rating FROM poi_ratings
-    ORDER BY user_id, created_at DESC) current_ratings GROUP BY poi_id)
-    SELECT *, CASE WHEN rating IS NULL THEN 0 ELSE rating END AS rating, pois.poi_id
+    return db.query(`${withPoiRatings} SELECT *, CASE WHEN rating IS NULL THEN 0 ELSE rating END AS rating, pois.poi_id
     FROM pois LEFT JOIN poi_ratings ON pois.poi_id = poi_ratings.poi_id
-    WHERE latitude >= :minLat AND latitude <= :maxLat AND longitude >= :minLng AND longitude <= :maxLng
-    AND pois.deleted = FALSE`, {
+    WHERE latitude >= :minLat AND latitude <= :maxLat AND longitude >= :minLng AND longitude <= :maxLng AND pois.deleted = FALSE`, {
         replacements: {
             maxLat,
             maxLng,
@@ -136,8 +136,9 @@ module.exports.searchPOI = (query) => {
 
 module.exports.searchNearbyPOI = (query, lat, lng) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT *, get_distance_function(latitude::real, longitude::real, :lat::real, :lng::real) as distance 
-    FROM pois WHERE text @@ to_tsquery(:query) AND pois.deleted IS FALSE ORDER BY distance DESC`, {
+    return db.query(`${withPoiRatings} SELECT *, CASE WHEN rating IS NULL THEN 0 ELSE rating END AS rating, pois.poi_id, get_distance_function(latitude::real, longitude::real, :lat::real, :lng::real) as distance
+    FROM pois LEFT JOIN poi_ratings ON pois.poi_id = poi_ratings.poi_id
+    WHERE text @@ to_tsquery(:query) AND pois.deleted IS FALSE ${orderByDistanceRatingAndName}`, {
         replacements: {
             lat,
             lng,
@@ -149,15 +150,9 @@ module.exports.searchNearbyPOI = (query, lat, lng) => {
 
 module.exports.getNearbyPOIs = (lat, lng, limit) => {
     // language=POSTGRES-PSQL
-    return db.query(`WITH poi_ratings AS 
-    (SELECT AVG(rating) AS rating, poi_id
-    FROM (SELECT DISTINCT ON (user_id) poi_id, rating FROM poi_ratings
-    ORDER BY user_id, created_at DESC) current_ratings
-    GROUP BY poi_id)
-    SELECT *, get_distance_function(latitude::real, longitude::real, :lat::real, :lng::real) as distance 
+    return db.query(`${withPoiRatings} SELECT *, get_distance_function(latitude::real, longitude::real, :lat::real, :lng::real) as distance 
     FROM pois LEFT JOIN poi_ratings ON pois.poi_id = poi_ratings.poi_id
-    WHERE pois.deleted = FALSE
-    ORDER BY rating NULLS LAST, distance DESC LIMIT :limit`, {
+    WHERE pois.deleted = FALSE ${orderByDistanceRatingAndName} LIMIT :limit`, {
         replacements: {
             lat,
             limit,
@@ -169,14 +164,8 @@ module.exports.getNearbyPOIs = (lat, lng, limit) => {
 
 module.exports.getTopRatedPOIs = (limit) => {
     // language=POSTGRES-PSQL
-    return db.query(`WITH poi_ratings AS 
-    (SELECT AVG(rating) AS rating, poi_id
-    FROM (SELECT DISTINCT ON (user_id) poi_id, rating FROM poi_ratings
-    ORDER BY user_id, created_at DESC) current_ratings
-    GROUP BY poi_id)
-    SELECT * FROM pois LEFT JOIN poi_ratings ON pois.poi_id = poi_ratings.poi_id
-    WHERE pois.deleted = FALSE
-    ORDER BY rating NULLS LAST LIMIT :limit`, {
+    return db.query(`${withPoiRatings} SELECT * FROM pois LEFT JOIN poi_ratings ON pois.poi_id = poi_ratings.poi_id
+    WHERE pois.deleted = FALSE ${orderByRatingAndName} LIMIT :limit`, {
         replacements: { limit },
         type: db.QueryTypes.SELECT
     });
