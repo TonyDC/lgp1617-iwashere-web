@@ -25,13 +25,13 @@ module.exports.getPOIsPost = (offset, limit) => {
                  GROUP BY poi_id)
     SELECT DISTINCT ON (single_post_id) *
     FROM (SELECT *, content_types.name AS type, posts.created_at as post_date, posts.poi_id AS single_post_id,
-               pois.name AS name
+               pois.name AS name, CASE WHEN rating IS NULL THEN 0 ELSE rating END AS rating
           FROM pois INNER JOIN poi_ratings ON pois.poi_id = poi_ratings.poi_id
           INNER JOIN posts ON posts.poi_id = pois.poi_id 
           INNER JOIN post_contents ON post_contents.post_id = posts.post_id 
           INNER JOIN content_types ON post_contents.content_type_id = content_types.content_type_id
           WHERE content_types.content_type_id = 1 AND posts.deleted = FALSE AND pois.deleted = FALSE 
-          ORDER BY post_date DESC) pois_posts
+          ORDER BY poi_ratings.rating DESC NULLS LAST, post_date DESC) pois_posts
     LIMIT :limit OFFSET :offset;`, {
         replacements: {
             limit,
