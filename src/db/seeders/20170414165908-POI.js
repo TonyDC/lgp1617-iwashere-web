@@ -7,6 +7,7 @@ module.exports = {
     up: (queryInterface) => {
         return queryInterface.bulkInsert('pois', [
             {
+                // 1
                 address: 'R. Dr. Roberto Frias, 4200-464 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'A melhor faculdade de engenharia do país',
@@ -16,6 +17,7 @@ module.exports = {
                 poi_type_id: 1
             },
             {
+                // 2
                 address: 'R. Nova da Alfândega, 4400 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Espaço para eventos culturais',
@@ -25,6 +27,7 @@ module.exports = {
                 poi_type_id: 1
             },
             {
+                // 3
                 address: 'Ponte Luís I, Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Uma ponte com estilo bastante peculiar e interessante',
@@ -34,6 +37,7 @@ module.exports = {
                 poi_type_id: 1
             },
             {
+                // 4
                 address: 'Rua Dr. Abel Salazar, s/n, 4465-012 S. Mamede de Infesta',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
@@ -44,6 +48,7 @@ module.exports = {
                 // context_id: 1
             },
             {
+                // 5
                 address: 'Dr. Augusto Nobre, Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
@@ -54,6 +59,7 @@ module.exports = {
                 // context_id: 1
             },
             {
+                // 6
                 address: 'R. Dr. Plácido da Costa 91, 4200-450 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
@@ -64,6 +70,18 @@ module.exports = {
                 // context_id: 1
             },
             {
+                // 7
+                address: 'Rua do Campo Alegre 1021/1055, 4169-007 Porto, Portugal',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
+                latitude: 41.151825,
+                longitude: -8.636602,
+                name: 'FCUP',
+                poi_type_id: 1
+                // context_id: 1
+            },
+            {
+                // 8
                 address: 'R. Jorge de Viterbo Ferreira 228, 4050-313 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
@@ -74,6 +92,18 @@ module.exports = {
                 // context_id: 1
             },
             {
+                // 9
+                address: '4050-039 Porto, Portugal',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
+                latitude: 41.155263,
+                longitude: -8.620654,
+                name: 'Museu da Faculdade de Farmácia do Porto',
+                poi_type_id: 1
+                // context_id: 1
+            },
+            {
+                // 10
                 address: 'Praça Marquês de Pombal, nº30-44, 4000-390 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
@@ -84,6 +114,7 @@ module.exports = {
                 // context_id: 1
             },
             {
+                // 11
                 address: 'Alameda Prof. Hernâni Monteiro, 4200-319 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
@@ -94,6 +125,7 @@ module.exports = {
                 // context_id: 1
             },
             {
+                // 12
                 address: 'R. Jorge de Viterbo Ferreira 228, 4050-343 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
@@ -104,6 +136,7 @@ module.exports = {
                 // context_id: 1
             },
             {
+                // 13
                 address: 'Rua do Campo Alegre 1191, 4150-173 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
@@ -114,6 +147,7 @@ module.exports = {
                 // context_id: 1
             },
             {
+                // 14
                 address: 'Praça de Gomes Teixeira, 4050-159 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
@@ -124,6 +158,7 @@ module.exports = {
                 // context_id: 1
             },
             {
+                // 15
                 address: 'Praça de Gomes Teixeira, 4050-159 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
@@ -134,6 +169,7 @@ module.exports = {
                 // context_id: 1
             },
             {
+                // 16
                 address: 'Av. de Rodrigues de Freitas 265, 4049-021 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
@@ -144,6 +180,7 @@ module.exports = {
                 // context_id: 1
             },
             {
+                // 17
                 address: 'Praça de Gomes Teixeira 10, 4050-159 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
@@ -154,26 +191,29 @@ module.exports = {
                 // context_id: 1
             },
             {
+                // 18
                 address: 'Praça de Gomes Teixeira 10, 4050-011 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
-                latitude: 41.1473441,
-                longitude: -8.6185373,
+                latitude: 41.147296,
+                longitude: -8.616321,
                 name: 'Igreja da Venerável Ordem Terceira de Nossa Senhora do Carmo - Igreja do Carmo',
                 poi_type_id: 1
                 // context_id: 1
             },
             {
+                // 19
                 address: 'Praça de Parada Leitão 45, 4050-011 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
-                latitude: 41.146921,
-                longitude: -8.61483,
+                latitude: 41.146902,
+                longitude: -8.616401,
                 name: 'Café Âncora D\'Ouro - Café Piolho',
                 poi_type_id: 1
                 // context_id: 1
             },
             {
+                // 20
                 address: 'Largo Prof. Abel Salazar 4099-001 PORTO',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
@@ -184,6 +224,7 @@ module.exports = {
                 // context_id: 1
             },
             {
+                // 21
                 address: 'R. Campo dos Mártires da Pátria 4099, 4050-076 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
@@ -194,6 +235,7 @@ module.exports = {
                 // context_id: 1
             },
             {
+                // 22
                 address: 'Jardim João Chagas - Jardim da Cordoaria, 4050-366 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
@@ -204,6 +246,7 @@ module.exports = {
                 // context_id: 1
             },
             {
+                // 23
                 address: 'Largo Amor de Perdição, 4050-008 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
@@ -214,6 +257,7 @@ module.exports = {
                 // context_id: 1
             },
             {
+                // 24
                 address: 'R. de São Filipe de Nery, 4050-546 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
@@ -224,6 +268,7 @@ module.exports = {
                 // context_id: 1
             },
             {
+                // 25
                 address: 'Rua das Carmelitas, nº151, 4050-162 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
@@ -234,6 +279,7 @@ module.exports = {
                 // context_id: 1
             },
             {
+                // 26
                 address: 'R. das Carmelitas 144, 4050-161 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
@@ -244,6 +290,7 @@ module.exports = {
                 // context_id: 1
             },
             {
+                // 27
                 address: 'Foz do Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
@@ -254,6 +301,7 @@ module.exports = {
                 // context_id: 1
             },
             {
+                // 28
                 address: 'Porto Ribeira',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
@@ -264,6 +312,7 @@ module.exports = {
                 // context_id: 1
             },
             {
+                // 29
                 address: 'Largo de Aviz - Santa Marinha, Vila Nova de Gaia, Norte, 4430-329, 4430-329',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
@@ -274,6 +323,7 @@ module.exports = {
                 // context_id: 1
             },
             {
+                // 30
                 address: 'Passeio de São Lázaro 33, 4000-098 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
@@ -284,6 +334,7 @@ module.exports = {
                 // context_id: 1
             },
             {
+                // 31
                 address: 'R. do Passeio Alegre 828, 4150-570 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
@@ -294,6 +345,7 @@ module.exports = {
                 // context_id: 1
             },
             {
+                // 32
                 address: 'Av. de Rodrigues de Freitas 265, 4049-021 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
@@ -304,6 +356,7 @@ module.exports = {
                 // context_id: 1
             },
             {
+                // 33
                 address: 'Rua das Estrelas, Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
@@ -312,19 +365,343 @@ module.exports = {
                 name: 'Jardim do Clube Universitário do Porto',
                 poi_type_id: 1
                 // context_id: 1
-            }
-
-            /*  Garden not found, wrong coordenates, can't find in google
-                {
+            },
+            {
+                // 34
                 address: 'Largo da Ponte D. Luiz, 4400-111 Vila Nova de Gaia',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
-                latitude: 41.139109,
-                longitude: -8.611337,
+                latitude: 41.139004,
+                longitude: -8.609186,
                 name: 'Jardim da Casa Burmester',
                 poi_type_id: 1
                 // context_id: 1
-            }, */
+            },
+
+            {
+                // 35
+                address: 'Rua Dr. Abel Salazar, s/n, 4465-012 S. Mamede de Infesta',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
+                latitude: 41.200729780141224,
+                longitude: -8.613021075725555,
+                name: 'Poente na Serra – Gondar – Minho”, Óleo s/ Madeira 23x35 cm',
+                parent_id: 4,
+                poi_type_id: 2
+                // context_id: 1
+            },
+            {
+                //  36
+                address: 'Rua Dr. Abel Salazar, s/n, 4465-012 S. Mamede de Infesta',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
+                latitude: 41.200729780141224,
+                longitude: -8.613021075725555,
+                name: '“Perspetiva de cinema” , Tinta da china s/ papel 22x33 cm',
+                parent_id: 4,
+                poi_type_id: 2
+                // context_id: 1
+            },
+            {
+                // 37
+                address: 'Rua Dr. Abel Salazar, s/n, 4465-012 S. Mamede de Infesta',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
+                latitude: 41.200729780141224,
+                longitude: -8.613021075725555,
+                name: 'Preparação histológica – Ovário de coelha',
+                parent_id: 4,
+                poi_type_id: 2
+                // context_id: 1
+            },
+            {
+                // 38
+                address: 'R. Dr. Plácido da Costa 91, 4200-450 Porto',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'Modalidade: Atletismo (Lançamentos). Data: início da década de 70. Material: madeira e metal. Dimensão: 18 cm. Peso: 1 kg. Clube Escola do Movimento.',
+                latitude: 41.1784647,
+                longitude: -8.602397,
+                name: 'Disco',
+                parent_id: 6,
+                poi_type_id: 2
+                // context_id: 1
+            },
+            {
+                // 39
+                address: 'R. Dr. Plácido da Costa 91, 4200-450 Porto',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'Modalidade: Ginástica. Data: década de 50/70. Material: madeira, pele e metal. Dimensão: 50 x 49 x24 cm. Utilizada para ser adaptada na trave sueca. Gabinete de Ginástica da FASEUP.',
+                latitude: 41.1784647,
+                longitude: -8.602397,
+                name: 'Sela',
+                parent_id: 6,
+                poi_type_id: 2
+                // context_id: 1
+            },
+            {
+                //  40
+                address: 'R. Dr. Roberto Frias, 4200-464 Porto',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
+                latitude: 41.1785734,
+                longitude: -8.598412,
+                name: 'Círculo de reflexão (sistema Borda). Troughton & Simms',
+                parent_id: 1,
+                poi_type_id: 2
+                // context_id: 1
+            },
+            {
+                // 41
+                address: 'R. Dr. Roberto Frias, 4200-464 Porto',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
+                latitude: 41.1785734,
+                longitude: -8.598412,
+                name: 'Modelo didático de maquina a vapor de James Watt, J. Schr der',
+                parent_id: 1,
+                poi_type_id: 2
+                // context_id: 1
+            },
+            {
+                // 42
+                address: 'R. Dr. Roberto Frias, 4200-464 Porto',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
+                latitude: 41.1785734,
+                longitude: -8.598412,
+                name: 'Modelo de primeira solução para nova ponte ferroviária utilizando o cimbre da Ponte da Arrábida. Edgar Cardoso',
+                parent_id: 1,
+                poi_type_id: 2
+                // context_id: 1
+            },
+            {
+                // 43
+                address: '4050-039 Porto, Portugal',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
+                latitude: 41.155263,
+                longitude: -8.620654,
+                name: 'A máquina de comprimidos',
+                parent_id: 9,
+                poi_type_id: 2
+                // context_id: 1
+            },
+            {
+                // 44
+                address: '4050-039 Porto, Portugal',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
+                latitude: 41.155263,
+                longitude: -8.620664,
+                name: 'Pipeta',
+                parent_id: 9,
+                poi_type_id: 2
+                // context_id: 1
+            },
+            {
+                // 45
+                address: '4050-039 Porto, Portugal',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
+                latitude: 41.155263,
+                longitude: -8.620654,
+                name: 'Moinho',
+                parent_id: 9,
+                poi_type_id: 2
+                // context_id: 1
+            },
+            {
+                // 46
+                address: 'Praça Marquês de Pombal, nº30-44, 4000-390 Porto, Portugal',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'O arquiteto surge representado de perfil, pose também associada ao referencial clássico.  Observa-se um registo rápido, com liberdade de expressão e abertura para uma forma de retratar mais expressionista. A escolha de linhas diluídas não permite identificar a natureza da indumentária, ocultando qualquer referência a vestuário ou elemento que estabeleça relação com um tempo específico. Os movimentos das pinceladas são mais notórios na zona dos olhos, da barba e das orelhas.',
+                latitude: 41.160725,
+                longitude: -8.604092,
+                name: 'Retrato Marques da Silva - Veloso Salgado, Óleo s/ Tela, 61 x 50 cm, 1890',
+                parent_id: 10,
+                poi_type_id: 2
+                // context_id: 1
+            },
+            {
+                // 47
+                address: 'Praça Marquês de Pombal, nº30-44, 4000-390 Porto, Portugal',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'A maquete, embora uma versão simplificada do monumento, permite compreender uma composição tripartida que revive a Guerra Peninsular (Invasões Francesas). Os grupos escultóricos distribuídos pela base representam cenas de artilharia enaltecendo a importante participação do povo e o desastre da ponte das Barcas, sendo constante a presença do elemento feminino. No remate, a representação do desfecho da luta, com a vitória da força popular, representada pelo leão, sobre a  águia napoleónica.',
+                latitude: 41.160725,
+                longitude: -8.604092,
+                name: 'Povo e Tropa” - Maquete para o Monumento aos Heróis da Guerra Peninsular, Barata Feyo (Atr.) [1947]',
+                parent_id: 10,
+                poi_type_id: 2
+                // context_id: 1
+            },
+            {
+                // 48
+                address: 'Praça Marquês de Pombal, nº30-44, 4000-390 Porto, Portugal',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'Da maqueta, apenas a base pertence ao original. A Casa sobre o mar materializa uma reflexão sobre o Regionalismo Crítico, procurando integrar a arquitectura moderna nas paisagens existentes através da tradição dos materiais. Propondo como localização a Foz do Douro, Távora reflete sobre a aplicação do estilo internacional, adaptando-o. Descreve então uma habitação rodeada por um friso de azulejos, sustentada por uma estrutura de betão cravada no terreno rochoso e avançada em consola sobre o mar.',
+                latitude: 41.160725,
+                longitude: -8.604092,
+                name: 'Maquete da Casa Sobre o Mar - Fernando Távora. Projeto para obtenção C.O.D.A., 41x 66x42 cm, [1952]',
+                parent_id: 10,
+                poi_type_id: 2
+                // context_id: 1
+            },
+            {
+                // 49
+                address: 'Alameda Prof. Hernâni Monteiro, 4200-319 Porto',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'Ao todo no Museu Maximiano existem 10 quadros deste género, todos da autoria de Enrique Zofio, alusivos às várias fases da gravidez. As esculturas são ao mesmo tempo fonte de conhecimento sobre uma prática obstétrica, manual além de instrumental bem como estemunho da evolução formal do fórceps. A que vemos na fotografia representa a fase final do parto e simula situações reais de gestação e parto.',
+                latitude: 41.181159,
+                longitude: -8.601503,
+                name: 'Mulher grávida e instrumento médico. Peça de Enrique Zófio',
+                parent_id: 11,
+                poi_type_id: 2
+                // context_id: 1
+            },
+            {
+                // 50
+                address: 'Alameda Prof. Hernâni Monteiro, 4200-319 Porto',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'A fotografia apresenta um estojo de amputação do século XVIII forrado a pele de peixe e flanela vermelha, composto com os instrumentos necessários ao exercício da amputação em aço com cabo de madeira. Acredita-se que o estojo que pertencera ao cirurgião José Marcelino Peres Pinto tenha uma origem Ibérica, embora, não haja nenhuma marca que remeta para um fabricante e consequentemente para uma localização geográfica. O Estojo vazio demonstra que havia um conhecimento por parte do artesão que o confecionava, sobre os instrumentos usados durante a cirurgia, uma vez que o estojo assume a forma dos mesmos de modo a melhor acomodá-los. Os materiais orgânicos dos quais alguns instrumentos eram feitos e a ausência da esterilização dos mesmo após as cirurgias (numa época anterior à descoberta do micróbio) contribuíram para a deterioração dos instrumentos o que levou a que algumas peçasse perdessem para sempre.',
+                latitude: 41.181159,
+                longitude: -8.601503,
+                name: 'Estojo instrumentos médicos',
+                parent_id: 11,
+                poi_type_id: 2
+                // context_id: 1
+            },
+            {
+                // 51
+                address: 'Alameda Prof. Hernâni Monteiro, 4200-319 Porto',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'Este busto representa uma lesão dermatológica primária: dermite purpúrica em evolução hemosidérica. Pertenceu ao antigo Museu de Anatomia Patológica, tendo sido uma oferta feita ao Museu pelo Professor Daniel Serrão em 1971. Modelos de cera anatómicos foram introduzidos em Florença, no século XVI e no século XVII eram preferidos ao desenho anatómico enquanto modelos em três dimensões destinados ao treino de estudantes de medicina, na impossibilidade do contacto físico com um paciente portador da patologia.',
+                latitude: 41.181159,
+                longitude: -8.601503,
+                name: 'Rosto em cera',
+                parent_id: 11,
+                poi_type_id: 2
+                // context_id: 1
+            },
+            {
+                // 52
+                address: 'R. Jorge de Viterbo Ferreira 228, 4050-343 Porto',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
+                latitude: 41.1471952,
+                longitude: -8.6245894,
+                name: 'Peça anatómica',
+                parent_id: 12,
+                poi_type_id: 2
+                // context_id: 1
+            },
+            {
+                // 53
+                address: 'Praça de Gomes Teixeira, 4050-159 Porto',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
+                latitude: 41.146810,
+                longitude: -8.615904,
+                name: 'Peça da coleção  egípcia',
+                parent_id: 15,
+                poi_type_id: 2
+                // context_id: 1
+            },
+            {
+                // 54
+                address: 'Praça de Gomes Teixeira, 4050-159 Porto',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
+                latitude: 41.146810,
+                longitude: -8.615904,
+                name: 'Antílope bebé empalhado',
+                parent_id: 15,
+                poi_type_id: 2
+                // context_id: 1
+            },
+            {
+                // 55
+                address: 'Praça de Gomes Teixeira, 4050-159 Porto',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
+                latitude: 41.146810,
+                longitude: -8.615904,
+                name: 'Quercus',
+                parent_id: 15,
+                poi_type_id: 2
+                // context_id: 1
+            },
+            {
+                // 56
+                address: 'Praça de Gomes Teixeira, 4050-159 Porto',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
+                latitude: 41.146810,
+                longitude: -8.615904,
+                name: 'Fonógrafo de Edison',
+                parent_id: 15,
+                poi_type_id: 2
+                // context_id: 1
+            },
+            {
+                // 57
+                address: 'Praça de Gomes Teixeira, 4050-159 Porto',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
+                latitude: 41.146810,
+                longitude: -8.615904,
+                name: 'Galvanómetro diferencial de Wiedemann',
+                parent_id: 15,
+                poi_type_id: 2
+                // context_id: 1
+            },
+            {
+                // 58
+                address: 'Praça de Gomes Teixeira, 4050-159 Porto',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
+                latitude: 41.146810,
+                longitude: -8.615904,
+                name: 'Espectrofotómetro de Glan',
+                parent_id: 15,
+                poi_type_id: 2
+                // context_id: 1
+            },
+            {
+                // 59
+                address: 'Av. de Rodrigues de Freitas 265, 4049-021 Porto',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'Duas faces da ‘Base dos doze deuses’ no Museu do Louvre. Dois frisos de figuras: 3 jovens que dançam no registo inferior, e 3 mulheres empunhando armas e uma lira, junto a 1 personagem masculina coberta com 1 manto, no registo superior (reto) e 2 frisos de figuras: 3 raparigas que dançam, no registo inferior, e 2 casais, com uma esfinge em voo, no registo superior (verso) pedra negra, pena e tinta castanha, furos [picotado] nos contornos das figuras do registo inferior (verso) marca de agua com uma besta dentro de um circulo, cantos cortados. 417x286mm. Mecenato Unicer',
+                latitude: 41.145629,
+                longitude: -8.600817,
+                name: 'Escola romana, S c. XVI Autor desconhecido',
+                parent_id: 16,
+                poi_type_id: 2
+                // context_id: 1
+            },
+            {
+                // 60
+                address: 'Av. de Rodrigues de Freitas 265, 4049-021 Porto',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
+                latitude: 41.145629,
+                longitude: -8.600817,
+                name: 'Guardador de Sol, 1963. José́ Rodrigues',
+                parent_id: 16,
+                poi_type_id: 2
+                // context_id: 1
+            },
+            {
+                // 60
+                address: 'Av. de Rodrigues de Freitas 265, 4049-021 Porto',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
+                latitude: 41.145629,
+                longitude: -8.600817,
+                name: 'Faina fluvial no Douro, 1962',
+                parent_id: 16,
+                poi_type_id: 2
+                // context_id: 1
+            }
         ], {});
     }
 };
