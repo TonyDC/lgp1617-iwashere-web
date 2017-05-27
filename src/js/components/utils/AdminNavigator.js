@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { BottomNavigation, BottomNavigationItem } from 'material-ui/BottomNavigation';
 import Paper from 'material-ui/Paper';
-import ContextSelector from './ContextSelector';
 
 import IconLocationOn from 'material-ui/svg-icons/communication/location-on';
 import ActionAccountBox from 'material-ui/svg-icons/action/account-box';
@@ -73,9 +72,6 @@ export default class AdminNavigator extends Component {
                         />
                         */ }
                     </BottomNavigation>
-                </Paper>
-                <Paper className="context-selector">
-                    <ContextSelector />
                 </Paper>
             </div>
         );

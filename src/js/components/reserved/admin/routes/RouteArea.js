@@ -8,6 +8,8 @@ import Divider from 'material-ui/Divider';
 import RaisedButton from 'material-ui/RaisedButton';
 import EditorLinearScale from 'material-ui/svg-icons/editor/linear-scale';
 
+import ContextSelector from '../../../utils/ContextSelector';
+
 import 'styles/panel.scss';
 import 'styles/utils.scss';
 
@@ -44,6 +46,7 @@ export default class RouteArea extends Component {
                         <title>#iwashere - Route area</title>
                     </Helmet>
                     <div className="main-style">
+                        <ContextSelector/>
                         <h4>Change an existing Route...</h4>
                         <RouteSearch onRouteSelected={ this.handleEditRoute.bind(this) } router={this.props.router} />
                         <Divider style={dividerStyle}/>

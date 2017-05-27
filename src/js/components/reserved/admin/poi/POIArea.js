@@ -7,6 +7,8 @@ import Divider from 'material-ui/Divider';
 import RaisedButton from 'material-ui/RaisedButton';
 import MapsAddLocation from 'material-ui/svg-icons/maps/add-location';
 
+import ContextSelector from '../../../utils/ContextSelector';
+
 import 'styles/panel.scss';
 import 'styles/utils.scss';
 
@@ -50,6 +52,7 @@ export default class POIArea extends Component {
                         <title>#iwashere - POI area</title>
                     </Helmet>
                     <div style={mainStyle}>
+                        <ContextSelector/>
                         <h4>Change an existing Point of Interest...</h4>
                         <POISearch onPOISelected={ this.handlePOISelection.bind(this) }/>
                         <Divider style={dividerStyle}/>

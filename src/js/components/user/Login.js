@@ -172,29 +172,17 @@ export default class Login extends Component {
     render() {
         const { inProgress } = this.state;
 
-        let signInInProgress = null;
-        if (inProgress) {
-            signInInProgress =
-                <FormGroup className="hor-align vert-align">
-                    <h1 className="loader-text">Signing in progress...</h1>
-                    <Loader color="#012935" className="loader"/>
-                </FormGroup>;
-        }
-
         return (
             <div>
                 <Helmet>
                     <title>#iwashere - Sign in</title>
                 </Helmet>
-
                 <LoginForm disableButtons={inProgress}
                            handleRegister={ this.handleRegister.bind(this) }
                            handleForgotPassword={ this.handleForgotPassword.bind(this) }
                            handleLogin={this.loginUser.bind(this)}
                            handleFacebook={this.loginFacebook.bind(this)}
                            handleGoogle={this.loginGoogle.bind(this)} />
-
-                { signInInProgress }
             </div>
         );
     }
