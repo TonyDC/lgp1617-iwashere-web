@@ -16,7 +16,7 @@ export default function (state = initialState, action) {
         case ActionTypes.SELECTED_RESERVED_CONTEXT:
             return {
                 ...state,
-                selected: action.payload
+                selectedIndex: action.payload
             };
 
         case ActionTypes.NEW_RESERVED_CONTEXTS:

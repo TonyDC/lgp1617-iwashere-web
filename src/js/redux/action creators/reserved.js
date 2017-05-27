@@ -23,7 +23,7 @@ export function addReservedContexts(contexts, selectedIndex) {
  */
 export function selectContext(selectedIndex) {
     return {
-        payload: { selectedIndex },
+        payload: selectedIndex,
         type: ActionTypes.SELECTED_RESERVED_CONTEXT
     };
 }

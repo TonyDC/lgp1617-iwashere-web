@@ -26,7 +26,6 @@ import UnauthRoutes from './routes/UnauthRoutes';
 import POIRoutes from './routes/POIRoutes';
 import RouteRoutes from './routes/RouteRoutes';
 
-import AdminLogin from './components/reserved/AdminLogin';
 import POIArea from './components/reserved/admin/poi/POIArea';
 import CreatePOI from './components/reserved/admin/poi/CreatePOI';
 import EditPOI from './components/reserved/admin/poi/EditPOI';

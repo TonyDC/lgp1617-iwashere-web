@@ -44,6 +44,7 @@ export default class ContextSelector extends Component {
             });
         }
     }
+
     handleSelectedContextChange(event, index, value) {
         this.context.store.dispatch(selectContext(value));
     }
@@ -52,16 +53,18 @@ export default class ContextSelector extends Component {
         let result = null;
         const { contexts, selectedIndex } = this.state;
         if (typeof selectedIndex === typeof ZERO_INDEX) {
-            result = <SelectField floatingLabelText="Context" value={selectedIndex}
-                                  onChange={this.handleSelectedContextChange.bind(this)}>
-                {
-                    contexts.map((element, index) => {
-                        const { roleName, contextName } = element;
+            result = (
+                <SelectField floatingLabelText="Context" value={selectedIndex}
+                             onChange={this.handleSelectedContextChange.bind(this)}>
+                    {
+                        contexts.map((element, index) => {
+                            const { roleName, contextName } = element;
 
-                        return <MenuItem key={index} value={index} primaryText={`${contextName} - ${roleName}`} />;
-                    })
-                }
-            </SelectField>;
+                            return <MenuItem key={index} value={index} primaryText={`${contextName} - ${roleName}`} />;
+                        })
+                    }
+                </SelectField>
+            );
         }
 
         return result;
