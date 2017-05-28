@@ -8,6 +8,11 @@ module.exports = {
     up: (queryInterface) => {
         return queryInterface.bulkInsert('user_contexts', [
             {
+                context_id: 1,
+                role_id: 1,
+                user_id: '8zWmscUg5LYSluQlQteYfweIkyw1'
+            },
+            {
                 context_id: 2,
                 role_id: 1,
                 user_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2'
