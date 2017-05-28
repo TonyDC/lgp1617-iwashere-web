@@ -1,10 +1,8 @@
 'use strict';
 
 const utils = require('../utils/misc');
-
 const express = require('express');
 const router = express.Router();
-
 const firebaseAdmin = require('firebase-admin');
 const httpStatus = require('http-status-codes');
 const validator = require('validator');
