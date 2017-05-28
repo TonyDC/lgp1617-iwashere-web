@@ -7,7 +7,7 @@ import { FormGroup } from "react-bootstrap";
 import httpStatus from "http-status-codes";
 import { GridLoader as Loader } from "halogen";
 import Alerts from "../utils/Alerts";
-import LoginForm from "./LoginComponent";
+import LoginForm from "./LoginForm";
 
 import { authenticatedFetch, checkFetchResponse } from "../../functions/fetch";
 import { addReservedContexts } from "../../redux/action creators/reserved";

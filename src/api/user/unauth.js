@@ -19,6 +19,8 @@ const NO_ELEMENTS_SIZE = 0,
 
 const UNAVAILABLE_ENTRY = '--Unavailable--';
 
+const MINIMUM_PASSWORD_SIZE = 6;
+
 /**
  * Register endpoint
  * Body properties:
@@ -34,7 +36,7 @@ router.post('/register', (req, res) => {
     const { email, username } = utils.trimStringProperties(req.body);
     const { password, confirmPassword } = req.body;
 
-    if (typeof password !== 'string' || typeof confirmPassword !== 'string' || password !== confirmPassword) {
+    if (typeof password !== 'string' || typeof confirmPassword !== 'string' || password !== confirmPassword || password.length < MINIMUM_PASSWORD_SIZE) {
         res.status(httpStatus.BAD_REQUEST).send({
             code: 'bad-password',
             message: 'Bad password'

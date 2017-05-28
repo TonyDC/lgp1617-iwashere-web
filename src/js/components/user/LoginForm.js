@@ -106,7 +106,10 @@ export default class LoginComponent extends Component {
         if (!error) {
             email = email.trim();
             if (validator.isEmpty(email) || !validator.isEmail(email)) {
-                this.setState({ emailError: 'Bad email' });
+                this.setState({
+                    email,
+                    emailError: 'Bad email'
+                });
                 error = true;
             }
         }
@@ -241,14 +244,14 @@ export default class LoginComponent extends Component {
 
         return (
             <div>
-                <form onSubmit={this.handleSubmit.bind(this)} className="form-group">
+                <form onSubmit={this.handleSubmit.bind(this)}>
                     <TextField errorText={emailError}
-                               hintText="E-mail"
+                               hintText="Enter your e-mail"
                                floatingLabelText="E-mail"
                                fullWidth
                                value={email} onChange={ this.handleEmail.bind(this) } />
                     <TextField errorText={passwordError}
-                               hintText="Password"
+                               hintText="Enter your password"
                                floatingLabelText="Password"
                                fullWidth
                                type="password"
