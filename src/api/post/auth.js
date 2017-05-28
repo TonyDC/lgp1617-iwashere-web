@@ -154,7 +154,6 @@ router.post('/like', (req, res, next) => {
     const { postDB, userDB } = db;
     Promise.all([userDB.getUserByUID(userID), postDB.getPostById(postID), postDB.getPostLike(postID, userID)]).
     then((results) => {
-
         if (results && results.length === THREE_SIZE &&
             results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE &&
             results[ONE_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE) {

@@ -69,14 +69,15 @@ export default class POIPosts extends Component {
             url += `${this.props.poiId}/${this.state.postsOffset}/${LIMIT}`;
 
             fetch(url, {
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Accept': 'application/json' },
                 method: 'GET'
             }).then((response) => {
-                if (response.status >= httpCodes.BAD_REQUEST || response.status === httpCodes.NO_CONTENT) {
-                    if (response.status === httpCodes.NO_CONTENT && this.componentIsMounted) {
+                if (response.status === httpCodes.NO_CONTENT) {
+                    if (this.componentIsMounted) {
                         this.setState({ hasMoreItems: false });
                     }
 
+                } else if (response.status >= httpCodes.BAD_REQUEST) {
                     return Promise.reject(new Error(response.statusText));
                 }
 
@@ -259,15 +260,15 @@ export default class POIPosts extends Component {
         }
 
         return <Col xs={12} mdOffset={1} md={10} lgOffset={1} lg={10}>
-                    {this.getPostView()}
-                    {toggleTagFilterButton}
-                    {tagFilter}
-                    <InfiniteScroll pageStart={0} loadMore={this.fetchPosts.bind(this)} hasMore={this.state.hasMoreItems} loader={loader}>
-                        <ul className="timeline timeline-container">
-                            {this.getTimelinePosts(filteredPosts)}
-                        </ul>
-                    </InfiniteScroll>
-                </Col>;
+            {this.getPostView()}
+            {toggleTagFilterButton}
+            {tagFilter}
+            <InfiniteScroll pageStart={0} loadMore={this.fetchPosts.bind(this)} hasMore={this.state.hasMoreItems} loader={loader}>
+                <ul className="timeline timeline-container">
+                    {this.getTimelinePosts(filteredPosts)}
+                </ul>
+            </InfiniteScroll>
+        </Col>;
     }
 }
 

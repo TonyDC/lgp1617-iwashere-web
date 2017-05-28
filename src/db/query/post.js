@@ -3,7 +3,7 @@
 const db = require('../index');
 
 module.exports.getPOIPosts = (poiID, offset, limit) => {
-    // language=POSTGRES-SQL
+    // language=POSTGRES-PSQL
     return db.query(`SELECT *, name AS type, posts.created_at as post_date, posts.post_id
     FROM posts LEFT JOIN post_contents ON post_contents.post_id = posts.post_id LEFT JOIN content_types ON post_contents.content_type_id = content_types.content_type_id
     WHERE poi_id = :poiID AND posts.deleted = FALSE
@@ -18,20 +18,20 @@ module.exports.getPOIPosts = (poiID, offset, limit) => {
 };
 
 module.exports.getPOIsPost = (offset, limit) => {
-    // language=POSTGRES-SQL
+    // language=POSTGRES-PSQL
     return db.query(`WITH poi_ratings AS (SELECT AVG(rating) AS rating, poi_id
                  FROM (SELECT DISTINCT ON (user_id) poi_id, rating FROM poi_ratings
                  ORDER BY user_id, created_at DESC) current_ratings
                  GROUP BY poi_id)
     SELECT DISTINCT ON (single_post_id) *
     FROM (SELECT *, content_types.name AS type, posts.created_at as post_date, posts.poi_id AS single_post_id,
-               pois.name AS name
-          FROM pois INNER JOIN poi_ratings ON pois.poi_id = poi_ratings.poi_id
+               pois.name AS name, CASE WHEN rating IS NULL THEN 0 ELSE rating END AS rating
+          FROM pois LEFT JOIN poi_ratings ON pois.poi_id = poi_ratings.poi_id
           INNER JOIN posts ON posts.poi_id = pois.poi_id 
           INNER JOIN post_contents ON post_contents.post_id = posts.post_id 
           INNER JOIN content_types ON post_contents.content_type_id = content_types.content_type_id
           WHERE content_types.content_type_id = 1 AND posts.deleted = FALSE AND pois.deleted = FALSE 
-          ORDER BY post_date DESC) pois_posts
+          ORDER BY poi_ratings.rating DESC NULLS LAST, post_date DESC) pois_posts
     LIMIT :limit OFFSET :offset;`, {
         replacements: {
             limit,
@@ -42,7 +42,7 @@ module.exports.getPOIsPost = (offset, limit) => {
 };
 
 module.exports.getPOIsPostWithLocation = (lat, lng, offset, limit) => {
-    // language=POSTGRES-SQL
+    // language=POSTGRES-PSQL
     return db.query(`WITH poi_ratings AS (SELECT AVG(rating) AS rating, poi_id
                  FROM (SELECT DISTINCT ON (user_id) poi_id, rating FROM poi_ratings
                  ORDER BY user_id, created_at DESC) current_ratings
@@ -50,13 +50,13 @@ module.exports.getPOIsPostWithLocation = (lat, lng, offset, limit) => {
     SELECT DISTINCT ON (single_post_id) * 
     FROM (SELECT *, content_types.name AS type, posts.created_at as post_date, posts.poi_id AS single_post_id, 
                get_distance_function(latitude::real, longitude::real, :lat::real, :lng::real) as distance,
-               pois.name AS name
-          FROM pois INNER JOIN poi_ratings ON pois.poi_id = poi_ratings.poi_id
+               pois.name AS name, CASE WHEN rating IS NULL THEN 0 ELSE rating END AS rating
+          FROM pois LEFT JOIN poi_ratings ON pois.poi_id = poi_ratings.poi_id
           INNER JOIN posts ON posts.poi_id = pois.poi_id 
           INNER JOIN post_contents ON post_contents.post_id = posts.post_id 
           INNER JOIN content_types ON post_contents.content_type_id = content_types.content_type_id
           WHERE content_types.content_type_id = 1 AND posts.deleted = FALSE AND pois.deleted = FALSE  
-          ORDER BY distance, post_date DESC) pois_posts
+          ORDER BY distance, poi_ratings.rating DESC NULLS LAST, post_date DESC) pois_posts
     LIMIT :limit OFFSET :offset;`, {
         replacements: {
             lat,
@@ -80,7 +80,7 @@ module.exports.getPostById = (id) => {
 };
 
 module.exports.getPostLikes = (postIdList) => {
-    // language=POSTGRES-SQL
+    // language=POSTGRES-PSQL
     return db.query(`SELECT posts.post_id, SUM(CASE WHEN liked = TRUE THEN 1 ELSE 0 END) AS likes
     FROM posts LEFT JOIN likes ON posts.post_id = likes.post_id
     WHERE posts.deleted = FALSE AND posts.post_id = ANY(:postIdList)
@@ -91,7 +91,7 @@ module.exports.getPostLikes = (postIdList) => {
 };
 
 module.exports.getPostTags = (postIdList) => {
-    // language=POSTGRES-SQL
+    // language=POSTGRES-PSQL
     return db.query(`SELECT * 
     FROM post_tags INNER JOIN tags ON tags.tag_id=post_tags.tag_id 
     WHERE post_tags.post_id = ANY(:postIdList)`, {
@@ -101,7 +101,7 @@ module.exports.getPostTags = (postIdList) => {
 };
 
 module.exports.getPostLikedByUser = (postIdList, userId) => {
-    // language=POSTGRES-SQL
+    // language=POSTGRES-PSQL
     return db.query(`SELECT post_id
     FROM likes 
     WHERE post_id = ANY(:postIdList) AND user_id = :userId AND liked = TRUE`, {
@@ -163,7 +163,7 @@ module.exports.createPost = (description, poiID, userID) => {
 };
 
 module.exports.addPostTags = (postID, tagIdList) => {
-    // language=POSTGRES-SQL
+    // language=POSTGRES-PSQL
     return db.query(` 
     INSERT INTO post_tags(post_id, tag_id)
     VALUES (:postID, unnest(array[:tagIdList])) ON CONFLICT DO NOTHING RETURNING tag_id`, {
@@ -189,7 +189,7 @@ module.exports.getUserPost = (userID, postID) => {
 };
 
 module.exports.setPostDeleted = (userID, postID) => {
-    // language=POSTGRES-SQL
+    // language=POSTGRES-PSQL
     return db.query(`UPDATE posts
     SET deleted = TRUE
     WHERE post_id = :postID AND user_id = :userID`, {

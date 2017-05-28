@@ -20,7 +20,7 @@ export default class RouteCard extends Component {
             routeTagsPanel = <Tags readOnly tags={this.props.routeInfo.tags} />;
             ratingPanel = <Rater url={API_ROUTE_RATING_URL}
                                  authUrl={API_ROUTE_AUTH_RATING_URL}
-                                 poiId={this.props.routeInfo.routeId}
+                                 routeId={this.props.routeInfo.routeId}
                                  user={this.props.user}/>;
         }
 

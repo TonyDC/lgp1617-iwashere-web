@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Alert from 'react-s-alert';
+import validator from 'validator';
 import { Helmet } from 'react-helmet';
 import * as firebase from 'firebase';
-import { Form, FormGroup, InputGroup, FormControl, Button } from 'react-bootstrap';
+import RaisedButton from 'material-ui/RaisedButton';
 import { GridLoader as Loader } from 'halogen';
-
-import validator from 'validator';
+import TextField from 'material-ui/TextField';
 
 import Alerts from '../utils/Alerts';
 
@@ -20,7 +19,7 @@ export default class PasswordReset extends Component {
         super(props);
         this.state = {
             email: '',
-            errors: [],
+            error: null,
             inProgress: false
         };
     }
@@ -30,39 +29,14 @@ export default class PasswordReset extends Component {
     }
 
     componentWillUnmount() {
-        this.closePreviousErrors();
         this.componentIsMounted = false;
-    }
-
-    closePreviousErrors() {
-        this.state.errors.forEach((error) => {
-            Alert.close(error);
-        });
-
-        this.setState({ errors: [] });
-    }
-
-    handleError(error) {
-        const { message } = error;
-
-        this.closePreviousErrors();
-
-        if (!this.componentIsMounted) {
-            return;
-        }
-
-        const currentError = Alerts.createErrorAlert(message);
-        this.setState({
-            errors: [currentError],
-            inProgress: false
-        });
     }
 
     checkForm() {
         const { email } = this.state;
 
         if (typeof email !== 'string' || !email || validator.isEmpty(email.trim()) || !validator.isEmail(email)) {
-            this.handleError({ message: "The email entered is not valid." });
+            this.setState({ error: "The email entered is not valid." });
 
             return false;
         }
@@ -73,30 +47,35 @@ export default class PasswordReset extends Component {
     sendPasswordResetEmail(event) {
         event.preventDefault();
 
-        if (!this.checkForm()) {
-            return;
+        if (this.componentIsMounted && this.checkForm()) {
+            this.setState({ inProgress: true });
+
+            const { email } = this.state;
+            firebase.auth().sendPasswordResetEmail(email).
+            then(() => {
+                if (this.componentIsMounted) {
+                    this.setState({ inProgress: false });
+                    this.props.router.push('/user/login');
+                    Alerts.createInfoAlert(`An email with a token has been sent to ${email}.`);
+                }
+            }).
+            catch((error) => {
+                if (this.componentIsMounted) {
+                    this.setState({
+                        error: error.message,
+                        inProgress: false
+                    });
+                }
+            });
         }
-
-        this.setState({ inProgress: true });
-
-        const { email } = this.state;
-        firebase.auth().sendPasswordResetEmail(email).
-        then(() => {
-            if (!this.componentIsMounted) {
-                return;
-            }
-
-            Alerts.createInfoAlert(`An email with a token has been sent to ${email}.`);
-            this.props.router.push('/user/login');
-        }).
-        catch((error) => {
-            this.handleError(error);
-        });
     }
 
     handleEmail(event) {
         event.preventDefault();
-        this.setState({ email: event.target.value });
+        this.setState({
+            email: event.target.value,
+            error: null
+        });
     }
 
     render() {
@@ -105,34 +84,26 @@ export default class PasswordReset extends Component {
 
         if (this.state.inProgress) {
             resetInProgress =
-                <FormGroup className="hor-align vert-align">
+                <div className="hor-align vert-align">
                     <Loader color="#012935" className="loader"/>
-                </FormGroup>;
+                </div>;
         } else {
             resetForm =
-                <Form horizontal onSubmit={ this.sendPasswordResetEmail.bind(this) }>
-                    <FormGroup>
-                        <InputGroup>
-                            <InputGroup.Addon>
-                                <i className="fa fa-envelope fa" aria-hidden="true"/>
-                            </InputGroup.Addon>
-                            <FormControl
-                                type="text"
-                                value={this.state.email}
-                                placeholder="Enter your email"
-                                onChange={this.handleEmail.bind(this)}
-                            />
-                        </InputGroup>
-                    </FormGroup>
-
-                    <FormGroup>
-                        <Button type="submit"
-                                className="btn-primary btn-md btn-block login-button colorAccent"
-                                onClick={ this.sendPasswordResetEmail.bind(this) }>
-                            Send email
-                        </Button>
-                    </FormGroup>
-                </Form>;
+                <form onSubmit={this.sendPasswordResetEmail.bind(this)} className="form-group">
+                    <TextField errorText={this.state.error}
+                               hintText="Enter your email..."
+                               floatingLabelText="Email"
+                               fullWidth
+                               value={this.state.email} onChange={ this.handleEmail.bind(this) } />
+                    <div className="button-container">
+                        <RaisedButton type="submit"
+                                      label="Reset"
+                                      primary
+                                      className="login-button"
+                                      onTouchTap={this.sendPasswordResetEmail.bind(this)}
+                                      disabled={this.state.inProgress} />
+                    </div>
+                </form>;
         }
 
         return (
@@ -143,7 +114,6 @@ export default class PasswordReset extends Component {
 
                 <div>
                     <h1 className="form-title">Reset Password</h1>
-                    <hr/>
                 </div>
 
                 {resetInProgress}

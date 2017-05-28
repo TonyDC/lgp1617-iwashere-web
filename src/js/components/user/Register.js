@@ -1,33 +1,24 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Alert from 'react-s-alert';
-import { Form, FormGroup, InputGroup, FormControl, Button, ControlLabel } from 'react-bootstrap';
+import nProgress from 'nprogress';
+import httpCodes from 'http-status-codes';
 import { Helmet } from 'react-helmet';
-import * as firebase from 'firebase';
-import validator from 'validator';
-import { GridLoader as Loader } from 'halogen';
+import firebase from 'firebase';
 
-import MyButton from '../utils/MyButton';
+import RegisterForm from './RegisterForm';
 import Alerts from '../utils/Alerts';
 
 import 'styles/app.scss';
 import 'styles/login.scss';
 import 'styles/utils.scss';
 
-const NO_ERRORS = 0;
-
 export default class Register extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            confirmPassword: '',
-            email: '',
             errors: [],
-            inProgress: false,
-            password: '',
-            registered: false,
-            username: ''
+            inProgress: false
         };
     }
 
@@ -36,104 +27,39 @@ export default class Register extends Component {
     }
 
     componentWillUnmount() {
-        this.closePreviousErrors();
         this.componentIsMounted = false;
     }
 
     closePreviousErrors() {
         this.state.errors.forEach((error) => {
-            Alert.close(error);
+            Alerts.close(error);
         });
 
         this.setState({ errors: [] });
     }
 
-    checkForm() {
-        const { username, email, password, confirmPassword } = this.state;
-        const errorList = [];
-
-        if (typeof username !== 'string' || !username || validator.isEmpty(username.trim())) {
-            errorList.push(Alerts.createErrorAlert("The username entered is not valid."));
-        }
-
-        if (typeof email !== 'string' || !email || validator.isEmpty(email.trim()) || !validator.isEmail(email)) {
-            errorList.push(Alerts.createErrorAlert("The email entered is not valid."));
-        }
-
-        if (!password || validator.isEmpty(password)) {
-            errorList.push(Alerts.createErrorAlert("The password is required."));
-        }
-
-        if (password !== confirmPassword) {
-            errorList.push(Alerts.createErrorAlert("The passwords entered don't match."));
-        }
-
-        this.setState({ errors: errorList });
-
-        return errorList.length === NO_ERRORS;
-    }
-
-    handleError(error) {
-        const { message } = error;
-
+    handleError(message) {
         if (!this.componentIsMounted) {
             return;
         }
 
-        this.closePreviousErrors();
+        const { errors } = this.state;
 
         const currentError = Alerts.createErrorAlert(message);
-        this.setState({
-            errors: [currentError],
-            inProgress: false,
-            registered: false
-        });
+        errors.push(currentError);
+        this.setState({ errors });
     }
 
-    sendEmailVerification(user) {
-        const newUser = user
-            ? user
-            : firebase.auth().currentUser;
-
-        if (!newUser.emailVerified) {
-            Alerts.createInfoAlert(`A verification email has been sent to ${newUser.email}.`);
-            newUser.sendEmailVerification();
-        }
-    }
-
-    loginUser() {
-        const { email, password } = this.state;
-        firebase.auth().signInWithEmailAndPassword(email, password).
-        then(() => {
-            if (!this.componentIsMounted) {
-                return;
-            }
-
-            this.sendEmailVerification();
-
-            this.setState({
-                inProgress: false,
-                registered: true
-            });
-
-            this.props.router.push('/');
-        }).
-        catch((error) => {
-            this.handleError(error);
-        });
-    }
-
-    registerUser(event) {
-        event.preventDefault();
-
+    registerUser(username, email, password, confirmPassword) {
         this.closePreviousErrors();
+        const { inProgress } = this.state;
 
-        if (this.state.inProgress || !this.checkForm() || !this.componentIsMounted) {
+        if (inProgress || !this.componentIsMounted) {
             return;
         }
 
-        const { username, email, password, confirmPassword } = this.state;
         this.setState({ inProgress: true });
+        nProgress.start();
 
         fetch('/api/user/unauth/register', {
             body: JSON.stringify({
@@ -146,6 +72,15 @@ export default class Register extends Component {
             method: 'POST'
         }).
         then((response) => {
+            const { status, statusText } = response;
+            if (status >= httpCodes.BAD_REQUEST) {
+                const error = new Error(statusText);
+                error.code = status;
+                error.message = statusText;
+
+                return Promise.reject(error);
+            }
+
             return response.json();
         }).
         then((response) => {
@@ -154,44 +89,47 @@ export default class Register extends Component {
                 error.code = response.error.status;
                 error.message = response.error.message;
 
-                throw error;
+                return Promise.reject(error);
             }
 
-            this.loginUser();
+            return firebase.auth().signInWithEmailAndPassword(email, password);
+        }).
+        then((currentUser) => {
+            if (currentUser && !currentUser.emailVerified) {
+                return currentUser.sendEmailVerification().
+                catch(() => {
+                    this.handleError('Error sending confirmation email');
+                });
+            }
+
+            return true;
+        }).
+        then((withoutEmail) => {
+            if (!withoutEmail) {
+                const { currentUser } = firebase.auth();
+                Alerts.createInfoAlert(`A verification email has been sent to ${currentUser.email}.`);
+            }
+            this.props.router.push('/');
         }).
         catch((error) => {
-            this.handleError(error);
+            const { message } = error;
+            this.handleError(message);
+        }).
+        then(() => {
+            nProgress.done();
+            if (this.componentIsMounted) {
+                this.setState({ inProgress: false });
+            }
         });
     }
 
-    handleUsername(event) {
+    handleAlreadyRegistered(event) {
         event.preventDefault();
-        this.setState({ username: event.target.value });
-    }
-
-    handleEmail(event) {
-        event.preventDefault();
-        this.setState({ email: event.target.value });
-    }
-
-    handlePassword(event) {
-        event.preventDefault();
-        this.setState({ password: event.target.value });
-    }
-
-    handleConfirmPassword(event) {
-        event.preventDefault();
-        this.setState({ confirmPassword: event.target.value });
+        this.props.router.push('/user/login');
     }
 
     render() {
-        let submitButton = <FormGroup><div className="hor-align"><Loader color="#E5402A" size="10px" margin="5px"/></div></FormGroup>;
-        if (!this.state.inProgress) {
-            submitButton = <FormGroup className="box"><Button type="submit"
-                                                              className="btn-primary btn-md btn-block login-button colorAccent"
-                                                              onClick={ this.registerUser.bind(this) }>Sign Up</Button>
-            </FormGroup>;
-        }
+        const { inProgress } = this.state;
 
         return (
             <div>
@@ -199,79 +137,11 @@ export default class Register extends Component {
                     <title>#iwashere - Sign up</title>
                 </Helmet>
 
-                <div>
-                    <h1 className="form-title">Sign up</h1>
-                    <hr/>
-                </div>
-
-                <Form horizontal onSubmit={this.registerUser.bind(this)}>
-                    <FormGroup>
-                        <ControlLabel htmlFor="username">Username</ControlLabel>
-                        <InputGroup>
-                            <InputGroup.Addon>
-                                <i className="fa fa-user fa" aria-hidden="true"/>
-                            </InputGroup.Addon>
-                            <FormControl
-                                name="username"
-                                type="text"
-                                value={this.state.username}
-                                placeholder="Enter your username"
-                                onChange={this.handleUsername.bind(this)}
-                            />
-                        </InputGroup>
-                    </FormGroup>
-
-                    <FormGroup>
-                        <ControlLabel htmlFor="email">Email</ControlLabel>
-                        <InputGroup>
-                            <InputGroup.Addon>
-                                <i className="fa fa-envelope fa" aria-hidden="true"/>
-                            </InputGroup.Addon>
-                            <FormControl
-                                name="email"
-                                type="text"
-                                value={this.state.email}
-                                placeholder="Enter your email"
-                                onChange={this.handleEmail.bind(this)}
-                            />
-                        </InputGroup>
-                    </FormGroup>
-
-                    <FormGroup>
-                        <ControlLabel htmlFor="password">Password</ControlLabel>
-                        <InputGroup>
-                            <InputGroup.Addon>
-                                <i className="fa fa-lock fa-lg" aria-hidden="true"/>
-                            </InputGroup.Addon>
-                            <FormControl
-                                name="password"
-                                type="password"
-                                placeholder="Enter your password"
-                                onChange={this.handlePassword.bind(this)}
-                            />
-                        </InputGroup>
-                    </FormGroup>
-
-                    <FormGroup>
-                        <ControlLabel htmlFor="confirm">Confirm Password</ControlLabel>
-                        <InputGroup>
-                            <InputGroup.Addon>
-                                <i className="fa fa-lock fa-lg" aria-hidden="true"/>
-                            </InputGroup.Addon>
-                            <FormControl
-                                name="confirm"
-                                type="password"
-                                placeholder="Confirm your password"
-                                onChange={this.handleConfirmPassword.bind(this)}
-                            />
-                        </InputGroup>
-                    </FormGroup>
-
-                    { submitButton }
-
-                    <MyButton url="/user/login">Already have an account?</MyButton>
-
-                </Form>
+                <RegisterForm
+                    disableButtons={inProgress}
+                    handleRegister={this.registerUser.bind(this)}
+                    handleAlreadyRegistered={this.handleAlreadyRegistered.bind(this)}
+                />
             </div>
         );
     }

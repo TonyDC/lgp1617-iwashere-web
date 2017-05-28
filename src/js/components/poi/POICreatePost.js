@@ -11,13 +11,12 @@ import RaisedButton from 'material-ui/RaisedButton';
 import Dropzone from 'react-dropzone';
 import nProgress from 'nprogress';
 
-const API_POI_POST_URL = '/api/post/auth/';
+import 'styles/dropzone.scss';
 
+const API_POI_POST_URL = '/api/post/auth/';
 const NO_ELEMENTS = 0;
 const ONE_ELEMENT = 1;
 const NOT_FOUND = -1;
-
-import 'styles/create_post.scss';
 
 export default class CreatePostDialog extends Component {
 
@@ -33,9 +32,6 @@ export default class CreatePostDialog extends Component {
                 tags: []
             }
         };
-
-        this.handleOpen = this.handleOpen.bind(this);
-        this.handleClose = this.handleClose.bind(this);
     }
 
     componentDidMount() {
@@ -61,12 +57,9 @@ export default class CreatePostDialog extends Component {
     }
 
     createPost() {
-        if (!this.checkPost(this.state.post)) {
+        const { currentUser } = firebase.auth();
+        if (!this.componentIsMounted || !this.checkPost(this.state.post) || !currentUser) {
             return;
-        }
-
-        if (this.componentIsMounted) {
-            this.setState({ inProgress: true });
         }
 
         if (this.errorAlert) {
@@ -74,7 +67,9 @@ export default class CreatePostDialog extends Component {
         }
 
         nProgress.start();
-        firebase.auth().currentUser.getToken().then((token) => {
+        this.setState({ inProgress: true });
+
+        currentUser.getToken().then((token) => {
             const { description, tags, files } = this.state.post;
             const { poiId } = this.props;
 
@@ -165,24 +160,22 @@ export default class CreatePostDialog extends Component {
     addTagToPost(tagId) {
         const { post } = this.state;
         const tagIndex = post.tags.indexOf(tagId);
-        if (tagIndex !== NOT_FOUND) {
-            return;
-        }
-        post.tags.push(tagId);
-        if (this.componentIsMounted) {
-            this.setState({ post });
+        if (tagIndex === NOT_FOUND) {
+            post.tags.push(tagId);
+            if (this.componentIsMounted) {
+                this.setState({ post });
+            }
         }
     }
 
     removeTagFromPost(tagId) {
         const { post } = this.state;
         const tagIndex = post.tags.indexOf(tagId);
-        if (tagIndex === NOT_FOUND) {
-            return;
-        }
-        post.tags.splice(tagIndex, ONE_ELEMENT);
-        if (this.componentIsMounted) {
-            this.setState({ post });
+        if (tagIndex !== NOT_FOUND) {
+            post.tags.splice(tagIndex, ONE_ELEMENT);
+            if (this.componentIsMounted) {
+                this.setState({ post });
+            }
         }
     }
 
@@ -214,6 +207,10 @@ export default class CreatePostDialog extends Component {
         this.state.post.files.forEach((file) => {
             window.URL.revokeObjectURL(file.preview);
         });
+
+        // NOTE: the order matters!
+        // ...this.state.post,
+        // files
         this.setState({
             post: {
                 ...this.state.post,
