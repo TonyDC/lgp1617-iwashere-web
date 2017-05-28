@@ -8,10 +8,9 @@ import { authenticatedFetch, checkFetchResponse } from './functions/fetch';
 const NO_ELEMENTS = 0;
 const ZERO_INDEX = 0;
 
-/*
- * Note:
- *  Firebase stores, in the local storage, information regarding the current logged in user.
- *  Since Firebase has a delay as to confirm the identity of the user, it is required if a user is already logged in. Hence, the usage of the local storage.
+/**
+ * Firebase stores, in the local storage, information regarding the current logged in user.
+ * Since Firebase has a delay as to confirm the identity of the user, it is required if a user is already logged in. Hence, the usage of the local storage.
  */
 function checkFirebase() {
     return new Promise((resolve, reject) => {

@@ -10,7 +10,6 @@ import Pin from './Pin';
 import 'styles/map.scss';
 
 /**
- *
  * @param props
  * @returns {XML}
  * @constructor
@@ -23,7 +22,7 @@ export default function SelectedLocation(props) {
             </IconButton>
         </div>
     </Pin>;
-};
+}
 
 SelectedLocation.propTypes = {
     lat: PropTypes.number.isRequired,

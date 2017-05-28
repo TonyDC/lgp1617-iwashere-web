@@ -1,10 +1,11 @@
+/* eslint react/no-process-env: "off" */
+
 import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import logger from 'redux-logger';
 import { createStore, applyMiddleware } from 'redux';
 import reducers from './js/redux/reducers';
-
 import App from './js/App';
 
 // Font Awesome
@@ -43,7 +44,6 @@ then((results) => {
     }
 
     // Render App
-
     render(
         <MuiThemeProvider muiTheme={getMuiTheme()}>
             <Provider store={store}>
@@ -52,9 +52,6 @@ then((results) => {
         </MuiThemeProvider>,
         document.getElementById('main'));
 
-}).
-catch((error) => {
-    console.log(error);
 });
 
 

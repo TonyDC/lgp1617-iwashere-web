@@ -149,3 +149,16 @@ module.exports.trimStringProperties = (object) => {
 
     return resultObject;
 };
+
+/**
+ * Parse json
+ * @param {object} object the object to convert
+ * @returns {{}|null} the object parsed or null if an error occurs
+ */
+module.exports.parseJSON = (object) => {
+    try {
+        return JSON.parse(object);
+    } catch (exception) {
+        return null;
+    }
+};

@@ -5,7 +5,6 @@ const uploadAux = require('../../utils/upload_aux');
 const upload = require('../../middleware/upload');
 const httpCodes = require('http-status-codes');
 const validator = require('validator');
-
 const express = require('express');
 const router = express.Router();
 
@@ -15,9 +14,9 @@ const ZERO_INDEX = 0;
 const ONE_INDEX = 1;
 const TWO_INDEX = 2;
 const THREE_INDEX = 3;
-
 const NO_ELEMENT_SIZE = 0;
 const ONE_SIZE = 1;
+const TWO_SIZE = 2;
 
 const HTTP_ALREADY_REPORTED = 208;
 
@@ -35,8 +34,7 @@ router.get('/search', (req, res, next) => {
     query = query.trim().split(/\s+/).
     join(' & ');
 
-    const { poiDB } = db;
-    poiDB.searchPOIsUnderContexts(query, contextID).
+    db.poiDB.searchPOIsUnderContexts(query, contextID).
     then((results) => {
         if (results) {
             res.json(utils.convertObjectsToCamelCase(results)).end();
@@ -52,38 +50,27 @@ router.get('/search', (req, res, next) => {
 // Create new POI
 router.post('/', bodyTemplate, (req, res, next) => {
     const { body, files } = req;
-    const { name, description, address, latitude, longitude, poiTypeId, parentId, tags, context } = utils.trimStringProperties(body);
+    const { name, description, address, latitude, longitude, poiTypeId, parentId, tags, context, metaInfo } = utils.trimStringProperties(body);
     const { poiFiles } = files;
     const { uid: userID } = req.auth.token;
     const { contextID: userContext } = req.auth;
-    let tagList = null;
-    try {
-        tagList = JSON.parse(tags);
-    } catch (exception) {
-        res.status(httpCodes.BAD_REQUEST).json({ message: 'Bad tags list' }).
-        end();
+    const tagList = utils.parseJSON(tags);
 
-        return;
-    }
-
-    if (typeof userID !== 'string' || typeof name !== 'string' || validator.isEmpty(name) ||
+    if (typeof userID !== 'string' || typeof name !== 'string' || validator.isEmpty(name) || !Array.isArray(tagList) ||
         typeof description !== 'string' || validator.isEmpty(description) || typeof address !== 'string' ||
         validator.isEmpty(address) || isNaN(parseFloat(latitude)) || isNaN(parseFloat(longitude)) ||
-        typeof poiTypeId !== 'string' ||
-        typeof context !== 'string' || validator.isEmpty(context)) {
+        typeof poiTypeId !== 'string' || typeof context !== 'string' || validator.isEmpty(context)) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
 
     const { userContextDB, poiDB } = db;
-    const primaryChecks = [userContextDB.verifyContextUnderUserJurisdiction(userContext, context), poiDB.getPOITypeByID(poiTypeId)];
-    Promise.all(primaryChecks).
+    Promise.all([userContextDB.verifyContextUnderUserJurisdiction(userContext, context), poiDB.getPOITypeByID(poiTypeId)]).
     then((results) => {
-        if (utils.checkResultList(results, [primaryChecks.length], true)) {
-            const createPOI = [poiDB.createPOI(name, description, address, latitude, longitude, poiTypeId, userID, context, parentId)];
-            const filesToUpload = poiFiles && poiFiles.length > NO_ELEMENT_SIZE;
-            if (filesToUpload) {
+        if (utils.checkResultList(results, [TWO_SIZE], true)) {
+            const createPOI = [poiDB.createPOI(name, description, address, latitude, longitude, poiTypeId, userID, context, metaInfo, parentId)];
+            if (poiFiles && poiFiles.length > NO_ELEMENT_SIZE) {
                 createPOI.push(uploadAux.handleFileUpload(poiFiles, userID));
             }
 
@@ -96,7 +83,7 @@ router.post('/', bodyTemplate, (req, res, next) => {
                         createAdditionalPoiInfo.push(poiDB.setPOITags(poiId, tagList));
                     }
 
-                    if (filesToUpload) {
+                    if (poiFiles && poiFiles.length > NO_ELEMENT_SIZE) {
                         poiCreationResults[ONE_INDEX].forEach((fileCreated) => {
                             const { contentUrls, contentTypeId } = fileCreated.fileInfo;
                             const urlXs = contentUrls[ZERO_INDEX];
@@ -142,28 +129,18 @@ router.post('/', bodyTemplate, (req, res, next) => {
 router.put('/:poiID', bodyTemplate, (req, res, next) => {
     const { body, files } = req;
     const { poiID } = req.params;
-    const { name, description, address, latitude, longitude, poiTypeId, parentId, tags, filesDeleted, context } = utils.trimStringProperties(body);
+    const { name, description, address, latitude, longitude, poiTypeId, parentId, tags, filesDeleted, context, metaInfo } = utils.trimStringProperties(body);
     const { poiFiles } = files;
     const { uid: userID } = req.auth.token;
     const { contextID: userContext } = req.auth;
-    let tagList = null;
-    let poiContentsToRemove = null;
-    try {
-        tagList = JSON.parse(tags);
-        poiContentsToRemove = JSON.parse(filesDeleted);
-    } catch (exception) {
-        res.status(httpCodes.BAD_REQUEST).json({ message: 'Bad tags list' }).
-        end();
+    const tagList = utils.parseJSON(tags);
+    const poiContentsToRemove = utils.parseJSON(filesDeleted);
 
-        return;
-    }
-
-    if (!poiID || typeof poiID !== 'string' || !validator.isNumeric(poiID) ||
+    if (!poiID || typeof poiID !== 'string' || !validator.isNumeric(poiID) || !Array.isArray(tagList) || !Array.isArray(poiContentsToRemove) ||
         typeof userID !== 'string' || typeof name !== 'string' || validator.isEmpty(name) ||
         typeof description !== 'string' || validator.isEmpty(description) || typeof address !== 'string' ||
         validator.isEmpty(address) || isNaN(parseFloat(latitude)) || isNaN(parseFloat(longitude)) ||
-        typeof poiTypeId !== 'string' ||
-        typeof context !== 'string' || validator.isEmpty(context)) {
+        typeof poiTypeId !== 'string' || typeof context !== 'string' || validator.isEmpty(context)) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
@@ -191,7 +168,7 @@ router.put('/:poiID', bodyTemplate, (req, res, next) => {
                 return null;
             }
 
-            const POIUpdatePromises = [poiDB.updatePOI(poiID, userID, name, description, address, latitude, longitude, poiTypeId, context, parentId)];
+            const POIUpdatePromises = [poiDB.updatePOI(poiID, userID, name, description, address, latitude, longitude, poiTypeId, context, metaInfo, parentId)];
             const filesToUpload = poiFiles && poiFiles.length > NO_ELEMENT_SIZE;
             if (filesToUpload) {
                 POIUpdatePromises.push(uploadAux.handleFileUpload(poiFiles, userID));
@@ -221,7 +198,7 @@ router.put('/:poiID', bodyTemplate, (req, res, next) => {
 
                 return Promise.all(newPOIFiles).
                 then((filesResults) => {
-                    if (utils.checkResultList(filesResults, [newPOIFiles.length], true)) {      // TODO falha caso alguma das listas for vazia
+                    if (utils.checkResultList(filesResults, [newPOIFiles.length], true)) {
                         res.json({ message: 'OK' }).end();
                     } else {
                         res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error while submitting the files' }).
@@ -240,15 +217,13 @@ router.put('/:poiID', bodyTemplate, (req, res, next) => {
 router.post('/:poiID', (req, res, next) => {
     const { poiID } = req.params;
     const { deleted } = req.body;
-
+    const { uid: userID } = req.auth.token;
+    const { contextID: userContextID } = req.auth;
     if (!poiID || typeof poiID !== 'string' || !validator.isNumeric(poiID) || typeof deleted !== 'boolean') {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
-
-    const { uid: userID } = req.auth.token;
-    const { contextID: userContextID } = req.auth;
 
     const { poiDB, userContextDB } = db;
     poiDB.getPOIByID(poiID).
@@ -263,7 +238,7 @@ router.post('/:poiID', (req, res, next) => {
         return userContextDB.verifyContextUnderUserJurisdiction(userContextID, contextID).
         then((contextResult) => {
             if (!contextResult || contextResult.length === NO_ELEMENT_SIZE) {
-                return res.status(httpCodes.BAD_REQUEST).json({ message: 'User does not belong to the POI context' }).
+                return res.status(httpCodes.UNAUTHORIZED).json({ message: 'User does not belong to the POI context' }).
                 end();
             } else if (poiDeletedStatus === deleted) {
                 return res.status(HTTP_ALREADY_REPORTED).json({ message: 'Same POI delete status. No information has been modified' }).
@@ -281,11 +256,9 @@ router.post('/:poiID', (req, res, next) => {
     });
 });
 
-// TODO check juridiction !!!SOLVED!!!
 router.get('/:poiID', (req, res, next) => {
     const { poiID } = req.params;
     const { contextID: userContext } = req.auth;
-
     if (!poiID || typeof poiID !== 'string' || !validator.isNumeric(poiID)) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
@@ -293,8 +266,7 @@ router.get('/:poiID', (req, res, next) => {
     }
 
     const { userContextDB, poiDB } = db;
-    const promisesToFulfill = [poiDB.getPOIDetailByID(poiID, true), poiDB.getPOITags(poiID), poiDB.getPOIAllMedia(poiID)];
-    Promise.all(promisesToFulfill).
+    Promise.all([poiDB.getPOIDetailByID(poiID, true), poiDB.getPOITags(poiID), poiDB.getPOIAllMedia(poiID)]).
     then((results) => {
         const poi = utils.convertObjectToCamelCase(results[ZERO_INDEX][ZERO_INDEX]);
         poi.tags = utils.convertObjectsToCamelCase(results[ONE_INDEX]);

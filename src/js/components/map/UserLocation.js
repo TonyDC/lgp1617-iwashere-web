@@ -23,7 +23,7 @@ export default function UserLocationComponent(props) {
             </IconButton>
         </div>
     </Pin>;
-};
+}
 
 UserLocationComponent.propTypes = {
     lat: PropTypes.number.isRequired,

@@ -25,6 +25,7 @@ module.exports = {
                 poi_id BIGSERIAL PRIMARY KEY,
                 name TEXT NOT NULL,
                 description TEXT NOT NULL,
+                meta_info TEXT,
                 address TEXT NOT NULL,
                 text TEXT NOT NULL,
                 latitude DOUBLE PRECISION NOT NULL,

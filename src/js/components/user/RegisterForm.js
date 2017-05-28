@@ -115,54 +115,48 @@ export default class RegisterForm extends Component {
         });
     }
 
-    checkForm() {
+    checkPassword() {
         let error = false;
-        let { email, username } = this.state;
         const { password, confirmPassword } = this.state;
-        if (typeof email !== 'string') {
-            this.setState({ emailError: 'Bad email' });
-            error = true;
-        }
-
-        if (typeof username !== 'string') {
-            this.setState({ usernameError: 'Bad username' });
-            error = true;
-        }
-
-        if (!error) {
-            email = email.trim();
-            if (validator.isEmpty(email) || !validator.isEmail(email)) {
-                this.setState({
-                    email,
-                    emailError: 'Bad email'
-                });
-                error = true;
-            }
-
-            username = username.trim();
-            if (validator.isEmpty(username)) {
-                this.setState({
-                    username,
-                    usernameError: 'Bad username'
-                });
-                error = true;
-            }
-        }
 
         if (typeof password !== 'string' || validator.isEmpty(password)) {
             this.setState({ passwordError: 'Bad password' });
             error = true;
         } else if (password.length < MINIMUM_PASSWORD_SIZE) {
-            this.setState({ passwordError: 'Weak password. Please, choose a stronger one' });
+            this.setState({ passwordError: 'Weak password. Please, choose a stronger one.' });
             error = true;
         }
 
         if (typeof confirmPassword !== 'string' || confirmPassword !== password) {
-            this.setState({ confirmPasswordError: 'The password do not match' });
+            this.setState({ confirmPasswordError: 'The passwords do not match.' });
             error = true;
         }
 
         return !error;
+    }
+
+    checkForm() {
+        let error = false;
+        let { email, username } = this.state;
+
+        email = email.trim();
+        if (typeof email !== 'string' || validator.isEmpty(email) || !validator.isEmail(email)) {
+            this.setState({ emailError: 'Invalid email.' });
+            error = true;
+        }
+
+        username = username.trim();
+        if (typeof username !== 'string' || validator.isEmpty(username)) {
+            this.setState({ usernameError: 'Invalid username.' });
+            error = true;
+        }
+
+        this.setState({
+            email,
+            username
+        });
+
+        return !error && this.checkPassword();
     }
 
     handleSubmit(event) {

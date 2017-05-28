@@ -8,13 +8,13 @@ module.exports = {
             DROP TABLE user_contexts;
         `);
     },
-// TODO change BIGINT to INTEGER
+
     up: (queryInterface) => {
         return queryInterface.sequelize.query(`
             CREATE TABLE user_contexts (
                 user_id TEXT NOT NULL REFERENCES users(uid) ON DELETE RESTRICT,
-                context_id BIGINT NOT NULL REFERENCES contexts(context_id) ON DELETE RESTRICT,
-                role_id BIGINT NOT NULL REFERENCES roles(role_id) ON DELETE RESTRICT,
+                context_id INTEGER NOT NULL REFERENCES contexts(context_id) ON DELETE RESTRICT,
+                role_id INTEGER NOT NULL REFERENCES roles(role_id) ON DELETE RESTRICT,
                 active BOOL NOT NULL DEFAULT TRUE,
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP,

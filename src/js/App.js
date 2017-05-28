@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import { Router, Route, IndexRoute, IndexRedirect, browserHistory } from 'react-router';
 import * as firebase from 'firebase';
 
-import AppShell from './components/utils/AppShell';
 import AdminShell from './components/utils/AdminShell';
 
 import MainRoutes from './routes/MainRoutes';
@@ -58,10 +57,8 @@ export default class App extends Component {
     }
 
     hookListeners() {
-        // TODO set initial container state
         this.firebaseObserverUnsubscriber = firebase.auth().onAuthStateChanged((user) => {
             if (user) {
-                firebase.auth().currentUser.getToken().then((token) => console.log(token));
                 this.context.store.dispatch(loginActionCreator(user));
             } else {
                 this.context.store.dispatch(logoutActionCreator());

@@ -1,43 +1,32 @@
 'use strict';
 
 const utils = require('../../utils/misc');
-
 const httpCodes = require('http-status-codes');
 const validator = require('validator');
 const firebaseAdmin = require('firebase-admin');
-
 const express = require('express');
 const router = express.Router();
-
 const db = root_require('src/db/query');
 
+const MINIMUM_PASSWORD_SIZE = 6;
 const NO_ELEMENTS = 0;
 const ONE_ELEMENT_SIZE = 1;
-const TWO_ELEMENT_SIZE = 2;
 const NOT_FOUND = -1;
-
 const ZERO_INDEX = 0;
 const ONE_INDEX = 1;
-const TWO_INDEX = 2;
-
-const THREE_SIZE = 3;
-
-const MINIMUM_PASSWORD_SIZE = 6;
 
 // Search for users by email
 router.get('/search', (req, res, next) => {
-    // ExpressJS automatically does URL decoding
+    const { contextID, rank } = req.auth;
     const { email } = utils.trimStringProperties(req.query);
+
     if (!email || typeof email !== 'string' || validator.isEmpty(email)) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
 
-    const { contextID, rank } = req.auth;
-
-    const { userDB } = db;
-    userDB.getUsersByEmailWithinContextAndRank(email, contextID, rank).
+    db.userDB.getUsersByEmailWithinContextAndRank(email, contextID, rank).
     then((results) => {
         if (results) {
             res.json(utils.convertObjectsToCamelCase(results)).end();
@@ -55,8 +44,7 @@ router.post('/', (req, res, next) => {
     const { rank, contextID } = req.auth;
     const { context, email, name, password, role } = utils.trimStringProperties(req.body);
 
-    if (typeof email !== 'string' || !validator.isEmail(email) ||
-        typeof name !== 'string' || validator.isEmpty(name) ||
+    if (typeof email !== 'string' || !validator.isEmail(email) || typeof name !== 'string' || validator.isEmpty(name) ||
         typeof password !== 'string' || password.length < MINIMUM_PASSWORD_SIZE) {
         res.status(httpCodes.BAD_REQUEST).json({ message: 'Bad arguments' }).
         end();
@@ -90,7 +78,6 @@ router.post('/', (req, res, next) => {
         }).
         catch((error) => {
             const { code } = error.errorInfo;
-
             // Check https://firebase.google.com/docs/auth/admin/errors
             if (['auth/user-not-found'].indexOf(code) === NOT_FOUND) {
                 return Promise.reject(error);
@@ -100,7 +87,6 @@ router.post('/', (req, res, next) => {
         });
     }).
     then((checks) => {
-        // CONFLICT
         if (!Array.isArray(checks)) {
             return null;
         }
@@ -203,7 +189,6 @@ router.put('/:userID', (req, res, next) => {
 
             const firebaseObject = { displayName: name };
             if (password !== null) {
-                console.log('Password was set', password);
                 firebaseObject.password = password;
             }
 
@@ -272,19 +257,16 @@ router.post('/:userID/', (req, res, next) => {
     }).
     catch((error) => {
         const { errorInfo } = error;
-        if (typeof errorInfo !== 'object') {
-            return next(error);
-        }
-
-        const { code } = error.errorInfo;
-        // Check https://firebase.google.com/docs/auth/admin/errors
-        if (['auth/user-not-found'].indexOf(code) !== NOT_FOUND) {
-            return res.status(httpCodes.BAD_REQUEST).
-            json({ message: 'User not found' }).
-            end();
+        if (typeof errorInfo === 'object') {
+            // Check https://firebase.google.com/docs/auth/admin/errors
+            if (['auth/user-not-found'].indexOf(error.errorInfo.code) !== NOT_FOUND) {
+                return res.status(httpCodes.BAD_REQUEST).json({ message: 'User not found' }).
+                end();
+            }
         }
 
         return next(error);
+
     });
 });
 
@@ -294,13 +276,12 @@ router.get('/:userID', (req, res, next) => {
 
     if (typeof userID !== 'string' || validator.isEmpty(userID)) {
         res.status(httpCodes.BAD_REQUEST).send({ message: 'Bad user ID' }).
-            end();
+        end();
 
         return;
     }
 
-    const { userDB } = db;
-    userDB.getUserWithinContextAndRank(userID, contextID, rank).
+    db.userDB.getUserWithinContextAndRank(userID, contextID, rank).
     then((results) => {
         if (results && Array.isArray(results) && results.length > NO_ELEMENTS) {
             res.json(utils.convertObjectsToCamelCase(results)).end();

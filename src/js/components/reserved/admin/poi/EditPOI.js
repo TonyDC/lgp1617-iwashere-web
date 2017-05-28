@@ -102,7 +102,31 @@ export default class EditPOI extends Component {
         });
     }
 
-// TODO buscar o parent
+    getFormData(data) {
+        const { name, address, description, tags, metaInfo, location, files, selectedType, contextId, filesDeleted } = data;
+
+        const form = new FormData();
+        form.append('name', name.trim());
+        form.append('address', address.trim());
+        form.append('description', description.trim());
+        form.append('tags', JSON.stringify(tags));
+        form.append('metaInfo', metaInfo.trim());
+        form.append('latitude', location.lat);
+        form.append('longitude', location.lng);
+        form.append('poiTypeId', selectedType);
+        form.append('filesDeleted', JSON.stringify(filesDeleted));
+        form.append('context', contextId);
+        // add parent...
+
+        // New files to be added
+        for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
+            // Note: In order to detect the array of files in the server, each file, individually, must be appended to the same form key.
+            form.append('poiFiles', files[fileIndex]);
+        }
+
+        return form;
+    }
+
     handleSave(data) {
         const { currentUser } = firebase.auth();
         if (!currentUser) {
@@ -116,30 +140,11 @@ export default class EditPOI extends Component {
         }
 
         const { poiID } = this;
-        const { name, address, description, tags, metaInfo, location, files, selectedType, contextId, filesDeleted } = data;
-
-        const form = new FormData();
-        form.append('name', name.trim());
-        form.append('address', address.trim());
-        form.append('description', description.trim());
-        form.append('tags', JSON.stringify(tags));
-        form.append('metaInfo', metaInfo.trim());               // TODO database
-        form.append('latitude', location.lat);
-        form.append('longitude', location.lng);
-        form.append('poiTypeId', selectedType);
-        form.append('filesDeleted', JSON.stringify(filesDeleted));
-        form.append('context', contextId);
-
-        // New files to be added
-        for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
-            // Note: In order to detect the array of files in the server, each file, individually, must be appended to the same form key.
-            form.append('poiFiles', files[fileIndex]);
-        }
 
         // 'Content-Type': `multipart/form-data` must not be added; the 'boundary' token must be provided automatically
         const headers = { 'X-user-context': contexts[selectedContextIndex].contextId };
 
-        return authenticatedFetch(`/api/reserved/content-editor/poi/${encodeURIComponent(poiID)}`, form, headers, 'PUT').
+        return authenticatedFetch(`/api/reserved/content-editor/poi/${encodeURIComponent(poiID)}`, this.getFormData(data), headers, 'PUT').
         then(checkFetchResponse);
     }
 

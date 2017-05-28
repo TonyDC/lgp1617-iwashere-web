@@ -56,15 +56,10 @@ module.exports.insertUserWithContextAndRole = (uid, name, email, contextID, role
 };
 
 module.exports.updateUser = (uid, name, removeContext = false) => {
-    let withContextRemove = '';
-    if (removeContext) {
-        withContextRemove = `UPDATE user_contexts SET active`
-    }
+    const withContextRemove = removeContext ? `UPDATE user_contexts SET active` : '';
+
     // language=POSTGRES-SQL
-    return db.query(`
-        UPDATE users SET name = :name WHERE uid = :uid;
-        ${withContextRemove}
-`, {
+    return db.query(`UPDATE users SET name = :name WHERE uid = :uid; ${withContextRemove}`, {
         replacements: {
             name,
             uid

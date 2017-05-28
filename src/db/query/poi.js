@@ -179,10 +179,10 @@ module.exports.getAllPOITypes = () => {
     });
 };
 
-module.exports.createPOI = (name, description, address, latitude, longitude, poiTypeId, editorId, contextId, parentId = null) => {
+module.exports.createPOI = (name, description, address, latitude, longitude, poiTypeId, editorId, contextId, metaInfo, parentId = null) => {
     // language=POSTGRES-PSQL
-    return db.query(`INSERT INTO pois(name, description, address, latitude, longitude, poi_type_id, parent_id, content_editor_id, context_id) 
-    VALUES (:name, :description, :address, :latitude, :longitude, :poiTypeId, :parentId, :editorId, :contextId) RETURNING poi_id`, {
+    return db.query(`INSERT INTO pois(name, description, address, latitude, longitude, poi_type_id, parent_id, content_editor_id, context_id, meta_info) 
+    VALUES (:name, :description, :address, :latitude, :longitude, :poiTypeId, :parentId, :editorId, :contextId, :metaInfo) RETURNING poi_id`, {
         replacements: {
             address,
             contextId,
@@ -190,6 +190,7 @@ module.exports.createPOI = (name, description, address, latitude, longitude, poi
             editorId,
             latitude,
             longitude,
+            metaInfo,
             name,
             parentId,
             poiTypeId
@@ -260,10 +261,10 @@ module.exports.setPOIContentDeleted = (poiContentIdList, deleted = true) => {
     });
 };
 
-module.exports.updatePOI = (poiID, contentEditorID, name, description, address, latitude, longitude, poiTypeId, contextID, parentID = null) => {
+module.exports.updatePOI = (poiID, contentEditorID, name, description, address, latitude, longitude, poiTypeId, contextID, metaInfo, parentID = null) => {
     // language=POSTGRES-SQL
     return db.query(`UPDATE pois SET name = :name, description = :description, address = :address, latitude = :latitude, longitude = :longitude,
-    poi_type_id = :poiTypeId, context_id = :contextID, parent_id = :parentID, update_content_editor_id = :contentEditorID 
+    poi_type_id = :poiTypeId, context_id = :contextID, parent_id = :parentID, update_content_editor_id = :contentEditorID, meta_info = :metaInfo 
     WHERE poi_id = :poiID`, {
         replacements: {
             address,
@@ -272,6 +273,7 @@ module.exports.updatePOI = (poiID, contentEditorID, name, description, address, 
             description,
             latitude,
             longitude,
+            metaInfo,
             name,
             parentID,
             poiID,

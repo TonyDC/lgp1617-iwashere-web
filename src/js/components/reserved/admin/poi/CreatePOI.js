@@ -37,26 +37,14 @@ export default class CreatePOI extends Component {
         this.componentIsMounted = false;
     }
 
-    handleSave(data) {
-        const { currentUser } = firebase.auth();
-        if (!currentUser) {
-            throw new Error('Bad user object');
-        }
-
-        const { reserved: reservedPropStore } = this.context.store.getState();
-        const { contexts, selectedIndex: selectedContextIndex } = reservedPropStore;
-        if (!contexts || !Array.isArray(contexts) || typeof selectedContextIndex !== 'number' || contexts.length <= selectedContextIndex) {
-            throw new Error('Bad user context selected');
-        }
-
+    getFormData(data) {
         const { name, address, description, tags, metaInfo, location, files, selectedType, contextId } = data;
-
         const form = new FormData();
         form.append('name', name.trim());
         form.append('address', address.trim());
         form.append('description', description.trim());
         form.append('tags', JSON.stringify(tags));
-        form.append('metaInfo', metaInfo.trim());                   // TODO database
+        form.append('metaInfo', metaInfo.trim());
         form.append('latitude', location.lat);
         form.append('longitude', location.lng);
         form.append('poiTypeId', selectedType);
@@ -66,10 +54,23 @@ export default class CreatePOI extends Component {
             form.append('poiFiles', files[fileIndex]);
         }
 
+        return form;
+    }
+
+    handleSave(data) {
+        if (!firebase.auth().currentUser) {
+            throw new Error('Bad user object');
+        }
+
+        const { contexts, selectedIndex: selectedContextIndex } = this.context.store.getState().reserved.reservedPropStore;
+        if (!contexts || !Array.isArray(contexts) || typeof selectedContextIndex !== 'number' || contexts.length <= selectedContextIndex) {
+            throw new Error('Bad user context selected');
+        }
+
         // 'Content-Type': `multipart/form-data` must not be added; the 'boundary' token must be provided automatically
         const headers = { 'X-user-context': contexts[selectedContextIndex].contextId };
 
-        return authenticatedFetch('/api/reserved/content-editor/poi/', form, headers, 'POST').
+        return authenticatedFetch('/api/reserved/content-editor/poi/', this.getFormData(data), headers, 'POST').
         then(checkFetchResponse);
     }
 

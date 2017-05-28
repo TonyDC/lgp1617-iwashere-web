@@ -3,9 +3,7 @@ import PropTypes from "prop-types";
 import { Helmet } from "react-helmet";
 import * as firebase from "firebase";
 import nProgress from "nprogress";
-import { FormGroup } from "react-bootstrap";
 import httpStatus from "http-status-codes";
-import { GridLoader as Loader } from "halogen";
 import Alerts from "../utils/Alerts";
 import LoginForm from "./LoginForm";
 
