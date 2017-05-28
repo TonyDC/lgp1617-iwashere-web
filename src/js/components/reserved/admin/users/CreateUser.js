@@ -47,7 +47,6 @@ export default class CreateUser extends Component {
             },
             headers = { 'X-user-context': getContext(store) };
 
-        // TODO verificar se é necessário ter 'Content-Type' e JSON.stringify
         return authenticatedFetch('/api/reserved/admin/user/', body, headers, 'POST').
         then(checkFetchResponse);
     }

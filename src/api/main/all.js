@@ -18,14 +18,15 @@ const THREE_SIZE = 3;
 
 router.get('/search', (req, res, next) => {
     let { query } = req.query;
+
+    query = query ? query.trim().split(/\s+/).
+    join(' & ') : '';
+
     if (!query || typeof query !== 'string') {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
-// TODO check if empty
-    query = query.trim().split(/\s+/).
-    join(' & ');
 
     const { poiDB, routeDB, tagDB } = db;
     Promise.all([poiDB.searchPOI(query), routeDB.searchRoute(query), tagDB.searchTag(query)]).

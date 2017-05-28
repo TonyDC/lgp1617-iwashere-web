@@ -7,9 +7,18 @@ module.exports = {
 
     up: (queryInterface) => {
         return queryInterface.bulkInsert('roles', [
-            { name: 'su', rank: 0 },
-            { name: 'admin', rank: 1 },
-            { name: 'content-editor', rank: 2 }
+            {
+                rank: 0,
+                name: 'su'
+            },
+            {
+                rank: 1,
+                name: 'admin'
+            },
+            {
+                rank: 2,
+                name: 'content-editor'
+            }
         ], {});
     }
 };

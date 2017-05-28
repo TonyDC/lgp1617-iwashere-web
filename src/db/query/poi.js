@@ -50,8 +50,7 @@ module.exports.getPOIsByID = (poiIdList, deleted = false) => {
 
 module.exports.getPOITags = (poiID) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT tags.name, tags.tag_id FROM poi_tags INNER JOIN tags ON poi_tags.tag_id = tags.tag_id 
-    WHERE poi_tags.poi_id = :poiID`, {
+    return db.query(`SELECT tags.name, tags.tag_id FROM poi_tags INNER JOIN tags ON poi_tags.tag_id = tags.tag_id WHERE poi_tags.poi_id = :poiID`, {
         replacements: { poiID },
         type: db.QueryTypes.SELECT
     });
@@ -288,8 +287,7 @@ module.exports.searchPOIsUnderContexts = (query, rootContextID, simplified = fal
 
     // language=POSTGRES-SQL
     return db.query(`SELECT ${projection} FROM pois WHERE text @@ to_tsquery(:query) AND context_id IN (
-    WITH RECURSIVE children(context_id, parent_id, name) AS (
-    SELECT context_id, parent_id, name FROM contexts WHERE context_id = :rootContextID
+    WITH RECURSIVE children(context_id, parent_id, name) AS (SELECT context_id, parent_id, name FROM contexts WHERE context_id = :rootContextID
     UNION SELECT c.context_id, c.parent_id, c.name
     FROM children p, contexts c WHERE p.context_id = c.parent_id) SELECT context_id FROM children)`, {
         replacements: {
