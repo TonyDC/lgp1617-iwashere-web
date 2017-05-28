@@ -63,7 +63,7 @@ export default class PasswordReset extends Component {
                 if (this.componentIsMounted) {
                     this.setState({
                         error: error.message,
-                        inProgress: false,
+                        inProgress: false
                     });
                 }
             });

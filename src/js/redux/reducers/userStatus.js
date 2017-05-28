@@ -19,8 +19,7 @@ export default function (state = {}, action) {
             return {
                 ...state,
                 isLogged: false,
-                userInfo: null,
-
+                userInfo: null
             };
 
         default:

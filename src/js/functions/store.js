@@ -1,5 +1,10 @@
 const NO_ELEMENTS = 0;
 
+/**
+ * Returns the user's contextId.
+ * @param store
+ * @return {*|null} the contextId of the user
+ */
 function getContext(store) {
     if (!store) {
         throw new Error('Bad store object');
