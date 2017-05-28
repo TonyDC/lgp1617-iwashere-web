@@ -1,4 +1,4 @@
-/* eslint react/no-process-env: "off" */
+/* eslint no-process-env: "off" */
 
 import React from 'react';
 import { render } from 'react-dom';

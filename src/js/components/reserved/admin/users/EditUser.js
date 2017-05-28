@@ -44,7 +44,7 @@ export default class EditUser extends Component {
 
     fetchUserInfo() {
         const { router } = this.props;
-        const { userID } = router.params;       // TODO colocar no router
+        const { userID } = router.params;
         const { store } = this.context;
 
         const headers = {

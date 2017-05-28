@@ -18,7 +18,6 @@ const ROLE_FIRST_ID = 1;
 const NO_ELEMENTS = 0;
 const MINIMUM_PASSWORD_SIZE = 6;
 
-// TODO refactor
 const mainStyle = {
     margin: 20,
     paddingBottom: 10,
@@ -32,14 +31,14 @@ export default class UserForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            context: null,
             email: '',
             emailError: false,
-            password: '',
-            passwordError: false,
             name: '',
             nameError: false,
+            password: '',
+            passwordError: false,
             role: null,
-            context: null,
             submitInProgress: false,
             suspended: null
         };
@@ -75,7 +74,7 @@ export default class UserForm extends Component {
     }
 
     handleContextSelection(event) {
-        const { nodes, edges } = event;
+        const { nodes } = event;
         const [selectedIndex] = nodes;
         if (typeof selectedIndex === 'number') {
             this.setState({ context: selectedIndex });
@@ -90,11 +89,9 @@ export default class UserForm extends Component {
         }
     }
 
-    checkParams() {
+    checkFormData() {
         let error = false;
         let { email, name } = this.state;
-        const { password, role, context } = this.state;
-        const { onDelete } = this.props;
 
         name = name.trim();
         if (name.length === NO_ELEMENTS) {
@@ -114,9 +111,14 @@ export default class UserForm extends Component {
             error = true;
         }
 
-        // TODO password strenght
-        // Edit mode activated
-        if (typeof onDelete === 'function') {
+        return !error;
+    }
+
+    checkParams() {
+        let error = !this.checkFormData();
+        const { password, role } = this.state;
+
+        if (typeof this.props.onDelete === 'function') {
             if (password.length === NO_ELEMENTS) {
                 this.setState({ passwordError: 'A password must be provided' });
                 error = true;
@@ -216,8 +218,6 @@ export default class UserForm extends Component {
             }
         }).
         catch((error) => {
-            console.error(error);
-
             if (this.formFetchError) {
                 Alerts.close(this.formFetchError);
                 this.formFetchError = null;
@@ -240,14 +240,14 @@ export default class UserForm extends Component {
 
     resetFields() {
         this.setState({
+            context: null,
             email: '',
             emailError: false,
-            password: '',
-            passwordError: false,
             name: '',
             nameError: false,
+            password: '',
+            passwordError: false,
             role: null,
-            context: null,
             submitInProgress: false,
             suspended: null
         });

@@ -1,4 +1,4 @@
-/* eslint react/max-lines: "warn" */
+/* eslint max-lines: "warn" */
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -36,7 +36,6 @@ const POI_TYPE_LANG_SEPARATOR = ';';
 const NOT_FOUND = -1;
 const DECIMAL_BASE = 10;
 
-// TODO refactor
 const mainStyle = {
     margin: 20,
     paddingBottom: 10,
