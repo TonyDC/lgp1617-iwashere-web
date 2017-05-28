@@ -1,3 +1,5 @@
+/* eslint react/max-lines: "warn" */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import GoogleMapReact from 'google-map-react';
@@ -48,9 +50,7 @@ const mapContainerStyle = {
     width: 'auto'
 };
 
-const mapStyle = {
-    height: '100%'
-};
+const mapStyle = { height: '100%' };
 
 const dropzoneContainerStyle = {
     minHeight: 100,
@@ -266,7 +266,7 @@ export default class POIForm extends Component {
         }
 
         const cloneFilesArray = this.state.files.slice(ZERO_INDEX);
-        // TODO index files array by file hash
+
         files.forEach((file) => {
             Object.assign(file, { _idx: this.lastMediaIndex++ });
             cloneFilesArray.push(file);
@@ -274,16 +274,15 @@ export default class POIForm extends Component {
         this.setState({ files: cloneFilesArray });
     }
 
-    checkParams() {
+    checkFormData() {
         let error = false;
         let { name, address, description } = this.state;
-        const { selectedType, location, contextId } = this.state;
 
         name = name.trim();
         if (name.length === NO_ELEMENTS) {
             this.setState({
                 name,
-                nameError: 'Name must not be empty'
+                nameError: 'Name must not be empty.'
             });
             error = true;
         }
@@ -292,7 +291,7 @@ export default class POIForm extends Component {
         if (address.length === NO_ELEMENTS) {
             this.setState({
                 address,
-                addressError: 'Address must not be empty'
+                addressError: 'Address must not be empty.'
             });
             error = true;
         }
@@ -301,31 +300,31 @@ export default class POIForm extends Component {
         if (description.length === NO_ELEMENTS) {
             this.setState({
                 description,
-                descriptionError: 'Description must not be empty'
+                descriptionError: 'Description must not be empty.'
             });
             error = true;
         }
 
+        return !error;
+    }
+
+    checkParams() {
+        Alerts.closeAll();
+        let error = !this.checkFormData();
+        const { selectedType, location, contextId } = this.state;
+
         if (selectedType < POI_TYPE_FIRST_ID) {
-            this.setState({ selectedTypeError: 'Bad selected type' });
+            this.setState({ selectedTypeError: 'Invalid type selected.' });
             error = true;
         }
 
         if (location === null) {
-            if (this.locationErrorAlert) {
-                Alerts.close(this.locationErrorAlert);
-                this.locationErrorAlert = null;
-            }
-            this.locationErrorAlert = Alerts.createErrorAlert('A location must be chosen for the POI in the map');
+            Alerts.createErrorAlert('A location must be chosen for the POI in the map.');
             error = true;
         }
 
         if (contextId === null) {
-            if (this.contextErrorAlert) {
-                Alerts.close(this.contextErrorAlert);
-                this.contextErrorAlert = null;
-            }
-            this.contextErrorAlert = Alerts.createErrorAlert('A context must be chosen from the tree');
+            Alerts.createErrorAlert('A context must be chosen from the tree.');
             error = true;
         }
 
@@ -355,8 +354,7 @@ export default class POIForm extends Component {
             }
             Alerts.createInfoAlert('POI information successfully submitted');
         }).
-        catch((error) => {
-            console.log(error);
+        catch(() => {
             if (this.formFetchError) {
                 Alerts.close(this.formFetchError);
                 this.formFetchError = null;
@@ -401,8 +399,7 @@ export default class POIForm extends Component {
                 });
             }
         }).
-        catch((err) => {
-            console.error(err);
+        catch(() => {
             if (this.componentIsMounted) {
                 this.setState({ submitInProgress: false });
             }
@@ -438,7 +435,6 @@ export default class POIForm extends Component {
         tree.clearSelection();
     }
 
-    // TODO campo para colocar o parent do POI
     render() {
         const { poiId, location, metaInfo, name, nameError, address, addressError, description, descriptionError, selectedType, selectedTypeError, submitInProgress, deleted } = this.state;
 

@@ -78,59 +78,51 @@ export default class UserSearch extends Component {
     submitSearch(event) {
         event.preventDefault();
 
-        const { inProgress } = this.state;
-        if (!this.componentIsMounted || inProgress) {           // TODO check this in the remaining components
-            return;
-        }
-
-        if (this.searchErrorAlert) {
+        if (this.componentIsMounted && !this.state.inProgress) {
             Alerts.close(this.searchErrorAlert);
-            this.searchErrorAlert = null;
-        }
 
-        let { search } = this.state;
-        if (typeof search !== 'string') {
-            this.setState({ searchError: true });
+            let { search } = this.state;
+            if (typeof search !== 'string') {
+                this.setState({ searchError: true });
 
-            return;
-        }
-
-        search = search.trim();
-        this.setState({ search });
-        if (search.length === NO_ELEMENTS) {
-            this.setState({ searchError: true });
-
-            return;
-        }
-
-        this.setState({
-            inProgress: true,
-            searchError: false
-        });
-        nProgress.start();
-        this.performSearch(search).
-        then((results) => {
-            if (this.componentIsMounted) {
-                this.setState({
-                    inProgress: false,
-                    results
-                });
+                return;
             }
-        }).
-        catch((error) => {
-            const { status } = error;
-            if (this.componentIsMounted) {
-                this.setState({ inProgress: false });
-                let alertText = 'Error while searching for users. Please, try again later.';
-                if (status === httpCodes.BAD_REQUEST) {
-                    alertText = 'Bad search input. Please, provide the email to search for.';
+
+            search = search.trim();
+            this.setState({ search });
+            if (search.length === NO_ELEMENTS) {
+                this.setState({ searchError: true });
+
+                return;
+            }
+
+            this.setState({
+                inProgress: true,
+                searchError: false
+            });
+            nProgress.start();
+            this.performSearch(search).then((results) => {
+                if (this.componentIsMounted) {
+                    this.setState({
+                        inProgress: false,
+                        results
+                    });
                 }
-                this.searchErrorAlert = Alerts.createErrorAlert(alertText);
-            }
-        }).
-        then(() => {
-            nProgress.done();
-        });
+            }).
+            catch((error) => {
+                if (this.componentIsMounted) {
+                    this.setState({ inProgress: false });
+                    let alertText = 'Error while searching for users. Please, try again later.';
+                    if (error.status === httpCodes.BAD_REQUEST) {
+                        alertText = 'Bad search input. Please, provide the email to search for.';
+                    }
+                    this.searchErrorAlert = Alerts.createErrorAlert(alertText);
+                }
+            }).
+            then(() => {
+                nProgress.done();
+            });
+        }
     }
 
     renderResultsArea() {

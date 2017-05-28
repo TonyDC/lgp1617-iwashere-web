@@ -40,7 +40,11 @@ export default class Alerts extends Component {
     }
 
     static close(alertID) {
-        return Alert.close(alertID);
+        if (alertID) {
+            return Alert.close(alertID);
+        }
+
+        return false;
     }
 
     constructor(props) {
