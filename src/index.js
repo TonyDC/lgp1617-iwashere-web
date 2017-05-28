@@ -16,9 +16,6 @@ import 'bootstrap/dist/css/bootstrap.css';
 // Bootstrap Social
 import 'bootstrap-social';
 
-// Custom CSS
-import './styles/index.scss';
-
 // Material Design
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
@@ -46,6 +43,7 @@ then((results) => {
     }
 
     // Render App
+
     render(
         <MuiThemeProvider muiTheme={getMuiTheme()}>
             <Provider store={store}>
@@ -53,6 +51,7 @@ then((results) => {
             </Provider>
         </MuiThemeProvider>,
         document.getElementById('main'));
+
 }).
 catch((error) => {
     console.log(error);
