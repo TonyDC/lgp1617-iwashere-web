@@ -2,26 +2,41 @@
 
 const db = require('../index');
 
-module.exports.getRouteDetailByID = (id, deleted = false) => {
+module.exports.getRouteDetailByID = (id, includeDeleted = false) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT * FROM routes 
-    WHERE route_id = :id AND (deleted = FALSE OR :deleted)`, {
+    WHERE route_id = :id AND (deleted = FALSE OR :includeDeleted)`, {
         replacements: {
-            deleted,
-            id
+            id,
+            includeDeleted
         },
         type: db.QueryTypes.SELECT
     });
 };
 
-module.exports.getPOIsByRouteID = (id, deleted = false) => {
+module.exports.getPOIsByRouteID = (id, includeDeleted = false) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT * 
     FROM route_pois INNER JOIN pois ON route_pois.poi_id = pois.poi_id
-    WHERE route_id = :id AND (deleted = FALSE OR :deleted)`, {
+    WHERE route_id = :id AND (pois.deleted = FALSE OR :includeDeleted)
+    ORDER BY route_pois.poi_order`, {
         replacements: {
-            deleted,
-            id
+            id,
+            includeDeleted
+        },
+        type: db.QueryTypes.SELECT
+    });
+};
+
+module.exports.getRoutesByPoiID = (id, includeDeleted = false) => {
+    // language=POSTGRES-SQL
+    return db.query(`SELECT * 
+    FROM route_pois INNER JOIN routes ON route_pois.poi_id = routes.route_id
+    WHERE poi_id = :id AND (routes.deleted = FALSE OR :includeDeleted)
+    ORDER BY route.rating DESC`, {
+        replacements: {
+            id,
+            includeDeleted
         },
         type: db.QueryTypes.SELECT
     });
@@ -29,7 +44,9 @@ module.exports.getPOIsByRouteID = (id, deleted = false) => {
 
 module.exports.getTagsByRouteID = (id) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT * FROM route_tags WHERE route_id = :id`, {
+    return db.query(`SELECT * 
+    FROM route_tags INNER JOIN tags ON route_tags.tag_id = tags.tag_id 
+    WHERE route_id = :id`, {
         replacements: { id },
         type: db.QueryTypes.SELECT
     });
@@ -69,22 +86,32 @@ module.exports.addRouteRating = (routeID, userID, rating) => {
     });
 };
 
-module.exports.searchRoute = (query) => {
+module.exports.searchRoute = (query, includeDeleted = false) => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT * FROM routes 
-    WHERE text @@ to_tsquery(:query) AND deleted = FALSE`, {
-        replacements: { query },
+    return db.query(`WITH route_ratings AS 
+    (SELECT AVG(rating) AS rating, route_id
+    FROM (SELECT DISTINCT ON (user_id) route_id, rating FROM route_ratings
+    ORDER BY user_id, created_at DESC) current_ratings GROUP BY route_id)
+    SELECT *, CASE WHEN rating IS NULL THEN 0 ELSE rating END AS rating, routes.route_id
+    FROM routes LEFT JOIN route_ratings ON routes.route_id = route_ratings.route_id
+    WHERE text @@ to_tsquery(:query) AND (deleted = FALSE OR :includeDeleted) 
+    ORDER BY route_ratings.rating DESC NULLS LAST, name`, {
+        replacements: {
+            includeDeleted,
+            query
+        },
         type: db.QueryTypes.SELECT
     });
 };
 
-module.exports.createRoute = (name, description, editorId) => {
+module.exports.createRoute = (name, description, editorId, contextId) => {
     // language=POSTGRES-SQL
     return db.query(`INSERT INTO 
-    routes(name, description, content_editor_id) 
-    VALUES (:name, :description, :editorId) 
+    routes(name, description, content_editor_id, context_id) 
+    VALUES (:name, :description, :editorId, :contextId) 
     RETURNING route_id`, {
         replacements: {
+            contextId,
             description,
             editorId,
             name
@@ -94,9 +121,9 @@ module.exports.createRoute = (name, description, editorId) => {
 };
 
 module.exports.setRouteTags = (routeId, tagIdList) => {
-    // language=POSTGRES-SQL
+    // language=POSTGRES-PSQL
     return db.query(`
-    WITH previous_tags AS (DELETE FROM route_tags WHERE route_id = :routeId RETURNING tag_id)
+    DELETE FROM route_tags WHERE route_id = :routeId;
     INSERT INTO route_tags(route_id, tag_id)
     VALUES (:routeId, unnest(array[:tagIdList])) ON CONFLICT DO NOTHING RETURNING tag_id`, {
         replacements: {
@@ -108,13 +135,14 @@ module.exports.setRouteTags = (routeId, tagIdList) => {
 };
 
 module.exports.setRoutePOIs = (routeId, poiIdList) => {
-    // language=POSTGRES-SQL
+    // language=POSTGRES-PSQL
     return db.query(`
-    WITH previous_pois AS (DELETE FROM route_pois WHERE route_id = :routeId RETURNING tag_id)
-    INSERT INTO route_pois(route_id, poi_id)
-    VALUES (:routeId, unnest(array[:poiIdList])) ON CONFLICT DO NOTHING RETURNING poi_id`, {
+    DELETE FROM route_pois WHERE route_id = :routeId;
+    INSERT INTO route_pois(route_id, poi_id, poi_order)
+    VALUES (:routeId, unnest(array[:poiIdList]), generate_series(1, :poiListLength)) ON CONFLICT DO NOTHING RETURNING poi_id`, {
         replacements: {
             poiIdList,
+            poiListLength: poiIdList.length,
             routeId
         },
         type: db.QueryTypes.INSERT
@@ -125,7 +153,7 @@ module.exports.getContentEditorRoute = (userID, routeID) => {
     // language=POSTGRES-SQL
     return db.query(`SELECT *
     FROM routes
-    WHERE route_id = :routeID AND user_id = :userId`, {
+    WHERE route_id = :routeID AND content_editor_id = :userID`, {
         replacements: {
             routeID,
             userID
@@ -134,13 +162,14 @@ module.exports.getContentEditorRoute = (userID, routeID) => {
     });
 };
 
-module.exports.updateRoute = (routeId, name, description) => {
+module.exports.updateRoute = (routeId, name, description, contextId) => {
     // language=POSTGRES-SQL
     return db.query(`UPDATE routes
-    SET name = :name AND description = :description 
+    SET name = :name, description = :description, context_id = :contextId
     WHERE route_id = :routeId
     RETURNING route_id`, {
         replacements: {
+            contextId,
             description,
             name,
             routeId
@@ -149,15 +178,14 @@ module.exports.updateRoute = (routeId, name, description) => {
     });
 };
 
-module.exports.setRouteDeleted = (userID, routeID, deleted = true) => {
-    // language=POSTGRES-SQL
+module.exports.setRouteDeleted = (routeID, deleted = true) => {
+    // language=POSTGRES-PSQL
     return db.query(`UPDATE routes
     SET deleted = :deleted
-    WHERE poi_id = :poiID AND user_id = :userID`, {
+    WHERE route_id = :routeID`, {
         replacements: {
             deleted,
-            routeID,
-            userID
+            routeID
         },
         type: db.QueryTypes.UPDATE
     });

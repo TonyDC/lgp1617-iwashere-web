@@ -14,6 +14,7 @@ module.exports = {
             CREATE TABLE roles (
                 role_id SERIAL PRIMARY KEY,
                 name TEXT NOT NULL UNIQUE,
+                rank INTEGER NOT NULL,          -- TODO BITMAP INDEX
                 created_at TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP
             );

@@ -2,8 +2,10 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Router, Route, IndexRoute, browserHistory } from 'react-router';
+import { Router, Route, IndexRoute, IndexRedirect, browserHistory } from 'react-router';
 import * as firebase from 'firebase';
+
+import AdminShell from './components/utils/AdminShell';
 
 import MainRoutes from './routes/MainRoutes';
 
@@ -15,7 +17,7 @@ import Register from './components/user/Register';
 import PasswordReset from './components/user/PasswordReset';
 import POIDetail from './components/poi/POIDetail';
 import RouteDetail from './components/route/RouteDetail';
-import POISearch from './components/poi/POISearch';
+import Search from './components/search/Search';
 import Feed from './components/feed/Feed';
 import POICreatePost from './components/poi/POICreatePost';
 
@@ -23,9 +25,23 @@ import UnauthRoutes from './routes/UnauthRoutes';
 import POIRoutes from './routes/POIRoutes';
 import RouteRoutes from './routes/RouteRoutes';
 
+import POIArea from './components/reserved/admin/poi/POIArea';
+import CreatePOI from './components/reserved/admin/poi/CreatePOI';
+import EditPOI from './components/reserved/admin/poi/EditPOI';
+import RouteArea from './components/reserved/admin/routes/RouteArea';
+import CreateRoute from './components/reserved/admin/routes/CreateRoute';
+import EditRoute from './components/reserved/admin/routes/EditRoute';
+import UserArea from './components/reserved/admin/users/UserArea';
+import CreateUser from './components/reserved/admin/users/CreateUser';
+import EditUser from './components/reserved/admin/users/EditUser';
+
+import Alerts from './components/utils/Alerts';
+
 import { loginActionCreator, logoutActionCreator } from './redux/action creators/login';
 
 import 'styles/app.scss';
+
+const NO_ELEMENTS = 0;
 
 export default class App extends Component {
 
@@ -50,17 +66,21 @@ export default class App extends Component {
         });
     }
 
-    /*
-     * Note:
-     *  Firebase stores, in the local storage, information regarding the current logged in user.
-     *  Since Firebase has a delay as to confirm the identity of the user, it is required if a user is already logged in. Hence, the usage of the local storage.
-     */
     redirectIfLoggedIn(nextState, replace) {
-        const currentState = this.context.store.getState();
+        const { currentUser } = firebase.auth();
         // { pathname: '/', state: <anyState> }
-        const localStorageProperty = `firebase:authUser:${firebase.app().options.apiKey}:[DEFAULT]`;
-        if (currentState.userStatus.isLogged || localStorage[localStorageProperty]) {
+        if (currentUser) {
             replace({ pathname: '/' });
+        }
+    }
+
+    redirectIfReservedNotLoggedIn(nextState, replace) {
+        const reduxState = this.context.store.getState();
+        const { reserved } = reduxState;
+        const { contexts } = reserved;
+        if (!Array.isArray(contexts) || contexts.length === NO_ELEMENTS) {
+            replace({ pathname: '/' });
+            Alerts.createErrorAlert('User without enough permissions');
         }
     }
 
@@ -69,9 +89,9 @@ export default class App extends Component {
             <Router history={ browserHistory }>
                 <Route path="/" component={ MainRoutes }>
                     <IndexRoute component={ Map } />
+                    <Route path="search" component={ Search }/>
                     <Route path="feed" component={ Feed }/>
                     <Route path="poi" component={ POIRoutes }>
-                        <Route path="search" component={ POISearch } />
                         <Route path=":id" component={ POIDetail } />
                         <Route path="post" component={ POICreatePost } />
                     </Route>
@@ -82,6 +102,26 @@ export default class App extends Component {
                         <Route path="login" component={ Login }/>
                         <Route path="register" component={ Register }/>
                         <Route path="recover" component={ PasswordReset }/>
+                    </Route>
+                    <Route path="reserved" onEnter={ this.redirectIfReservedNotLoggedIn.bind(this) }>
+                        <Route path="dash" component={ AdminShell }>
+                            <IndexRedirect to="poi" />
+                            <Route path="poi">
+                                <IndexRoute component={ POIArea } />
+                                <Route path="create" component={ CreatePOI } />
+                                <Route path=":poiID" component={ EditPOI } />
+                            </Route>
+                            <Route path="route">
+                                <IndexRoute component={ RouteArea } />
+                                <Route path="create" component={ CreateRoute } />
+                                <Route path=":id" component={ EditRoute } />
+                            </Route>
+                            <Route path="user">
+                                <IndexRoute component={ UserArea } />
+                                <Route path="create" component={ CreateUser } />
+                                <Route path=":id" component={ EditUser } />
+                            </Route>
+                        </Route>
                     </Route>
                     <Route path="*" component={ NoMatch }/>
                 </Route>

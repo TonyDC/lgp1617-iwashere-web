@@ -1,28 +1,27 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import Alert from 'react-s-alert';
-import { Helmet } from 'react-helmet';
-import * as firebase from 'firebase';
-import { Form, FormGroup, InputGroup, FormControl, Button } from 'react-bootstrap';
-import validator from 'validator';
-import httpStatus from 'http-status-codes';
-import { GridLoader as Loader } from 'halogen';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { Helmet } from "react-helmet";
+import * as firebase from "firebase";
+import nProgress from "nprogress";
+import httpStatus from "http-status-codes";
+import Alerts from "../utils/Alerts";
+import LoginForm from "./LoginForm";
 
-import MyButton from '../utils/MyButton';
-import Alerts from '../utils/Alerts';
+import { authenticatedFetch, checkFetchResponse } from "../../functions/fetch";
+import { addReservedContexts } from "../../redux/action creators/reserved";
 
-import 'styles/app.scss';
-import 'styles/login.scss';
-import 'styles/utils.scss';
+import "styles/app.scss";
+import "styles/login.scss";
+import "styles/utils.scss";
 
-const NO_ERROR = 0;
+const ZERO_INDEX = 0;
+const NO_ELEMENTS = 0;
 
 export default class Login extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            email: '',
             errors: [],
             inProgress: false,
             password: ''
@@ -40,25 +39,21 @@ export default class Login extends Component {
 
     closePreviousErrors() {
         this.state.errors.forEach((error) => {
-            Alert.close(error);
+            Alerts.close(error);
         });
 
-        if (!this.componentIsMounted) {
-            return;
+        if (this.componentIsMounted) {
+            this.setState({ errors: [] });
         }
-
-        this.setState({ errors: [] });
     }
 
     handleError(error) {
-        const { message } = error;
-
         this.closePreviousErrors();
-
         if (!this.componentIsMounted) {
             return;
         }
 
+        const { message } = error;
         const currentError = Alerts.createErrorAlert(message);
         this.setState({
             errors: [currentError],
@@ -67,15 +62,13 @@ export default class Login extends Component {
     }
 
     loginPopup(provider) {
-        if (this.state.inProgress) {
-            return;
-        }
-
-        if (!this.componentIsMounted) {
+        const { inProgress } = this.state;
+        if (inProgress || !this.componentIsMounted) {
             return;
         }
 
         this.setState({ inProgress: true });
+        nProgress.start();
 
         firebase.auth().signInWithPopup(provider).
         then((userRecord) => {
@@ -99,36 +92,56 @@ export default class Login extends Component {
                 return null;
             });
         }).
+        then(this.handleUserTypeFetch.bind(this)).
         then(() => {
-            if (!this.componentIsMounted) {
-                return;
-            }
-
-            this.setState({ inProgress: false });
             this.props.router.push('/');
+            if (this.componentIsMounted) {
+                this.setState({ inProgress: false });
+            }
         }).
         catch((error) => {
             this.handleError(error);
+        }).
+        then(() => {
+            nProgress.done();
         });
     }
 
-    loginUser(event) {
-        event.preventDefault();
+    loginUser(email, password) {
+        const { inProgress } = this.state;
 
-        if (this.state.inProgress || !this.checkForm() || !this.componentIsMounted) {
+        if (inProgress || !this.componentIsMounted) {
             return;
         }
 
         this.setState({ inProgress: true });
+        nProgress.start();
 
-        const { email, password } = this.state;
         firebase.auth().signInWithEmailAndPassword(email, password).
+        then(this.handleUserTypeFetch.bind(this)).
         then(() => {
-            this.setState({ inProgress: false });
             this.props.router.push('/');
+            if (this.componentIsMounted) {
+                this.setState({ inProgress: false });
+            }
         }).
         catch((error) => {
             this.handleError(error);
+        }).
+        then(() => {
+            nProgress.done();
+        });
+    }
+
+    handleUserTypeFetch() {
+        return authenticatedFetch('/api/reserved/user-type', {}, { 'Accept': 'application/json' }, 'GET').
+        then(checkFetchResponse).
+        then((contexts) => {
+            let index = null;
+            if (Array.isArray(contexts) && contexts.length > NO_ELEMENTS) {
+                index = ZERO_INDEX;
+            }
+            this.context.store.dispatch(addReservedContexts(contexts, index));
         });
     }
 
@@ -146,118 +159,28 @@ export default class Login extends Component {
         this.loginPopup(provider);
     }
 
-    checkForm() {
-        this.closePreviousErrors();
-
-        const { email, password } = this.state;
-        const errorList = [];
-
-        if (typeof email !== 'string' || !email || validator.isEmpty(email.trim()) || !validator.isEmail(email)) {
-            errorList.push(Alerts.createErrorAlert("The email entered is not valid."));
-
-        } else if (!password || validator.isEmpty(password)) {
-            errorList.push(Alerts.createErrorAlert("The password is required."));
-        }
-
-        this.setState({ errors: errorList });
-
-        return errorList.length === NO_ERROR;
+    handleRegister() {
+        this.props.router.push('/user/register');
     }
 
-    handleEmail(event) {
-        event.preventDefault();
-        this.setState({ email: event.target.value });
-    }
-
-    handlePassword(event) {
-        event.preventDefault();
-        this.setState({ password: event.target.value });
+    handleForgotPassword() {
+        this.props.router.push('/user/recover');
     }
 
     render() {
-        let signInForm = null;
-        let otherSignInOptions = null;
-        let signInInProgress = null;
-
-        if (this.state.inProgress) {
-            signInInProgress =
-                <FormGroup className="hor-align vert-align">
-                    <h1 className="loader-text">Signing in progress...</h1>
-                    <Loader color="#012935" className="loader"/>
-                </FormGroup>;
-        } else {
-            signInForm =
-                <Form horizontal className="login-form" onSubmit={ this.loginUser.bind(this) }>
-                    <FormGroup>
-                        <InputGroup>
-                            <InputGroup.Addon>
-                                <i className="fa fa-envelope fa" aria-hidden="true"/>
-                            </InputGroup.Addon>
-                            <FormControl
-                                type="text"
-                                value={this.state.email}
-                                placeholder="Enter your email"
-                                onChange={this.handleEmail.bind(this)}
-                            />
-                        </InputGroup>
-                    </FormGroup>
-                    <FormGroup>
-                        <InputGroup>
-                            <InputGroup.Addon>
-                                <i className="fa fa-lock fa-lg" aria-hidden="true"/>
-                            </InputGroup.Addon>
-                            <FormControl
-                                type="password"
-                                value={this.state.password}
-                                placeholder="Enter your password"
-                                onChange={this.handlePassword.bind(this)}
-                            />
-                        </InputGroup>
-                    </FormGroup>
-                    <FormGroup className="box">
-                        <Button type="submit"
-                                className="btn btn-primary btn-md btn-block login-button colorAccent"
-                                onClick={ this.loginUser.bind(this) }>
-                            Sign In
-                        </Button>
-                    </FormGroup>
-                </Form>;
-
-            otherSignInOptions =
-                <div>
-                    <FormGroup className="hor-align">
-                        or
-                    </FormGroup>
-
-                    <FormGroup className="box">
-                        <Button className="btn btn-block btn-social btn-md btn-facebook"
-                                onClick={ this.loginFacebook.bind(this) }>
-                            <span className="fa fa-facebook"/> Sign in with Facebook
-                        </Button>
-                    </FormGroup>
-
-                    <FormGroup className="box">
-                        <Button className="btn btn-block btn-social btn-md btn-google"
-                                onClick={ this.loginGoogle.bind(this) }>
-                            <span className="fa fa-google"/> Sign in with Google
-                        </Button>
-                    </FormGroup>
-
-                    <MyButton url="/user/recover">Forgot your password?</MyButton>
-
-                    <MyButton url="/user/register">Don't have an account?</MyButton>
-
-                </div>;
-        }
+        const { inProgress } = this.state;
 
         return (
             <div>
                 <Helmet>
                     <title>#iwashere - Sign in</title>
                 </Helmet>
-                { signInForm }
-                { otherSignInOptions }
-                { signInInProgress }
+                <LoginForm disableButtons={inProgress}
+                           handleRegister={ this.handleRegister.bind(this) }
+                           handleForgotPassword={ this.handleForgotPassword.bind(this) }
+                           handleLogin={this.loginUser.bind(this)}
+                           handleFacebook={this.loginFacebook.bind(this)}
+                           handleGoogle={this.loginGoogle.bind(this)} />
             </div>
         );
     }

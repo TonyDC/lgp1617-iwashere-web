@@ -109,8 +109,8 @@ router.get('/rating/:poiID/:userID', (req, res, next) => {
             res.json(result[ZERO_INDEX]).end();
         } else {
             res.status(httpCodes.NO_CONTENT).
-                json({ rating: 0 }).
-                end();
+            json({ rating: 0 }).
+            end();
         }
     }).
     catch((error) => {
@@ -164,37 +164,10 @@ router.get('/range/:minLat/:maxLat/:minLng/:maxLng', (req, res, next) => {
     const { poiDB } = db;
     poiDB.getPOIsWithin(minLat, maxLat, minLng, maxLng).
     then((rows) => {
-        if (rows) {
-            res.json(utils.convertObjectsToCamelCase(rows)).end();
-        } else {
-            res.sendStatus(httpCodes.NO_CONTENT).end();
-        }
-    }).
-    catch((error) => {
-        next(error);
-    });
-});
-
-router.get('/:id', (req, res, next) => {
-    const { id } = req.params;
-    if (!id || isNaN(parseInt(id, DECIMAL_BASE))) {
-        res.sendStatus(httpCodes.BAD_REQUEST).end();
-
-        return;
-    }
-
-    const { poiDB } = db;
-    Promise.all([poiDB.getPOIDetailByID(id), poiDB.getPOITags(id)]).
-    then((results) => {
-        if (results && results.length === TWO_SIZE &&
-            results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE) {
-            const poi = utils.convertObjectToCamelCase(results[ZERO_INDEX][ZERO_INDEX]);
-            poi.tags = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
-
-            res.json(poi).end();
-        } else {
-            res.sendStatus(httpCodes.NO_CONTENT).end();
-        }
+        aux.handlePOIResults(rows).
+        then((pois) => {
+            res.json(pois).end();
+        });
     }).
     catch((error) => {
         next(error);
@@ -245,6 +218,49 @@ router.get('/suggestions/:limit', (req, res, next) => {
                 res.json(suggestions).end();
             }
         });
+    }).
+    catch((error) => {
+        next(error);
+    });
+});
+
+router.get('/types', (req, res, next) => {
+    const { poiDB } = db;
+    poiDB.getAllPOITypes().
+    then((types) => {
+        if (types) {
+            res.json(utils.convertObjectsToCamelCase(types)).end();
+        } else {
+            res.sendStatus(httpCodes.NO_CONTENT).end();
+        }
+    }).
+    catch((error) => {
+        next(error);
+    });
+});
+
+// NOTE: this endpoint definition must be the last one, as the placeholder may conflict with the previous endpoints.
+// Endpoints are visited taking into consideration the order they are defined.
+router.get('/:id', (req, res, next) => {
+    const { id } = req.params;
+    if (!id || isNaN(parseInt(id, DECIMAL_BASE))) {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    const { poiDB } = db;
+    Promise.all([poiDB.getPOIDetailByID(id), poiDB.getPOITags(id)]).
+    then((results) => {
+        if (results && results.length === TWO_SIZE &&
+            results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE) {
+            const poi = utils.convertObjectToCamelCase(results[ZERO_INDEX][ZERO_INDEX]);
+            poi.tags = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
+
+            res.json(poi).end();
+        } else {
+            res.sendStatus(httpCodes.NO_CONTENT).end();
+        }
     }).
     catch((error) => {
         next(error);

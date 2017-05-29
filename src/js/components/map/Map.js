@@ -3,50 +3,15 @@ import PropTypes from 'prop-types';
 import GoogleMapReact from 'google-map-react';
 import Alerts from '../utils/Alerts';
 import httpCodes from 'http-status-codes';
-import { red500 as POIColor, blue500 as currentLocationColor } from 'material-ui/styles/colors';
+
 import { GOOGLE_MAPS_API_KEY } from '../../../../config';
 import POISideBar from '../poi/POISideBar';
 
-import Pin from './Pin';
-
-import IconButton from 'material-ui/IconButton';
-import CommunicationLocationOn from 'material-ui/svg-icons/communication/location-on';
-import MapsMyLocation from 'material-ui/svg-icons/maps/my-location';
+import POIComponent from './SelectedLocation';
+import UserLocationComponent from './UserLocation';
 
 import 'styles/utils.scss';
 import 'styles/map.scss';
-
-const POIComponent = (props) => {
-    return <Pin lat={props.lat} lng={props.lng} onClick={props.clickHandler}>
-        <div className="pin">
-            <IconButton>
-                <CommunicationLocationOn color={ POIColor }/>
-            </IconButton>
-        </div>
-    </Pin>;
-};
-
-POIComponent.propTypes = {
-    clickHandler: PropTypes.any.isRequired,
-    lat: PropTypes.number.isRequired,
-    lng: PropTypes.number.isRequired
-};
-
-
-const UserLocationComponent = (props) => {
-    return <Pin lat={ props.lat } lng={ props.lng }>
-        <div className="pin">
-            <IconButton>
-                <MapsMyLocation color={ currentLocationColor }/>
-            </IconButton>
-        </div>
-    </Pin>;
-};
-
-UserLocationComponent.propTypes = {
-    lat: PropTypes.number.isRequired,
-    lng: PropTypes.number.isRequired
-};
 
 export default class Map extends Component {
 
@@ -145,7 +110,8 @@ export default class Map extends Component {
             return;
         }
 
-        fetch(`/api/poi/range/${currentMinLat}/${currentMaxLat}/${currentMinLng}/${currentMaxLng}`).then((response) => {
+        fetch(`/api/poi/range/${currentMinLat}/${currentMaxLat}/${currentMinLng}/${currentMaxLng}`).
+        then((response) => {
             if (response.status >= httpCodes.BAD_REQUEST) {
                 return Promise.reject(new Error(response.statusText));
             }
@@ -153,21 +119,19 @@ export default class Map extends Component {
             return response.json();
         }).
         then((response) => {
-            if (!this.componentIsMounted) {
-                return;
+            if (this.componentIsMounted) {
+                this.setState({
+                    response: {
+                        area: {
+                            maxLat: currentMaxLat,
+                            maxLng: currentMaxLng,
+                            minLat: currentMinLat,
+                            minLng: currentMinLng
+                        },
+                        content: response
+                    }
+                });
             }
-
-            this.setState({
-                response: {
-                    area: {
-                        maxLat: currentMaxLat,
-                        maxLng: currentMaxLng,
-                        minLat: currentMinLat,
-                        minLng: currentMinLng
-                    },
-                    content: response
-                }
-            });
         }).
         catch(() => {
             if (!this.isPOIsErrorsLaunched) {
@@ -198,7 +162,7 @@ export default class Map extends Component {
                 return <POIComponent
                     lat={ element.latitude }
                     lng={ element.longitude }
-                    clickHandler={ () => {
+                    onClick={ () => {
                         this.poiSelected(element.poiId);
                     }}
                     key={ index }
@@ -224,8 +188,7 @@ export default class Map extends Component {
                                 defaultZoom={this.props.zoom}
                                 bootstrapURLKeys={{ key: GOOGLE_MAPS_API_KEY }}
                                 onGoogleApiLoaded={ this.onGoogleAPILoaded.bind(this) }
-                                yesIWantToUseGoogleMapApiInternals
-                >
+                                yesIWantToUseGoogleMapApiInternals >
                     { currentLocation }
                     { poisInViewport }
                 </GoogleMapReact>

@@ -1,4 +1,5 @@
 /* eslint guard-for-in: "off" */
+/* eslint no-prototype-builtins: "off" */
 
 const DECIMAL_BASE = 10;
 const NOT_FOUND = -1;
@@ -60,7 +61,7 @@ module.exports.convertObjectToCamelCase = (object) => {
  * @return {Object[]} array with converted objects
  */
 module.exports.convertObjectsToCamelCase = (objects) => {
-    if (objects) {
+    if (objects && Array.isArray(objects)) {
         return objects.map(convertObjectToCamelCase);
     }
 
@@ -89,7 +90,7 @@ module.exports.convertArrayToString = (objects) => {
 };
 
 /**
- * Ensures the resultList has an acceptable size and that .
+ * Ensures the resultList has an acceptable size and that all promise results are the ones expected.
  * @param {[][]} resultList list of results
  * @param {[]} acceptableLengths acceptable lengths of the result list
  * @param {boolean} containsLists tells if the result list contains lists
@@ -114,7 +115,7 @@ module.exports.checkResultList = (resultList, acceptableLengths, containsLists =
 
 /**
  * Converts an array in string form into an array of integers.
- * @param {string} array in string form
+ * @param {string} string array in string form
  *
  * @return {[]} the array of integers
  */
@@ -130,4 +131,34 @@ module.exports.convertStringToArray = (string) => {
     }
 
     return array;
+};
+
+/**
+ * Trims the object's shallow string properties
+ * @param {object} object the object to convert
+ * @returns {{}} the new object having its shallow string properties trimmed
+ */
+module.exports.trimStringProperties = (object) => {
+    const resultObject = {};
+    Object.assign(resultObject, object);
+    for (const property in resultObject) {
+        if (resultObject.hasOwnProperty(property) && typeof resultObject[property] === 'string') {
+            resultObject[property] = resultObject[property].trim();
+        }
+    }
+
+    return resultObject;
+};
+
+/**
+ * Parse json
+ * @param {object} object the object to convert
+ * @returns {{}|null} the object parsed or null if an error occurs
+ */
+module.exports.parseJSON = (object) => {
+    try {
+        return JSON.parse(object);
+    } catch (exception) {
+        return null;
+    }
 };

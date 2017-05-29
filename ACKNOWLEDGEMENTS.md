@@ -21,4 +21,6 @@
 - http://tobiasahlin.com/spinkit/
 - http://realfavicongenerator.net/
 - https://docs.travis-ci.com/user/languages/javascript-with-nodejs#Node.js-v4-(or-io.js-v3)-compiler-requirements
-
+- http://restcookbook.com/
+- https://www.microsoft.com/en-us/download/details.aspx?id=48159
+- https://www.robertkehoe.com/2015/03/fix-node-gyp-rebuild-error-on-windows/

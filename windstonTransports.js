@@ -15,7 +15,7 @@ module.exports.transportLoggers = process.env.NODE_ENV === 'production'
         new winston.transports.Console({
             colorize: true,
             json: true,
-            level: 'verbose'
+            level: 'debug'
         })
     ];
 
@@ -35,6 +35,6 @@ module.exports.transportErrorLoggers = process.env.NODE_ENV === 'production'
             colorize: true,
             humanReadableUnhandledException: true,
             json: true,
-            level: 'verbose'
+            level: 'debug'
         })
     ];

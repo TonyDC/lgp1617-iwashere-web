@@ -2,7 +2,7 @@ const os = require('os');
 
 const multer = require('multer');
 
-const TWO = 2;
+const TWO = 50;
 const KB = 1024;
 
 /*

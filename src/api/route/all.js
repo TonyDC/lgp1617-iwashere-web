@@ -19,6 +19,31 @@ const TWO_INDEX = 2;
 const NO_ELEMENT_SIZE = 0;
 const THREE_SIZE = 3;
 
+router.get('/search', (req, res, next) => {
+    let { query } = req.query;
+    if (!query || typeof query !== 'string') {
+        res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+        return;
+    }
+
+    query = query.trim().split(/\s+/).
+    join(' & ');
+
+    const { routeDB } = db;
+
+    routeDB.searchRoute(query).then((results) => {
+        if (results) {
+            res.json(utils.convertObjectsToCamelCase(results)).end();
+        } else {
+            res.sendStatus(httpCodes.NO_CONTENT).end();
+        }
+    }).
+    catch((error) => {
+        next(error);
+    });
+});
+
 router.get('/rating/:routeID/:userID', (req, res, next) => {
     const { routeID, userID } = req.params;
 

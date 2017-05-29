@@ -20,8 +20,8 @@ const INTERNAL_ERROR_MSG_CODE = 2;
 /**
  * Creates a file on firebase under ./<uid>, returning its url and contentTypeId.
  * If the file is of IMAGE_TYPE, several files are created with different sizes.
- * @param uid the uid of the file's owner
- * @return {function( {}, func)}
+ * @param {string} uid the uid of the file's owner
+ * @return {function( {}, func)} function handler
  */
 function processFiles (uid) {
     return (fileItem, callback) => {
@@ -153,6 +153,14 @@ function processFiles (uid) {
     };
 }
 
+/**
+ * Utility function to handle file upload to Firebase.
+ * It organizes the files according to the user ID.
+ * It unlinks the files after processing.
+ * @param {array} files An array of objects describing the files metadata
+ * @param {string} userId the user ID
+ * @returns {Promise} A Promise whose payload is an array of upload statuses
+ */
 module.exports.handleFileUpload = (files, userId) => {
     return new Promise((fulfill, reject) => {
         async.map(files, processFiles(userId), (error, response) => {

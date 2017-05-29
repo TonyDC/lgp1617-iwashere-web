@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import firebase from 'firebase';
 import PropTypes from 'prop-types';
+import { GridLoader as Loader } from 'halogen';
+
+import 'styles/utils.scss';
 
 export default class Image extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = { imageStatus: false };
 
         // Create a reference with an initial file path and name
         this.storage = firebase.storage();
@@ -21,6 +24,22 @@ export default class Image extends Component {
         this.componentIsMounted = false;
     }
 
+    handleImageLoaded() {
+        if (!this.componentIsMounted) {
+            return;
+        }
+
+        this.setState({ imageStatus: true });
+    }
+
+    handleImageErrored() {
+        if (!this.componentIsMounted) {
+            return;
+        }
+
+        this.setState({ error: true });
+    }
+
     handleImageDownload() {
         if (!this.props.url) {
             return;
@@ -31,21 +50,52 @@ export default class Image extends Component {
         this.storage.refFromURL(`gs://iwashere-mobile.appspot.com/${this.props.url}`).getDownloadURL().
         then((url) => {
             if (this.componentIsMounted) {
-                this.setState({ url });
+                this.setState({
+                    imageStatus: true,
+                    url
+                });
             }
         }).
         catch(() => {
-            this.setState({ error: true });
+            if (this.componentIsMounted) {
+                this.setState({ error: true });
+            }
         });
     }
 
     render() {
-        if (this.state.url) {
-            return <img src={this.state.url}/>;
+        const { url: propsURL, style, className, withLoader } = this.props;
+        const additionalProps = {
+            className,
+            style
+        };
+        const { url: stateURL, imageStatus, error } = this.state;
+
+        if (propsURL) {
+            if (imageStatus) {
+                return <img src={stateURL}
+                            {...additionalProps}
+                            onLoad={this.handleImageLoaded.bind(this)}
+                            onError={this.handleImageErrored.bind(this)}/>;
+            } else if (withLoader) {
+                let loader = null;
+                if (error) {
+                    loader = <i className="fa fa-exclamation-triangle" aria-hidden="true"/>;
+                } else {
+                    loader = <Loader color="#012935" className="loader"/>;
+                }
+
+                return <div {...additionalProps}>{ loader }</div>;
+            }
         }
 
-        return <div/>;
+        return <div {...additionalProps} />;
     }
 }
 
-Image.propTypes = { url: PropTypes.string };
+Image.propTypes = {
+    className: PropTypes.string,
+    style: PropTypes.object,
+    url: PropTypes.string,
+    withLoader: PropTypes.bool
+};
