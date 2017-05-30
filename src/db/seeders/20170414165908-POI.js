@@ -334,7 +334,7 @@ module.exports = {
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
                 latitude: 41.145779,
-                longitude: -8.601999,
+                longitude: -8.601001,
                 name: 'Av. de Rodrigues de Freitas',
                 parent_id: 1,
                 poi_type_id: 2
