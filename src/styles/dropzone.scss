@@ -12,13 +12,19 @@
 
 .dropzone-info {
     text-align: center;
-    margin-top: 30px;
+    margin-top: 0;
+    margin-bottom: 20px;
 }
 
 .dropzone-thumbnail {
     display: block;
     object-fit: contain;
     width: 100px;
+}
+
+.dropzone-thumbnail-container {
+    display: inline-block;
+    margin: 20px;
 }
 
 .dropzone-delete-icon {

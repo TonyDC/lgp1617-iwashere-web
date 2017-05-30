@@ -3,20 +3,23 @@
 const httpCodes = require('http-status-codes');
 const firebaseAdmin = require('firebase-admin');
 
+const db = root_require('./src/db/query');
+
 const AUTH_BODY_LENGTH = 2,
     AUTH_TYPE_INDEX = 0,
     TOKEN_INDEX = 1;
 
 const ELEMENT_NOT_FOUND_ARRAY = -1;
+const NO_ELEMENTS = 0;
 
 /**
- * Fireabse Authentication ExpressJS middleware
+ * Firebase ExpressJS Authentication middleware
  *
  * The request object gains a new property `req.auth.token`, containing information about the logged user
  *
  * @param {object} req The request object
  * @param {object} res The response object
- * @param {object} next The next middleware callback
+ * @param {function} next The next middleware callback
  *
  * @return {void}
  */
@@ -56,4 +59,51 @@ function firebaseAuth (req, res, next) {
     });
 }
 
+/**
+ * Check if the user is associated to a context, with the given minimum role rank
+ * @param {number} minimumRank the minimum rank
+ * @returns {function(*, *, *)} the ExpressJS function handler
+ */
+function verifyUserPermissions (minimumRank) {
+    return (req, res, next) => {
+        const { uid } = req.auth.token;
+        if (!uid || typeof uid !== 'string') {
+            res.sendStatus(httpCodes.BAD_REQUEST).end();
+
+            return null;
+        }
+
+        let context = req.header('X-user-context');
+        if (!context || typeof context !== 'string') {
+            res.status(httpCodes.BAD_REQUEST).json({ message: '\'X-user-context\' header must be provided' }).
+            end();
+
+            return null;
+        }
+
+        context = context.trim();
+        const { userContextDB } = db;
+
+        return userContextDB.getContextByUserIDAndMinimumRank(uid, context, minimumRank).
+        then((results) => {
+            if (results && results.length > NO_ELEMENTS) {
+                const [{ rank }] = results;
+                req.auth.contextID = context;
+                req.auth.rank = rank;
+
+                return next();
+            }
+
+            res.status(httpCodes.UNAUTHORIZED).json({ message: 'User without enough permissions' }).
+            end();
+
+            return null;
+        }).
+        catch((error) => {
+            next(error);
+        });
+    };
+}
+
 module.exports.firebaseAuth = firebaseAuth;
+module.exports.verifyUserPermissions = verifyUserPermissions;

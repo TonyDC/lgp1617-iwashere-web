@@ -88,19 +88,19 @@ app.use((err, req, res, next) => {
     switch (code) {
         case 'LIMIT_UNEXPECTED_FILE':
             res.status(httpCodes.BAD_REQUEST).
-            json({ meesage: 'Unexpected body field' }).
+            json({ message: 'Unexpected body field' }).
             end();
             break;
 
         case 'LIMIT_FILE_SIZE':
             res.status(httpCodes.BAD_REQUEST).
-            json({ meesage: 'File size limit exceeded' }).
+            json({ message: 'File size limit exceeded' }).
             end();
             break;
 
         case 'LIMIT_FILE_COUNT':
             res.status(httpCodes.BAD_REQUEST).
-            json({ meesage: 'File number limit exceeded' }).
+            json({ message: 'File number limit exceeded' }).
             end();
             break;
 
