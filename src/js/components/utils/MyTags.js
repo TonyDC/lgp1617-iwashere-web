@@ -45,37 +45,36 @@ export default class MyTags extends Component {
             return response.json();
         }).
         then((allTags) => {
-            if (!this.componentIsMounted) {
-                return;
-            }
+            if (this.componentIsMounted) {
+                allTags.concat(allTags.map((tag) => {
+                    tag.name = `#${tag.name}`;
 
-            this.setState({ allTags });
+                    return tag;
+                }));
+                this.setState({ allTags });
+            }
         });
     }
 
     renderTag(tag) {
         if ('onRemoveTag' in this.props) {
             return (
-                <Chip
-                    onRequestDelete={() => {
-                        this.props.onRemoveTag(tag.tagId);
-                    }}
-                    labelColor="white"
-                    key={`tag#${tag.tagId}`}
-                    className="tag-look"
-                >
+                <Chip key={`tag#${tag.name}`}
+                      onRequestDelete={() => {
+                          this.props.onRemoveTag(tag.tagId);
+                      }}
+                      labelColor="white"
+                      className="tag-look" >
                     {tag.name}
                 </Chip>
             );
         }
 
         return (
-            <Chip
-                labelColor="white"
-                key={`tag#${tag.tagId}`}
-                className="tag-look"
-            >
-                {tag.name}
+            <Chip labelColor="white"
+                  key={`tag#${tag.name}`}
+                  className="tag-look">
+                #{tag.name}
             </Chip>
         );
     }
