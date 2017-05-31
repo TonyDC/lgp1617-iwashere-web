@@ -255,6 +255,7 @@ export default class ReservedRoute extends Component {
                 </div>
                 <div className="button-container">
                     <RaisedButton label="Save"
+                                  primary
                                   disabled={this.props.inProgress}
                                   className="button-style"
                                   onTouchTap={() => {
