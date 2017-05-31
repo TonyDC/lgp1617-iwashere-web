@@ -510,7 +510,7 @@ export default class POIForm extends Component {
                         { selectedLocationPin }
                     </GoogleMapReact>
                 </Paper>
-                <h5>Files to upload (Drag and drop files - png, jpeg)</h5>
+                <h5>Drag and drop files here (png, jpeg), or click here to open the select file window</h5>
                 <Paper>
                     <Dropzone className="custom-dropzone" style={dropzoneContainerStyle} onDrop={this.onDrop.bind(this)} accept="image/jpeg, image/png" onDragEnter={this.onDragEnter.bind(this)} onDragLeave={this.onDragLeave.bind(this)}>
                         { this.state.dropzoneActive && <div className="overlay">Drop files...</div> }

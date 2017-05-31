@@ -218,12 +218,13 @@ export default class POIPosts extends Component {
         const filterIcon = this.state.filtering
             ? <CancelIcon/>
             : <MoreIcon/>;
-        const toggleTagFilterButton =
-            <div className="filter-button-container">
+        const toggleTagFilterButton = Array.isArray(this.state.posts) && this.state.posts.length > NO_ELEMENT_SIZE
+            ? (<div className="filter-button-container">
                 <FloatingActionButton backgroundColor="#012935" onTouchTap={this.toggleFiltering.bind(this)}>
                     {filterIcon}
                 </FloatingActionButton>
-            </div>;
+            </div>)
+            : null;
 
         const loader =
             <div className="hor-align vert-align">
