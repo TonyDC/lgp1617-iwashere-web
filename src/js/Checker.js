@@ -22,7 +22,7 @@ function checkFirebase() {
                 if (user) {
                     firebaseObserverUnsubscriber();
 
-                    authenticatedFetch('/api/reserved/user-type', {}, { 'Accept': 'application/json' }, 'GET').
+                    authenticatedFetch('/api/reserved/user-type', null, { 'Accept': 'application/json' }, 'GET').
                     then(checkFetchResponse).
                     then((contexts) => {
                         let index = null;

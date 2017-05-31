@@ -21,6 +21,7 @@ const expressWinston = require('express-winston');
 const windstonTransports = require('./windstonTransports');
 
 const APIMiddleware = require('./src/api/index');
+const filesMiddleware = require('./files');
 
 const app = express();
 
@@ -47,8 +48,8 @@ if (process.env.NODE_ENV !== 'production') {
 // Logger
 app.use(expressWinston.logger({ transports: windstonTransports.transportLoggers }));
 
-// GZip compression
-app.use(require('compression')());
+// GZip compression (DO NOT USE IT!!! -> BREACH)
+// app.use(require('compression')());
 
 // HTTP security headers
 app.use(require('helmet')());
@@ -68,10 +69,13 @@ firebaseAdmin.initializeApp({
 
 /* *********************************** */
 
-// Public files entrypoint
+// Public files endpoint
 app.use('/public', publicPath);
 
-// API entrypoins
+// Static files endpoint
+app.use('/files', filesMiddleware);
+
+// API endpoint
 app.use('/api', APIMiddleware);
 
 // URL not found: server index.html

@@ -65,7 +65,7 @@ export default class POISearch extends Component {
 
         const headers = { 'X-user-context': getContext(this.context.store) };
 
-        return authenticatedFetch(`${POI_API_URL}search?query=${encodeURIComponent(query)}`, {}, headers, 'GET').
+        return authenticatedFetch(`${POI_API_URL}search?query=${encodeURIComponent(query)}`, null, headers, 'GET').
         then(checkFetchResponse);
     }
 

@@ -12,6 +12,8 @@ import ActionBuild from 'material-ui/svg-icons/action/build';
 
 import logoCompact from 'img/logo-compact.png';
 
+import { Link } from 'react-router';
+
 import { grey100 } from 'material-ui/styles/colors';
 
 import 'styles/navbar.scss';
@@ -107,7 +109,7 @@ export default class NavBar extends Component {
         return (
             <div className="navbar-container">
                 <Toolbar className="toolbar-custom-style">
-                    <a href="/" className="vert-align"><img src={logoCompact} className="app-logo"/></a>
+                    <Link to="/" className="vert-align"><img src={logoCompact} className="app-logo"/></Link>
                     <ToolbarGroup>
                         <IconButton iconStyle={styles.buttons} onTouchTap={this.goToPage.bind(this, '/')} tooltip={<div>Home</div>}>
                             <ActionHome hoverColor={grey100}/>

@@ -63,7 +63,7 @@ export default class EditRoute extends Component {
             'X-user-context': getContext(this.context.store)
         };
 
-        authenticatedFetch(`${API_ROUTE_URL}${this.props.params.id}`, {}, headers, 'GET').
+        authenticatedFetch(`${API_ROUTE_URL}${this.props.params.id}`, null, headers, 'GET').
         then((response) => {
             return checkFetchResponse(response, true);
         }).
@@ -104,7 +104,7 @@ export default class EditRoute extends Component {
             'X-user-context': getContext(this.context.store)
         };
 
-        authenticatedFetch(`${API_ROUTE_URL}pois/${this.props.params.id}`, {}, headers, 'GET').
+        authenticatedFetch(`${API_ROUTE_URL}pois/${this.props.params.id}`, null, headers, 'GET').
         then((response) => {
             return checkFetchResponse(response, true);
         }).
@@ -198,8 +198,7 @@ export default class EditRoute extends Component {
                 'X-user-context': userContext
             };
 
-            authenticatedFetch(`${API_ROUTE_URL}${route.routeId}`,
-                JSON.stringify(route), headers, 'POST').
+            authenticatedFetch(`${API_ROUTE_URL}${route.routeId}`, JSON.stringify(route), headers, 'POST').
             then((response) => {
                 checkFetchResponse(response, true, false).then(() => {
                     this.setState({ inProgress: false });

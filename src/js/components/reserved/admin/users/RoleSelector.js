@@ -78,10 +78,9 @@ export default class RoleSelector extends Component {
     }
 
     fetchRoles() {
-        const body = {},
-            headers = { 'X-user-context': this.getContext() };
+        const headers = { 'X-user-context': this.getContext() };
 
-        return authenticatedFetch(ROLE_API_ENDPOINT, body, headers, 'GET').
+        return authenticatedFetch(ROLE_API_ENDPOINT, null, headers, 'GET').
         then(checkFetchResponse).
         then((roles) => {
             if (!roles) {

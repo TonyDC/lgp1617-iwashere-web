@@ -223,7 +223,8 @@ export default class POIForm extends Component {
             const { tags } = this.state;
             const tagIndex = tags.indexOf(tag);
             if (tagIndex !== NOT_FOUND) {
-                this.setState({ tags: tags.splice(tagIndex, ONE_ELEMENT) });
+                const cloneTagsArray = tags.slice(tags, ZERO_INDEX);
+                this.setState({ tags: cloneTagsArray.splice(tagIndex, ONE_ELEMENT) });
             }
         }
     }
@@ -455,6 +456,8 @@ export default class POIForm extends Component {
                 <SelectedLocation lat={lat} lng={lng}/>
             );
         }
+
+        console.log(this.state.tags);
 
         const contextId = this.state.contextId ? this.state.contextId : this.props.userContext;
 
