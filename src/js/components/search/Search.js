@@ -10,14 +10,11 @@ import { List, ListItem } from 'material-ui/List';
 import Divider from 'material-ui/Divider';
 import RaisedButton from 'material-ui/RaisedButton';
 import ActionSearch from 'material-ui/svg-icons/action/search';
-
 import Alerts from '../utils/Alerts';
 import { checkFetchResponse } from '../../functions/fetch';
 import { processLocation } from '../../functions/location';
-
 import 'styles/panel.scss';
 import 'styles/utils.scss';
-
 const NO_ELEMENTS = 0;
 const MAX_SIZE = 3;
 
@@ -40,9 +37,9 @@ export default class Search extends Component {
     }
 
     componentWillMount() {
-        const { search } = this.props.params;
+        const { search } = this.props.router.location.query;
         if (search) {
-            this.setState({ search: decodeURI(this.props.params.search) });
+            this.setState({ search: decodeURI(search) });
         }
     }
 
@@ -52,8 +49,8 @@ export default class Search extends Component {
         if (!this.geolocationSupport) {
             Alerts.createWarningAlert('The browser does not support geo-location. The results will not consider the current location.');
         }
-        const { search } = this.props.params;
-        if (search) {
+        const { search } = this.state;
+        if (typeof search === 'string' && !validator.isEmpty(search)) {
             this.submitSearch();
         }
     }
@@ -75,7 +72,7 @@ export default class Search extends Component {
         if (this.geolocationSupport) {
             const geoOptions = {
                 enableHighAccuracy: true,
-                maximumAge: 10000,
+                maximumAge: 120000,
                 timeout: 10000
             };
 
@@ -177,8 +174,11 @@ export default class Search extends Component {
     }
 
     submitSearch(event) {
-        event.preventDefault();
-        if (this.componentIsMounted) {
+        if (event) {
+            event.preventDefault();
+        }
+
+        if (this.componentIsMounted && !this.state.inProgress) {
             let { search } = this.state;
             search = search.trim();
             this.setState({ search });
