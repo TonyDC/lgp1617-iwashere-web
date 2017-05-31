@@ -51,7 +51,6 @@ export default class MyTags extends Component {
 
                     return tag;
                 }));
-                console.log(allTags);
                 this.setState({ allTags });
             }
         });
