@@ -328,9 +328,130 @@ module.exports = {
                 name: 'Manuel Pereira da Silva',
                 poi_type_id: 1
             },
-            // Streets
             {
                 // 30
+                address: 'Alameda Prof. Hernâni Monteiro, 4200 Porto, Portugal',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                context_id: 5,
+                description: 'Nascido no Porto a 18 de maio de 1891, Hernâni Bastos Monteiro foi médico, professor universitário e escritor. Frequentou a Academia Politécnica do Porto entre 1907 e 1910, contudo no ano seguinte transitou para a FMUP, onde concluiu o curso de Medicina em 1915. Ficou responsável pelo catálogo do Museu de Anatomia Normal da FMUP. Em 1918 foi nomeado regente da cadeira de Anatomia Topográfica, sendo que em 1924 passou a Professor Catedrático da mesma juntamente com Medicina Operatória. Fundou os Laboratórios de Cirurgia Experimental e de Radiologia em 1928 e o Laboratório de Embriologia e Teratologia. ',
+                latitude: 41.1831,
+                longitude: -8.60105,
+                name: 'Hernâni Bastos Monteiro',
+                poi_type_id: 1
+            },
+            {
+                // 31
+                address: 'Largo do Prof. Abel Salazar, 4050-011 Porto, Portugal',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                context_id: 5,
+                description: 'Abel Salazar, nascido a 19 de julho de 1889 em Guimarães, foi médico, cientista, professor, artista plástico, crítico de arte, prosador e pensador. Matriculou-se na Escola Médico-Cirúrgica em 1909, concluindo o curso de Medicina após 6 anos. Em 1919, com apenas 30 anos, foi nomeado professor catedrático de Histologia e Embriologia. No próprio ano fundou o Instituto de Histologia juntamente com o Instituto de Anatomia, entregue a Pires de Lima. Após uma pausa de 4 anos, quando regressa à FMUP, descobre o seu instituto abandonado, tendo de o reconstruir. Representou a FMUP enquanto cientista e professor em diversos congressos europeus.',
+                latitude: 41.14709,
+                longitude: -8.61736,
+                name: 'Abel Salazar',
+                poi_type_id: 1
+            },
+            {
+                // 32
+                address: 'Praceta Jaime Cortesão, 4250 Porto, Portugal',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                context_id: 5,
+                description: 'Nascido a 29 de abril de 1884 em Cantanhede, Jaime Zuarte Cortesão foi médico, político, escritor e historiador. Tendo estudado Grego e Direito na Universidade de Coimbra, optou depois por seguir Medicina na Escola Médico-Cirúrgica do Porto. Com uma curta carreira médica, começou a lecionar História e Literatura no liceu entre 1911 e 1915. Na vida política foi deputado nas legislaturas de 1915 a 1917. Dedicou-se ainda à poesia, destacando-se o poema heróico A Morte da Águia.',
+                latitude: 41.17313,
+                longitude: -8.64062,
+                name: 'Jaime Cortesão',
+                poi_type_id: 1
+            },
+            {
+                // 33
+                address: 'R. Dr. Alberto de Aguiar, 4350-307 Porto, Portugal',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                context_id: 5,
+                description: 'Alberto de Aguiar, nascido no Porto a 22 de setembro de 1868, foi médico, analista e professor universitário. Licenciou-se em 1893 na Escola Médico-Cirúrgica do Porto, doutorando-se três anos depois. Foi docente de diversas cadeiras na FMUP entre 1896 e o ano da sua jubilação, 1935: Bacteriologia, Parasitologia, Patologia Geral, Química Biológica e Fisiologia. Para além de ter sido diretor da FMUP, foi também professor na FFUP. Dirigiu durante cinco anos o Laboratório Nobre, resultante de uma parceria entre a Escola Médico-Cirúrgica e o Hospital de Santo António. Foi Presidente do Senado da CMP entre 2 de janeiro e 30 de junho de 1926.',
+                latitude: 41.15736,
+                longitude: -8.59237,
+                name: 'Alberto de Aguiar',
+                poi_type_id: 1
+            },
+            {
+                // 34
+                address: 'R. Dr. Eduardo Santos Silva, 4200 Porto, Portugal',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                context_id: 5,
+                description: 'Nascido a 18 de março de 1879 no Porto, Eduardo Ferreira dos Santos Silva foi                médico, professor e político. Ingressou na Escola Médico-Cirúrgica do Porto em 1897 onde cursou Medicina. Contudo, após ter terminado o curso, não exerceu de imediato Medicina. Foi nomeado para lecionar Geografia, Ciências Naturais, Francês e Português no Liceu Central do Porto em 1905. Especializou em dermatologia e sifiligrafia em Paris no ano de 1909. Foi presidente do Senado da Câmara Municipal do Porto até 1921. Demitiu-se devido a divergências com o Partido Republicano.',
+                latitude: 41.17845,
+                longitude: -8.5869,
+                name: 'Eduardo Santos Silva',
+                poi_type_id: 1
+            },
+            {
+                // 35
+                address: 'R. Dr. Manuel Laranjeira, 4200 Porto, Portugal',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                context_id: 5,
+                description: 'Manuel Fernandes Laranjeira, nascido a 17 de agosto de 1877 em Santa Maria da Feira, foi médico, poeta, dramaturgo e articulista. Ingressou na Escola Médico-Cirúrgica do Porto em 1899 e quando terminou o curso começou a lecionar a cadeira de Biologia. Afetado a nível mental pela Sífilis, entrou num grave estado de depressão. Antes de cometer suicídio em 1912, recebeu o título de Doutor em Medicina e escreveu sobre crítica social, artística, literária e política. Participou também em várias conferências.',
+                latitude: 41.17223,
+                longitude: -8.59828,
+                name: 'Manuel Laranjeira',
+                poi_type_id: 1
+            },
+            {
+                // 36
+                address: 'R. Dr. Manuel Monterroso, 4250 Porto, Portugal',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                context_id: 5,
+                description: 'Nascido em 1875 na casa de família, Manuel Aníbal da Costa Monterroso foi médico, professor e caricaturista. Terminou o curso em Medicina na Escola Médico-Cirúrgica do Porto em 1902. Começou a sua atividade como médico quando foi admitido na Assistência Nacional aos Tuberculosos sendo que, mais tarde, foi nomeado Delegado de Saúde do Porto. Foi Major Médico Miliciano durante a 1ª Guerra Mundial. Mostrando uma faceta artística, publicou os seus trabalhos humorísticos em periódicos nacionais e internacionais. Entre os anos 40 e 60 participou em várias exposições na Sociedade Nacional de Belas Artes. Foi ordenado Cavaleiro da Ordem de Santiago.',
+                latitude: 41.17738,
+                longitude: -8.62759,
+                name: 'Manuel Monterroso',
+                poi_type_id: 1
+            },
+            {
+                // 37
+                address: 'R. Dr. José Domingues de Oliveira, 4450-718 Leça da Palmeira, Portugal',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                context_id: 5,
+                description: 'José Domingues de Oliveira Júnior, nascido em Leça da Palmeira a 17 de fevereiro de 1865, foi médico e pioneiro da curieterapia. Cursou Medicina na Escola Médico-Cirúrgica do Porto, tendo terminado em 1888. No ano seguinte continuou os estudos em Paris e, quando regressou a Portugal, começou a exercer. Em 1891começou a trabalhar na área de Sanidade Marítima, tendo publicado uma obra com o mesmo nome em 1911. Foi delegado da Estação de Saúde do Porto, motivo pelo qual recebeu o grau de cavaleiro da Ordem de Santiago da Espada em 1900.',
+                latitude: 41.19063,
+                longitude: -8.69948,
+                name: 'José Domingues de Oliveira',
+                poi_type_id: 1
+            },
+            {
+                // 38
+                address: 'R. Dr. Roberto Frias, 4200 Porto, Portugal',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                context_id: 5,
+                description: 'Nascido a 5 de junho de 1853 em Nova Goa, Roberto Belarmino do Rosário Frias foi médico, cirurgião e professor universitário. Matriculou-se no curso de Medicina na Escola Médico-Cirúrgica do Porto, onde terminou a licenciatura em 1880. Depois de se ter mudado para a Caparica, sentiu necessidade de prosseguir os estudos no estrangeiro. É assim que acaba por ser docente na Escola Médica de Goa. Quando regressa ao Porto, foi nomeado Lente Demonstrador da Secção Cirúrgica entre 1887 e 1895. Ocupou posteriormente o lugar de Lente Substituto.',
+                latitude: 41.1785,
+                longitude: -8.59892,
+                name: 'Roberto Frias',
+                poi_type_id: 1
+            },
+            {
+                // 39
+                address: 'R. Dr. Roberto Frias, 4200 Porto, Portugal',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                context_id: 5,
+                description: 'António de Sousa Magalhães e Lemos, nascido a 18 de agosto de 1855 em Felgueiras, foi neurologista, psiquiatra e professor universitário. Ingressou na Escola Médico-Cirúrgica do Porto, tendo concluído o curso em 1882. Foi nomeado médico-ajudante do Hospital Conde Ferreira, em 1892 ocupou o cargo de médico-adjunto e mais tarde foi diretor. Em 1887 foi Lente auxiliar no IICP. Foi nomeado professor de Neurologia e de Psiquiatria na FMUP. Na mesma instituição, recebeu o grau de Doutor em 1917. Foi membro do Conselho Médico Legal, professor de Psiquiatria Forense no curso superior do Instituto de Medicina Legal.',
+                latitude: 41.14757,
+                longitude: -8.60943,
+                name: 'Magalhães Lemos',
+                poi_type_id: 1
+            },
+            {
+                // 40
+                address: 'R. do Dr. Ricardo Jorge, 4000 Porto, Portugal',
+                content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
+                context_id: 5,
+                description: 'Nascido no Porto a 9 de maio 1858, Ricardo de Almeida Jorge foi médico, professor universitário e escritor. Foi estudante de Medicina na Escola Médico-Cirúrgica do Porto entre 1874 e 1879. Contudo, em 1883 viajou para o estrangeiro para completar os estudos de Neurologia. Interessado pelo tema da Saúde Pública, promoveu quatro conferências que alertavam para essa questão. Deste modo, conferindo prestigio, foi convidado a chefiar o Laboratório Municipal de Bacteriologia. Em 1895 foi indigitado Professor Titular da cadeira de Higiene e Medicina Legal da Escola Médico-Cirúrgica do Porto. Entre 1914 e 1915 foi presidente da Sociedade das Ciências Médicas.',
+                latitude: 41.15027,
+                longitude: -8.61207,
+                name: 'Ricardo Jorge',
+                poi_type_id: 1
+            },
+            // Streets
+            {
+                // 41
                 address: 'Av. de Rodrigues de Freitas, Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -342,7 +463,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 31
+                // 42
                 address: 'Av. Francisco Xavier Esteves, 4300 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -354,7 +475,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 32
+                // 43
                 address: 'Praça de Gomes Teixeira, 4050 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -366,7 +487,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 33
+                // 44
                 address: 'Praça de Parada Leitão, 4050-064 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -378,7 +499,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 34
+                // 45
                 address: 'Praça Manuel Teixeira Gomes, 4460 Custóias, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -390,7 +511,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 35
+                // 46
                 address: 'R. António Arroio, 4150 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -402,7 +523,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 36
+                // 47
                 address: 'R. Bento Carqueja, 4350 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -414,7 +535,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 37
+                // 48
                 address: 'R. De Azevedo De Albuquerque, 4050 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -426,7 +547,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 38
+                // 49
                 address: 'R. de Gonçalo Sampaio, Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -438,7 +559,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 39
+                // 50
                 address: 'R. de Luís Woodhouse, 4200 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -450,7 +571,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 40
+                // 51
                 address: 'R. de Ricardo Severo, 4050 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -462,7 +583,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 41
+                // 52
                 address: 'R. de Sampaio Bruno, 4000 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -473,7 +594,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 42
+                // 53
                 address: 'R. Dr. Adriano de Paiva, 4200 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -485,7 +606,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 43
+                // 54
                 address: 'R. do Conde de Campo Bello, 4200 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -497,7 +618,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 44
+                // 55
                 address: 'Rua do Dr. Ferreira da Silva, 4050 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -509,7 +630,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 45
+                // 56
                 address: 'R. Eng. Ezequiel de Campos, 4100 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -521,7 +642,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 46
+                // 57
                 address: 'R. Gustavo de Sousa, 4100 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -533,7 +654,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 47
+                // 58
                 address: 'R. Leonardo Coimbra, 4200 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -545,7 +666,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 48
+                // 59
                 address: 'R. Prof. Augusto Nobre, Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -557,7 +678,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 49
+                // 60
                 address: 'R. Prof. Duarte Leite, 4350 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -569,7 +690,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 50
+                // 61
                 address: 'R. Prof. Mendes Correia, 4200 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -581,7 +702,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 51
+                // 62
                 address: 'R. Raúl Brandão, 4150-570 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -593,7 +714,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 52
+                // 63
                 address: 'R. Rocha Peixoto, 4100 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -605,7 +726,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 53
+                // 64
                 address: 'R. Vitorino Damásio, 4200 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -617,7 +738,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 54
+                // 65
                 address: 'Alameda de Basílio Teles, Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -628,7 +749,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 55
+                // 66
                 address: 'Alameda Prof. Hernâni Monteiro, 4200 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -636,11 +757,11 @@ module.exports = {
                 latitude: 41.183132,
                 longitude: -8.601141,
                 name: 'Alameda Prof. Hernâni Monteiro',
-                parent_id: 1,
+                parent_id: 30,
                 poi_type_id: 2
             },
             {
-                // 56
+                // 67
                 address: 'Av. de Camilo, 4300 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -652,7 +773,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 57
+                // 68
                 address: 'Largo do Dr. Pedro Vitorino, 4000 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -664,7 +785,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 58
+                // 69
                 address: 'Largo do Prof. Abel Salazar, 4050-011 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -672,10 +793,11 @@ module.exports = {
                 latitude: 41.147251,
                 longitude: -8.617274,
                 name: 'Largo do Prof. Abel Salazar',
+                parent_id: 31,
                 poi_type_id: 2
             },
             {
-                // 59
+                // 70
                 address: 'Praceta Jaime Cortesão, 4250 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -683,10 +805,11 @@ module.exports = {
                 latitude: 41.173093,
                 longitude: -8.640759,
                 name: 'Praceta Jaime Cortesão',
+                parent_id: 32,
                 poi_type_id: 2
             },
             {
-                // 60
+                // 71
                 address: 'R. de António Patrício, Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -698,7 +821,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 61
+                // 72
                 address: 'Rua de Júlio Dinis, 4050 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -710,7 +833,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 62
+                // 73
                 address: 'R. Dr. Aarão de Lacerda, 4100 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -722,7 +845,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 63
+                // 74
                 address: 'R. Dr. Alberto de Aguiar, 4350-307 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -730,21 +853,23 @@ module.exports = {
                 latitude: 41.157347,
                 longitude: -8.592323,
                 name: 'R. Dr. Alberto de Aguiar',
+                parent_id: 33,
                 poi_type_id: 2
             },
             {
-                // 64
+                // 75
                 address: 'R. Dr. Eduardo Santos Silva, 4200 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
                 description: 'Lorem ipsum dolor sit amet, quam ac. Eros nunc arcu. Eleifend sit, lacus amet pede egestas nam in, tempor egestas donec semper cras purus. Massa amet ut, nec in augue suspendisse justo dictum, posuere interdum, arcu iaculis eu egestas ligula vestibulum ipsum, diam risus eu et. Maecenas eget leo vestibulum scelerisque eget, vestibulum massa pulvinar, fringilla velit magna libero quisque sed, sollicitudin tenetur, pellentesque eget placerat ipsum consequat donec enim. Ligula vitae eget sed sed, viverra orci, dui lobortis neque nibh luctus tellus vitae, sit viverra leo est massa sit parturient.',
                 latitude: 41.157347,
                 longitude: -8.592323,
-                name: 'R. Dr. Alberto de Aguiar',
+                name: 'Eduardo Santos Silva',
+                parent_id: 34,
                 poi_type_id: 2
             },
             {
-                // 65
+                // 76
                 address: 'R. Dr. Manuel Laranjeira, 4200 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -752,10 +877,11 @@ module.exports = {
                 latitude: 41.172161,
                 longitude: -8.598267,
                 name: 'R. Dr. Manuel Laranjeira',
+                parent_id: 35,
                 poi_type_id: 2
             },
             {
-                // 66
+                // 77
                 address: 'R. Dr. Manuel Monterroso, 4250 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -763,10 +889,11 @@ module.exports = {
                 latitude: 41.176986,
                 longitude: -8.627373,
                 name: 'R. Dr. Manuel Monterroso',
+                parent_id: 36,
                 poi_type_id: 2
             },
             {
-                // 67
+                // 78
                 address: 'R. Dr. José Domingues de Oliveira, 4450-718 Leça da Palmeira, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -774,10 +901,11 @@ module.exports = {
                 latitude: 41.190553,
                 longitude: -8.699493,
                 name: 'R. Dr. José Domingues de Oliveira',
+                parent_id: 37,
                 poi_type_id: 2
             },
             {
-                // 68
+                // 79
                 address: 'R. Dr. Plácido da Costa, 4200 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -789,7 +917,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 69
+                // 80
                 address: 'R. Dr. Roberto Frias, 4200 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -797,10 +925,11 @@ module.exports = {
                 latitude: 41.178434,
                 longitude: -8.598960,
                 name: 'R. Dr. Roberto Frias',
+                parent_id: 38,
                 poi_type_id: 2
             },
             {
-                // 70
+                // 81
                 address: 'R. do Dr. Magalhães Lemos, 4000 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -808,10 +937,11 @@ module.exports = {
                 latitude: 41.147568,
                 longitude: -8.609482,
                 name: 'R. do Dr. Magalhães Lemos',
+                parent_id: 39,
                 poi_type_id: 2
             },
             {
-                // 71
+                // 82
                 address: 'R. do Dr. Ricardo Jorge, 4000 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -819,10 +949,11 @@ module.exports = {
                 latitude: 41.150246,
                 longitude: -8.612185,
                 name: 'R. do Dr. Ricardo Jorge',
+                parent_id: 40,
                 poi_type_id: 2
             },
             {
-                // 72
+                // 83
                 address: 'Avenida Arquitecto Fernando Távora, 4455, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -833,7 +964,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 73
+                // 84
                 address: 'Largo Soares dos Reis, 4300-096 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -844,7 +975,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 74
+                // 85
                 address: 'R. Acácio Lino, 4250 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -855,7 +986,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 75
+                // 86
                 address: 'R. António Correia da Silva, 4250 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -866,7 +997,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 76
+                // 87
                 address: 'R. António José da Costa, Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -877,7 +1008,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 77
+                // 88
                 address: 'R. Arquitecto Cassiano Barbosa, 4100 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -888,7 +1019,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 78
+                // 89
                 address: 'R. Artur Loureiro, 4100 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -899,7 +1030,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 79
+                // 90
                 address: 'R. Aurélia de Sousa, 4000-099 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -910,7 +1041,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 80
+                // 91
                 address: 'R. Dominguez Alvarez, Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -921,7 +1052,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 81
+                // 92
                 address: 'R. de António Cardoso, Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -932,7 +1063,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 82
+                // 93
                 address: 'R. de Arménio Losa, 4100 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -943,7 +1074,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 83
+                // 94
                 address: 'R. de Francisco Oliveira Ferreira, 4100-431 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -954,7 +1085,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 84
+                // 95
                 address: 'R. de Januário Godinho, 4100 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -965,7 +1096,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 85
+                // 96
                 address: 'R. de Joaquim Lopes, 4100 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -976,7 +1107,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 86
+                // 97
                 address: 'R. de Júlio Ramos, 4200 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -987,7 +1118,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 87
+                // 98
                 address: 'R. de Rogério Azevedo, 4250 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -998,7 +1129,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 88
+                // 99
                 address: 'R. de Silva Porto, 4250 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -1009,7 +1140,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 89
+                // 100
                 address: 'R. de Tomás Soller, 4100 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -1020,7 +1151,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 90
+                // 101
                 address: 'R. do Dr. Manuel Pereira da Silva, 4200 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -1032,7 +1163,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 91
+                // 102
                 address: 'R. Dr. Alberto Aires de Gouveia, 4050 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -1043,7 +1174,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 92
+                // 103
                 address: 'R. António Carneiro, 4300 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -1054,7 +1185,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 93
+                // 104
                 address: 'R. do Prof. António Cruz, 4200 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -1065,7 +1196,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 94
+                // 105
                 address: 'R. Henrique Medina, 4250 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -1076,7 +1207,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 95
+                // 106
                 address: 'R. Henrique Pousão, 4100 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -1087,7 +1218,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 96
+                // 107
                 address: 'R. Joaquim Vitorino Ribeiro, 4350 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -1098,7 +1229,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 97
+                // 108
                 address: 'R. Jorge Gigante, Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -1109,7 +1240,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 98
+                // 109
                 address: 'R. José Teixeira Barreto, 4300 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -1120,7 +1251,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 99
+                // 110
                 address: 'R. Júlio de Brito, 4150 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -1131,7 +1262,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 100
+                // 111
                 address: 'R. Mário Bonito, Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -1142,7 +1273,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 101
+                // 112
                 address: 'R. Marques de Oliveira, 4250 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -1153,7 +1284,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 102
+                // 113
                 address: 'R. Mte. Guilherme Camarinha, 4200 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -1164,7 +1295,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 103
+                // 114
                 address: 'R. Vieira Portuense, 4050 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -1175,7 +1306,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 104
+                // 115
                 address: 'R. Eng. Ezequiel de Campos, 4100 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 5,
@@ -1187,7 +1318,7 @@ module.exports = {
             },
             // Places
             {
-                // 105
+                // 116
                 address: 'R. Dr. Roberto Frias, 4200-464 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1198,7 +1329,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 106
+                // 117
                 address: 'R. Nova da Alfândega, 4400 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1209,7 +1340,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 107
+                // 118
                 address: 'Ponte Luís I, Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1220,7 +1351,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 108
+                // 119
                 address: 'Rua Dr. Abel Salazar, s/n, 4465-012 S. Mamede de Infesta',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1231,7 +1362,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 109
+                // 120
                 address: 'Dr. Augusto Nobre, Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1242,7 +1373,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 110
+                // 121
                 address: 'R. Dr. Plácido da Costa 91, 4200-450 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1253,7 +1384,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 111
+                // 122
                 address: 'Rua do Campo Alegre 1021/1055, 4169-007 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1264,7 +1395,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 112
+                // 123
                 address: 'R. Jorge de Viterbo Ferreira 228, 4050-313 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1275,7 +1406,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 113
+                // 124
                 address: '4050-039 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1286,7 +1417,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 114
+                // 125
                 address: 'Praça Marquês de Pombal, nº30-44, 4000-390 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1297,7 +1428,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 115
+                // 126
                 address: 'Alameda Prof. Hernâni Monteiro, 4200-319 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1308,7 +1439,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 116
+                // 127
                 address: 'R. Jorge de Viterbo Ferreira 228, 4050-343 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1319,7 +1450,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 117
+                // 128
                 address: 'Rua do Campo Alegre 1191, 4150-173 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1330,7 +1461,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 118
+                // 129
                 address: 'Praça de Gomes Teixeira, 4050-159 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1341,7 +1472,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 119
+                // 130
                 address: 'Praça de Gomes Teixeira, 4050-159 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1352,7 +1483,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 120
+                // 131
                 address: 'Av. de Rodrigues de Freitas 265, 4049-021 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1363,7 +1494,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 121
+                // 132
                 address: 'Praça de Gomes Teixeira 10, 4050-159 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1374,7 +1505,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 122
+                // 133
                 address: 'Praça de Gomes Teixeira 10, 4050-011 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1385,7 +1516,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 123
+                // 134
                 address: 'Praça de Parada Leitão 45, 4050-011 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1396,7 +1527,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 124
+                // 135
                 address: 'Largo Prof. Abel Salazar 4099-001 PORTO',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1407,7 +1538,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 125
+                // 136
                 address: 'R. Campo dos Mártires da Pátria 4099, 4050-076 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1418,7 +1549,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 126
+                // 137
                 address: 'Jardim João Chagas - Jardim da Cordoaria, 4050-366 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1429,7 +1560,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 127
+                // 138
                 address: 'Largo Amor de Perdição, 4050-008 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1440,7 +1571,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 128
+                // 139
                 address: 'R. de São Filipe de Nery, 4050-546 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1451,7 +1582,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 129
+                // 140
                 address: 'Rua das Carmelitas, nº151, 4050-162 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1462,7 +1593,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 130
+                // 141
                 address: 'R. das Carmelitas 144, 4050-161 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1473,7 +1604,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 131
+                // 142
                 address: 'Foz do Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1484,7 +1615,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 132
+                // 143
                 address: 'Porto Ribeira',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1495,7 +1626,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 133
+                // 144
                 address: 'Largo de Aviz - Santa Marinha, Vila Nova de Gaia, Norte, 4430-329, 4430-329',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1506,7 +1637,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 134
+                // 145
                 address: 'Passeio de São Lázaro 33, 4000-098 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1517,7 +1648,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 135
+                // 146
                 address: 'R. do Passeio Alegre 828, 4150-570 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1528,7 +1659,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 136
+                // 147
                 address: 'Av. de Rodrigues de Freitas 265, 4049-021 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1539,7 +1670,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 137
+                // 148
                 address: 'Rua das Estrelas, Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1550,7 +1681,7 @@ module.exports = {
                 poi_type_id: 2
             },
             {
-                // 138
+                // 149
                 address: 'Largo da Ponte D. Luiz, 4400-111 Vila Nova de Gaia',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1562,7 +1693,7 @@ module.exports = {
             },
             // Objects
             {
-                // 139
+                // 150
                 address: 'Rua Dr. Abel Salazar, s/n, 4465-012 S. Mamede de Infesta',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1570,11 +1701,11 @@ module.exports = {
                 latitude: 41.200728,
                 longitude: -8.613088,
                 name: 'Poente na Serra – Gondar – Minho”, Óleo s/ Madeira 23x35 cm',
-                parent_id: 4,
+                parent_id: 119,
                 poi_type_id: 3
             },
             {
-                //  140
+                //  151
                 address: 'Rua Dr. Abel Salazar, s/n, 4465-012 S. Mamede de Infesta',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1582,11 +1713,11 @@ module.exports = {
                 latitude: 41.200648,
                 longitude: -8.613094,
                 name: '“Perspetiva de cinema” , Tinta da china s/ papel 22x33 cm',
-                parent_id: 4,
+                parent_id: 119,
                 poi_type_id: 3
             },
             {
-                // 141
+                // 152
                 address: 'Rua Dr. Abel Salazar, s/n, 4465-012 S. Mamede de Infesta',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1594,11 +1725,11 @@ module.exports = {
                 latitude: 41.200631,
                 longitude: -8.612973,
                 name: 'Preparação histológica – Ovário de coelha',
-                parent_id: 4,
+                parent_id: 119,
                 poi_type_id: 3
             },
             {
-                // 142
+                // 153
                 address: 'R. Dr. Plácido da Costa 91, 4200-450 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1606,11 +1737,11 @@ module.exports = {
                 latitude: 41.178112,
                 longitude: -8.601523,
                 name: 'Disco',
-                parent_id: 6,
+                parent_id: 121,
                 poi_type_id: 3
             },
             {
-                // 143
+                // 154
                 address: 'R. Dr. Plácido da Costa 91, 4200-450 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1618,11 +1749,11 @@ module.exports = {
                 latitude: 41.177783,
                 longitude: -8.600057,
                 name: 'Sela',
-                parent_id: 6,
+                parent_id: 121,
                 poi_type_id: 3
             },
             {
-                //  144
+                //  155
                 address: 'R. Dr. Roberto Frias, 4200-464 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1634,7 +1765,7 @@ module.exports = {
                 poi_type_id: 3
             },
             {
-                // 145
+                // 156
                 address: 'R. Dr. Roberto Frias, 4200-464 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1642,11 +1773,11 @@ module.exports = {
                 latitude: 41.177984,
                 longitude: -8.596955,
                 name: 'Modelo didático de maquina a vapor de James Watt, J. Schr der',
-                parent_id: 1,
+                parent_id: 116,
                 poi_type_id: 3
             },
             {
-                // 146
+                // 157
                 address: 'R. Dr. Roberto Frias, 4200-464 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1654,11 +1785,11 @@ module.exports = {
                 latitude: 41.177874,
                 longitude: -8.596057,
                 name: 'Modelo de primeira solução para nova ponte ferroviária utilizando o cimbre da Ponte da Arrábida. Edgar Cardoso',
-                parent_id: 1,
+                parent_id: 116,
                 poi_type_id: 3
             },
             {
-                // 147
+                // 158
                 address: '4050-039 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1666,11 +1797,11 @@ module.exports = {
                 latitude: 41.155019,
                 longitude: -8.620654,
                 name: 'A máquina de comprimidos',
-                parent_id: 9,
+                parent_id: 124,
                 poi_type_id: 3
             },
             {
-                // 148
+                // 159
                 address: '4050-039 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1678,11 +1809,11 @@ module.exports = {
                 latitude: 41.155150,
                 longitude: -8.620736,
                 name: 'Moinho',
-                parent_id: 9,
+                parent_id: 124,
                 poi_type_id: 3
             },
             {
-                // 149
+                // 160
                 address: '4050-039 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1690,11 +1821,11 @@ module.exports = {
                 latitude: 41.155125,
                 longitude: -8.620399,
                 name: 'Pipeta',
-                parent_id: 9,
+                parent_id: 124,
                 poi_type_id: 3
             },
             {
-                // 150
+                // 161
                 address: 'Praça Marquês de Pombal, nº30-44, 4000-390 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1702,11 +1833,11 @@ module.exports = {
                 latitude: 41.160832,
                 longitude: -8.604090,
                 name: 'Retrato Marques da Silva - Veloso Salgado, Óleo s/ Tela, 61 x 50 cm, 1890',
-                parent_id: 10,
+                parent_id: 125,
                 poi_type_id: 3
             },
             {
-                // 151
+                // 162
                 address: 'Praça Marquês de Pombal, nº30-44, 4000-390 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1714,11 +1845,11 @@ module.exports = {
                 latitude: 41.160673,
                 longitude: -8.603899,
                 name: 'Povo e Tropa” - Maquete para o Monumento aos Heróis da Guerra Peninsular, Barata Feyo (Atr.) [1947]',
-                parent_id: 10,
+                parent_id: 125,
                 poi_type_id: 3
             },
             {
-                // 152
+                // 163
                 address: 'Praça Marquês de Pombal, nº30-44, 4000-390 Porto, Portugal',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1726,11 +1857,11 @@ module.exports = {
                 latitude: 41.160750,
                 longitude: -8.604007,
                 name: 'Maquete da Casa Sobre o Mar - Fernando Távora. Projeto para obtenção C.O.D.A., 41x 66x42 cm, [1952]',
-                parent_id: 10,
+                parent_id: 125,
                 poi_type_id: 3
             },
             {
-                // 153
+                // 164
                 address: 'Alameda Prof. Hernâni Monteiro, 4200-319 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1738,11 +1869,11 @@ module.exports = {
                 latitude: 41.180731,
                 longitude: -8.602471,
                 name: 'Mulher grávida e instrumento médico. Peça de Enrique Zófio',
-                parent_id: 11,
+                parent_id: 126,
                 poi_type_id: 3
             },
             {
-                // 154
+                // 165
                 address: 'Alameda Prof. Hernâni Monteiro, 4200-319 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1750,11 +1881,11 @@ module.exports = {
                 latitude: 41.180417,
                 longitude: -8.601233,
                 name: 'Estojo instrumentos médicos',
-                parent_id: 11,
+                parent_id: 126,
                 poi_type_id: 3
             },
             {
-                // 155
+                // 166
                 address: 'Alameda Prof. Hernâni Monteiro, 4200-319 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1762,11 +1893,11 @@ module.exports = {
                 latitude: 41.181179,
                 longitude: -8.600084,
                 name: 'Rosto em cera',
-                parent_id: 11,
+                parent_id: 126,
                 poi_type_id: 3
             },
             {
-                // 156
+                // 167
                 address: 'R. Jorge de Viterbo Ferreira 228, 4050-343 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1774,11 +1905,11 @@ module.exports = {
                 latitude: 41.146956,
                 longitude: -8.624293,
                 name: 'Peça anatómica',
-                parent_id: 12,
+                parent_id: 126,
                 poi_type_id: 3
             },
             {
-                // 157
+                // 168
                 address: 'Praça de Gomes Teixeira, 4050-159 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1786,11 +1917,11 @@ module.exports = {
                 latitude: 41.146777,
                 longitude: -8.615948,
                 name: 'Peça da coleção  egípcia',
-                parent_id: 15,
+                parent_id: 130,
                 poi_type_id: 3
             },
             {
-                // 158
+                // 169
                 address: 'Praça de Gomes Teixeira, 4050-159 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1798,11 +1929,11 @@ module.exports = {
                 latitude: 41.146810,
                 longitude: -8.615608,
                 name: 'Antílope bebé empalhado',
-                parent_id: 15,
+                parent_id: 130,
                 poi_type_id: 3
             },
             {
-                // 159
+                // 170
                 address: 'Praça de Gomes Teixeira, 4050-159 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1810,11 +1941,11 @@ module.exports = {
                 latitude: 41.146575,
                 longitude: -8.615974,
                 name: 'Quercus',
-                parent_id: 15,
+                parent_id: 130,
                 poi_type_id: 3
             },
             {
-                // 160
+                // 171
                 address: 'Praça de Gomes Teixeira, 4050-159 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1822,11 +1953,11 @@ module.exports = {
                 latitude: 41.146697,
                 longitude: -8.615836,
                 name: 'Fonógrafo de Edison',
-                parent_id: 15,
+                parent_id: 130,
                 poi_type_id: 3
             },
             {
-                // 161
+                // 172
                 address: 'Praça de Gomes Teixeira, 4050-159 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1834,11 +1965,11 @@ module.exports = {
                 latitude: 41.146790,
                 longitude: -8.615382,
                 name: 'Galvanómetro diferencial de Wiedemann',
-                parent_id: 15,
+                parent_id: 130,
                 poi_type_id: 3
             },
             {
-                // 162
+                // 173
                 address: 'Praça de Gomes Teixeira, 4050-159 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1846,11 +1977,11 @@ module.exports = {
                 latitude: 41.146575,
                 longitude: -8.615406,
                 name: 'Espectrofotómetro de Glan',
-                parent_id: 15,
+                parent_id: 130,
                 poi_type_id: 3
             },
             {
-                // 163
+                // 174
                 address: 'Av. de Rodrigues de Freitas 265, 4049-021 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1858,11 +1989,11 @@ module.exports = {
                 latitude: 41.145589,
                 longitude: -8.600899,
                 name: 'Escola romana, S c. XVI Autor desconhecido',
-                parent_id: 16,
+                parent_id: 131,
                 poi_type_id: 3
             },
             {
-                // 164
+                // 175
                 address: 'Av. de Rodrigues de Freitas 265, 4049-021 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1870,11 +2001,11 @@ module.exports = {
                 latitude: 41.145608,
                 longitude: -8.600633,
                 name: 'Guardador de Sol, 1963. José́ Rodrigues',
-                parent_id: 16,
+                parent_id: 131,
                 poi_type_id: 3
             },
             {
-                // 165
+                // 176
                 address: 'Av. de Rodrigues de Freitas 265, 4049-021 Porto',
                 content_editor_id: '2PR6AlwJNsR24FqVXx8HKIivpwY2',
                 context_id: 3,
@@ -1882,7 +2013,7 @@ module.exports = {
                 latitude: 41.145487,
                 longitude: -8.600749,
                 name: 'Faina fluvial no Douro, 1962',
-                parent_id: 16,
+                parent_id: 131,
                 poi_type_id: 3
             }
         ], {});
