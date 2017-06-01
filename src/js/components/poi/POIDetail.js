@@ -58,7 +58,7 @@ export default class POIDetail extends Component {
         }
 
         fetch(`/api/poi/${this.props.params.id}`, {
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Accept': 'application/json' },
             method: 'GET'
         }).
         then((response) => {
