@@ -181,8 +181,8 @@ export default class RouteDetail extends Component {
                 <div className="container">
                     <Row className="show-grid">
                         <Col xs={12} mdOffset={1} md={10} lgOffset={1} lg={10}>
-                            {poiSideBar}
                             {routeCard}
+                            {poiSideBar}
                         </Col>
                     </Row>
                 </div>

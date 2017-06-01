@@ -16,7 +16,7 @@ export default class AdminShell extends Component {
 
     render() {
         return (
-            <div className="wrapper-fill">
+            <div className="colorPrimary wrapper-fill">
                 <AdminNavigator router={this.props.router}/>
                 <RouteTransition
                     pathname={this.props.location.pathname}

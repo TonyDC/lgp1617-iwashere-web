@@ -9,8 +9,11 @@ import CommunicationFeed from 'material-ui/svg-icons/communication/rss-feed';
 import SocialPerson from 'material-ui/svg-icons/social/person';
 import ActionExitToApp from 'material-ui/svg-icons/action/exit-to-app';
 import ActionBuild from 'material-ui/svg-icons/action/build';
+import ActionAndroid from 'material-ui/svg-icons/action/android';
 
 import logoCompact from 'img/logo-compact.png';
+
+import { Link } from 'react-router';
 
 import { grey100 } from 'material-ui/styles/colors';
 
@@ -74,6 +77,10 @@ export default class NavBar extends Component {
         this.props.router.push(url);
     }
 
+    downloadApp() {
+        window.location.href = '/files/android';
+    }
+
     render() {
         const { userStatus, reserved } = this.state;
         let userActionButton =
@@ -107,7 +114,7 @@ export default class NavBar extends Component {
         return (
             <div className="navbar-container">
                 <Toolbar className="toolbar-custom-style">
-                    <a href="/" className="vert-align"><img src={logoCompact} className="app-logo"/></a>
+                    <Link to="/" className="vert-align"><img src={logoCompact} className="app-logo"/></Link>
                     <ToolbarGroup>
                         <IconButton iconStyle={styles.buttons} onTouchTap={this.goToPage.bind(this, '/')} tooltip={<div>Home</div>}>
                             <ActionHome hoverColor={grey100}/>
@@ -117,6 +124,9 @@ export default class NavBar extends Component {
                         </IconButton>
                         <IconButton iconStyle={styles.buttons} onTouchTap={this.goToPage.bind(this, '/feed')} tooltip={<div>Feed</div>}>
                             <CommunicationFeed hoverColor={grey100}/>
+                        </IconButton>
+                        <IconButton iconStyle={styles.buttons} onTouchTap={this.downloadApp.bind(this)} tooltip={<div>Download app</div>}>
+                            <ActionAndroid hoverColor={grey100}/>
                         </IconButton>
                         { reservedAreaButton }
                         <ToolbarSeparator className="toolbar-separator-custom-style"/>

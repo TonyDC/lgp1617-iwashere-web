@@ -212,18 +212,23 @@ export default class POIForm extends Component {
         }
     }
 
-    handleAddTag(tag) {
-        const cloneTagsArray = this.state.tags.slice(ZERO_INDEX);
-        cloneTagsArray.push(tag);
-        this.setState({ tags: cloneTagsArray });
-    }
-
-    handleRemoveTag(tag) {
+    handleAddTag(tagId) {
         if (this.componentIsMounted) {
             const { tags } = this.state;
-            const tagIndex = tags.indexOf(tag);
+            if (tags.indexOf(tagId) === NOT_FOUND) {
+                tags.push(tagId);
+                this.setState({ tags });
+            }
+        }
+    }
+
+    handleRemoveTag(tagId) {
+        if (this.componentIsMounted) {
+            const { tags } = this.state;
+            const tagIndex = tags.indexOf(tagId);
             if (tagIndex !== NOT_FOUND) {
-                this.setState({ tags: tags.splice(tagIndex, ONE_ELEMENT) });
+                tags.splice(tagIndex, ONE_ELEMENT);
+                this.setState({ tags });
             }
         }
     }
@@ -507,7 +512,7 @@ export default class POIForm extends Component {
                         { selectedLocationPin }
                     </GoogleMapReact>
                 </Paper>
-                <h5>Files to upload (Drag and drop files - png, jpeg)</h5>
+                <h5>Drag and drop files here (png, jpeg), or click here to open the select file window</h5>
                 <Paper>
                     <Dropzone className="custom-dropzone" style={dropzoneContainerStyle} onDrop={this.onDrop.bind(this)} accept="image/jpeg, image/png" onDragEnter={this.onDragEnter.bind(this)} onDragLeave={this.onDragLeave.bind(this)}>
                         { this.state.dropzoneActive && <div className="overlay">Drop files...</div> }

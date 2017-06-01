@@ -46,7 +46,7 @@ export default class POIArea extends Component {
 
     render() {
         return (
-            <div className="wrapper-fill vert-align hor-align">
+            <div className="colorPrimary wrapper-fill vert-align hor-align">
                 <Paper className="paper-min-width" zDepth={2} style={mainStyle}>
                     <Helmet>
                         <title>#iwashere - POI area</title>

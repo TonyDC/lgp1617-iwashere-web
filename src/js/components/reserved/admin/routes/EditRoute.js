@@ -18,6 +18,7 @@ import 'styles/map.scss';
 const API_ROUTE_URL = '/api/reserved/content-editor/route/';
 const DECIMAL_BASE = 10;
 const ONE_SIZE = 1;
+const ZERO_INDEX = 0;
 
 const mainStyle = {
     margin: 20,
@@ -31,6 +32,7 @@ export default class EditRoute extends Component {
         super(props);
 
         this.state = {
+            allPois: [],
             inProgress: false,
             route: { pois: [] },
             routeInfoLoaded: false,
@@ -63,7 +65,7 @@ export default class EditRoute extends Component {
             'X-user-context': getContext(this.context.store)
         };
 
-        authenticatedFetch(`${API_ROUTE_URL}${this.props.params.id}`, {}, headers, 'GET').
+        authenticatedFetch(`${API_ROUTE_URL}${this.props.params.id}`, null, headers, 'GET').
         then((response) => {
             return checkFetchResponse(response, true);
         }).
@@ -104,18 +106,20 @@ export default class EditRoute extends Component {
             'X-user-context': getContext(this.context.store)
         };
 
-        authenticatedFetch(`${API_ROUTE_URL}pois/${this.props.params.id}`, {}, headers, 'GET').
+        authenticatedFetch(`${API_ROUTE_URL}pois/${this.props.params.id}`, null, headers, 'GET').
         then((response) => {
             return checkFetchResponse(response, true);
         }).
         then((routePois) => {
             if (routePois && this.componentIsMounted) {
                 const { route } = this.state;
+                const allPois = routePois.slice(ZERO_INDEX);
                 route.pois = routePois.map((poi) => {
                     return `${poi.poiId}`;
                 });
 
                 this.setState({
+                    allPois,
                     route,
                     routePoisLoaded: true
                 });
@@ -155,21 +159,21 @@ export default class EditRoute extends Component {
     }
 
     saveRoute(route) {
+        const updateRoute = { ...route };
         const { currentUser } = firebase.auth();
-        if (currentUser && this.componentIsMounted) {
-            if (!this.checkRoute(route)) {
-                return;
-            }
-
-            this.setState({ inProgress: true });
+        if (currentUser && this.componentIsMounted && this.checkRoute(updateRoute)) {
             nProgress.start();
+            this.setState({ inProgress: true });
+
+            updateRoute.tags = JSON.stringify(updateRoute.tags);
+            updateRoute.contextId = updateRoute.contextId ? updateRoute.contextId : getContext(this.context.store);
 
             const headers = {
                 'Content-Type': 'application/json',
                 'X-user-context': getContext(this.context.store)
             };
 
-            authenticatedFetch(API_ROUTE_URL, JSON.stringify(route), headers, 'PUT').
+            authenticatedFetch(API_ROUTE_URL, JSON.stringify(updateRoute), headers, 'PUT').
             then(checkFetchResponse).
             then(() => {
                 nProgress.done();
@@ -198,11 +202,11 @@ export default class EditRoute extends Component {
                 'X-user-context': userContext
             };
 
-            authenticatedFetch(`${API_ROUTE_URL}${route.routeId}`,
-                JSON.stringify(route), headers, 'POST').
+            authenticatedFetch(`${API_ROUTE_URL}${route.routeId}`, JSON.stringify(route), headers, 'POST').
             then((response) => {
                 checkFetchResponse(response, true, false).then(() => {
                     this.setState({ inProgress: false });
+                    Alerts.createInfoAlert('Route visibility set.');
 
                     return callback(true);
                 });
@@ -226,6 +230,7 @@ export default class EditRoute extends Component {
                                    userContext={getContext(this.context.store)}
                                    onSave={this.saveRoute.bind(this)}
                                    onDelete={this.deleteRoute.bind(this)}
+                                   allPois={this.state.allPois}
                                    route={this.state.route}
                                    router={this.props.router}
                                    title="Edit a route" />;

@@ -51,11 +51,10 @@ export default class EditUser extends Component {
             'Accept': 'application/json',
             'X-user-context': getContext(store)
         };
-        const body = {};
 
         nProgress.start();
 
-        return authenticatedFetch(`${USER_API_URL}/${encodeURIComponent(userID)}`, body, headers, 'GET').
+        return authenticatedFetch(`${USER_API_URL}/${encodeURIComponent(userID)}`, null, headers, 'GET').
         then(checkFetchResponse).
         then((json) => {
             if (!this.componentIsMounted) {

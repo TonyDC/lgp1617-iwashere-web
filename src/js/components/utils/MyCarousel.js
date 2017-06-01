@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { GridLoader as Loader } from 'halogen';
-import httpCodes from 'http-status-codes';
 import { Carousel } from 'react-responsive-carousel';
 import Image from './Image';
+import { checkFetchResponse } from '../../functions/fetch';
 
 import 'react-responsive-carousel/lib/styles/carousel.css';
 
@@ -33,16 +33,10 @@ export default class MyCarousel extends Component {
             method: 'GET'
         }).
         then((response) => {
-            if (response.status >= httpCodes.BAD_REQUEST ||
-                response.status === httpCodes.NO_CONTENT) {
-                return Promise.reject(new Error(response.statusText));
-            }
-
-            return response.json();
+            return checkFetchResponse(response, true);
         }).
-        then((response) => {
+        then((media) => {
             if (this.componentIsMounted) {
-                const media = this.getMedia(response);
                 this.setState({ media });
             }
         });
@@ -75,7 +69,7 @@ export default class MyCarousel extends Component {
             );
         }
 
-        if (this.state.media.length === NO_ELEMENT_SIZE) {
+        if (this.state.media.length === NO_ELEMENT_SIZE || !this.componentIsMounted) {
             return null;
         }
 
@@ -83,7 +77,7 @@ export default class MyCarousel extends Component {
             <Carousel useKeyboardArrows autoPlay infiniteLoop
                       showArrows showThumbs={ false } showStatus={ false }
                       interval={TRANSITION_INTERVAL}>
-                {this.state.media}
+                {this.getMedia(this.state.media)}
             </Carousel>
         );
     }

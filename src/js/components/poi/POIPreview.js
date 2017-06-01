@@ -91,7 +91,7 @@ export default class POIPreview extends Component {
     render() {
         const closeButton =
             <RaisedButton
-                className="poi-detail-button pull-right" backgroundColor="#39A8E0"
+                className="poi-detail-button pull-right" backgroundColor="#39A8E0" labelColor="#FFF"
                 label="Close"
                 key="close"
                 onTouchTap={this.props.onClose}
@@ -117,7 +117,7 @@ export default class POIPreview extends Component {
         const poiPreviewButtons =
             <div className="poi-detail-buttons">
                 <RaisedButton
-                    className="poi-detail-button" backgroundColor="#39A8E0"
+                    className="poi-detail-button" backgroundColor="#39A8E0" labelColor="#FFF"
                     label="View more"
                     onTouchTap={this.viewPoiDetail.bind(this)}
                 />

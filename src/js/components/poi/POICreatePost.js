@@ -75,7 +75,7 @@ export default class CreatePostDialog extends Component {
 
             const form = new FormData();
             form.append('description', description.trim());
-            form.append('tags', tags);
+            form.append('tags', JSON.stringify(tags));
             form.append('poiID', poiId);
             for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
                 // Note: In order to detect the array of files in the server, each file, individually, must be appended to the same form key.
@@ -236,25 +236,25 @@ export default class CreatePostDialog extends Component {
 
         return (
             <div className="poi-detail-buttons">
-                <RaisedButton className="poi-detail-button" backgroundColor="#39A8E0" label="New Post" onTouchTap={this.handleOpen.bind(this)} />
+                <RaisedButton className="poi-detail-button" backgroundColor="#39A8E0" label="New Post" labelColor="#FFF" onTouchTap={this.handleOpen.bind(this)} />
                 <Dialog autoScrollBodyContent title="Create a new post" actions={actions} modal={false} open={this.state.open}
                         onRequestClose={() => {
                             this.handleClose();
                         }}>
-                    <Dropzone className="custom-dropzone" onDrop={this.onDrop.bind(this)} accept="image/jpeg, image/png" disableClick onDragEnter={this.onDragEnter.bind(this)} onDragLeave={this.onDragLeave.bind(this)}>
-                        <form>
-                            <Tags title="Add tag..." tags={this.state.post.tags}
-                                  onAddTag={(tagId) => {
-                                      this.addTagToPost(tagId);
-                                  }}
-                                  onRemoveTag={(tagId) => {
-                                      this.removeTagFromPost(tagId);
-                                  }}
-                            />
-                            <TextField hintText="Enter a description" floatingLabelText="Description" onChange={ this.handleDescription.bind(this) } fullWidth />
+                    <form>
+                        <Tags title="Add tag..." tags={this.state.post.tags}
+                              onAddTag={(tagId) => {
+                                  this.addTagToPost(tagId);
+                              }}
+                              onRemoveTag={(tagId) => {
+                                  this.removeTagFromPost(tagId);
+                              }}
+                        />
+                        <TextField hintText="Enter a description" floatingLabelText="Description" onChange={ this.handleDescription.bind(this) } fullWidth />
+                        <Dropzone className="custom-dropzone" onDrop={this.onDrop.bind(this)} accept="image/jpeg, image/png" onDragEnter={this.onDragEnter.bind(this)} onDragLeave={this.onDragLeave.bind(this)}>
                             <div>
                                 { this.state.dropzoneActive && <div className="overlay">Drop files...</div> }
-                                <p className="dropzone-info">Drag and drop a file here (png, jpeg)</p>
+                                <p className="dropzone-info">Drag and drop a file here (png, jpeg), or click here to open the select file window</p>
                                 { this.state.rejected && <p className="dropzone-info">Files were rejected. Only one .png or .jpeg file is accepted</p> }
                                 { this.state.post.files.length > NO_ELEMENTS && <p className="dropzone-info">File to upload</p> }
                                 {
@@ -281,8 +281,8 @@ export default class CreatePostDialog extends Component {
                                     })
                                 }
                             </div>
-                        </form>
-                    </Dropzone>
+                        </Dropzone>
+                    </form>
                 </Dialog>
             </div>
         );

@@ -21,11 +21,12 @@ const TWO_SIZE = 2;
 // Create new Route
 router.post('/', (req, res, next) => {
     const { name, description, tags, pois, contextId } = utils.trimStringProperties(req.body);
+    const tagList = utils.parseJSON(tags);
     const { uid: userID } = req.auth.token;
     const { contextID: userContext } = req.auth;
 
     if (typeof userID !== 'string' || validator.isEmpty(userID) || typeof name !== 'string' || validator.isEmpty(name) ||
-        typeof description !== 'string' || validator.isEmpty(description) || !tags || !pois || pois.length < ONE_SIZE ||
+        typeof description !== 'string' || validator.isEmpty(description) || !pois || pois.length < ONE_SIZE ||
         typeof contextId === 'undefined' || validator.isEmpty(`${contextId}`)) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
@@ -45,7 +46,7 @@ router.post('/', (req, res, next) => {
                 if (utils.checkResultList(routeCreationResults, [ONE_SIZE])) {
                     const { routeId } = utils.convertObjectToCamelCase(routeCreationResults[ZERO_INDEX]);
 
-                    return routeAux.setAdditionalRouteInfo(routeId, pois, tags).
+                    return routeAux.setAdditionalRouteInfo(routeId, pois, tagList).
                     then(() => {
                         res.json({ routeId }).end();
                     });
@@ -71,11 +72,12 @@ router.post('/', (req, res, next) => {
 // Update Route
 router.put('/', (req, res, next) => {
     const { routeId, name, description, tags, pois, contextId } = utils.trimStringProperties(req.body);
+    const tagList = utils.parseJSON(tags);
     const { uid: userID } = req.auth.token;
     const { contextID: userContext } = req.auth;
 
     if (typeof userID !== 'string' || validator.isEmpty(userID) || typeof name !== 'string' || validator.isEmpty(name) ||
-        typeof description !== 'string' || validator.isEmpty(description) || !tags || !pois || pois.length < ONE_SIZE ||
+        typeof description !== 'string' || validator.isEmpty(description) || !pois || pois.length < ONE_SIZE ||
         typeof routeId === 'undefined' || validator.isEmpty(`${routeId}`) ||
         typeof contextId === 'undefined' || validator.isEmpty(`${contextId}`)) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
@@ -95,7 +97,7 @@ router.put('/', (req, res, next) => {
             then((routeUpdateResults) => {
                 if (utils.checkResultList(routeUpdateResults, [ONE_SIZE])) {
 
-                    return routeAux.setAdditionalRouteInfo(routeId, pois, tags).
+                    return routeAux.setAdditionalRouteInfo(routeId, pois, tagList).
                     then(() => {
                         res.json({ routeId }).end();
                     });
