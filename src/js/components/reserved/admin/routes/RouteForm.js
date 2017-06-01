@@ -240,6 +240,7 @@ export default class ReservedRoute extends Component {
                                onChange={this.handleDescription.bind(this)}/>
                     <Tags title="Add tag..."
                           tags={route.tags}
+                          fullWidth
                           onAddTag={this.handleAddTag.bind(this)}
                           onRemoveTag={this.handleRemoveTag.bind(this)}/>
                     <Card>

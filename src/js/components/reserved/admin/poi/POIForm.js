@@ -212,19 +212,23 @@ export default class POIForm extends Component {
         }
     }
 
-    handleAddTag(tag) {
-        const cloneTagsArray = this.state.tags.slice(ZERO_INDEX);
-        cloneTagsArray.push(tag);
-        this.setState({ tags: cloneTagsArray });
-    }
-
-    handleRemoveTag(tag) {
+    handleAddTag(tagId) {
         if (this.componentIsMounted) {
             const { tags } = this.state;
-            const tagIndex = tags.indexOf(tag);
+            if (tags.indexOf(tagId) === NOT_FOUND) {
+                tags.push(tagId);
+                this.setState({ tags });
+            }
+        }
+    }
+
+    handleRemoveTag(tagId) {
+        if (this.componentIsMounted) {
+            const { tags } = this.state;
+            const tagIndex = tags.indexOf(tagId);
             if (tagIndex !== NOT_FOUND) {
-                const cloneTagsArray = tags.slice(ZERO_INDEX);
-                this.setState({ tags: cloneTagsArray.splice(tagIndex, ONE_ELEMENT) });
+                tags.splice(tagIndex, ONE_ELEMENT);
+                this.setState({ tags });
             }
         }
     }
