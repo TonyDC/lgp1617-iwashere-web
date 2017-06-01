@@ -12,7 +12,6 @@ import POIPosts from './POIPosts';
 import 'styles/utils.scss';
 
 const DECIMAL_BASE = 10;
-const PLACE_TYPE = 'place;lugar';
 
 export default class POIDetail extends Component {
 
@@ -114,11 +113,7 @@ export default class POIDetail extends Component {
 
             if (this.state.poiInfo) {
                 poiCard = <POICard poiInfo={this.state.poiInfo} user={this.state.user} showPostButton onNewPost={this.onNewPost.bind(this)}/>;
-
-                if (this.state.poiInfo.type === PLACE_TYPE) {
-                    userMediaTimeline =
-                        <POIPosts url={`/api/post`} poiId={this.props.params.id} user={this.state.user} newPost={this.state.newPost}/>;
-                }
+                userMediaTimeline = <POIPosts url={`/api/post`} poiId={this.props.params.id} user={this.state.user} newPost={this.state.newPost}/>;
             }
         }
 
