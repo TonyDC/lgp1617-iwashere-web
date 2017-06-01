@@ -15,8 +15,9 @@ const DECIMAL_BASE = 10;
 
 const ZERO_INDEX = 0;
 const ONE_INDEX = 1;
+const TWO_INDEX = 2;
 const NO_ELEMENT_SIZE = 0;
-const TWO_SIZE = 2;
+const THREE_SIZE = 3;
 
 router.get('/search', (req, res, next) => {
     let { query } = req.query;
@@ -106,13 +107,14 @@ router.get('/:id', (req, res, next) => {
 
     const { routeDB } = db;
 
-    Promise.all([routeDB.getRouteDetailByID(id), routeDB.getTagsByRouteID(id)]).
+    Promise.all([routeDB.getRouteDetailByID(id), routeDB.getTagsByRouteID(id), routeDB.getPOIsByRouteID(id)]).
     then((results) => {
-        if (results && results.length === TWO_SIZE &&
+        if (results && results.length === THREE_SIZE &&
             results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE) {
 
             const route = utils.convertObjectToCamelCase(results[ZERO_INDEX][ZERO_INDEX]);
             route.tags = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
+            route.pois = utils.convertObjectsToCamelCase(results[TWO_INDEX]);
 
             res.json(route).end();
         } else {
