@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import { GridLoader as Loader } from 'halogen';
 import InfiniteScroll from 'react-infinite-scroller';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
-import MoreIcon from "material-ui/svg-icons/image/style";
 import CancelIcon from "material-ui/svg-icons/navigation/close";
 import ViewPost from "../utils/ViewPost";
 import Tags from '../utils/MyTags';
@@ -15,9 +14,16 @@ import Post from '../utils/Post';
 
 import 'styles/timeline.scss';
 
+import iwashereTag from 'img/iwashere-icon.svg';
+const iwashereTagStyle = {
+    height: 60,
+    width: 25
+};
+
 const NO_ELEMENT_SIZE = 0;
 const NOT_FOUND = -1;
 const LIMIT = 10;
+
 
 export default class POIPosts extends Component {
 
@@ -217,7 +223,7 @@ export default class POIPosts extends Component {
 
         const filterIcon = this.state.filtering
             ? <CancelIcon/>
-            : <MoreIcon/>;
+            : <img style={iwashereTagStyle} src={iwashereTag}/>;
         const toggleTagFilterButton = Array.isArray(this.state.posts) && this.state.posts.length > NO_ELEMENT_SIZE
             ? (<div className="filter-button-container">
                 <FloatingActionButton backgroundColor="#012935" onTouchTap={this.toggleFiltering.bind(this)}>
