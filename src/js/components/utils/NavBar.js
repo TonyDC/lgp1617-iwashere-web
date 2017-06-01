@@ -78,7 +78,7 @@ export default class NavBar extends Component {
     }
 
     downloadApp() {
-        return null;
+        window.location.href = '/files/android';
     }
 
     render() {
