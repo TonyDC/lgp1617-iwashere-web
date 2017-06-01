@@ -1,6 +1,7 @@
 'use strict';
 
 const utils = require('../utils/misc');
+const validator = require('validator');
 
 const httpCodes = require('http-status-codes');
 
@@ -17,12 +18,12 @@ const ONE_SIZE = 1;
 const THREE_SIZE = 3;
 
 router.get('/search', (req, res, next) => {
-    let { query } = req.query;
+    let { query } = utils.trimStringProperties(req.query);
 
-    query = query ? query.trim().split(/\s+/).
+    query = typeof query === 'string' ? query.split(/\s+/).
     join(' & ') : '';
 
-    if (!query || typeof query !== 'string') {
+    if (validator.isEmpty(query)) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;

@@ -3,6 +3,7 @@
 const express = require('express');
 const router = express.Router();
 
+const utils = require('../utils/misc');
 const httpCodes = require('http-status-codes');
 const db = root_require('src/db/query');
 
@@ -23,7 +24,7 @@ const NO_ELEMENT_SIZE = 0;
 const TWO_SIZE = 2;
 
 router.post('/rating', (req, res, next) => {
-    const { routeID, rating } = req.body;
+    const { routeID, rating } = utils.trimStringProperties(req.body);
     if (!routeID || !rating || RATING_VALUES.indexOf(rating) === VALUE_NOT_FOUND ||
         isNaN(parseInt(routeID, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();

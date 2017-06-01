@@ -158,7 +158,7 @@ router.post('/:routeID', (req, res, next) => {
 });
 
 router.get('/pois/:id', (req, res, next) => {
-    const { id } = req.params;
+    const { id } = utils.trimStringProperties(req.params);
     const { contextID: userContext } = req.auth;
 
     if (!id || isNaN(parseInt(id, DECIMAL_BASE))) {
@@ -202,7 +202,7 @@ router.get('/pois/:id', (req, res, next) => {
 });
 
 router.get('/search', (req, res, next) => {
-    let { query } = req.query;
+    let { query } = utils.trimStringProperties(req.query);
     const { contextID: userContext } = req.auth;
 
     if (!query || typeof query !== 'string') {
@@ -237,7 +237,7 @@ router.get('/search', (req, res, next) => {
 });
 
 router.get('/:id', (req, res, next) => {
-    const { id } = req.params;
+    const { id } = utils.trimStringProperties(req.params);
     const { contextID: userContext } = req.auth;
 
     if (!id || isNaN(parseInt(id, DECIMAL_BASE))) {
