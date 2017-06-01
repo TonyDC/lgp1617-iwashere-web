@@ -13,18 +13,18 @@
     cursor: pointer;
     color: #ccc !important;
     position: relative;
-    text-decoration: none;
+    text-decoration: none !important;
 }
 .react-rater a.will-be-active {
-    color: #ffdd99 !important;
+    color: #e59979 !important;
 }
 
 .react-rater a.is-active {
-    color: #fc6 !important;
+    color: #E5402A !important;
 }
 
 .react-rater a.is-active-half:before {
-    color: #fc6;
+    color: #E5402A;
     content: '\2605';
     position: absolute;
     left: 0;

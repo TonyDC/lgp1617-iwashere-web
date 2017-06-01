@@ -33,7 +33,7 @@ export default class ReservedRoute extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            allPois: [],
+            allPois: props.allPois,
             route: this.props.route
         };
     }
@@ -240,6 +240,7 @@ export default class ReservedRoute extends Component {
                                onChange={this.handleDescription.bind(this)}/>
                     <Tags title="Add tag..."
                           tags={route.tags}
+                          fullWidth
                           onAddTag={this.handleAddTag.bind(this)}
                           onRemoveTag={this.handleRemoveTag.bind(this)}/>
                     <Card>
@@ -255,6 +256,7 @@ export default class ReservedRoute extends Component {
                 </div>
                 <div className="button-container">
                     <RaisedButton label="Save"
+                                  primary
                                   disabled={this.props.inProgress}
                                   className="button-style"
                                   onTouchTap={() => {
@@ -273,11 +275,13 @@ export default class ReservedRoute extends Component {
 }
 
 ReservedRoute.defaultProps = {
+    allPois: [],
     inProgress: false,
     zoom: 10
 };
 
 ReservedRoute.propTypes = {
+    allPois: PropTypes.array,
     inProgress: PropTypes.bool.isRequired,
     onDelete: PropTypes.func,
     onSave: PropTypes.func.isRequired,

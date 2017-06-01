@@ -8,6 +8,9 @@ import POIComponent from '../map/SelectedLocation';
 import 'styles/utils.scss';
 import 'styles/map.scss';
 
+const ONE_SIZE = 1;
+const ZERO_INDEX = 0;
+
 export default class RouteMap extends Component {
 
     constructor(props) {
@@ -54,6 +57,17 @@ export default class RouteMap extends Component {
         }
 
         this.propsUpdated = true;
+
+        if (this.props.poiList && this.props.poiList.length === ONE_SIZE) {
+            const poi = this.props.poiList[ZERO_INDEX];
+            this.map.setCenter({
+                lat: poi.latitude,
+                lng: poi.longitude
+            });
+
+            return;
+        }
+
         const bounds = new this.maps.LatLngBounds();
         this.props.poiList.forEach((poi) => {
             bounds.extend({
@@ -77,7 +91,8 @@ export default class RouteMap extends Component {
         }
 
         const poisInViewport = poisList.map((element) => {
-            return <POIComponent lat={ element.latitude }
+            return <POIComponent key={ element.poiId }
+                                 lat={ element.latitude }
                                  lng={ element.longitude }
                                  onClick={ () => {
                                      this.props.onPoiSelected(element.poiId);

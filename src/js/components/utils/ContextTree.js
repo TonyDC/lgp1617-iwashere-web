@@ -74,11 +74,9 @@ export default class ContextTree extends Component {
             throw new Error('Bad user context');
         }
 
-        const body = {},
-            headers = { 'X-user-context': userContext },
-            method = 'GET';
+        const headers = { 'X-user-context': userContext };
 
-        return authenticatedFetch('/api/reserved/utils/child-types', body, headers, method).
+        return authenticatedFetch('/api/reserved/utils/child-types', null, headers, 'GET').
         then(checkFetchResponse).
         then((data) => {
             if (this.componentIsMounted) {

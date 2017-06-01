@@ -50,7 +50,7 @@ export default class RouteSearch extends Component {
 
         const headers = { 'X-user-context': getContext(this.context.store) };
 
-        return authenticatedFetch(`${API_ROUTE_URL}search?query=${query}`, {}, headers, 'GET').
+        return authenticatedFetch(`${API_ROUTE_URL}search?query=${query}`, null, headers, 'GET').
         then(checkFetchResponse);
     }
 

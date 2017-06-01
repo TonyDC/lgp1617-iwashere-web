@@ -2,6 +2,7 @@
 
 // Note regarding 'parseInt' function: Javascript supports 53bit mantissa
 const httpCodes = require('http-status-codes');
+const validator = require('validator');
 const utils = require('../utils/misc');
 const aux = require('../utils/poi_aux');
 
@@ -20,7 +21,7 @@ const TWO_SIZE = 2;
 router.get('/search', (req, res, next) => {
     let { query } = req.query;
     let { lat, lng } = req.query;
-    if (!query || typeof query !== 'string') {
+    if (typeof query !== 'string' || validator.isEmpty(query.trim()) || (typeof lat === 'string' && !validator.isDecimal(lat)) || (typeof lat === 'string' && !validator.isDecimal(lng))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
@@ -34,8 +35,10 @@ router.get('/search', (req, res, next) => {
     lat = parseFloat(lat);
     lng = parseFloat(lng);
 
+    let promise = null;
+
     if (!isNaN(lat) && !isNaN(lng)) {
-        poiDB.searchNearbyPOI(query, lat, lng).
+        promise = poiDB.searchNearbyPOI(query, lat, lng).
         then((results) => {
             if (results) {
                 const response = {
@@ -48,12 +51,9 @@ router.get('/search', (req, res, next) => {
             } else {
                 res.sendStatus(httpCodes.NO_CONTENT).end();
             }
-        }).
-        catch((error) => {
-            next(error);
         });
     } else {
-        poiDB.searchPOI(query).then((results) => {
+        promise = poiDB.searchPOI(query).then((results) => {
             if (results) {
                 const response = {
                     results: results.map((entry) => {
@@ -65,11 +65,12 @@ router.get('/search', (req, res, next) => {
             } else {
                 res.sendStatus(httpCodes.NO_CONTENT).end();
             }
-        }).
-        catch((error) => {
-            next(error);
         });
     }
+
+    promise.catch((error) => {
+        next(error);
+    });
 });
 
 router.get('/media/:poiID', (req, res, next) => {

@@ -57,9 +57,8 @@ export default class EditPOI extends Component {
             'Accept': 'application/json',
             'X-user-context': contexts[selectedContextIndex].contextId
         };
-        const body = {};
 
-        return authenticatedFetch(`/api/reserved/content-editor/poi/${encodeURIComponent(poiID)}`, body, headers, 'GET').
+        return authenticatedFetch(`/api/reserved/content-editor/poi/${encodeURIComponent(poiID)}`, null, headers, 'GET').
         then(checkFetchResponse).
         then((json) => {
             const { poiId, name, address, description, poiTypeId, tags, latitude, longitude, deleted, contents, contextId } = json;

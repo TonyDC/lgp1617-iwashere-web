@@ -62,7 +62,7 @@ export default class CreatePOI extends Component {
             throw new Error('Bad user object');
         }
 
-        const { contexts, selectedIndex: selectedContextIndex } = this.context.store.getState().reserved.reservedPropStore;
+        const { contexts, selectedIndex: selectedContextIndex } = this.context.store.getState().reserved;
         if (!contexts || !Array.isArray(contexts) || typeof selectedContextIndex !== 'number' || contexts.length <= selectedContextIndex) {
             throw new Error('Bad user context selected');
         }
