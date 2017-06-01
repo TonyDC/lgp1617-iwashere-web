@@ -5,6 +5,7 @@ const router = express.Router();
 
 const httpCodes = require('http-status-codes');
 const db = root_require('src/db/query');
+const utils = require('../utils/misc');
 
 const ZERO_RATING = 0;
 const ONE_RATING = 1;
@@ -22,8 +23,8 @@ const ONE_INDEX = 1;
 const TWO_SIZE = 2;
 
 router.post('/rating', (req, res, next) => {
-    const { poiID, rating } = req.body;
-    if (!poiID || !rating || RATING_VALUES.indexOf(rating) === VALUE_NOT_FOUND ||
+    const { poiID, rating } = utils.trimStringProperties(req.body);
+    if (RATING_VALUES.indexOf(rating) === VALUE_NOT_FOUND ||
         isNaN(parseInt(poiID, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 

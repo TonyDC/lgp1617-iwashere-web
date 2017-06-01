@@ -1,5 +1,6 @@
 'use strict';
 
+const utils = require('../utils/misc');
 const aux = require('../utils/post_aux');
 const httpCodes = require('http-status-codes');
 
@@ -11,9 +12,9 @@ const DECIMAL_BASE = 10;
 const NO_ELEMENT_SIZE = 0;
 
 router.get('/poi_posts/:poiID/:offset/:limit', (req, res, next) => {
-    const { poiID, offset, limit } = req.params;
+    const { poiID, offset, limit } = utils.trimStringProperties(req.params);
 
-    if (!poiID || isNaN(parseInt(poiID, DECIMAL_BASE)) || !limit || !offset || isNaN(parseInt(offset, DECIMAL_BASE))) {
+    if (isNaN(parseInt(poiID, DECIMAL_BASE)) || isNaN(parseInt(offset, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
@@ -33,10 +34,10 @@ router.get('/poi_posts/:poiID/:offset/:limit', (req, res, next) => {
 });
 
 router.get('/poi_posts/:userID/:poiID/:offset/:limit', (req, res, next) => {
-    const { poiID, offset, limit, userID } = req.params;
+    const { poiID, offset, limit, userID } = utils.trimStringProperties(req.params);
 
-    if (!poiID || isNaN(parseInt(poiID, DECIMAL_BASE)) || !limit || !offset ||
-        isNaN(parseInt(offset, DECIMAL_BASE)) || !userID || typeof userID !== 'string') {
+    if (isNaN(parseInt(poiID, DECIMAL_BASE)) ||
+        isNaN(parseInt(offset, DECIMAL_BASE)) || typeof userID !== 'string') {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
@@ -56,9 +57,9 @@ router.get('/poi_posts/:userID/:poiID/:offset/:limit', (req, res, next) => {
 });
 
 router.get('/post_poi/:offset/:limit', (req, res, next) => {
-    const { offset, limit } = req.params;
+    const { offset, limit } = utils.trimStringProperties(req.params);
 
-    if (!limit || !offset || isNaN(parseInt(offset, DECIMAL_BASE))) {
+    if (isNaN(parseInt(offset, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
@@ -78,10 +79,10 @@ router.get('/post_poi/:offset/:limit', (req, res, next) => {
 });
 
 router.get('/post_poi/:userID/:offset/:limit', (req, res, next) => {
-    const { offset, limit, userID } = req.params;
+    const { offset, limit, userID } = utils.trimStringProperties(req.params);
 
-    if (!userID || typeof userID !== 'string' ||
-        !limit || !offset || isNaN(parseInt(offset, DECIMAL_BASE))) {
+    if (typeof userID !== 'string' ||
+        isNaN(parseInt(offset, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
@@ -101,11 +102,11 @@ router.get('/post_poi/:userID/:offset/:limit', (req, res, next) => {
 });
 
 router.get('/post_poi/:userID/:lat/:lng/:offset/:limit', (req, res, next) => {
-    const { offset, limit, userID, lat, lng } = req.params;
+    const { offset, limit, userID, lat, lng } = utils.trimStringProperties(req.params);
 
-    if (!userID || typeof userID !== 'string' ||
-        !limit || !offset || isNaN(parseInt(offset, DECIMAL_BASE)) ||
-        !lat || !lng || isNaN(parseFloat(lat)) || isNaN(parseFloat(lng))) {
+    if (typeof userID !== 'string' ||
+        isNaN(parseInt(offset, DECIMAL_BASE)) ||
+        isNaN(parseFloat(lat)) || isNaN(parseFloat(lng))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
@@ -125,10 +126,10 @@ router.get('/post_poi/:userID/:lat/:lng/:offset/:limit', (req, res, next) => {
 });
 
 router.get('/post_poi/:lat/:lng/:offset/:limit', (req, res, next) => {
-    const { offset, limit, lat, lng } = req.params;
+    const { offset, limit, lat, lng } = utils.trimStringProperties(req.params);
 
-    if (!limit || !offset || isNaN(parseInt(offset, DECIMAL_BASE)) ||
-        !lat || !lng || isNaN(parseFloat(lat)) || isNaN(parseFloat(lng))) {
+    if (isNaN(parseInt(offset, DECIMAL_BASE)) ||
+        isNaN(parseFloat(lat)) || isNaN(parseFloat(lng))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;

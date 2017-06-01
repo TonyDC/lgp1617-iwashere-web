@@ -19,15 +19,15 @@ const NO_ELEMENT_SIZE = 0;
 const TWO_SIZE = 2;
 
 router.get('/search', (req, res, next) => {
-    let { query } = req.query;
-    let { lat, lng } = req.query;
-    if (typeof query !== 'string' || validator.isEmpty(query.trim()) || (typeof lat === 'string' && !validator.isDecimal(lat)) || (typeof lat === 'string' && !validator.isDecimal(lng))) {
+    let { query } = utils.trimStringProperties(req.query);
+    let { lat, lng } = utils.trimStringProperties(req.query);
+    if (typeof query !== 'string' || validator.isEmpty(query) || (typeof lat === 'string' && !validator.isDecimal(lat)) || (typeof lat === 'string' && !validator.isDecimal(lng))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
 
-    query = query.trim().split(/\s+/).
+    query = query.split(/\s+/).
     join(' & ');
 
     const { poiDB } = db;
@@ -74,8 +74,8 @@ router.get('/search', (req, res, next) => {
 });
 
 router.get('/media/:poiID', (req, res, next) => {
-    const { poiID } = req.params;
-    if (!poiID || isNaN(parseInt(poiID, DECIMAL_BASE))) {
+    const { poiID } = utils.trimStringProperties(req.params);
+    if (isNaN(parseInt(poiID, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
@@ -96,8 +96,8 @@ router.get('/media/:poiID', (req, res, next) => {
 });
 
 router.get('/rating/:poiID/:userID', (req, res, next) => {
-    const { poiID, userID } = req.params;
-    if (!poiID || !userID || typeof userID !== 'string' || isNaN(parseInt(poiID, DECIMAL_BASE))) {
+    const { poiID, userID } = utils.trimStringProperties(req.params);
+    if (typeof userID !== 'string' || isNaN(parseInt(poiID, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
@@ -120,8 +120,8 @@ router.get('/rating/:poiID/:userID', (req, res, next) => {
 });
 
 router.get('/rating/:poiID', (req, res, next) => {
-    const { poiID } = req.params;
-    if (!poiID || isNaN(parseInt(poiID, DECIMAL_BASE))) {
+    const { poiID } = utils.trimStringProperties(req.params);
+    if (isNaN(parseInt(poiID, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
@@ -154,9 +154,8 @@ router.get('/rating/:poiID', (req, res, next) => {
 });
 
 router.get('/range/:minLat/:maxLat/:minLng/:maxLng', (req, res, next) => {
-    const { minLat, maxLat, minLng, maxLng } = req.params;
-    if (!minLat || !maxLat || !minLng || !maxLng ||
-        isNaN(parseFloat(minLat)) || isNaN(parseFloat(maxLat)) || isNaN(parseFloat(minLng)) || isNaN(parseFloat(maxLng))) {
+    const { minLat, maxLat, minLng, maxLng } = utils.trimStringProperties(req.params);
+    if (isNaN(parseFloat(minLat)) || isNaN(parseFloat(maxLat)) || isNaN(parseFloat(minLng)) || isNaN(parseFloat(maxLng))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
@@ -176,8 +175,8 @@ router.get('/range/:minLat/:maxLat/:minLng/:maxLng', (req, res, next) => {
 });
 
 router.get('/suggestions/:limit/:lat/:lng', (req, res, next) => {
-    const { limit, lat, lng } = req.params;
-    if (!limit || isNaN(parseInt(limit, DECIMAL_BASE)) || !lat || !lng ||
+    const { limit, lat, lng } = utils.trimStringProperties(req.params);
+    if (isNaN(parseInt(limit, DECIMAL_BASE)) ||
         isNaN(parseFloat(lat)) || isNaN(parseFloat(lng))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
@@ -202,8 +201,8 @@ router.get('/suggestions/:limit/:lat/:lng', (req, res, next) => {
 });
 
 router.get('/suggestions/:limit', (req, res, next) => {
-    const { limit } = req.params;
-    if (!limit || isNaN(parseInt(limit, DECIMAL_BASE))) {
+    const { limit } = utils.trimStringProperties(req.params);
+    if (isNaN(parseInt(limit, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
@@ -243,8 +242,8 @@ router.get('/types', (req, res, next) => {
 // NOTE: this endpoint definition must be the last one, as the placeholder may conflict with the previous endpoints.
 // Endpoints are visited taking into consideration the order they are defined.
 router.get('/:id', (req, res, next) => {
-    const { id } = req.params;
-    if (!id || isNaN(parseInt(id, DECIMAL_BASE))) {
+    const { id } = utils.trimStringProperties(req.params);
+    if (isNaN(parseInt(id, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;

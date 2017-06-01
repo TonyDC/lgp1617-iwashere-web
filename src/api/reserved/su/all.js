@@ -16,14 +16,14 @@ const TWO_INDEX = 2;
 const THREE_SIZE = 3;
 
 router.get('/search', (req, res, next) => {
-    let { query } = req.query;
+    let { query } = utils.trimStringProperties(req.query);
     if (!query || typeof query !== 'string') {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
 
-    query = query.trim().split(/\s+/).
+    query = query.split(/\s+/).
     join(' & ');
 
     const { poiDB, routeDB, tagDB } = db;

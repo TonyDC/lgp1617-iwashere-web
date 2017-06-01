@@ -24,11 +24,11 @@ const bodyTemplate = upload.fields([{ name: 'postFiles' }]);
 
 router.post('/', bodyTemplate, (req, res, next) => {
     const { body, files } = req;
-    const { poiID, description, tags } = body;
+    const { poiID, description, tags } = utils.trimStringProperties(body);
     const { postFiles } = files;
     const userID = req.auth.token.uid;
 
-    if (!poiID || typeof description !== 'string' || !userID || typeof userID !== 'string') {
+    if (!poiID || typeof description !== 'string' || typeof userID !== 'string') {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
@@ -109,7 +109,7 @@ router.post('/', bodyTemplate, (req, res, next) => {
 });
 
 router.delete('/:postID', (req, res, next) => {
-    const { postID } = req.params;
+    const { postID } = utils.trimStringProperties(req.params);
 
     if (!postID) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
@@ -142,7 +142,7 @@ router.delete('/:postID', (req, res, next) => {
 });
 
 router.post('/like', (req, res, next) => {
-    const { postID, liked } = req.body;
+    const { postID, liked } = utils.trimStringProperties(req.body);
     if (!postID || isNaN(parseInt(postID, DECIMAL_BASE)) || typeof liked !== 'boolean') {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
