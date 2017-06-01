@@ -16,7 +16,7 @@ import 'styles/timeline.scss';
 
 import iwashereTag from 'img/iwashere-icon.svg';
 const iwashereTagStyle = {
-    height: 60,
+    height: 56,
     width: 25
 };
 
