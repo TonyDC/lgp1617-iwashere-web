@@ -75,7 +75,7 @@ export default class CreatePostDialog extends Component {
 
             const form = new FormData();
             form.append('description', description.trim());
-            form.append('tags', tags);
+            form.append('tags', JSON.stringify(tags));
             form.append('poiID', poiId);
             for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
                 // Note: In order to detect the array of files in the server, each file, individually, must be appended to the same form key.

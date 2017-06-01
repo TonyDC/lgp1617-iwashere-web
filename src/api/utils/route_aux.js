@@ -23,7 +23,7 @@ module.exports.setAdditionalRouteInfo = (routeId, pois, tags) => {
 
         const { routeDB } = db;
         const createAdditionalRouteInfo = [routeDB.setRoutePOIs(routeId, poisList)];
-        if (tags.length > NO_ELEMENT_SIZE) {
+        if (tagsList.length > NO_ELEMENT_SIZE) {
             createAdditionalRouteInfo.push(routeDB.setRouteTags(routeId, tagsList));
         }
 
