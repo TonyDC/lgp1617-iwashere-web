@@ -4,6 +4,12 @@ import Chip from 'material-ui/Chip';
 import httpCodes from 'http-status-codes';
 import AutoComplete from 'material-ui/AutoComplete';
 
+import iwashereTag from 'img/iwashere-icon.svg';
+const iwashereTagStyle = {
+    height: 20,
+    width: 20
+};
+
 import 'styles/my_tags.scss';
 
 const API_TAG = '/api/tag/';
@@ -34,7 +40,7 @@ export default class MyTags extends Component {
 
     fetchAllTags() {
         fetch(API_TAG, {
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Accept': 'application/json' },
             method: 'GET'
         }).
         then((response) => {
@@ -47,7 +53,7 @@ export default class MyTags extends Component {
         then((allTags) => {
             if (this.componentIsMounted) {
                 allTags.concat(allTags.map((tag) => {
-                    tag.name = `#${tag.name}`;
+                    tag.name = `${tag.name}`;
 
                     return tag;
                 }));
@@ -65,7 +71,7 @@ export default class MyTags extends Component {
                       }}
                       labelColor="white"
                       className="tag-look" >
-                    {tag.name}
+                    <img src={iwashereTag} style={iwashereTagStyle} /> {tag.name}
                 </Chip>
             );
         }
@@ -74,7 +80,7 @@ export default class MyTags extends Component {
             <Chip labelColor="white"
                   key={`tag#${tag.name}`}
                   className="tag-look">
-                #{tag.name}
+                <img src={iwashereTag} style={iwashereTagStyle} /> {tag.name}
             </Chip>
         );
     }
