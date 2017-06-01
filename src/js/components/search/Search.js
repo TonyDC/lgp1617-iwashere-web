@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import nProgress from 'nprogress';
 import validator from 'validator';
 import Helmet from 'react-helmet';
-import InfiniteScroll from 'react-infinite';
 import TextField from 'material-ui/TextField';
 import Paper from 'material-ui/Paper';
 import { List, ListItem } from 'material-ui/List';
@@ -15,8 +14,15 @@ import { checkFetchResponse } from '../../functions/fetch';
 import { processLocation } from '../../functions/location';
 import 'styles/panel.scss';
 import 'styles/utils.scss';
+
 const NO_ELEMENTS = 0;
+const SIZE_PER_ELEMENT = 100;
 const MAX_SIZE = 3;
+
+const overflowStyle = {
+    maxHeight: MAX_SIZE * SIZE_PER_ELEMENT,
+    overflowY: 'scroll'
+};
 
 const notFoundItemStyle = {
     backgroundColor: '#f0f0f0',
@@ -147,7 +153,6 @@ export default class Search extends Component {
         if (this.componentIsMounted) {
             nProgress.start();
             this.setState({ inProgress: true });
-
             Promise.all([this.performPOISearch(query), this.performRouteSearch(query)]).
             then((results) => {
                 if (!this.componentIsMounted) {
@@ -159,6 +164,7 @@ export default class Search extends Component {
                     poiResults: poiResults ? poiResults : [],
                     routeResults: routeResults ? routeResults : []
                 });
+                this.props.router.push(`search?search=${encodeURIComponent(query)}`);
             }).
             catch(() => {
                 if (!this.componentIsMounted) {
@@ -229,21 +235,15 @@ export default class Search extends Component {
                 return resultFunction(element);
             });
 
+            let styleToApply = null;
             if (results.length > MAX_SIZE) {
-                resultsArea = (
-                    <List>
-                        <InfiniteScroll containerHeight={200} elementHeight={40}>
-                            { resultsList }
-                        </InfiniteScroll>
-                    </List>
-                );
-            } else {
-                resultsArea = (
-                    <List>
-                        { resultsList }
-                    </List>
-                );
+                styleToApply = overflowStyle;
             }
+            resultsArea = (
+                <List style={styleToApply}>
+                    { resultsList }
+                </List>
+            );
         }
 
         return resultsArea;

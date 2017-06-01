@@ -31,9 +31,9 @@ import EditPOI from './components/reserved/admin/poi/EditPOI';
 import RouteArea from './components/reserved/admin/routes/RouteArea';
 import CreateRoute from './components/reserved/admin/routes/CreateRoute';
 import EditRoute from './components/reserved/admin/routes/EditRoute';
-import UserArea from './components/reserved/admin/users/UserArea';
-import CreateUser from './components/reserved/admin/users/CreateUser';
-import EditUser from './components/reserved/admin/users/EditUser';
+// import UserArea from './components/reserved/admin/users/UserArea';
+// import CreateUser from './components/reserved/admin/users/CreateUser';
+// import EditUser from './components/reserved/admin/users/EditUser';
 
 import Alerts from './components/utils/Alerts';
 
@@ -116,11 +116,6 @@ export default class App extends Component {
                                 <Route path="create" component={ CreateRoute } />
                                 <Route path=":id" component={ EditRoute } />
                             </Route>
-                            <Route path="user">
-                                <IndexRoute component={ UserArea } />
-                                <Route path="create" component={ CreateUser } />
-                                <Route path=":id" component={ EditUser } />
-                            </Route>
                         </Route>
                     </Route>
                     <Route path="*" component={ NoMatch }/>
@@ -136,3 +131,12 @@ App.contextTypes = {
     muiTheme: PropTypes.object,
     store: PropTypes.object
 };
+
+/* To add user area:
+
+ <Route path="user">
+ <IndexRoute component={ UserArea } />
+ <Route path="create" component={ CreateUser } />
+ <Route path=":id" component={ EditUser } />
+ </Route>
+ */
