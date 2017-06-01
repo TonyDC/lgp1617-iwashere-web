@@ -174,12 +174,14 @@ export default class EditPOI extends Component {
     }
 
     render() {
+        const { router } = this.props;
         const { poi, fetchInProgress } = this.state;
 
         let poiForm = null;
         if (fetchInProgress === false && poi) {
             poiForm = (
                 <POIForm
+                    router={router}
                     initialValues={ this.state.poi }
                     onSave={ this.handleSave.bind(this) }
                     onDelete={ this.handleDelete.bind(this) }
@@ -207,4 +209,5 @@ export default class EditPOI extends Component {
 }
 
 EditPOI.propTypes = { router: PropTypes.object.isRequired };
+
 EditPOI.contextTypes = { store: PropTypes.object };

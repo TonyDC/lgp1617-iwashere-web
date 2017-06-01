@@ -607,7 +607,7 @@ POIForm.propTypes = {
     onDelete: PropTypes.func,
     onSave: PropTypes.func,
     resetAfterSubmit: PropTypes.bool,
-    router: PropTypes.object,
+    router: PropTypes.object.isRequired,
     userContext: PropTypes.oneOfType([
         PropTypes.number,
         PropTypes.string
