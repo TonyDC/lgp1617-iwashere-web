@@ -2,8 +2,13 @@ const os = require('os');
 
 const multer = require('multer');
 
-const TWO = 50;
+const MAX_SIZE_MB = 50;
 const KB = 1024;
+
+const TEMP_DIR = os.tmpdir();
+
+const MAX_NUMBER_OF_FIELDS = 20;
+const MAX_NUMBER_OF_FILES = 10;
 
 /*
 Properties:
@@ -16,11 +21,11 @@ parts            For multipart forms, the max number of parts (fields + files) I
 headerPairs    For multipart forms, the max number of header key=>value pairs to parse 2000
 */
 const upload = multer({
-    dest: os.tmpdir(),
+    dest: TEMP_DIR,
     limits: {
-        fields: 10,
-        fileSize: TWO * KB * KB,
-        files: 5
+        fields: MAX_NUMBER_OF_FIELDS,
+        fileSize: MAX_SIZE_MB * KB * KB,
+        files: MAX_NUMBER_OF_FILES
     }
 });
 

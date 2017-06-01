@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import nProgress from 'nprogress';
 import httpCodes from 'http-status-codes';
 import TextField from 'material-ui/TextField';
-import InfiniteScroll from 'react-infinite';
 import { List, ListItem } from 'material-ui/List';
 import Divider from 'material-ui/Divider';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -18,7 +17,19 @@ import 'styles/utils.scss';
 
 const POI_API_URL = '/api/reserved/content-editor/poi/';
 const NO_ELEMENTS = 0;
-const TWO_SIZE = 2;
+
+const SIZE_PER_ELEMENT = 100;
+const MAX_SIZE = 3;
+
+const overflowStyle = {
+    maxHeight: MAX_SIZE * SIZE_PER_ELEMENT,
+    overflowY: 'scroll'
+};
+
+const notFoundItemStyle = {
+    backgroundColor: '#f0f0f0',
+    borderRadius: 5
+};
 
 export default class POISearch extends Component {
 
@@ -148,25 +159,21 @@ export default class POISearch extends Component {
                     );
                 });
 
-                if (results.length > TWO_SIZE) {
-                    resultsArea = (
-                        <List>
-                            <InfiniteScroll containerHeight={200} elementHeight={40}>
-                                { resultsList }
-                            </InfiniteScroll>
-                        </List>
-                    );
-                } else {
-                    resultsArea = (
-                        <List>
-                            { resultsList }
-                        </List>
-                    );
+                let styleToApply = null;
+                if (results.length > MAX_SIZE) {
+                    styleToApply = overflowStyle;
                 }
+                resultsArea = (
+                    <List style={styleToApply}>
+                        { resultsList }
+                    </List>
+                );
+
             } else {
                 resultsArea = (
                     <List>
                         <ListItem
+                            style={notFoundItemStyle}
                             primaryText="No results were found."
                             secondaryText={ <p>Try a different search...</p> }
                             disabled

@@ -90,8 +90,15 @@ router.post('/register', (req, res) => {
 });
 
 router.post('/register-by-provider', (req, res, next) => {
-    const { uid } = req.body;
+    const { uid } = utils.trimStringProperties(req.body);
     const { userDB } = db;
+
+    if (!uid) {
+        res.status(httpStatus.BAD_REQUEST).json({ message: 'bad uid' }).
+        end();
+
+        return;
+    }
 
     Promise.all([firebaseAdmin.auth().getUser(uid), userDB.getUserByUID(uid)]).
     then((results) => {

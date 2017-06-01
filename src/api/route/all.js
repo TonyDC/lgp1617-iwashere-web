@@ -20,7 +20,7 @@ const NO_ELEMENT_SIZE = 0;
 const THREE_SIZE = 3;
 
 router.get('/search', (req, res, next) => {
-    let { query } = req.query;
+    let { query } = utils.trimStringProperties(req.query);
     if (!query || typeof query !== 'string') {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
@@ -45,7 +45,7 @@ router.get('/search', (req, res, next) => {
 });
 
 router.get('/rating/:routeID/:userID', (req, res, next) => {
-    const { routeID, userID } = req.params;
+    const { routeID, userID } = utils.trimStringProperties(req.params);
 
     if (!routeID || !userID || typeof userID !== 'string' || isNaN(parseInt(routeID, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
@@ -68,7 +68,7 @@ router.get('/rating/:routeID/:userID', (req, res, next) => {
 });
 
 router.get('/rating/:routeID', (req, res, next) => {
-    const { routeID } = req.params;
+    const { routeID } = utils.trimStringProperties(req.params);
 
     if (!routeID || isNaN(parseInt(routeID, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
@@ -98,7 +98,7 @@ router.get('/rating/:routeID', (req, res, next) => {
 });
 
 router.get('/:id', (req, res, next) => {
-    const { id } = req.params;
+    const { id } = utils.trimStringProperties(req.params);
     if (!id || isNaN(parseInt(id, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
@@ -127,7 +127,7 @@ router.get('/:id', (req, res, next) => {
 });
 
 router.get('/pois/:id', (req, res, next) => {
-    const { id } = req.params;
+    const { id } = utils.trimStringProperties(req.params);
     if (!id || isNaN(parseInt(id, DECIMAL_BASE))) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 

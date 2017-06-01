@@ -24,14 +24,14 @@ const bodyTemplate = upload.fields([{ name: 'poiFiles' }]);
 
 router.get('/search', (req, res, next) => {
     const { contextID } = req.auth;
-    let { query } = req.query;
+    let { query } = utils.trimStringProperties(req.query);
     if (!query || typeof query !== 'string') {
         res.sendStatus(httpCodes.BAD_REQUEST).end();
 
         return;
     }
 
-    query = query.trim().split(/\s+/).
+    query = query.split(/\s+/).
     join(' & ');
 
     db.poiDB.searchPOIsUnderContexts(query, contextID).
@@ -215,7 +215,7 @@ router.put('/:poiID', bodyTemplate, (req, res, next) => {
 
 // To separate POI information update from POI deletion
 router.post('/:poiID', (req, res, next) => {
-    const { poiID } = req.params;
+    const { poiID } = utils.trimStringProperties(req.params);
     const { deleted } = req.body;
     const { uid: userID } = req.auth.token;
     const { contextID: userContextID } = req.auth;
@@ -257,7 +257,7 @@ router.post('/:poiID', (req, res, next) => {
 });
 
 router.get('/:poiID', (req, res, next) => {
-    const { poiID } = req.params;
+    const { poiID } = utils.trimStringProperties(req.params);
     const { contextID: userContext } = req.auth;
     if (!poiID || typeof poiID !== 'string' || !validator.isNumeric(poiID)) {
         res.sendStatus(httpCodes.BAD_REQUEST).end();

@@ -3,6 +3,7 @@
 const express = require('express');
 const router = express.Router();
 
+/*
 const firebaseAdmin = require('firebase-admin');
 
 router.post('/login', (req, res) => {
@@ -11,5 +12,6 @@ router.post('/login', (req, res) => {
 
     res.json({ token }).end();
 });
+*/
 
 module.exports = router;
