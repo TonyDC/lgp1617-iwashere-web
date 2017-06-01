@@ -223,7 +223,7 @@ router.get('/search', (req, res, next) => {
                 return context.contextId;
             });
             const routes = utils.convertObjectsToCamelCase(results[ZERO_INDEX]).filter((route) => {
-                return !route.deleted || userContexts.indexOf(route.contextId) !== NOT_FOUND;
+                return userContexts.indexOf(route.contextId) !== NOT_FOUND;
             });
 
             res.json(routes).end();
