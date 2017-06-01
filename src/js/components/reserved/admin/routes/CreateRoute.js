@@ -61,24 +61,26 @@ export default class CreateRoute extends Component {
     }
 
     createRoute(route) {
+        const newRoute = { ...route };
         const { currentUser } = firebase.auth();
         if (currentUser && this.componentIsMounted && this.checkRoute(route)) {
             nProgress.start();
             this.setState({ inProgress: true });
 
-            route.contextId = route.contextId ? route.contextId : getContext(this.context.store);
+            newRoute.tags = JSON.stringify(newRoute.tags);
+            newRoute.contextId = newRoute.contextId ? newRoute.contextId : getContext(this.context.store);
 
             const headers = {
                 'Content-Type': 'application/json',
                 'X-user-context': getContext(this.context.store)
             };
 
-            authenticatedFetch(API_ROUTE_URL, JSON.stringify(route), headers, 'POST').
+            authenticatedFetch(API_ROUTE_URL, JSON.stringify(newRoute), headers, 'POST').
             then(checkFetchResponse).
-            then((newRoute) => {
+            then((createdRoute) => {
                 nProgress.done();
                 Alerts.createInfoAlert('Route created.');
-                this.props.router.push(`/reserved/dash/route/${newRoute.routeId}`);
+                this.props.router.push(`/reserved/dash/route/${createdRoute.routeId}`);
             }).
             catch(() => {
                 nProgress.done();
