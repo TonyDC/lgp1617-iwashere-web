@@ -22,6 +22,10 @@ module.exports = {
             {
                 name: 'FEUP',
                 parent_id: 3
+            },
+            {
+                name: 'Porto',
+                parent_id: 1
             }
         ], {});
     }
