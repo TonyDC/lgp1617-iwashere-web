@@ -6,8 +6,6 @@ import POIPreview from '../poi/POIPreview';
 import 'styles/utils.scss';
 import 'styles/poi_detail_side.scss';
 
-const MINIMUM_WINDOW_SIZE = 400;
-
 export default class POISideBar extends Component {
 
     constructor(props) {
@@ -15,22 +13,13 @@ export default class POISideBar extends Component {
 
         this.state = {
             open: true,
-            poiId: null,
-            size: '30%'
+            poiId: null
         };
-    }
-
-    componentWillMount() {
-        this.updateDimensions();
     }
 
     componentDidMount() {
         this.componentIsMounted = true;
-
-        // The same function object must be used when binding and unbinding the event listener
-        this.resizeHandler = this.updateDimensions.bind(this);
-        window.addEventListener("resize", this.resizeHandler);
-        this.updateDimensions();
+        this.updatePoiPreview();
     }
 
     componentDidUpdate() {
@@ -41,22 +30,6 @@ export default class POISideBar extends Component {
 
     componentWillUnmount() {
         this.componentIsMounted = false;
-        window.removeEventListener("resize", this.resizeHandler);
-        this.resizeHandler = null;
-    }
-
-    updateDimensions() {
-        let size = '30%';
-
-        if (window.innerWidth < MINIMUM_WINDOW_SIZE) {
-            size = '100%';
-        }
-
-        if (!this.componentIsMounted) {
-            return;
-        }
-
-        this.setState({ size });
     }
 
     closePoiPreview() {
@@ -79,8 +52,6 @@ export default class POISideBar extends Component {
     }
 
     render() {
-
-
         let poiPreview = null;
         if (this.props.poiId === this.state.poiId) {
             poiPreview = <POIPreview poiId={this.state.poiId}
@@ -90,7 +61,7 @@ export default class POISideBar extends Component {
         }
 
         return (
-            <Drawer className="side-drawer" open={this.state.open} containerClassName="side-container" width={this.state.size}>
+            <Drawer className="side-drawer" open={this.state.open} containerClassName="side-container">
                 {poiPreview}
             </Drawer>
         );
