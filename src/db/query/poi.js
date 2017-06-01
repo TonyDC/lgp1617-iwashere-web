@@ -86,7 +86,7 @@ module.exports.getPOIMedia = (poiIdList) => {
     return db.query(`SELECT *, name AS type 
     FROM poi_contents INNER JOIN content_types ON poi_contents.content_type_id = content_types.content_type_id
     WHERE content_types.content_type_id = '1' AND poi_contents.deleted = FALSE AND poi_contents.poi_id = ANY(:poiIdList) 
-    ORDER BY poi_contents.created_at DESC LIMIT 1`, {
+    ORDER BY poi_contents.created_at DESC`, {
         replacements: { poiIdList },
         type: db.QueryTypes.SELECT
     });
