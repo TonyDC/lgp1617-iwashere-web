@@ -9,6 +9,70 @@ module.exports = {
         return queryInterface.bulkInsert('poi_contents', [
             {
                 content_type_id: 1,
+                poi_id: 110,
+                url_l: 'initial-content/110/FADEUP.jpg',
+                url_m: 'initial-content/110/FADEUP.jpg',
+                url_s: 'initial-content/110/FADEUP.jpg',
+                url_xs: 'initial-content/110/FADEUP.jpg'
+            },
+            {
+                content_type_id: 1,
+                poi_id: 112,
+                url_l: 'initial-content/112/FFUP.jpg',
+                url_m: 'initial-content/112/FFUP.jpg',
+                url_s: 'initial-content/112/FFUP.jpg',
+                url_xs: 'initial-content/112/FFUP.jpg'
+            },
+            {
+                content_type_id: 1,
+                poi_id: 114,
+                url_l: 'initial-content/114/FIMS.jpg',
+                url_m: 'initial-content/114/FIMS.jpg',
+                url_s: 'initial-content/114/FIMS.jpg',
+                url_xs: 'initial-content/114/FIMS.jpg'
+            },
+            {
+                content_type_id: 1,
+                poi_id: 115,
+                url_l: 'initial-content/115/FMUP_01.jpg',
+                url_m: 'initial-content/115/FMUP_01.jpg',
+                url_s: 'initial-content/115/FMUP_01.jpg',
+                url_xs: 'initial-content/115/FMUP_01.jpg'
+            },
+            {
+                content_type_id: 1,
+                poi_id: 115,
+                url_l: 'initial-content/115/FMUP_02.jpg',
+                url_m: 'initial-content/115/FMUP_02.jpg',
+                url_s: 'initial-content/115/FMUP_02.jpg',
+                url_xs: 'initial-content/115/FMUP_02.jpg'
+            },
+            {
+                content_type_id: 1,
+                poi_id: 115,
+                url_l: 'initial-content/115/FMUP_03.jpg',
+                url_m: 'initial-content/115/FMUP_03.jpg',
+                url_s: 'initial-content/115/FMUP_03.jpg',
+                url_xs: 'initial-content/115/FMUP_03.jpg'
+            },
+            {
+                content_type_id: 1,
+                poi_id: 116,
+                url_l: 'initial-content/116/ICBAS.jpg',
+                url_m: 'initial-content/116/ICBAS.jpg',
+                url_s: 'initial-content/116/ICBAS.jpg',
+                url_xs: 'initial-content/116/ICBAS.jpg'
+            },
+            {
+                content_type_id: 1,
+                poi_id: 118,
+                url_l: 'initial-content/118/REITORIA.jpg',
+                url_m: 'initial-content/118/REITORIA.jpg',
+                url_s: 'initial-content/118/REITORIA.jpg',
+                url_xs: 'initial-content/118/REITORIA.jpg'
+            },
+            {
+                content_type_id: 1,
                 poi_id: 139,
                 url_l: 'initial-content/139/Poente na Serra_l.png',
                 url_m: 'initial-content/139/Poente na Serra_m.png',
