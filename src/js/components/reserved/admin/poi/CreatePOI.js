@@ -75,6 +75,8 @@ export default class CreatePOI extends Component {
     }
 
     render() {
+        const { router } = this.props;
+
         return (
             <div className="colorPrimary wrapper-fill vert-align hor-align">
                 <Paper className="paper-min-width" zDepth={2} style={mainStyle}>
@@ -83,11 +85,13 @@ export default class CreatePOI extends Component {
                     </Helmet>
                     <h3 style={titleStyle}>Create POI</h3>
                     <Divider style={titleDividerStyle}/>
-                    <POIForm onSave={ this.handleSave.bind(this) } resetAfterSubmit userContext={ getContext(this.context.store) }/>
+                    <POIForm onSave={ this.handleSave.bind(this) } resetAfterSubmit userContext={ getContext(this.context.store) } router={router}/>
                 </Paper>
             </div>
         );
     }
 }
+
+CreatePOI.propTypes = { router: PropTypes.object.isRequired };
 
 CreatePOI.contextTypes = { store: PropTypes.object };
