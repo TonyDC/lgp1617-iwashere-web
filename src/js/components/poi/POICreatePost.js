@@ -18,6 +18,11 @@ const NO_ELEMENTS = 0;
 const ONE_ELEMENT = 1;
 const NOT_FOUND = -1;
 
+const dropzoneContainerStyle = {
+    marginTop: 30,
+    minHeight: 30
+};
+
 export default class CreatePostDialog extends Component {
 
     constructor(props) {
@@ -252,7 +257,7 @@ export default class CreatePostDialog extends Component {
                         />
                         <TextField hintText="Enter a description" floatingLabelText="Description" onChange={ this.handleDescription.bind(this) } fullWidth />
                         <Dropzone className="custom-dropzone" onDrop={this.onDrop.bind(this)} accept="image/jpeg, image/png" onDragEnter={this.onDragEnter.bind(this)} onDragLeave={this.onDragLeave.bind(this)}>
-                            <div>
+                            <div style={dropzoneContainerStyle}>
                                 { this.state.dropzoneActive && <div className="overlay">Drop files...</div> }
                                 <p className="dropzone-info">Drag and drop a file here (png, jpeg), or click here to open the select file window</p>
                                 { this.state.rejected && <p className="dropzone-info">Files were rejected. Only one .png or .jpeg file is accepted</p> }
@@ -262,6 +267,8 @@ export default class CreatePostDialog extends Component {
                                     this.state.post.files.map((file, index) => {
                                         return <span key={index} onClick={(event) => {
                                             event.preventDefault();
+                                            // Stop event propagation to Dropzone event handler
+                                            event.stopPropagation();
 
                                             const { files } = this.state.post;
                                             files.splice(index, ONE_ELEMENT);
@@ -273,10 +280,7 @@ export default class CreatePostDialog extends Component {
                                                 }
                                             });
                                         }}>
-                                            <div>
-                                        <img src={file.preview} className="dropzone-thumbnail"/>
-                                            <i className="fa fa-trash dropzone-delete-icon" aria-hidden="true"/>
-                                            </div>
+                                            <div><img src={file.preview} className="dropzone-thumbnail"/><i className="fa fa-trash dropzone-delete-icon" aria-hidden="true"/></div>
                                 </span>;
                                     })
                                 }

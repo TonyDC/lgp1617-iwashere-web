@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import Helmet from 'react-helmet';
 import GoogleMapReact from 'google-map-react';
 import Alerts from '../utils/Alerts';
 import httpCodes from 'http-status-codes';
@@ -183,6 +184,10 @@ export default class Map extends Component {
 
         return (
             <div className="wrapper-fill">
+                <Helmet>
+                    <title>#iwashere</title>
+                </Helmet>
+
                 {poiPreview}
                 <GoogleMapReact defaultCenter={this.props.center}
                                 defaultZoom={this.props.zoom}
