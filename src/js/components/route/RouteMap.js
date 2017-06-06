@@ -159,6 +159,7 @@ export default class RouteMap extends Component {
             <div className="route-map wrapper-fill">
                 <GoogleMapReact defaultCenter={this.props.center}
                                 defaultZoom={this.props.zoom}
+                                yesIWantToUseGoogleMapApiInternals
                                 bootstrapURLKeys={{ key: GOOGLE_MAPS_API_KEY }}
                                 onGoogleApiLoaded={ this.onGoogleAPILoaded.bind(this) }>
                     {poisInViewport}
