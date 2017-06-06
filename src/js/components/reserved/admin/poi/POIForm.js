@@ -278,8 +278,11 @@ export default class POIForm extends Component {
         this.setState({ files: cloneFilesArray });
     }
 
-    checkFormData() {
+    checkParams() {
+        Alerts.closeAll();
+
         let error = false;
+        const { selectedType, location, contextId } = this.state;
         let { name, address, description, metaInfo } = this.state;
 
         if (typeof name === 'string') {
@@ -321,14 +324,6 @@ export default class POIForm extends Component {
                 this.setState({ metaInfo });
             }
         }
-
-        return !error;
-    }
-
-    checkParams() {
-        Alerts.closeAll();
-        let error = !this.checkFormData();
-        const { selectedType, location, contextId } = this.state;
 
         if (selectedType < POI_TYPE_FIRST_ID) {
             this.setState({ selectedTypeError: 'Invalid type selected.' });
