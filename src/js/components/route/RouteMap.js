@@ -142,7 +142,7 @@ export default class RouteMap extends Component {
         }
 
         let poisList = this.props.poiList ? this.props.poiList : [];
-        if (this.props.allPois) {
+        if (Array.isArray(this.props.allPois)) {
             poisList = this.props.allPois;
         }
 
