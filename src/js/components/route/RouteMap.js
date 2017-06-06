@@ -33,9 +33,10 @@ export default class RouteMap extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.poiList.length !== this.props.poiList.length &&
-            nextProps.poiList.every((poi, index) => {
-                return poi === this.props.poiList[index];
+        if (!Array.isArray(this.props.poiList) ||
+            nextProps.poiList.length !== this.props.poiList.length ||
+            nextProps.poiList.some((poi, index) => {
+                return poi !== this.props.poiList[index];
             })) {
             this.calculateRoute(nextProps.poiList);
         }
@@ -59,7 +60,7 @@ export default class RouteMap extends Component {
             });
         }
 
-        const pois = poiList ? poiList : [];
+        const pois = Array.isArray(poiList) ? poiList : [];
         if (pois.length > ONE_SIZE) {
             const start = pois[ZERO_INDEX];
             const end = pois[pois.length - ONE_SIZE];
@@ -114,7 +115,7 @@ export default class RouteMap extends Component {
 
         this.propsUpdated = true;
 
-        if (this.props.poiList && this.props.poiList.length === ONE_SIZE) {
+        if (Array.isArray(this.props.poiList) && this.props.poiList.length === ONE_SIZE) {
             const poi = this.props.poiList[ZERO_INDEX];
             this.map.setCenter({
                 lat: poi.latitude,
@@ -141,7 +142,7 @@ export default class RouteMap extends Component {
             this.onPropsUpdated();
         }
 
-        let poisList = this.props.poiList ? this.props.poiList : [];
+        let poisList = Array.isArray(this.props.poiList) ? this.props.poiList : [];
         if (Array.isArray(this.props.allPois)) {
             poisList = this.props.allPois;
         }
