@@ -4,7 +4,7 @@ const db = require('../index');
 
 module.exports.getAllTags = () => {
     // language=POSTGRES-SQL
-    return db.query(`SELECT * FROM tags`, {
+    return db.query(`SELECT * FROM tags ORDER BY name`, {
         replacements: {},
         type: db.QueryTypes.SELECT
     });

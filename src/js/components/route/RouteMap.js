@@ -23,6 +23,8 @@ export default class RouteMap extends Component {
 
         this.map = null;
         this.maps = null;
+        this.directionsService = null;
+        this.directionsDisplay = null;
         this.bounds = null;
     }
 
@@ -30,13 +32,62 @@ export default class RouteMap extends Component {
         this.componentIsMounted = true;
     }
 
+    componentWillReceiveProps(nextProps) {
+        this.calculateRoute(nextProps.poiList);
+    }
+
     componentWillUnmount() {
         this.componentIsMounted = false;
+    }
+
+    calculateRoute(poiList) {
+        this.directionsDisplay.set('directions', null);
+
+        const waypts = [];
+        for (let index = ONE_SIZE; index < poiList.length - ONE_SIZE; index++) {
+            waypts.push({
+                location: {
+                    lat: poiList[index].latitude,
+                    lng: poiList[index].longitude
+                },
+                stopover: true
+            });
+        }
+
+        const pois = poiList ? poiList : [];
+        if (pois.length > ONE_SIZE) {
+            const start = pois[ZERO_INDEX];
+            const end = pois[pois.length - ONE_SIZE];
+            const request = {
+                destination: {
+                    lat: end.latitude,
+                    lng: end.longitude
+                },
+                optimizeWaypoints: true,
+                origin: {
+                    lat: start.latitude,
+                    lng: start.longitude
+                },
+                travelMode: 'WALKING',
+                waypoints: waypts
+            };
+
+            this.directionsService.route(request, (response, status) => {
+                if (status === "OK") {
+                    this.directionsDisplay.setDirections(response);
+                }
+            });
+        }
     }
 
     onGoogleAPILoaded({ map, maps }) {
         this.map = map;
         this.maps = maps;
+        this.directionsService = new this.maps.DirectionsService();
+        this.directionsDisplay = new this.maps.DirectionsRenderer({
+            map,
+            suppressMarkers: true
+        });
 
         if (this.props.readOnly) {
             if (this.bounds) {
@@ -77,17 +128,17 @@ export default class RouteMap extends Component {
         });
 
         this.map.fitBounds(bounds);
+        this.calculateRoute(this.props.poiList);
     }
 
     render() {
-
         if (!this.propsUpdated && this.props.poiList.length) {
             this.onPropsUpdated();
         }
 
-        let poisList = this.props.poiList;
-        if (!poisList) {
-            poisList = [];
+        let poisList = this.props.poiList ? this.props.poiList : [];
+        if (this.props.allPois) {
+            poisList = this.props.allPois;
         }
 
         const poisInViewport = poisList.map((element) => {
@@ -104,8 +155,7 @@ export default class RouteMap extends Component {
                 <GoogleMapReact defaultCenter={this.props.center}
                                 defaultZoom={this.props.zoom}
                                 bootstrapURLKeys={{ key: GOOGLE_MAPS_API_KEY }}
-                                onGoogleApiLoaded={ this.onGoogleAPILoaded.bind(this) }
-                >
+                                onGoogleApiLoaded={ this.onGoogleAPILoaded.bind(this) }>
                     {poisInViewport}
                 </GoogleMapReact>
             </div>
@@ -124,6 +174,7 @@ RouteMap.defaultProps = {
 };
 
 RouteMap.propTypes = {
+    allPois: PropTypes.array,
     center: PropTypes.shape({
         lat: PropTypes.number,
         lng: PropTypes.number
