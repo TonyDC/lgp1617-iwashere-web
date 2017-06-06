@@ -10,6 +10,7 @@ import EditorLinearScale from 'material-ui/svg-icons/editor/linear-scale';
 import 'styles/panel.scss';
 import 'styles/utils.scss';
 
+const NOT_FOUND = -1;
 const ZERO_INDEX = 0;
 const POI_INDEX = 0;
 const ROUTE_INDEX = 1;
@@ -30,8 +31,22 @@ export default class AdminNavigator extends Component {
             '/reserved/dash/route',
             '/reserved/dash/user'
         ];
-        const index = this.paths.indexOf(pathname.toLowerCase());
+        const index = this.retrievePathIndex(pathname.toLowerCase());
         this.state = { selectedIndex: index < ZERO_INDEX ? ZERO_INDEX : index };
+    }
+
+    retrievePathIndex(path) {
+        if (typeof path !== 'string') {
+            return null;
+        }
+
+        for (let index = 0; index < this.paths.length; index++) {
+            if (path.startsWith(this.paths[index])) {
+                return index;
+            }
+        }
+
+        return NOT_FOUND;
     }
 
     select(selectedIndex) {
