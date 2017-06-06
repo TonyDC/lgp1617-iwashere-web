@@ -44,8 +44,17 @@ export default class ContextTree extends Component {
             const { contextId, name } = element;
 
             return {
+                color: {
+                    background: '#E5402A',
+                    border: '#922b1e',
+                    highlight: {
+                        background: '#ff988a',
+                        border: '#cc786c'
+                    }
+                },
                 id: contextId,
-                label: name
+                label: name,
+                shape: 'box'
             };
         });
         const edges = data.map((element) => {
