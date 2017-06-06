@@ -1,4 +1,4 @@
-/* eslint max-lines: "warn" */
+/* eslint max-lines: "warn", max-statements: "warn" */
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
