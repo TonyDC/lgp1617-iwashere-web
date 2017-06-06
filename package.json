@@ -84,6 +84,7 @@
     "react-addons-test-utils": "^15.5.0",
     "react-test-renderer": "^15.4.2",
     "redux-logger": "^3.0.6",
+    "webpack-bundle-size-analyzer": "^2.7.0",
     "webpack-dev-middleware": "^1.6.1",
     "webpack-hot-middleware": "^2.10.0"
   },
