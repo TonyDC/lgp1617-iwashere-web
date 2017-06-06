@@ -280,33 +280,46 @@ export default class POIForm extends Component {
 
     checkFormData() {
         let error = false;
-        let { name, address, description } = this.state;
+        let { name, address, description, metaInfo } = this.state;
 
-        name = name.trim();
-        if (name.length === NO_ELEMENTS) {
-            this.setState({
-                name,
-                nameError: 'Name must not be empty.'
-            });
-            error = true;
+        if (typeof name === 'string') {
+            name = name.trim();
+            if (name.length === NO_ELEMENTS) {
+                this.setState({
+                    name,
+                    nameError: 'Name must not be empty.'
+                });
+                error = true;
+            }
         }
 
-        address = address.trim();
-        if (address.length === NO_ELEMENTS) {
-            this.setState({
-                address,
-                addressError: 'Address must not be empty.'
-            });
-            error = true;
+        if (typeof address === 'string') {
+            address = address.trim();
+            if (address.length === NO_ELEMENTS) {
+                this.setState({
+                    address,
+                    addressError: 'Address must not be empty.'
+                });
+                error = true;
+            }
         }
 
-        description = description.trim();
-        if (description.length === NO_ELEMENTS) {
-            this.setState({
-                description,
-                descriptionError: 'Description must not be empty.'
-            });
-            error = true;
+        if (typeof description === 'string') {
+            description = description.trim();
+            if (description.length === NO_ELEMENTS) {
+                this.setState({
+                    description,
+                    descriptionError: 'Description must not be empty.'
+                });
+                error = true;
+            }
+        }
+
+        if (typeof metaInfo === 'string') {
+            metaInfo = metaInfo.trim();
+            if (metaInfo.length === NO_ELEMENTS) {
+                this.setState({ metaInfo });
+            }
         }
 
         return !error;
@@ -481,7 +494,7 @@ export default class POIForm extends Component {
                     errorText={ descriptionError ? descriptionError : null } value={description} onChange={ this.handleDescription.bind(this) }
                 />
                 <TextField id="additional-info" hintText="Additional information" floatingLabelText="Additional information" fullWidth multiLine
-                    value={metaInfo} onChange={ this.handleMetaInfo.bind(this) }
+                    value={metaInfo === null ? '' : metaInfo} onChange={ this.handleMetaInfo.bind(this) }
                 />
                 <SelectField floatingLabelText="POI Type" fullWidth
                     value={selectedType} errorText={ selectedTypeError ? selectedTypeError : null } onChange={ this.handlePOIType.bind(this) } disabled={ this.state.selectedType < POI_TYPE_FIRST_ID }
