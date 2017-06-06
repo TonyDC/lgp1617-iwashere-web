@@ -90,6 +90,8 @@
   "scripts": {
     "deploy": "npm run build && npm start",
     "build": "NODE_ENV=production webpack --config ./webpack.prod.config.js --progress --colors",
+    "stats": "NODE_ENV=production webpack --config ./webpack.prod.config.js --profile --json | webpack-bundle-size-analyzer",
+    "reset-poi-routes": "",
     "start": "NODE_ENV=production node ./app.js",
     "dev": "node ./app.js",
     "test": "npm run lint && NODE_ENV=test npm run jest",
