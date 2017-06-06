@@ -202,7 +202,8 @@ export default class ReservedRoute extends Component {
 
         const routeMap = <RouteMap onPoiSelected={this.handleAddPoi.bind(this)}
                                    onMapChanged={this.fetchPOIs.bind(this)}
-                                   poiList={this.state.allPois}
+                                   allPois={this.state.allPois}
+                                   poiList={routePois}
                                    router={this.props.router}/>;
 
         let visibilityElement = null;
