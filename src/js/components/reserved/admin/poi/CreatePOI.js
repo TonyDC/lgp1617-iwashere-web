@@ -40,11 +40,11 @@ export default class CreatePOI extends Component {
     getFormData(data) {
         const { name, address, description, tags, metaInfo, location, files, selectedType, contextId } = data;
         const form = new FormData();
-        form.append('name', name.trim());
-        form.append('address', address.trim());
-        form.append('description', description.trim());
+        form.append('name', name);
+        form.append('address', address);
+        form.append('description', description);
         form.append('tags', JSON.stringify(tags));
-        form.append('metaInfo', metaInfo.trim());
+        form.append('metaInfo', metaInfo);
         form.append('latitude', location.lat);
         form.append('longitude', location.lng);
         form.append('poiTypeId', selectedType);

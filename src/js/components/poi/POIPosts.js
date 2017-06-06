@@ -83,6 +83,8 @@ export default class POIPosts extends Component {
                         this.setState({ hasMoreItems: false });
                     }
 
+                    return null;
+
                 } else if (response.status >= httpCodes.BAD_REQUEST) {
                     return Promise.reject(new Error(response.statusText));
                 }
@@ -90,6 +92,10 @@ export default class POIPosts extends Component {
                 return response.json();
             }).
             then((newPosts) => {
+                if (newPosts === null) {
+                    return;
+                }
+
                 const posts = this.state.posts.slice();
                 const postIds = posts.map((post) => {
                     return post.postId;
