@@ -33,7 +33,12 @@ export default class RouteMap extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.calculateRoute(nextProps.poiList);
+        if (nextProps.poiList.length !== this.props.poiList.length &&
+            nextProps.poiList.every((poi, index) => {
+                return poi === this.props.poiList[index];
+            })) {
+            this.calculateRoute(nextProps.poiList);
+        }
     }
 
     componentWillUnmount() {
