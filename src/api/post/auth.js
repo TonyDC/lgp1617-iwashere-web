@@ -48,8 +48,8 @@ router.post('/', bodyTemplate, (req, res, next) => {
             then((postResults) => {
                 if (utils.checkResultList(postResults, [createPost.length], true)) {
                     const { postId } = utils.convertObjectToCamelCase(postResults[ZERO_INDEX][ZERO_INDEX]);
-                    const createAdditionalPostInfo = [];
-                    const tagsObject = utils.parseJSON(tags);
+                    const createAdditionalPostInfo = [], 
+                          tagsObject = utils.parseJSON(tags);
                     if (Array.isArray(tagsObject) && tagsObject.length > NO_ELEMENT_SIZE) {
                         createAdditionalPostInfo.push(postDB.addPostTags(postId, utils.parseJSON(tags)));
                     }
