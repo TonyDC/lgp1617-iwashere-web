@@ -1,4 +1,4 @@
-#\#iwashere
+# \#iwashere
 
 \#iwashere  is a social network that encourages the U.Porto community (mostly, its students, teachers, researchers, but also other people as well) to actively share their knowledge and experiences about certain places of interest, about something they did or visited, by posting photos, videos, audios or text. The product to be developed will also act like a ‘mobile companion’ that will suggest itineraries with places, pieces/artifacts of the museums to discover, depending on the user's current location. The main goal of this project is to create a contextual community that will contribute to enrich the cultural heritage of Porto and promote its awareness. 
  
