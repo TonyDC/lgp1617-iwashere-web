@@ -1,4 +1,4 @@
-# Configuration
+# Advanced Configuration
 This file helps with the configuration in a Ubuntu machine.
 
 ## Steps
