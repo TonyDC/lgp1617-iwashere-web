@@ -15,7 +15,7 @@ router.get('/', (req, res, next) => {
     const { tagDB } = db;
     tagDB.getAllTags().
     then((results) => {
-        if (results && results.length > NO_ELEMENT_SIZE) {
+        if (Array.isArray(results) && results.length > NO_ELEMENT_SIZE) {
             res.json(utils.convertObjectsToCamelCase(results)).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();

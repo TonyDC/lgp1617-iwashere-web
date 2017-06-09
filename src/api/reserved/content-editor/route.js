@@ -177,7 +177,7 @@ router.get('/pois/:id', (req, res, next) => {
             then((contextCheck) => {
                 if (!route.deleted || (contextCheck && contextCheck.length > NO_ELEMENT_SIZE)) {
                     return routeDB.getPOIsByRouteID(id, true).then((results) => {
-                        poiAux.handlePOIResults(results).then((poiList) => {
+                        return poiAux.handlePOIResults(results).then((poiList) => {
                             if (poiList.length === NO_ELEMENT_SIZE) {
                                 res.sendStatus(httpCodes.NO_CONTENT).end();
                             } else {
@@ -218,7 +218,7 @@ router.get('/search', (req, res, next) => {
 
     Promise.all([routeDB.searchRoute(query, true), userContextDB.getChildContexts(userContext)]).
     then((results) => {
-        if (utils.checkResultList(results, [TWO_SIZE])) {
+        if (utils.checkResultList(results, [TWO_SIZE], true)) {
             const userContexts = utils.convertObjectsToCamelCase(results[ONE_INDEX]).map((context) => {
                 return context.contextId;
             });

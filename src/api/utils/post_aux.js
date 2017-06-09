@@ -37,7 +37,7 @@ module.exports.handleGetPOIPostsRequest = (params) => {
                     additionalPostInfo.push(postDB.getPostLikedByUser(utils.convertArrayToString(postIds), userID));
                 }
 
-                Promise.all(additionalPostInfo).
+                return Promise.all(additionalPostInfo).
                 then((results) => {
                     if (results && (results.length === TWO_SIZE || results.length === THREE_SIZE)) {
                         const postTags = utils.convertObjectsToCamelCase(results[ZERO_INDEX]);
@@ -72,9 +72,9 @@ module.exports.handleGetPOIPostsRequest = (params) => {
 
                     fulfill([]);
                 });
-            } else {
-                fulfill([]);
             }
+
+            return fulfill([]);
         }).
         catch((error) => {
             reject(error);
@@ -94,7 +94,7 @@ module.exports.handleGetPOIsPostRequest = (params) => {
             postRequest = postDB.getPOIsPost(offset, limit);
         }
 
-        postRequest.
+        return postRequest.
         then((postsList) => {
             const posts = utils.convertObjectsToCamelCase(postsList);
 

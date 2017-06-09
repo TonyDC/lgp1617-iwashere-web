@@ -42,9 +42,7 @@ router.get('/search', (req, res, next) => {
         then((results) => {
             if (results) {
                 const response = {
-                    results: results.map((entry) => {
-                        return utils.convertObjectToCamelCase(entry);
-                    }),
+                    results: utils.convertObjectsToCamelCase(results),
                     type: 'distance'
                 };
                 res.json(response).end();
@@ -56,9 +54,7 @@ router.get('/search', (req, res, next) => {
         promise = poiDB.searchPOI(query).then((results) => {
             if (results) {
                 const response = {
-                    results: results.map((entry) => {
-                        return utils.convertObjectToCamelCase(entry);
-                    }),
+                    results: utils.convertObjectsToCamelCase(results),
                     type: 'name'
                 };
                 res.json(response).end();
@@ -84,7 +80,7 @@ router.get('/media/:poiID', (req, res, next) => {
     const { poiDB } = db;
     poiDB.getPOIAllMedia(poiID).
     then((media) => {
-        if (media) {
+        if (Array.isArray(media)) {
             res.json(utils.convertObjectsToCamelCase(media)).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
@@ -106,7 +102,7 @@ router.get('/rating/:poiID/:userID', (req, res, next) => {
     const { poiDB } = db;
     poiDB.getPOIRatingByUser(poiID, userID).
     then((result) => {
-        if (result && result.length > NO_ELEMENT_SIZE) {
+        if (Array.isArray(result) && result.length > NO_ELEMENT_SIZE) {
             res.json(result[ZERO_INDEX]).end();
         } else {
             res.status(httpCodes.NO_CONTENT).
@@ -130,7 +126,7 @@ router.get('/rating/:poiID', (req, res, next) => {
     const { poiDB } = db;
     poiDB.getPOIRating(poiID).
     then((result) => {
-        if (result && result.length > NO_ELEMENT_SIZE) {
+        if (Array.isArray(result) && result.length > NO_ELEMENT_SIZE) {
             let poiRating = result[ZERO_INDEX];
             if (!poiRating.rating || !poiRating.ratings) {
                 poiRating = {
@@ -164,7 +160,7 @@ router.get('/range/:minLat/:maxLat/:minLng/:maxLng', (req, res, next) => {
     const { poiDB } = db;
     poiDB.getPOIsWithin(minLat, maxLat, minLng, maxLng).
     then((rows) => {
-        aux.handlePOIResults(rows).
+        return aux.handlePOIResults(rows).
         then((pois) => {
             res.json(pois).end();
         });
@@ -186,12 +182,12 @@ router.get('/suggestions/:limit/:lat/:lng', (req, res, next) => {
     const { poiDB } = db;
     poiDB.getNearbyPOIs(lat, lng, limit).
     then((results) => {
-        aux.handlePOIResults(results).
+        return aux.handlePOIResults(results).
         then((suggestions) => {
-            if (suggestions.length === NO_ELEMENT_SIZE) {
-                res.sendStatus(httpCodes.NO_CONTENT).end();
-            } else {
+            if (Array.isArray(suggestions) && suggestions.length > NO_ELEMENT_SIZE) {
                 res.json(suggestions).end();
+            } else {
+                res.sendStatus(httpCodes.NO_CONTENT).end();
             }
         });
     }).
@@ -210,9 +206,9 @@ router.get('/suggestions/:limit', (req, res, next) => {
     const { poiDB } = db;
     poiDB.getTopRatedPOIs(limit).
     then((results) => {
-        aux.handlePOIResults(results).
+        return aux.handlePOIResults(results).
         then((suggestions) => {
-            if (suggestions.length === NO_ELEMENT_SIZE) {
+            if (Array.isArray(suggestions) && suggestions.length === NO_ELEMENT_SIZE) {
                 res.sendStatus(httpCodes.NO_CONTENT).end();
             } else {
                 res.json(suggestions).end();
@@ -228,7 +224,7 @@ router.get('/types', (req, res, next) => {
     const { poiDB } = db;
     poiDB.getAllPOITypes().
     then((types) => {
-        if (types) {
+        if (Array.isArray(types)) {
             res.json(utils.convertObjectsToCamelCase(types)).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
@@ -252,7 +248,7 @@ router.get('/:id', (req, res, next) => {
     const { poiDB } = db;
     Promise.all([poiDB.getPOIDetailByID(id), poiDB.getPOITags(id)]).
     then((results) => {
-        if (results && results.length === TWO_SIZE &&
+        if (Array.isArray(results) && results.length === TWO_SIZE &&
             results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE) {
             const poi = utils.convertObjectToCamelCase(results[ZERO_INDEX][ZERO_INDEX]);
             poi.tags = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
