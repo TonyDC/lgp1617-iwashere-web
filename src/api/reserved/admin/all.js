@@ -29,7 +29,7 @@ router.get('/search', (req, res, next) => {
     const { poiDB, routeDB, tagDB } = db;
     Promise.all([poiDB.searchPOI(query), routeDB.searchRoute(query), tagDB.searchTag(query)]).
     then((results) => {
-        if (results && results.length === THREE_SIZE) {
+        if (Array.isArray(results) && results.length === THREE_SIZE) {
             res.json({
                 poi: utils.convertObjectsToCamelCase(results[ZERO_INDEX]),
                 route: utils.convertObjectsToCamelCase(results[ONE_INDEX]),

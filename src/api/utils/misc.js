@@ -97,14 +97,14 @@ module.exports.convertArrayToString = (objects) => {
  *
  * @return {boolean} tells if the result list is valid
  */
-module.exports.checkResultList = (resultList, acceptableLengths, containsLists = false) => {
-    if (!resultList) {
+module.exports.checkResultList = (resultList, acceptableLengths, containsLists = false, allowNotEmpty = false) => {
+    if (!Array.isArray(resultList)) {
         return false;
     }
 
     if (containsLists) {
         for (let index = 0; index < resultList.length; index++) {
-            if (!(resultList[index] && resultList[index].length > NO_ELEMENT_SIZE)) {
+            if (!(Array.isArray(resultList[index]) && (resultList[index].length > NO_ELEMENT_SIZE || allowNotEmpty))) {
                 return false;
             }
         }

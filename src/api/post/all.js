@@ -22,10 +22,10 @@ router.get('/poi_posts/:poiID/:offset/:limit', (req, res, next) => {
 
     aux.handleGetPOIPostsRequest(req.params).
     then((posts) => {
-        if (posts.length === NO_ELEMENT_SIZE) {
-            res.sendStatus(httpCodes.NO_CONTENT).end();
-        } else {
+        if (Array.isArray(posts) && posts.length > NO_ELEMENT_SIZE) {
             res.json(posts).end();
+        } else {
+            res.sendStatus(httpCodes.NO_CONTENT).end();
         }
     }).
     catch((error) => {
@@ -45,10 +45,10 @@ router.get('/poi_posts/:userID/:poiID/:offset/:limit', (req, res, next) => {
 
     aux.handleGetPOIPostsRequest(req.params).
     then((posts) => {
-        if (posts.length === NO_ELEMENT_SIZE) {
-            res.sendStatus(httpCodes.NO_CONTENT).end();
-        } else {
+        if (Array.isArray(posts) && posts.length > NO_ELEMENT_SIZE) {
             res.json(posts).end();
+        } else {
+            res.sendStatus(httpCodes.NO_CONTENT).end();
         }
     }).
     catch((error) => {
@@ -67,10 +67,10 @@ router.get('/post_poi/:offset/:limit', (req, res, next) => {
 
     aux.handleGetPOIsPostRequest(req.params).
     then((posts) => {
-        if (posts.length === NO_ELEMENT_SIZE) {
-            res.sendStatus(httpCodes.NO_CONTENT).end();
-        } else {
+        if (Array.isArray(posts) && posts.length > NO_ELEMENT_SIZE) {
             res.json(posts).end();
+        } else {
+            res.sendStatus(httpCodes.NO_CONTENT).end();
         }
     }).
     catch((error) => {
@@ -90,10 +90,10 @@ router.get('/post_poi/:userID/:offset/:limit', (req, res, next) => {
 
     aux.handleGetPOIsPostRequest(req.params).
     then((posts) => {
-        if (posts.length === NO_ELEMENT_SIZE) {
-            res.sendStatus(httpCodes.NO_CONTENT).end();
-        } else {
+        if (Array.isArray(posts) && posts.length > NO_ELEMENT_SIZE) {
             res.json(posts).end();
+        } else {
+            res.sendStatus(httpCodes.NO_CONTENT).end();
         }
     }).
     catch((error) => {
@@ -114,10 +114,10 @@ router.get('/post_poi/:userID/:lat/:lng/:offset/:limit', (req, res, next) => {
 
     aux.handleGetPOIsPostRequest(req.params).
     then((posts) => {
-        if (posts.length === NO_ELEMENT_SIZE) {
-            res.sendStatus(httpCodes.NO_CONTENT).end();
-        } else {
+        if (Array.isArray(posts) && posts.length > NO_ELEMENT_SIZE) {
             res.json(posts).end();
+        } else {
+            res.sendStatus(httpCodes.NO_CONTENT).end();
         }
     }).
     catch((error) => {
@@ -137,10 +137,10 @@ router.get('/post_poi/:lat/:lng/:offset/:limit', (req, res, next) => {
 
     aux.handleGetPOIsPostRequest(req.params).
     then((posts) => {
-        if (posts.length === NO_ELEMENT_SIZE) {
-            res.sendStatus(httpCodes.NO_CONTENT).end();
-        } else {
+        if (Array.isArray(posts) && posts.length > NO_ELEMENT_SIZE) {
             res.json(posts).end();
+        } else {
+            res.sendStatus(httpCodes.NO_CONTENT).end();
         }
     }).
     catch((error) => {

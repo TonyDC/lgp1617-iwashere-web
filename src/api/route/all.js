@@ -33,7 +33,7 @@ router.get('/search', (req, res, next) => {
     const { routeDB } = db;
 
     routeDB.searchRoute(query).then((results) => {
-        if (results) {
+        if (Array.isArray(results) && results.length) {
             res.json(utils.convertObjectsToCamelCase(results)).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
@@ -56,7 +56,7 @@ router.get('/rating/:routeID/:userID', (req, res, next) => {
     const { routeDB } = db;
     routeDB.getRatingByUserID(routeID, userID).
     then((result) => {
-        if (result && result.length > NO_ELEMENT_SIZE) {
+        if (Array.isArray(result) && result.length > NO_ELEMENT_SIZE) {
             res.json(result[ZERO_INDEX]).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
@@ -79,7 +79,7 @@ router.get('/rating/:routeID', (req, res, next) => {
     const { routeDB } = db;
     routeDB.getRatingByRouteID(routeID).
     then((result) => {
-        if (result && result.length > NO_ELEMENT_SIZE) {
+        if (Array.isArray(result) && result.length > NO_ELEMENT_SIZE) {
             let routeRating = result[ZERO_INDEX];
             if (!routeRating.rating || !routeRating.ratings) {
                 routeRating = {
@@ -109,7 +109,7 @@ router.get('/:id', (req, res, next) => {
 
     Promise.all([routeDB.getRouteDetailByID(id), routeDB.getTagsByRouteID(id), routeDB.getPOIsByRouteID(id)]).
     then((results) => {
-        if (results && results.length === THREE_SIZE &&
+        if (Array.isArray(results) && results.length === THREE_SIZE &&
             results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE) {
 
             const route = utils.convertObjectToCamelCase(results[ZERO_INDEX][ZERO_INDEX]);
@@ -137,21 +137,21 @@ router.get('/pois/:id', (req, res, next) => {
     const { routeDB } = db;
     routeDB.getRouteDetailByID(id).
     then((routes) => {
-        if (routes && routes.length > NO_ELEMENT_SIZE) {
-            routeDB.getPOIsByRouteID(id).
+        if (Array.isArray(routes) && routes.length > NO_ELEMENT_SIZE) {
+            return routeDB.getPOIsByRouteID(id).
             then((results) => {
-                aux.handlePOIResults(results).
+                return aux.handlePOIResults(results).
                 then((poiList) => {
-                    if (poiList.length === NO_ELEMENT_SIZE) {
-                        res.sendStatus(httpCodes.NO_CONTENT).end();
-                    } else {
+                    if (Array.isArray(poiList) && poiList.length > NO_ELEMENT_SIZE) {
                         res.json(poiList).end();
+                    } else {
+                        res.sendStatus(httpCodes.NO_CONTENT).end();
                     }
                 });
             });
-        } else {
-            res.sendStatus(httpCodes.NO_CONTENT).end();
         }
+
+        return res.sendStatus(httpCodes.NO_CONTENT).end();
     }).
     catch((error) => {
         next(error);

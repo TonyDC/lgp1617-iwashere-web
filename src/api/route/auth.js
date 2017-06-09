@@ -18,9 +18,6 @@ const FIVE_RATING = 5;
 const RATING_VALUES = [ZERO_RATING, ONE_RATING, TWO_RATING, THREE_RATING, FOUR_RATING, FIVE_RATING];
 
 const VALUE_NOT_FOUND = -1;
-const ZERO_INDEX = 0;
-const ONE_INDEX = 1;
-const NO_ELEMENT_SIZE = 0;
 const TWO_SIZE = 2;
 
 router.post('/rating', (req, res, next) => {
@@ -37,9 +34,7 @@ router.post('/rating', (req, res, next) => {
     const { routeDB, userDB } = db;
     Promise.all([userDB.getUserByUID(userID), routeDB.getRouteDetailByID(routeID)]).
     then((results) => {
-        if (results && results.length === TWO_SIZE &&
-            results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE &&
-            results[ONE_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE) {
+        if (utils.checkResultList(results, [TWO_SIZE], true)) {
 
             return routeDB.addRouteRating(routeID, userID, rating).
             then(() => {

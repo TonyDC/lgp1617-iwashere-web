@@ -36,9 +36,7 @@ router.post('/rating', (req, res, next) => {
     const { poiDB, userDB } = db;
     Promise.all([userDB.getUserByUID(userID), poiDB.getPOIDetailByID(poiID)]).
     then((results) => {
-        if (results && results.length === TWO_SIZE &&
-            results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE &&
-            results[ONE_INDEX] && results[ONE_INDEX].length > NO_ELEMENT_SIZE) {
+        if (utils.checkResultList(results, [TWO_SIZE], true)) {
 
             return poiDB.addPOIRating(poiID, userID, rating).
             then(() => {

@@ -71,7 +71,7 @@ router.post('/register', (req, res) => {
         password
     }).
     then((user) => {
-        userDB.insertUser(user.uid, username, email).
+        return userDB.insertUser(user.uid, username, email).
         then(() => {
             // See the UserRecord reference doc for the contents of userRecord.
             res.send({
