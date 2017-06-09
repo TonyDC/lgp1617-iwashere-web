@@ -35,7 +35,6 @@ router.post('/rating', (req, res, next) => {
     Promise.all([userDB.getUserByUID(userID), routeDB.getRouteDetailByID(routeID)]).
     then((results) => {
         if (utils.checkResultList(results, [TWO_SIZE], true)) {
-
             return routeDB.addRouteRating(routeID, userID, rating).
             then(() => {
                 res.end();

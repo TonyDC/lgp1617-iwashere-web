@@ -33,7 +33,7 @@ router.get('/search', (req, res, next) => {
     const { routeDB } = db;
 
     routeDB.searchRoute(query).then((results) => {
-        if (Array.isArray(results) && results.length) {
+        if (Array.isArray(results) && results.length > NO_ELEMENT_SIZE) {
             res.json(utils.convertObjectsToCamelCase(results)).end();
         } else {
             res.sendStatus(httpCodes.NO_CONTENT).end();
@@ -111,7 +111,6 @@ router.get('/:id', (req, res, next) => {
     then((results) => {
         if (Array.isArray(results) && results.length === THREE_SIZE &&
             results[ZERO_INDEX] && results[ZERO_INDEX].length > NO_ELEMENT_SIZE) {
-
             const route = utils.convertObjectToCamelCase(results[ZERO_INDEX][ZERO_INDEX]);
             route.tags = utils.convertObjectsToCamelCase(results[ONE_INDEX]);
             route.pois = utils.convertObjectsToCamelCase(results[TWO_INDEX]);
@@ -140,14 +139,14 @@ router.get('/pois/:id', (req, res, next) => {
         if (Array.isArray(routes) && routes.length > NO_ELEMENT_SIZE) {
             return routeDB.getPOIsByRouteID(id).
             then((results) => {
-                return aux.handlePOIResults(results).
-                then((poiList) => {
-                    if (Array.isArray(poiList) && poiList.length > NO_ELEMENT_SIZE) {
-                        res.json(poiList).end();
-                    } else {
-                        res.sendStatus(httpCodes.NO_CONTENT).end();
-                    }
-                });
+                return aux.handlePOIResults(results);
+            }).
+            then((poiList) => {
+                if (Array.isArray(poiList) && poiList.length > NO_ELEMENT_SIZE) {
+                    res.json(poiList).end();
+                } else {
+                    res.sendStatus(httpCodes.NO_CONTENT).end();
+                }
             });
         }
 
