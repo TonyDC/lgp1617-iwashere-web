@@ -11,6 +11,7 @@ This product aims precisely to the needs of U.Porto’s Digital Museum which is 
 
 - Rodolfo Matos (rodolfo@uporto.pt)  
 - Maria Manuela Pinto (mmpinto@letras.up.pt)
+- Maria Leonor Botelho (mlbotelho@letras.up.pt) 
  
 ## Team:
 
@@ -21,11 +22,10 @@ This product aims precisely to the needs of U.Porto’s Digital Museum which is 
 - Luís Costa - up200806068@fe.up.pt - Computer Engineer
 - Lukáš Konkoľ - up201610072@fe.up.pt - Computer Engineer
 - Pedro Pontes - up201305367@fe.up.pt - Computer Engineer
-- Beatriz Campos - up201406684@fba.up.pt - Communication Design
+- Beatriz Girão - up201406684@fba.up.pt - Communication Design
 - Rita Campos - up201206509@fba.up.pt - Communication Design
-
-
-
+- Valter Abreu - up201607866@fe.up.pt - Multimedia
+- Margarida Rocha - up201005972@fe.up.pt - Multimedia
 
 ## Company: Mira - Aiming Forward  
 www.mira-up.com  
@@ -36,6 +36,8 @@ www.facebook.com/miralgp2
 - CMO: Pedro Casanova - Email: up201607858@fe.up.pt  
 - CCO: Beatriz Ayala - Email: up201305245@fe.up.pt  
 - CBO: Rita Campos - Email: ritacamp0s@hotmail.com
+- Supervisor: Ademar Aguiar - Email: aaguiar@fe.up.pt
+- Regent: Raul Vidal - Email: rmvidal@fe.up.pt
  
 Focusing on quality and success, MIRA was born to adapt the client’s ideas and ambitions to real projects. MIRA treats each customer individually, considering each project as unique as the customer. This allows achieving the goals that the customer establishes for each project. We pretend to differentiate our brand on the IT market by a transparent and simple communication as well as for the dedication that we deliver on our work to guarantee that the final result is 100% according the customer’s expectations. Our method of work will be directed towards technological innovation, based on the improvements of existing structures in the market while still striving for innovation on creation, in a manner that it’ll be more present in the day to day of our companies.
  
