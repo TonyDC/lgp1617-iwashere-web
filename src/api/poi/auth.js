@@ -17,9 +17,6 @@ const RATING_VALUES = [ZERO_RATING, ONE_RATING, TWO_RATING, THREE_RATING, FOUR_R
 
 const DECIMAL_BASE = 10;
 const VALUE_NOT_FOUND = -1;
-const NO_ELEMENT_SIZE = 0;
-const ZERO_INDEX = 0;
-const ONE_INDEX = 1;
 const TWO_SIZE = 2;
 
 router.post('/rating', (req, res, next) => {

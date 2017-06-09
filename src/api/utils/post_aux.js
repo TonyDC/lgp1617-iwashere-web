@@ -72,9 +72,9 @@ module.exports.handleGetPOIPostsRequest = (params) => {
 
                     fulfill([]);
                 });
-            } else {
-                fulfill([]);
             }
+
+            return fulfill([]);
         }).
         catch((error) => {
             reject(error);
