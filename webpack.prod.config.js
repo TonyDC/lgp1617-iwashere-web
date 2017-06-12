@@ -4,9 +4,10 @@ const webpack = require('webpack');
 module.exports = {
     devtool: 'source-map',
 
-    entry: [
-        './src/index'
-    ],
+    entry: {
+        app: './src/index',
+        vendor: ["react", "react-dom", "moment", "material-ui"]
+    },
 
     output: {
         path: path.join(__dirname, 'public'),
@@ -29,7 +30,8 @@ module.exports = {
         new webpack.ProvidePlugin({
             'Promise': 'es6-promise',                                           // Thanks Aaron (https://gist.github.com/Couto/b29676dd1ab8714a818f#gistcomment-1584602)
             'fetch': 'imports-loader?this=>global!exports-loader?global.fetch!whatwg-fetch'
-        })
+        }),
+        new webpack.optimize.CommonsChunkPlugin({ name: "vendor", filename: "vendor.bundle.js" })
     ],
 
     resolve: {

@@ -5,16 +5,12 @@ import PropTypes from 'prop-types';
 import { Router, Route, IndexRoute, IndexRedirect, browserHistory } from 'react-router';
 import * as firebase from 'firebase';
 
-import AdminShell from './components/utils/AdminShell';
-
 import MainRoutes from './routes/MainRoutes';
-
 import NoMatch from './components/utils/NoMatch';
 
 import Map from './components/map/Map';
+
 import Login from './components/user/Login';
-import Register from './components/user/Register';
-import PasswordReset from './components/user/PasswordReset';
 import POIDetail from './components/poi/POIDetail';
 import RouteDetail from './components/route/RouteDetail';
 import Search from './components/search/Search';
@@ -25,12 +21,7 @@ import UnauthRoutes from './routes/UnauthRoutes';
 import POIRoutes from './routes/POIRoutes';
 import RouteRoutes from './routes/RouteRoutes';
 
-import POIArea from './components/reserved/admin/poi/POIArea';
-import CreatePOI from './components/reserved/admin/poi/CreatePOI';
-import EditPOI from './components/reserved/admin/poi/EditPOI';
-import RouteArea from './components/reserved/admin/routes/RouteArea';
-import CreateRoute from './components/reserved/admin/routes/CreateRoute';
-import EditRoute from './components/reserved/admin/routes/EditRoute';
+import { AdminShell, PasswordReset, Register, CreatePOI, CreateRoute, EditPOI, EditRoute, POIArea, RouteArea } from './components/support/SplitCodeComponents';
 // import UserArea from './components/reserved/admin/users/UserArea';
 // import CreateUser from './components/reserved/admin/users/CreateUser';
 // import EditUser from './components/reserved/admin/users/EditUser';
@@ -102,6 +93,7 @@ export default class App extends Component {
                         <Route path="login" component={ Login }/>
                         <Route path="register" component={ Register }/>
                         <Route path="recover" component={ PasswordReset }/>
+                        <Route path="*" component={ NoMatch }/>
                     </Route>
                     <Route path="reserved" onEnter={ this.redirectIfReservedNotLoggedIn.bind(this) }>
                         <Route path="dash" component={ AdminShell }>
