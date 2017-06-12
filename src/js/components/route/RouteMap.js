@@ -3,7 +3,7 @@ import { GOOGLE_MAPS_API_KEY } from '../../../../config';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import GoogleMapReact from 'google-map-react';
-import POIComponent from '../map/SelectedLocation';
+import POIComponent from '../map/Location';
 
 import 'styles/utils.scss';
 import 'styles/map.scss';
@@ -148,11 +148,23 @@ export default class RouteMap extends Component {
         }
 
         const poisInViewport = poisList.map((element) => {
+            if (element.color || this.props.defaultColor) {
+                const color = element.color ? element.color : this.props.defaultColor;
+
+                return <POIComponent key={ element.poiId }
+                                     color={ color }
+                                     lat={ element.latitude }
+                                     lng={ element.longitude }
+                                     onClick={ () => {
+                                         this.props.onPoiSelected(element);
+                                     }}/>;
+            }
+
             return <POIComponent key={ element.poiId }
                                  lat={ element.latitude }
                                  lng={ element.longitude }
                                  onClick={ () => {
-                                     this.props.onPoiSelected(element.poiId);
+                                     this.props.onPoiSelected(element);
                                  }}/>;
         });
 
@@ -186,6 +198,7 @@ RouteMap.propTypes = {
         lat: PropTypes.number,
         lng: PropTypes.number
     }),
+    defaultColor: PropTypes.string,
     onMapChanged: PropTypes.func,
     onPoiSelected: PropTypes.func.isRequired,
     poiList: PropTypes.array,

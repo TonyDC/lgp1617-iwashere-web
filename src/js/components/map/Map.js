@@ -8,7 +8,7 @@ import httpCodes from 'http-status-codes';
 import { GOOGLE_MAPS_API_KEY } from '../../../../config';
 import POISideBar from '../poi/POISideBar';
 
-import POIComponent from './SelectedLocation';
+import POIComponent from './Location';
 import UserLocationComponent from './UserLocation';
 
 import 'styles/utils.scss';

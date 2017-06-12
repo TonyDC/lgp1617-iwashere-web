@@ -19,13 +19,16 @@ export default function SelectedLocation(props) {
     return <Pin lat={ props.lat } lng={ props.lng } onClick={ props.onClick }>
         <div className="pin">
             <IconButton>
-                <CommunicationLocationOn color={ POI_COLOR }/>
+                <CommunicationLocationOn color={ props.color }/>
             </IconButton>
         </div>
     </Pin>;
 }
 
+SelectedLocation.defaultProps = { color: POI_COLOR };
+
 SelectedLocation.propTypes = {
+    color: PropTypes.string,
     lat: PropTypes.number.isRequired,
     lng: PropTypes.number.isRequired,
     onClick: PropTypes.func
