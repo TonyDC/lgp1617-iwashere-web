@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import httpCodes from 'http-status-codes';
 import * as firebase from 'firebase';
 import { Card, CardTitle } from "material-ui/Card";
 import { GridLoader as Loader } from 'halogen';
