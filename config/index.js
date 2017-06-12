@@ -1,3 +1,12 @@
+/* eslint no-process-env: "off", global-require: "off" */
+
+/* According to Jest documentation:
+ *
+ * If you are using a more complicated Babel configuration, using Babel's env option,
+ * keep in mind that Jest will automatically define NODE_ENV as test.
+ *
+ * It will not use development section like Babel does by default when no NODE_ENV is set.
+ */
 if (process.env.NODE_ENV === 'test') {
     module.exports = {
         FIREBASE_ADMIN_SDK_PATH: ' ',

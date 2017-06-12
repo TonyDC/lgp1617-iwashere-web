@@ -21,8 +21,7 @@ import UnauthRoutes from './routes/UnauthRoutes';
 import POIRoutes from './routes/POIRoutes';
 import RouteRoutes from './routes/RouteRoutes';
 
-import AdminShell from './components/utils/AdminShell';
-import { PasswordReset, Register, CreatePOI, CreateRoute, EditPOI, EditRoute, POIArea, RouteArea } from './components/support/SplitCodeComponents';
+import { AdminShell, PasswordReset, Register, CreatePOI, CreateRoute, EditPOI, EditRoute, POIArea, RouteArea } from './components/support/SplitCodeComponents';
 // import UserArea from './components/reserved/admin/users/UserArea';
 // import CreateUser from './components/reserved/admin/users/CreateUser';
 // import EditUser from './components/reserved/admin/users/EditUser';
