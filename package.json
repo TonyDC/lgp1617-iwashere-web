@@ -45,6 +45,7 @@
     "prop-types": "^15.5.4",
     "react": "^15.5.4",
     "react-bootstrap": "^0.30.8",
+    "react-code-splitting": "^1.1.1",
     "react-dom": "^15.5.4",
     "react-drag-sortable": "latest",
     "react-dropzone": "^3.13.1",
