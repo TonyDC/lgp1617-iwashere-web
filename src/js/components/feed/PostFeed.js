@@ -13,6 +13,7 @@ import IconButton from "material-ui/IconButton";
 import { red500 as currentLocationColor } from "material-ui/styles/colors";
 import MapsMyLocation from "material-ui/svg-icons/maps/my-location";
 import NoLocation from "material-ui/svg-icons/device/gps-off";
+import { checkFetchResponse } from '../../functions/fetch';
 
 import "styles/suggestions.scss";
 
@@ -117,14 +118,12 @@ export default class POISuggestions extends Component {
             method: 'GET'
         }).
         then((response) => {
-            if (response.status >= httpCodes.BAD_REQUEST) {
-                return Promise.reject(new Error(response.statusText));
-            }
-
-            return response.json();
+            return checkFetchResponse(response, false);
         }).
         then((newSuggestions) => {
-            if (!this.componentIsMounted) {
+            if (!this.componentIsMounted || newSuggestions === null) {
+                this.setState({ hasMoreSuggestions: false });
+
                 return;
             }
 
