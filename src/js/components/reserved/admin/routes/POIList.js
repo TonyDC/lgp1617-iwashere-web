@@ -15,12 +15,12 @@ export default class POIList extends Component {
                 if (typeof this.props.onSelectMosaic === 'undefined') {
                     this.selectMosaic(poi.poiId);
                 } else {
-                    this.props.onSelectMosaic(poi.poiId);
+                    this.props.onSelectMosaic(poi);
                 }
             }}
             onDismiss={() => {
                 if (typeof this.props.onDismissMosaic !== 'undefined') {
-                    this.props.onDismissMosaic(poi.poiId);
+                    this.props.onDismissMosaic(poi);
                 }
             }}
         />);
