@@ -14,12 +14,14 @@ import Visibility from 'material-ui/svg-icons/action/visibility';
 import VisibilityOff from 'material-ui/svg-icons/action/visibility-off';
 import { Card, CardHeader } from "material-ui/Card";
 import RaisedButton from 'material-ui/RaisedButton';
+import { blue500 as DEFAULT_COLOR } from 'material-ui/styles/colors';
 
 import 'styles/utils.scss';
 import 'styles/map.scss';
 
 const ONE_ELEMENT = 1;
 const NOT_FOUND = -1;
+const SELECTED_COLOR = '#E5402A';
 
 const mainStyle = {
     margin: 40,
@@ -125,11 +127,11 @@ export default class ReservedRoute extends Component {
         }
     }
 
-    handleAddPoi(poiId) {
+    handleAddPoi(poi) {
         if (this.componentIsMounted) {
             const { route } = this.state;
-            if (route.pois.indexOf(poiId) === NOT_FOUND) {
-                route.pois.push(poiId);
+            if (route.pois.indexOf(poi.poiId) === NOT_FOUND) {
+                route.pois.push(poi.poiId);
                 this.setState({ route });
             }
         }
@@ -145,11 +147,12 @@ export default class ReservedRoute extends Component {
         }
     }
 
-    handleRemovePoi(poiId) {
+    handleRemovePoi(poi) {
         if (this.componentIsMounted) {
             const { route } = this.state;
-            const poiIndex = route.pois.indexOf(poiId);
+            const poiIndex = route.pois.indexOf(poi.poiId);
             if (poiIndex !== NOT_FOUND) {
+                poi.color = null;
                 route.pois.splice(poiIndex, ONE_ELEMENT);
                 this.setState({ route });
             }
@@ -193,6 +196,7 @@ export default class ReservedRoute extends Component {
         route.pois.forEach((poiId) => {
             this.state.allPois.some((poi) => {
                 if (poiId === poi.poiId) {
+                    poi.color = SELECTED_COLOR;
                     routePois.push(poi);
                 }
 
@@ -202,19 +206,18 @@ export default class ReservedRoute extends Component {
 
         const routeMap = <RouteMap onPoiSelected={this.handleAddPoi.bind(this)}
                                    onMapChanged={this.fetchPOIs.bind(this)}
+                                   defaultColor={DEFAULT_COLOR}
                                    allPois={this.state.allPois}
                                    poiList={routePois}
                                    router={this.props.router}/>;
 
-        let visibilityElement = null;
-        if (route.routeId) {
-            visibilityElement =
-                <Checkbox label={route.deleted ? "Hidden" : "Visible"}
-                          checked={!route.deleted}
-                          checkedIcon={<Visibility />}
-                          uncheckedIcon={<VisibilityOff />}
-                          onCheck={this.handleDeleteStatus.bind(this)}/>;
-        }
+        const visibilityElement = route.routeId
+                              ? <Checkbox label={route.deleted ? "Hidden" : "Visible"}
+                                          checked={!route.deleted}
+                                          checkedIcon={<Visibility />}
+                                          uncheckedIcon={<VisibilityOff />}
+                                          onCheck={this.handleDeleteStatus.bind(this)}/>
+                              : null;
 
         const contextId = route.contextId ? route.contextId : this.props.userContext;
 
@@ -250,7 +253,6 @@ export default class ReservedRoute extends Component {
                             {routeMap}
                         </Paper>
                         <POIList pois={routePois}
-                                 onSelectMosaic={this.handleAddPoi.bind(this)}
                                  onDismissMosaic={this.handleRemovePoi.bind(this)}
                                  onMoveMosaic={this.handleReorderPoi.bind(this)}/>
                     </Card>

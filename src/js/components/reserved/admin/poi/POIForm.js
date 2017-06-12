@@ -17,7 +17,7 @@ import MenuItem from 'material-ui/MenuItem';
 
 import { GOOGLE_MAPS_API_KEY } from '../../../../../../config/index';
 
-import SelectedLocation from '../../../map/SelectedLocation';
+import SelectedLocation from '../../../map/Location';
 import ContextTree from '../../../utils/ContextTree';
 import Tags from '../../../utils/MyTags';
 import Alerts from '../../../utils/Alerts';

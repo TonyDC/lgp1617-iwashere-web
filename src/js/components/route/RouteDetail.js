@@ -123,12 +123,12 @@ export default class RouteDetail extends Component {
         });
     }
 
-    poiSelected(poiId) {
+    poiSelected(poi) {
         if (!this.componentIsMounted) {
             return;
         }
 
-        this.setState({ selectedItem: poiId });
+        this.setState({ selectedItem: poi.poiId });
     }
 
     render() {
