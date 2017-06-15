@@ -128,7 +128,7 @@ export default class RouteDetail extends Component {
             return;
         }
 
-        this.setState({ selectedItem: poi.poiId });
+        this.setState({ selectedItem: poi ? poi.poiId : null });
     }
 
     render() {
