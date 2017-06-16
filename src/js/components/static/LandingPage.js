@@ -15,52 +15,6 @@ import iwashereTag from 'img/iwashere-icon.svg';
 import 'styles/utils.scss';
 import 'styles/landing-page.scss';
 
-const iwashereTagStyle = {
-    height: 20,
-    width: 20
-};
-
-const containerStyle = { backgroundColor: '#FFF' };
-
-const imageStyle = {
-    width: '100%',
-    height: '100%',
-    objectFit: 'contain'
-};
-
-const logoImageStyle = {
-    width: '30vw',
-    top: 40,
-    left: 40,
-    position: 'absolute',
-    objectFit: 'contain'
-};
-
-const partnersStyle = {
-    top: 40,
-    right: 40,
-    position: 'absolute',
-    display: 'flex',
-    justifyContent: 'space-around',
-};
-
-const imageBottomBar = {
-    position: 'absolute',
-    width: '100%',
-    paddingTop: 10,
-    paddingBottom: 10,
-    bottom: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
-    display: 'flex',
-    justifyContent: 'space-around',
-    alignItems: 'center'
-};
-
-const platformContainerStyle = {
-    display: 'flex',
-    justifyContent: 'space-around'
-};
-
 export default class LandingPage extends Component {
 
     goToPage(url) {
@@ -171,7 +125,7 @@ export default class LandingPage extends Component {
 
                     <article>
                         <div className="landing-page-section-icon">
-                            <img src={iwashereTag} style={iwashereTagStyle}/>
+                            <img src={iwashereTag}/>
                         </div>
                         <header>Posts</header>
                         <div>
