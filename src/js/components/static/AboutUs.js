@@ -121,7 +121,7 @@ export default class AboutUs extends Component {
               </li>
             : null;
 
-        return <article className="member vert-align" key={memberInfo.name}>
+        return <li className="member vert-align" key={memberInfo.name}>
                     <img src={memberInfo.img} alt={memberInfo.name} className="member-img"/>
 
                     <div className="text-box">
@@ -141,7 +141,7 @@ export default class AboutUs extends Component {
                             </div>
                         </div>
                     </div>
-                </article>;
+                </li>;
     }
 
     render() {
@@ -181,7 +181,9 @@ export default class AboutUs extends Component {
                 </section>
 
                 <section className="team-members hor-align">
-                    {teamMembers}
+                    <ul className="flex-box">
+                        {teamMembers}
+                    </ul>
                 </section>
             </div>
         );
