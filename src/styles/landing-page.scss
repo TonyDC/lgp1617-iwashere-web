@@ -1,7 +1,9 @@
-$future-features-color: #ff7e24;
-$implemented-features-color: #4b90ff;
+$future-features-color: #E43F2A;
+$implemented-features-color: #35A8E0;
 
 $icon-size: 50px;
+
+$max-column-width: 900px;
 
 section {
     margin: 20px 0;
@@ -20,6 +22,14 @@ section:last-child {
     padding-bottom: 20px;
 }
 
+.landing-page-column {
+    @media (min-width: $max-column-width) {
+        max-width: $max-column-width;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
 .landing-page-content {
     margin: 15px 15px 0;
 }
@@ -34,10 +44,21 @@ section:last-child {
     object-fit: contain;
 }
 
+
+
 .landing-logo {
-    width: 30vw;
-    top: 35px;
-    left: 35px;
+    @media (min-width: $max-column-width) {
+        width: $max-column-width * 0.3;       // 1200px * 30vw
+        top: 35px;
+        left: 35px;
+    }
+
+    @media (max-width: $max-column-width) {
+        width: 30vw;
+        top: 35px;
+        left: 35px;
+    }
+
     position: absolute;
     object-fit: contain;
 }
@@ -126,6 +147,13 @@ section.implemented-features {
             color: $future-features-color;
             font-size: $icon-size;
         }
+
+        // Image Icons
+        img {
+            object-fit: contain;
+            width: $icon-size;
+            height: $icon-size;
+        }
     }
 }
 
@@ -133,6 +161,16 @@ section.future-features {
     .section-header {
         text-transform: uppercase;
         font-weight: bold;
+        font-size: 2rem;
+        color: $future-features-color;
+
+        @media (max-width: $max-column-width) {
+            margin-left: 10vw;
+        }
+
+        @media (min-width: $max-column-width) {
+            margin-left: $max-column-width * 0.1;
+        }
     }
 
     article {
@@ -169,11 +207,21 @@ section.future-features {
             color: $future-features-color;
             font-size: $icon-size;
         }
+
+        // Image Icons
+        img {
+            object-fit: contain;
+            width: $icon-size;
+            height: $icon-size;
+        }
     }
 }
 
 section.platforms {
     margin-bottom: 0;
+    padding-bottom: 40px;
+    background-color: $implemented-features-color;
+    color: white;
 
     ol, ul {
         list-style: none outside none;
@@ -189,7 +237,10 @@ section.platforms {
 
     .section-header {
         text-transform: uppercase;
+        padding-top: 10px;
+        padding-left: 10px;
         margin-bottom: 30px;
+        font-weight: bold;
     }
 
     .platforms-listing {
@@ -206,14 +257,14 @@ section.platforms {
             // Material Design Icons
             svg {
                 display: block;
-                color: $future-features-color !important;
+                color: white !important;
                 width: $icon-size !important;
                 height: $icon-size !important;
             }
 
             // Font Awesome Icons
             i {
-                color: $future-features-color;
+                color: white;
                 font-size: $icon-size;
             }
         }

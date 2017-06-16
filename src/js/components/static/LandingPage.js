@@ -9,8 +9,11 @@ import EditorLinearScale from 'material-ui/svg-icons/editor/linear-scale';
 import MapsPlace from 'material-ui/svg-icons/maps/place';
 
 import landingPageImage from 'img/landing.jpg';
-import logoImage from 'img/logo.png';
-import iwashereTag from 'img/iwashere-icon.svg';
+import logoImage from 'img/iwh-alpha.png';
+import iwashereTag from 'img/iwashere-logo-inverted.svg';
+import badgeImage from 'img/badge.svg';
+import gamepadImage from 'img/gamepad.svg';
+import pictureImage from 'img/picture.svg';
 
 import 'styles/utils.scss';
 import 'styles/landing-page.scss';
@@ -32,24 +35,24 @@ export default class LandingPage extends Component {
                     <title>#iwashere</title>
                 </Helmet>
 
-
-                    <div className="landing-image-container">
-                        <img src={landingPageImage} className="landing-image"/>
-                        <img src={logoImage} className="landing-logo"/>
-                        <div className="landing-partners">
-                            <i className="fa fa-picture-o" aria-hidden="true"/>
-                            <i className="fa fa-picture-o" aria-hidden="true"/>
-                            <i className="fa fa-picture-o" aria-hidden="true"/>
-                        </div>
-                        <div className="landing-logo-bottom-bar">
-                            <h2 className="tag-line">
-                                Leave your mark
-                            </h2>
-                            <span>
+                <div className="landing-page-column">
+                <div className="landing-image-container">
+                    <img src={landingPageImage} className="landing-image"/>
+                    <img src={logoImage} className="landing-logo"/>
+                    <div className="landing-partners">
+                        <i className="fa fa-picture-o" aria-hidden="true"/>
+                        <i className="fa fa-picture-o" aria-hidden="true"/>
+                        <i className="fa fa-picture-o" aria-hidden="true"/>
+                    </div>
+                    <div className="landing-logo-bottom-bar">
+                        <h2 className="tag-line">
+                            Leave your mark
+                        </h2>
+                        <span>
                             <RaisedButton label="Start Route" backgroundColor="#012935" labelColor="#FFF" onTouchTap={ this.goToPage.bind(this, '/route/1') }/>
                         </span>
-                        </div>
                     </div>
+                </div>
 
                 <div className="landing-page-content">
                     <section className="product-description">
@@ -113,7 +116,7 @@ export default class LandingPage extends Component {
 
                         <article>
                             <div className="landing-page-section-icon">
-                                <i className="fa fa-picture-o" aria-hidden="true"/>
+                                <img src={pictureImage}/>
                             </div>
                             <header>Digital Museum</header>
                             <div>
@@ -141,7 +144,7 @@ export default class LandingPage extends Component {
 
                         <article>
                             <div className="landing-page-section-icon">
-                                <i className="fa fa-gamepad" aria-hidden="true"/>
+                                <img src={gamepadImage}/>
                             </div>
                             <header>Gamification</header>
                             <div>
@@ -155,7 +158,7 @@ export default class LandingPage extends Component {
 
                         <article>
                             <div className="landing-page-section-icon">
-                                icon
+                                <img src={badgeImage}/>
                             </div>
                             <header>Badges</header>
                             <div>
@@ -170,7 +173,7 @@ export default class LandingPage extends Component {
                     </section>
 
                     <section className="platforms">
-                        <h4 className="section-header">Soon available for</h4>
+                        <h4 className="section-header">Soon available for:</h4>
 
                         <ul className="platforms-listing">
                             <li>
@@ -191,7 +194,7 @@ export default class LandingPage extends Component {
                             </li>
                             <li>
                                 <div className="platform-icon">
-                                    <i className="fa fa-apple" aria-hidden="true" style={{display: 'block'}}/>
+                                    <i className="fa fa-apple" aria-hidden="true"/>
                                 </div>
                                 <div className="platform-description">
                                     iOS
@@ -201,16 +204,9 @@ export default class LandingPage extends Component {
                     </section>
                 </div>
             </div>
+            </div>
         );
     }
 }
 
-LandingPage.propTypes = {
-    router: PropTypes.object.isRequired,
-    disableButtons: PropTypes.bool,
-    handleFacebook: PropTypes.func,
-    handleForgotPassword: PropTypes.func,
-    handleGoogle: PropTypes.func,
-    handleLogin: PropTypes.func,
-    handleRegister: PropTypes.func
-};
+LandingPage.propTypes = { router: PropTypes.object.isRequired };
