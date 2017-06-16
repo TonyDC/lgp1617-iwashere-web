@@ -20,7 +20,7 @@ section:last-child {
 
 .landing-page-container {
     background-color: #FFF;
-    padding-bottom: 20px;
+    padding-bottom: 40px;
 }
 
 .landing-page-column {
@@ -31,7 +31,7 @@ section:last-child {
     }
 }
 
-.landing-page-content {
+.landing-page-content-margin {
     margin: 15px 15px 0;
 }
 
@@ -165,11 +165,11 @@ section.future-features {
         color: $future-features-color;
 
         @media (max-width: $max-column-width) {
-            margin-left: 10vw;
+            margin-left: 5vw;
         }
 
         @media (min-width: $max-column-width) {
-            margin-left: $max-column-width * 0.1;
+            margin-left: $max-column-width * 0.05;
         }
     }
 
