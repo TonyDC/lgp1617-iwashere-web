@@ -8,6 +8,8 @@ import * as firebase from 'firebase';
 import MainRoutes from './routes/MainRoutes';
 import NoMatch from './components/utils/NoMatch';
 
+import LandingPage from './components/static/LandingPage';
+
 import Map from './components/map/Map';
 
 import Login from './components/user/Login';
@@ -79,7 +81,8 @@ export default class App extends Component {
         return (
             <Router history={ browserHistory }>
                 <Route path="/" component={ MainRoutes }>
-                    <IndexRoute component={ Map } />
+                    <IndexRoute component={ LandingPage } />
+                    <Route path="map" component={ Map }/>
                     <Route path="search" component={ Search }/>
                     <Route path="feed" component={ Feed }/>
                     <Route path="poi" component={ POIRoutes }>

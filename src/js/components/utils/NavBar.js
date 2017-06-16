@@ -9,6 +9,7 @@ import SocialPerson from 'material-ui/svg-icons/social/person';
 import ActionExitToApp from 'material-ui/svg-icons/action/exit-to-app';
 import ActionBuild from 'material-ui/svg-icons/action/build';
 import ActionAndroid from 'material-ui/svg-icons/action/android';
+import MapsMap from 'material-ui/svg-icons/maps/map';
 
 import logoCompact from 'img/logo-compact.png';
 
@@ -115,6 +116,9 @@ export default class NavBar extends Component {
                 <Toolbar className="toolbar-custom-style">
                     <Link to="/" className="vert-align"><img src={logoCompact} className="app-logo"/></Link>
                     <ToolbarGroup>
+                        <IconButton iconStyle={styles.buttons} onTouchTap={this.goToPage.bind(this, '/map')} tooltip={<div>Map</div>}>
+                            <MapsMap hoverColor={grey100}/>
+                        </IconButton>
                         <IconButton iconStyle={styles.buttons} onTouchTap={this.goToPage.bind(this, '/search')} tooltip={<div>Search</div>}>
                             <ActionSearch hoverColor={grey100}/>
                         </IconButton>
