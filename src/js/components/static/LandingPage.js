@@ -18,6 +18,8 @@ import pictureImage from 'img/picture.svg';
 import 'styles/utils.scss';
 import 'styles/landing-page.scss';
 
+const TEAM_BUTTON_COLOR = '#E43F2A';
+
 export default class LandingPage extends Component {
 
     goToPage(url) {
@@ -54,7 +56,7 @@ export default class LandingPage extends Component {
                         </div>
                     </div>
 
-                    <div className="landing-page-content">
+                    <div className="landing-page-content-margin">
                         <section className="product-description">
                             <article>
                                 <header>What is #iwashere</header>
@@ -134,8 +136,8 @@ export default class LandingPage extends Component {
                                 </div>
                                 <header>Posts</header>
                                 <div>
-                                    The possibility creating posts provides the users with the opportunity
-                                    to contribute to the platform, leaving their opinions,
+                                    The possibility of creating posts provides the users with the opportunity
+                                    to contribute to the platform, by leaving their opinions,
                                     taking photos, videos or audio.
                                 </div>
                             </article>
@@ -171,38 +173,43 @@ export default class LandingPage extends Component {
                             <hr/>
 
                         </section>
-
-                        <section className="platforms">
-                            <h4 className="section-header">Soon available for:</h4>
-
-                            <ul className="platforms-listing">
-                                <li>
-                                    <div className="platform-icon">
-                                        <ActionLanguage/>
-                                    </div>
-                                    <div className="platform-description">
-                                        Web
-                                    </div>
-                                </li>
-                                <li>
-                                    <div className="platform-icon">
-                                        <ActionAndroid/>
-                                    </div>
-                                    <div className="platform-description">
-                                        Android
-                                    </div>
-                                </li>
-                                <li>
-                                    <div className="platform-icon">
-                                        <i className="fa fa-apple" aria-hidden="true"/>
-                                    </div>
-                                    <div className="platform-description">
-                                        iOS
-                                    </div>
-                                </li>
-                            </ul>
-                        </section>
                     </div>
+
+                    <section className="platforms">
+                        <h4 className="section-header">Soon available for:</h4>
+
+                        <ul className="platforms-listing">
+                            <li>
+                                <div className="platform-icon">
+                                    <ActionLanguage/>
+                                </div>
+                                <div className="platform-description">
+                                    Web
+                                </div>
+                            </li>
+                            <li>
+                                <div className="platform-icon">
+                                    <ActionAndroid/>
+                                </div>
+                                <div className="platform-description">
+                                    Android
+                                </div>
+                            </li>
+                            <li>
+                                <div className="platform-icon">
+                                    <i className="fa fa-apple" aria-hidden="true"/>
+                                </div>
+                                <div className="platform-description">
+                                    iOS
+                                </div>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <section className="hor-align team-button">
+                        <RaisedButton label="Meet the team" backgroundColor={TEAM_BUTTON_COLOR} labelColor="#FFF" onTouchTap={ this.goToPage.bind(this, '/about') }/>
+                    </section>
+
                 </div>
             </div>
         );

@@ -4,9 +4,10 @@ $implemented-features-color: #35A8E0;
 $icon-size: 50px;
 
 $max-column-width: 900px;
+$smartphone-size: 450px;
 
 section {
-    margin: 20px 0;
+    margin: 40px 0;
 }
 
 section:first-child {
@@ -19,7 +20,7 @@ section:last-child {
 
 .landing-page-container {
     background-color: #FFF;
-    padding-bottom: 20px;
+    padding-bottom: 40px;
 }
 
 .landing-page-column {
@@ -30,7 +31,7 @@ section:last-child {
     }
 }
 
-.landing-page-content {
+.landing-page-content-margin {
     margin: 15px 15px 0;
 }
 
@@ -44,23 +45,21 @@ section:last-child {
     object-fit: contain;
 }
 
-
-
 .landing-logo {
+    position: absolute;
+    object-fit: contain;
+
     @media (min-width: $max-column-width) {
-        width: $max-column-width * 0.3;       // 1200px * 30vw
-        top: 35px;
-        left: 35px;
+        width: $max-column-width * 0.3;
+        top: 36px;
+        left: 36px;
     }
 
     @media (max-width: $max-column-width) {
         width: 30vw;
-        top: 35px;
-        left: 35px;
+        top: 4vw;
+        left: 4vw;
     }
-
-    position: absolute;
-    object-fit: contain;
 }
 
 .landing-logo-bottom-bar {
@@ -70,16 +69,17 @@ section:last-child {
     padding-bottom: 10px;
     bottom: 0;
     background-color: rgba(255, 255, 255, 0.5);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 
-    @media (min-width: 450px) {
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-    }
-
-    @media (max-width: 450px) {
+    @media (max-width: $smartphone-size) {
         // TODO check
-        text-align: center;
+        // text-align: center;
+
+        .tag-line {
+            font-size: 5vw;
+        }
     }
 
     .tag-line {
@@ -165,11 +165,11 @@ section.future-features {
         color: $future-features-color;
 
         @media (max-width: $max-column-width) {
-            margin-left: 10vw;
+            margin-left: 5vw;
         }
 
         @media (min-width: $max-column-width) {
-            margin-left: $max-column-width * 0.1;
+            margin-left: $max-column-width * 0.05;
         }
     }
 
