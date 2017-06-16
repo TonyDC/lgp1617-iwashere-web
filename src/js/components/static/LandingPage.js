@@ -210,32 +210,39 @@ export default class LandingPage extends Component {
                     </article>
 
                     <hr/>
+
                 </section>
 
-                <div>
-                    <h4>Soon available for</h4>
+                <section className="platforms">
+                    <h4 className="section-header">Soon available for</h4>
 
-                    <div style={platformContainerStyle}>
-                        <div>
-                            <ActionLanguage style={{display: 'block'}}/>
-                            Web
-                        </div>
-                        <div>
-                            <div className="hor-align">
-                                <ActionAndroid style={{display: 'block', height: 100, width: 100}}/>
+                    <ul className="platforms-listing">
+                        <li>
+                            <div className="platform-icon">
+                                <ActionLanguage/>
                             </div>
-                            <div style={{textAlign: 'center'}}>
+                            <div className="platform-description">
+                                Web
+                            </div>
+                        </li>
+                        <li>
+                            <div className="platform-icon">
+                                <ActionAndroid/>
+                            </div>
+                            <div className="platform-description">
                                 Android
                             </div>
-                        </div>
-                        <div>
-                            <div className="hor-align" style={{fontSize: 80}}>
+                        </li>
+                        <li>
+                            <div className="platform-icon">
                                 <i className="fa fa-apple" aria-hidden="true" style={{display: 'block'}}/>
                             </div>
+                            <div className="platform-description">
                             iOS
-                        </div>
-                    </div>
-                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </section>
             </div>
         );
     }
