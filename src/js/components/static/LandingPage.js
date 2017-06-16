@@ -129,8 +129,8 @@ export default class LandingPage extends Component {
                         </div>
                         <header>Posts</header>
                         <div>
-                            By the possibility making posts, it creates the opportunity of
-                            collaboration in the platform from the user, leaving their opinions,
+                            The possibility creating posts provides the users with the opportunity
+                            to contribute to the platform, leaving their opinions,
                             taking photos, videos or audio.
                         </div>
                     </article>
