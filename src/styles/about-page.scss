@@ -70,6 +70,23 @@ section.team article {
     }
 }
 
+section.ack article {
+    header, div {
+        text-align: center;
+    }
+
+    header {
+        font-size: 3rem;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    .ack-img {
+        width: 50%;
+        height: 50%;
+    }
+}
+
 .flex-box {
     padding: 0;
     margin: 0;
@@ -89,20 +106,37 @@ section.team-members {
 
     padding: 20px;
 
-    .section-header {
-        text-transform: uppercase;
-        font-weight: bold;
-    }
-
-    .member-img {
-        max-height: 150px;
-        max-width: 150px;
-        border-radius: 50%;
-    }
-
     li {
-        padding: 10px;
+        height: 200px;
+        width: 400px;
+        margin: 20px;
         text-align: center;
+
+        .section-header {
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .thumbnail {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            overflow: hidden;
+        }
+        .thumbnail img {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            height: 100%;
+            width: auto;
+            -webkit-transform: translate(-50%,-50%);
+            -ms-transform: translate(-50%,-50%);
+            transform: translate(-50%,-50%);
+        }
+        .thumbnail img.portrait {
+            width: 100%;
+            height: auto;
+        }
 
         header {
             font-size: 2rem;
@@ -118,8 +152,7 @@ section.team-members {
             font-size: 2rem;
         }
 
-        li {
-            padding: 10px;
+        ul li.contact {
             display: inline;
             list-style-type: none;
         }

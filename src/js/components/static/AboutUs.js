@@ -3,8 +3,9 @@ import Helmet from 'react-helmet';
 import PropTypes from 'prop-types';
 import RaisedButton from 'material-ui/RaisedButton';
 
-import teamImage from 'img/team/team.jpg';
 import logoImage from 'img/logo.png';
+import teamImage from 'img/team/team.jpg';
+import ackImage from 'img/team/ack.jpg';
 import casimiroImage from 'img/team/antonio-casimiro.jpg';
 import pontesImage from 'img/team/pedro-pontes.jpg';
 import azevedoImage from 'img/team/ana-azevedo.jpg';
@@ -116,13 +117,15 @@ export default class AboutUs extends Component {
 
     memberElement(memberInfo) {
         const linkedIn = memberInfo.linkedIn
-            ? <li className="background--linkedin">
+            ? <li className="contact">
                 <a href={memberInfo.linkedIn} target="_blank"><i className="fa fa-linkedin" /></a>
               </li>
             : null;
 
         return <li className="member vert-align" key={memberInfo.name}>
-                    <img src={memberInfo.img} alt={memberInfo.name} className="member-img"/>
+                    <div className="thumbnail">
+                        <img src={memberInfo.img} className="portrait" alt={memberInfo.name} />
+                    </div>
 
                     <div className="text-box">
                         <h1 className="member-name">
@@ -134,7 +137,7 @@ export default class AboutUs extends Component {
                             <div className="social-holder">
                                 <ul>
                                     {linkedIn}
-                                    <li className="background--email">
+                                    <li className="contact">
                                         <a href={`mailto:${memberInfo.email}`} target="_blank"><i className="fa fa-envelope" /></a>
                                     </li>
                                 </ul>
@@ -166,7 +169,7 @@ export default class AboutUs extends Component {
                             We left our mark. Leave yours.
                         </h2>
                         <span>
-                            <RaisedButton label="Start Route" backgroundColor="#012935" labelColor="#FFF" onTouchTap={ this.goToPage.bind(this, '/route/1') }/>
+                            <RaisedButton label="Start Now" backgroundColor="#012935" labelColor="#FFF" onTouchTap={ this.goToPage.bind(this, '/map') }/>
                         </span>
                     </div>
                 </div>
@@ -180,10 +183,27 @@ export default class AboutUs extends Component {
                     </article>
                 </section>
 
+                <hr/>
+
                 <section className="team-members hor-align">
                     <ul className="flex-box">
                         {teamMembers}
                     </ul>
+                </section>
+
+                <hr/>
+
+                <section className="ack">
+                    <article>
+                        <header>Acknowledgements</header>
+                        <div>
+                            As a content oriented project, #iwashere counted with the contribute of several people, responsible for collecting the contents now made available to you.
+                        </div>
+
+                        <div className="hor-align">
+                            <img src={ackImage} className="ack-img" alt="Acknowledgements" />
+                        </div>
+                    </article>
                 </section>
             </div>
         );
