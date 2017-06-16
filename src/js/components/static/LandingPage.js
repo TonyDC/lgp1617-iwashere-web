@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Helmet from 'react-helmet';
 import PropTypes from 'prop-types';
 import RaisedButton from 'material-ui/RaisedButton';
 
@@ -10,6 +11,9 @@ import MapsPlace from 'material-ui/svg-icons/maps/place';
 import landingPageImage from 'img/landing.jpg';
 import logoImage from 'img/logo.png';
 import iwashereTag from 'img/iwashere-icon.svg';
+
+import 'styles/utils.scss';
+import 'styles/landing-page.scss';
 
 const iwashereTagStyle = {
     height: 20,
@@ -69,118 +73,164 @@ export default class LandingPage extends Component {
 
     render() {
         return (
-            <div style={containerStyle}>
-            <div style={{position: 'relative'}}>
-                <img src={landingPageImage} style={imageStyle}/>
-                <img src={logoImage} style={logoImageStyle}/>
-                <div style={partnersStyle}>
-                    <i className="fa fa-picture-o" aria-hidden="true"/>
-                    <i className="fa fa-picture-o" aria-hidden="true"/>
-                    <i className="fa fa-picture-o" aria-hidden="true"/>
-                </div>
-                <div style={imageBottomBar}>
-                    <h2>
-                        Leave your mark
-                    </h2>
-                    <span>
-                        <RaisedButton label="Start Route" backgroundColor="#012935" labelColor="#FFF" onTouchTap={ this.goToPage.bind(this, '/route/1') }/>
-                    </span>
-                </div>
-            </div>
+            <div className="landing-page-container">
+                <Helmet>
+                    <title>#iwashere</title>
+                </Helmet>
 
-                <h4>WHAT IS #IWASHERE</h4>
+                <div className="landing-image-container">
+                    <img src={landingPageImage} className="landing-image"/>
+                    <img src={logoImage} className="landing-logo"/>
+                    <div className="landing-partners">
+                        <i className="fa fa-picture-o" aria-hidden="true"/>
+                        <i className="fa fa-picture-o" aria-hidden="true"/>
+                        <i className="fa fa-picture-o" aria-hidden="true"/>
+                    </div>
+                    <div className="landing-logo-bottom-bar">
+                        <h2 className="tag-line">
+                            Leave your mark
+                        </h2>
+                        <span>
+                            <RaisedButton label="Start Route" backgroundColor="#012935" labelColor="#FFF" onTouchTap={ this.goToPage.bind(this, '/route/1') }/>
+                        </span>
+                    </div>
+                </div>
+
+                <section className="product-description">
+                    <article>
+                        <header>What is #iwashere</header>
+                        <div>
+                            #iwashere is a social network that encourages the U.Porto community
+                            to actively share their knowledge and experiences about certain places of interest,
+                            about something they did or visited, by posting photos, videos, audios or text.
+                        </div>
+                    </article>
+                </section>
+
+                <section className="implemented-features">
+                    <article>
+                        <header>What we are aiming for</header>
+                        <div>
+                            The product to be developed will also act like a 'mobile
+                            companion' that will suggest itineraries with places,
+                            pieces/artifacts of the museums to discover, depending on the
+                            user's current location.
+                        </div>
+                    </article>
+
+                    <hr/>
+
+                    <article>
+                        <div className="landing-page-section-icon">
+                            <MapsPlace/>
+                        </div>
+                        <header>Points of Interest</header>
+                        <div>
+                            Point of Interest refers to something or someone which is
+                            relevant to this city.
+                            By clicking on a specific point in the map, you access the side bar,
+                            with a brief description of what you selected.
+                            From this sidebar, you will also access to more information, as other
+                            posts and opinions.
+                        </div>
+                    </article>
+
+                    <hr/>
+
+                    <article>
+                        <div className="landing-page-section-icon">
+                            <EditorLinearScale/>
+                        </div>
+                        <header>Routes</header>
+                        <div>
+                            This system creates a list of Points of Interest related between
+                            them. In the future, there will be the possibility of following the
+                            route and its Points of Interest in real time.
+                        </div>
+                    </article>
+
+                    <hr/>
+                </section>
+
+                <section className="future-features">
+                    <h5 className="section-header">Coming soon</h5>
+
+                    <article>
+                        <div className="landing-page-section-icon">
+                            <i className="fa fa-picture-o" aria-hidden="true"/>
+                        </div>
+                        <header>Digital Museum</header>
+                        <div>
+                            #iwashere gives the user the opportunity to revisit museums.
+                            Using a QR-code, the visitor can upload the digital data related to
+                            the museum he visited.
+                        </div>
+                    </article>
+
+                    <hr/>
+
+                    <article>
+                        <div className="landing-page-section-icon">
+                            <img src={iwashereTag} style={iwashereTagStyle}/>
+                        </div>
+                        <header>Posts</header>
+                        <div>
+                            By the possibility making posts, it creates the opportunity of
+                            collaboration in the platform from the user, leaving their opinions,
+                            taking photos, videos or audio.
+                        </div>
+                    </article>
+
+                    <hr/>
+
+                    <article>
+                        <div className="landing-page-section-icon">
+                            <i className="fa fa-gamepad" aria-hidden="true"/>
+                        </div>
+                        <header>Gamification</header>
+                        <div>
+                            #iwashere will have fun allied to culture. We want to make the
+                            experience as entertaining as possible, adding a little competition
+                            between players.
+                        </div>
+                    </article>
+
+                    <hr/>
+
+                    <article>
+                        <div className="landing-page-section-icon">
+                            icon
+                        </div>
+                        <header>Badges</header>
+                        <div>
+                            All players will be awarded with badges once they have completed
+                            tasks, quests and contests. This badges can be obtained in single-play or
+                            multi-play mode.
+                        </div>
+                    </article>
+
+                    <hr/>
+                </section>
+
                 <div>
-                    #iwashere is a social network that encourages the U.Porto community
-                    to actively share their knowledge and experiences about certain places of interest,
-                    about something they did or visited, by posting photos, videos, audios or text.
-                </div>
-
-                <h4>WHAT WE AIM FOR</h4>
-                <div>
-                    The product to be developed will also act like a 'mobile
-                    companion' that will suggest itineraries with places,
-                    pieces/artifacts of the museums to discover, depending on the
-                    user's current location.
-                </div>
-                <hr/>
-
-                <MapsPlace/>
-                <h4>POINTS OF INTEREST</h4>
-                <div>
-                    Point of Interest refers to something or someone which is
-                    relevant to this city.
-                    By clicking on a specific point in the map, you access the side bar,
-                    with a brief description of what you selected.
-                    From this sidebar, you will also access to more information, as other
-                    posts and opinions.
-                </div>
-                <hr/>
-
-                <EditorLinearScale/>
-                <h4>ROUTES</h4>
-                <div>
-                    This system creates a list of Points of Interest related between
-                    them. In the future, there will be the possibility of following the
-                    route and its Points of Interest in real time.
-                </div>
-                <hr/>
-
-                <h5>COMING SOON</h5>
-
-                <i className="fa fa-picture-o" aria-hidden="true"/>
-                <h4>DIGITAL MUSEUM</h4>
-                <div>
-                    #iwashere gives the user the opportunity to revisit museums.
-                    Using a QR-code, the visitor can upload the digital data related to
-                    the museum he visited.
-                </div>
-                <hr/>
-
-                <img src={iwashereTag} style={iwashereTagStyle}/>
-                <h4>POSTS</h4>
-                <div>
-                    By the possibility making posts, it creates the opportunity of
-                    collaboration in the platform from the user, leaving their opinions,
-                    taking photos, videos or audio.
-                </div>
-                <hr/>
-
-                <i className="fa fa-gamepad" aria-hidden="true"/>
-                <h4>GAMIFICATION</h4>
-                <div>
-                    #iwashere will have fun allied to culture. We want to make the
-                    experience as entertaining as possible, adding a little competition
-                    between players.
-                </div>
-                <hr/>
-
-                <h4>BADGES</h4>
-                <div>
-                    All players will be awarded with badges once they have completed
-                    tasks, quests and contests. This badges can be obtained in single-play or
-                    multi-play mode.
-                </div>
-                <hr/>
-
-                <div>
-                    <h4>SOON AVAILABLE FOR</h4>
+                    <h4>Soon available for</h4>
 
                     <div style={platformContainerStyle}>
                         <div>
                             <ActionLanguage style={{display: 'block'}}/>
-                            WEB
+                            Web
                         </div>
                         <div>
                             <div className="hor-align">
                                 <ActionAndroid style={{display: 'block', height: 100, width: 100}}/>
                             </div>
                             <div style={{textAlign: 'center'}}>
-                                ANDROID
+                                Android
                             </div>
                         </div>
                         <div>
                             <div className="hor-align" style={{fontSize: 80}}>
-                            <i className="fa fa-apple" aria-hidden="true" style={{display: 'block'}}/>
+                                <i className="fa fa-apple" aria-hidden="true" style={{display: 'block'}}/>
                             </div>
                             iOS
                         </div>
