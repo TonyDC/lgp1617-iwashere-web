@@ -61,7 +61,7 @@ export default class LandingPage extends Component {
                             <article>
                                 <header>What is #iwashere</header>
                                 <div>
-                                    #iwashere is a social network that encourages the U.Porto community
+                                    #iwashere is a network that encourages the U.Porto community
                                     to actively share their knowledge and experiences about certain places of interest,
                                     about something they did or visited, by posting photos, videos, audios or text.
                                 </div>

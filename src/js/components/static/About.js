@@ -119,32 +119,32 @@ export default class AboutUs extends Component {
         const linkedIn = memberInfo.linkedIn
             ? <li className="contact">
                 <a href={memberInfo.linkedIn} target="_blank"><i className="fa fa-linkedin" /></a>
-              </li>
+            </li>
             : null;
 
         return <li className="member vert-align" key={memberInfo.name}>
-                    <div className="thumbnail">
-                        <img src={memberInfo.img} className="portrait" alt={memberInfo.name} />
-                    </div>
+            <div className="thumbnail">
+                <img src={memberInfo.img} className="portrait" alt={memberInfo.name} />
+            </div>
 
-                    <div className="text-box">
-                        <h1 className="member-name">
-                            {memberInfo.name}
-                        </h1>
-                        <div>
-                            <em>{memberInfo.background}</em>
-                            <br/>
-                            <div className="social-holder">
-                                <ul>
-                                    {linkedIn}
-                                    <li className="contact">
-                                        <a href={`mailto:${memberInfo.email}`} target="_blank"><i className="fa fa-envelope" /></a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+            <div className="text-box">
+                <h1 className="member-name">
+                    {memberInfo.name}
+                </h1>
+                <div>
+                    <em>{memberInfo.background}</em>
+                    <br/>
+                    <div className="social-holder">
+                        <ul>
+                            {linkedIn}
+                            <li className="contact">
+                                <a href={`mailto:${memberInfo.email}`} target="_blank"><i className="fa fa-envelope" /></a>
+                            </li>
+                        </ul>
                     </div>
-                </li>;
+                </div>
+            </div>
+        </li>;
     }
 
     render() {
