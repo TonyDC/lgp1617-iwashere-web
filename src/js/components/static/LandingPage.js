@@ -51,7 +51,7 @@ export default class LandingPage extends Component {
                                 Leave your mark
                             </h2>
                             <span>
-                            <RaisedButton label="Start Route" backgroundColor="#012935" labelColor="#FFF" onTouchTap={ this.goToPage.bind(this, '/route/1') }/>
+                            <RaisedButton label="Start Route" backgroundColor="#012935" labelColor="#FFF" onTouchTap={ this.goToPage.bind(this, '/route/4') }/>
                         </span>
                         </div>
                     </div>
@@ -87,12 +87,11 @@ export default class LandingPage extends Component {
                                 </div>
                                 <header>Points of Interest</header>
                                 <div>
-                                    Point of Interest refers to something or someone which is
-                                    relevant to this city.
+                                    Point of Interest refers to something or someone which is relevant to this city.
                                     By clicking on a specific point in the map, you access the side bar,
                                     with a brief description of what you selected.
-                                    From this sidebar, you will also access to more information, as other
-                                    posts and opinions.
+                                    From this sidebar, you will also access to more information,
+                                    as other posts and opinions.
                                 </div>
                             </article>
 
@@ -104,9 +103,8 @@ export default class LandingPage extends Component {
                                 </div>
                                 <header>Routes</header>
                                 <div>
-                                    This system creates a list of Points of Interest related between
-                                    them. In the future, there will be the possibility of following the
-                                    route and its Points of Interest in real time.
+                                    This system creates a list with “Points of Interest” which are inter-related.
+                                    In the future, it will be possibility to follow a route and its Points of Interest in real time.
                                 </div>
                             </article>
 
@@ -123,8 +121,7 @@ export default class LandingPage extends Component {
                                 <header>Digital Museum</header>
                                 <div>
                                     #iwashere gives the user the opportunity to revisit museums.
-                                    Using a QR-code, the visitor can upload the digital data related to
-                                    the museum he visited.
+                                    By using a QR Code, the visitor can upload the digital data related to the museum they have visited.
                                 </div>
                             </article>
 
@@ -136,9 +133,9 @@ export default class LandingPage extends Component {
                                 </div>
                                 <header>Posts</header>
                                 <div>
-                                    By the possibility making posts, it creates the opportunity of
-                                    collaboration in the platform from the user, leaving their opinions,
-                                    taking photos, videos or audio.
+                                    Due to the possibility of making posts, it creates the opportunity of collaboration
+                                    among different users within the platform by allowing them to state their opinions,
+                                    take photos, or files with video or audio.
                                 </div>
                             </article>
 
@@ -150,9 +147,8 @@ export default class LandingPage extends Component {
                                 </div>
                                 <header>Gamification</header>
                                 <div>
-                                    #iwashere will have fun allied to culture. We want to make the
-                                    experience as entertaining as possible, adding a little competition
-                                    between players.
+                                    #iwashere will add fun to culture. We want to make the experience as entertaining as possible,
+                                    and therefore we will be adding a bit of competition among players.
                                 </div>
                             </article>
 
@@ -164,9 +160,8 @@ export default class LandingPage extends Component {
                                 </div>
                                 <header>Badges</header>
                                 <div>
-                                    All players will be awarded with badges once they have completed
-                                    tasks, quests and contests. This badges can be obtained in single-play or
-                                    multi-play mode.
+                                    All players will be awarded with badges once they have completed tasks, quests and contests.
+                                    These badges can be won in either singleplay or multiplay mode.
                                 </div>
                             </article>
 

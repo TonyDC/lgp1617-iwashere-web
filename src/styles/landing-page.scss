@@ -6,6 +6,8 @@ $icon-size: 50px;
 $max-column-width: 900px;
 $smartphone-size: 450px;
 
+$header-margin-bottom: 20px;
+
 section {
     margin: 40px 0;
 }
@@ -92,7 +94,9 @@ section:last-child {
     top: 40px;
     right: 40px;
     position: absolute;
-    display: flex;
+
+    // TODO change to flex
+    display: none;
     justify-content: space-around;
 }
 
@@ -106,6 +110,7 @@ section.product-description article {
     }
 
     header {
+        margin-bottom: $header-margin-bottom;
         font-size: 3rem;
         font-weight: bold;
         text-transform: uppercase;
@@ -122,6 +127,7 @@ section.implemented-features {
             font-size: 2rem;
             text-transform: uppercase;
             color: $implemented-features-color;
+            margin-bottom: $header-margin-bottom;
         }
     }
 
@@ -163,6 +169,7 @@ section.future-features {
         font-weight: bold;
         font-size: 2rem;
         color: $future-features-color;
+        margin-bottom: $header-margin-bottom;
 
         @media (max-width: $max-column-width) {
             margin-left: 5vw;
@@ -182,6 +189,7 @@ section.future-features {
             font-size: 2rem;
             text-transform: uppercase;
             color: $future-features-color;
+            margin-bottom: $header-margin-bottom;
         }
     }
 
