@@ -3,6 +3,8 @@ $implemented-features-color: #4b90ff;
 
 $icon-size: 50px;
 
+$smartphone-size: 450px;
+
 .about-page-container {
     background-color: #FFF;
     padding-bottom: 50px;
@@ -37,8 +39,18 @@ $icon-size: 50px;
     justify-content: space-around;
     align-items: center;
 
+    @media (max-width: 750px) {
+        // TODO check
+        // text-align: center;
+
+        .tag-line {
+            font-size: 3vw;
+        }
+    }
+
     .tag-line {
         text-transform: uppercase;
+        margin: 0;
     }
 }
 
@@ -107,7 +119,6 @@ section.ack article {
 }
 
 section.team-members {
-
     padding: 20px;
 
     li {

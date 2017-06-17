@@ -15,6 +15,10 @@ import badgeImage from 'img/badge.svg';
 import gamepadImage from 'img/gamepad.svg';
 import pictureImage from 'img/picture.svg';
 
+import LGPImage from 'img/partners/LGP.png';
+import MDmage from 'img/partners/MD.png';
+import ODEImage from 'img/partners/ODE.png';
+
 import 'styles/utils.scss';
 import 'styles/landing-page.scss';
 
@@ -169,6 +173,10 @@ export default class LandingPage extends Component {
                         </section>
                     </div>
 
+                    <section className="hor-align team-button">
+                        <RaisedButton label="Meet the team" backgroundColor={TEAM_BUTTON_COLOR} labelColor="#FFF" onTouchTap={ this.goToPage.bind(this, '/about') }/>
+                    </section>
+
                     <section className="platforms">
                         <h4 className="section-header">Soon available for:</h4>
 
@@ -200,8 +208,25 @@ export default class LandingPage extends Component {
                         </ul>
                     </section>
 
-                    <section className="hor-align team-button">
-                        <RaisedButton label="Meet the team" backgroundColor={TEAM_BUTTON_COLOR} labelColor="#FFF" onTouchTap={ this.goToPage.bind(this, '/about') }/>
+                    <section className="partners">
+                        <h4 className="section-header">Partners:</h4>
+                        <ul className="partners-listing">
+                            <li>
+                                <div className="partner-icon">
+                                    <img src={LGPImage}/>
+                                </div>
+                            </li>
+                            <li>
+                                <div className="partner-icon">
+                                    <img src={MDmage}/>
+                                </div>
+                            </li>
+                            <li>
+                                <div className="partner-icon">
+                                    <img src={ODEImage}/>
+                                </div>
+                            </li>
+                        </ul>
                     </section>
 
                 </div>
