@@ -1,0 +1,284 @@
+$future-features-color: #E43F2A;
+$implemented-features-color: #35A8E0;
+
+$icon-size: 50px;
+
+$max-column-width: 900px;
+$smartphone-size: 450px;
+
+$header-margin-bottom: 20px;
+
+section {
+    margin: 40px 0;
+}
+
+section:first-child {
+    margin-top: 0;
+}
+
+section:last-child {
+    margin-bottom: 0;
+}
+
+.landing-page-container {
+    background-color: #FFF;
+    padding-bottom: 40px;
+}
+
+.landing-page-column {
+    @media (min-width: $max-column-width) {
+        max-width: $max-column-width;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+.landing-page-content-margin {
+    margin: 15px 15px 0;
+}
+
+.landing-image-container {
+    position: relative;
+}
+
+.landing-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.landing-logo {
+    position: absolute;
+    object-fit: contain;
+
+    @media (min-width: $max-column-width) {
+        width: $max-column-width * 0.3;
+        top: 36px;
+        left: 36px;
+    }
+
+    @media (max-width: $max-column-width) {
+        width: 30vw;
+        top: 4vw;
+        left: 4vw;
+    }
+}
+
+.landing-logo-bottom-bar {
+    position: absolute;
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.5);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    @media (max-width: $smartphone-size) {
+        // TODO check
+        // text-align: center;
+
+        .tag-line {
+            font-size: 5vw;
+        }
+    }
+
+    .tag-line {
+        margin: 10px 0;
+        text-transform: uppercase;
+    }
+}
+
+.landing-partners {
+    top: 40px;
+    right: 40px;
+    position: absolute;
+
+    // TODO change to flex
+    display: none;
+    justify-content: space-around;
+}
+
+.landing-partners > i {
+    margin: 0 10px;
+}
+
+section.product-description article {
+    header, div {
+        text-align: center;
+    }
+
+    header {
+        margin-bottom: $header-margin-bottom;
+        font-size: 3rem;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+}
+
+section.implemented-features {
+    article {
+        header, div {
+            text-align: center;
+        }
+
+        header {
+            font-size: 2rem;
+            text-transform: uppercase;
+            color: $implemented-features-color;
+            margin-bottom: $header-margin-bottom;
+        }
+    }
+
+    hr {
+        width: 80%;
+        border-top-color: $implemented-features-color;
+    }
+
+    .landing-page-section-icon {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+
+        // Material Design Icons
+        svg {
+            color: $implemented-features-color !important;
+            width: $icon-size !important;
+            height: $icon-size !important;
+        }
+
+        // Font Awesome Icons
+        i {
+            color: $future-features-color;
+            font-size: $icon-size;
+        }
+
+        // Image Icons
+        img {
+            object-fit: contain;
+            width: $icon-size;
+            height: $icon-size;
+        }
+    }
+}
+
+section.future-features {
+    .section-header {
+        text-transform: uppercase;
+        font-weight: bold;
+        font-size: 2rem;
+        color: $future-features-color;
+        margin-bottom: $header-margin-bottom;
+
+        @media (max-width: $max-column-width) {
+            margin-left: 5vw;
+        }
+
+        @media (min-width: $max-column-width) {
+            margin-left: $max-column-width * 0.05;
+        }
+    }
+
+    article {
+        header, div {
+            text-align: center;
+        }
+
+        header {
+            font-size: 2rem;
+            text-transform: uppercase;
+            color: $future-features-color;
+            margin-bottom: $header-margin-bottom;
+        }
+    }
+
+    hr {
+        width: 80%;
+        border-top-color: $future-features-color;
+    }
+
+    .landing-page-section-icon {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+
+        // Material Design Icons
+        svg {
+            color: $future-features-color !important;
+            width: $icon-size !important;
+            height: $icon-size !important;
+        }
+
+        // Font Awesome Icons
+        i {
+            color: $future-features-color;
+            font-size: $icon-size;
+        }
+
+        // Image Icons
+        img {
+            object-fit: contain;
+            width: $icon-size;
+            height: $icon-size;
+        }
+    }
+}
+
+section.platforms {
+    margin-bottom: 0;
+    padding-bottom: 40px;
+    background-color: $implemented-features-color;
+    color: white;
+
+    ol, ul {
+        list-style: none outside none;
+        margin: 0;
+        padding: 0;
+
+        li {
+            margin: 0;
+            padding: 0;
+            display: block;
+        }
+    }
+
+    .section-header {
+        text-transform: uppercase;
+        padding-top: 10px;
+        padding-left: 10px;
+        margin-bottom: 30px;
+        font-weight: bold;
+    }
+
+    .platforms-listing {
+        display: flex;
+        justify-content: space-around;
+    }
+
+    li {
+        .platform-icon {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+
+            // Material Design Icons
+            svg {
+                display: block;
+                color: white !important;
+                width: $icon-size !important;
+                height: $icon-size !important;
+            }
+
+            // Font Awesome Icons
+            i {
+                color: white;
+                font-size: $icon-size;
+            }
+        }
+
+        .platform-description {
+            text-align: center;
+        }
+    }
+}
