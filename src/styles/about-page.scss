@@ -86,6 +86,8 @@ section.ack article {
     .ack-img {
         width: 50%;
         height: 50%;
+        object-fit: contain;
+        margin: 30px 0;
     }
 }
 

@@ -181,6 +181,7 @@ export default class Map extends Component {
                 router={this.props.router}
             />;
         }
+        // Try with <span>
 
         return (
             <div className="wrapper-fill">
