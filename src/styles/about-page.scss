@@ -46,7 +46,9 @@ $icon-size: 50px;
     top: 40px;
     right: 40px;
     position: absolute;
-    display: flex;
+
+    // TODO change to 'flex'
+    display: none;
     justify-content: space-around;
 }
 
