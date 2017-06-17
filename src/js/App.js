@@ -9,6 +9,7 @@ import MainRoutes from './routes/MainRoutes';
 import NoMatch from './components/utils/NoMatch';
 
 import LandingPage from './components/static/LandingPage';
+import About from './components/static/About';
 
 import Map from './components/map/Map';
 
@@ -82,6 +83,7 @@ export default class App extends Component {
             <Router history={ browserHistory }>
                 <Route path="/" component={ MainRoutes }>
                     <IndexRoute component={ LandingPage } />
+                    <Route path="about" component={ About }/>
                     <Route path="map" component={ Map }/>
                     <Route path="search" component={ Search }/>
                     <Route path="feed" component={ Feed }/>
