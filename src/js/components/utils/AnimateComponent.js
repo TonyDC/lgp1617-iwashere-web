@@ -10,11 +10,19 @@ export default class AnimateComponent extends Component {
     }
 
     handleWaypointEnter() {
+        const { visible } = this.state;
+        if (visible) {
+            return;
+        }
         this.setState({ visible: true });
     }
 
     handleWaypointLeave() {
-        this.setState({ visible: false });
+        const { visible } = this.state;
+        const { activateOnLeave } = this.props;
+        if (activateOnLeave && visible) {
+            this.setState({ visible: false });
+        }
     }
 
     render() {
@@ -47,7 +55,10 @@ export default class AnimateComponent extends Component {
     }
 }
 
+AnimateComponent.defaultProps = { activateOnLeave: false };
+
 AnimateComponent.propTypes = {
+    activateOnLeave: PropTypes.bool,
     children: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
     onHideClassName: PropTypes.string,
     onShowClassName: PropTypes.string

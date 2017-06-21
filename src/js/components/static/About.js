@@ -108,7 +108,17 @@ const TEAM_MEMBERS = [
     }
 ];
 
+const PAGE_TOP_X_COORD = 0;
+const PAGE_TOP_Y_COORD = 0;
+
+const TWO_VALUE = 2;
+const ZERO_REMAINDER = 0;
+
 export default class AboutUs extends Component {
+
+    componentDidMount() {
+        window.scrollTo(PAGE_TOP_X_COORD, PAGE_TOP_Y_COORD);
+    }
 
     goToPage(url) {
         if (typeof url !== 'string' || this.props.router.getCurrentLocation().pathname === url) {
@@ -126,7 +136,7 @@ export default class AboutUs extends Component {
             : null;
 
         return (
-            <AnimateComponent onHideClassName={`animation start-${index % 2 === 0 ? 'left' : 'right'}-animation`} onShowClassName="animation show-animation" key={memberInfo.name}>
+            <AnimateComponent onHideClassName={`animation start-${index % TWO_VALUE === ZERO_REMAINDER ? 'left' : 'right'}-animation`} onShowClassName="animation show-animation" key={memberInfo.name}>
                 <li className="member vert-align" >
                     <div className="thumbnail">
                         <img src={memberInfo.img} className="portrait" alt={memberInfo.name} />
