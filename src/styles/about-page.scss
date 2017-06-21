@@ -9,6 +9,10 @@ $max-column-width: 1200px;
 .about-page-container {
     background-color: #FFF;
     padding-bottom: 50px;
+
+    section {
+        margin: 20px 0;
+    }
 }
 
 .about-page-column {
@@ -78,10 +82,6 @@ $max-column-width: 1200px;
     margin: 0 10px;
 }
 
-section {
-    margin: 20px 0;
-}
-
 section.team article {
     header, div {
         text-align: center;
@@ -125,17 +125,17 @@ section.ack article {
     display: flex;
 
     -webkit-flex-flow: row wrap;
-    justify-content: space-around;
+    justify-content: space-between;
 }
 
 section.team-members {
     padding: 20px;
 
     li {
-        height: 200px;
-        width: 400px;
-        margin: 20px;
-        text-align: center;
+        // height: 200px;
+        // width: 400px;
+        // margin: 20px;
+        // text-align: center;
 
         .section-header {
             text-transform: uppercase;
@@ -185,9 +185,19 @@ section.team-members {
             font-size: 2rem;
         }
 
-        ul li.contact {
-            display: inline;
-            list-style-type: none;
+        .social-holder > ul {
+            list-style: none outside none;
+            margin: 0;
+            padding: 0;
+
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+
+            li.contact {
+                display: inline;
+                list-style-type: none;
+            }
         }
     }
 

@@ -204,7 +204,7 @@ export default class AboutUs extends Component {
 
                     <hr/>
 
-                    <section className="team-members hor-align">
+                    <section className="team-members">
                         <ul className="flex-box">
                             {teamMembers}
                         </ul>
