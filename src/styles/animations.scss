@@ -1,18 +1,35 @@
-.hide {
-    -webkit-transform: scale(0);
-    -moz-transform: scale(0);
-    -ms-transform: scale(0);
-    transform: scale(0);
-
-    -webkit-transition: -webkit-transform 0.4s cubic-bezier(0.57, 0.07, 0.44, 2);
-    -moz-transition: -moz-transition 0.4s cubic-bezier(0.57, 0.07, 0.44, 2);
-    -ms-transition: -ms-transition 0.4s cubic-bezier(0.57, 0.07, 0.44, 2);
-    transition: transform 0.4s cubic-bezier(0.57, 0.07, 0.44, 2);
+.animation {
+    transition: transform 0.6s cubic-bezier(.17,.89,.47,1), opacity 0.6s cubic-bezier(.17,.89,.47,1);
 }
 
-.show {
-    -webkit-transform:scale(1);
-    -moz-transform:scale(1);
-    -ms-transform:scale(1);
-    transform: scale(1);
+.start-left-animation {
+    opacity: 0;
+    transform: translate(-100px, 0);
+}
+
+.start-right-animation {
+    opacity: 0;
+    transform: translate(100px, 0);
+}
+
+.start-top-animation {
+    opacity: 0;
+    transform: translate(0px, -100px);
+}
+
+.show-animation {
+    opacity: 1;
+    transform: translate(0px, 0px);
+}
+
+.animation-delay-1ms {
+    transition-delay: 0.1s;
+}
+
+.animation-delay-2ms {
+    transition-delay: 0.2s;
+}
+
+.animation-delay-3ms {
+    transition-delay: 0.3s;
 }

@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Waypoint from 'react-waypoint';
-import { Motion, spring } from 'react-motion';
-
-import 'styles/animations.scss';
 
 export default class AnimateComponent extends Component {
 
@@ -21,24 +18,19 @@ export default class AnimateComponent extends Component {
     }
 
     render() {
+        const { onHideClassName, onShowClassName } = this.props;
         const { visible } = this.state;
 
         let content = (
-            <div style={{ opacity: 0 }}>
+            <div className={onHideClassName}>
                 { this.props.children }
             </div>
         );
 
         if (visible) {
             content = (
-                <div>
-                    <Motion defaultStyle={{ xPos: 0 }} style={{ xPos: spring(1, { stiffness: 120, damping: 10, precision: 0.001 }) }}>
-                        { (interpolationParameters) => {
-                            return (<div style={{ transform: `scale(${interpolationParameters.xPos})` }}>
-                                { this.props.children }
-                            </div>);
-                        }}
-                    </Motion>
+                <div className={onShowClassName}>
+                    { this.props.children }
                 </div>
             );
         }
@@ -47,6 +39,7 @@ export default class AnimateComponent extends Component {
             <Waypoint
                 onEnter={this.handleWaypointEnter.bind(this)}
                 onLeave={this.handleWaypointLeave.bind(this)}
+                //bottomOffset={300}
             >
                 { content }
             </Waypoint>
@@ -54,4 +47,8 @@ export default class AnimateComponent extends Component {
     }
 }
 
-AnimateComponent.propTypes = { children: PropTypes.object };
+AnimateComponent.propTypes = {
+    children: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+    onHideClassName: PropTypes.string,
+    onShowClassName: PropTypes.string
+};

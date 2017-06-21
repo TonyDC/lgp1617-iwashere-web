@@ -23,6 +23,7 @@ import ODEImage from 'img/partners/ODE.png';
 
 import 'styles/utils.scss';
 import 'styles/landing-page.scss';
+import 'styles/animations.scss';
 
 const TEAM_BUTTON_COLOR = '#E43F2A';
 
@@ -63,7 +64,7 @@ export default class LandingPage extends Component {
                     </div>
 
                     <div className="landing-page-content-margin">
-                        <AnimateComponent>
+                        <AnimateComponent onHideClassName="animation start-left-animation" onShowClassName="animation show-animation">
                             <section className="product-description">
                                 <article>
                                     <header>What is #iwashere</header>
@@ -79,7 +80,7 @@ export default class LandingPage extends Component {
                         </AnimateComponent>
 
                         <section className="implemented-features">
-                            <AnimateComponent>
+                            <AnimateComponent onHideClassName="animation start-left-animation" onShowClassName="animation show-animation">
                                 <article>
                                     <header>What we are aiming for</header>
                                     <div>
@@ -89,166 +90,177 @@ export default class LandingPage extends Component {
                                         user's current location.
                                     </div>
                                 </article>
+                                <hr/>
                             </AnimateComponent>
 
-                            <hr/>
-
-                            <AnimateComponent>
-                            <article>
-                                <div className="landing-page-section-icon">
-                                    <MapsPlace/>
-                                </div>
-                                <header>Points of Interest</header>
-                                <div>
-                                    Point of Interest refers to something or someone which is relevant to this city.
-                                    By clicking on a specific point in the map, you access the side bar,
-                                    with a brief description of what you selected.
-                                    From this sidebar, you will also access to more information,
-                                    as other posts and opinions.
-                                </div>
-                            </article>
+                            <AnimateComponent onHideClassName="animation start-left-animation" onShowClassName="animation show-animation">
+                                <article>
+                                    <div className="landing-page-section-icon">
+                                        <MapsPlace/>
+                                    </div>
+                                    <header>Points of Interest</header>
+                                    <div>
+                                        Point of Interest refers to something or someone which is relevant to this city.
+                                        By clicking on a specific point in the map, you access the side bar,
+                                        with a brief description of what you selected.
+                                        From this sidebar, you will also access to more information,
+                                        as other posts and opinions.
+                                    </div>
+                                </article>
+                                <hr/>
                             </AnimateComponent>
 
-                            <hr/>
 
-                            <AnimateComponent>
-                            <article>
-                                <div className="landing-page-section-icon">
-                                    <EditorLinearScale/>
-                                </div>
-                                <header>Routes</header>
-                                <div>
-                                    This system creates a list with “Points of Interest” which are inter-related.
-                                    In the future, it will be possibility to follow a route and its Points of Interest in real time.
-                                </div>
-                            </article>
+                            <AnimateComponent onHideClassName="animation start-left-animation" onShowClassName="animation show-animation">
+                                <article>
+                                    <div className="landing-page-section-icon">
+                                        <EditorLinearScale/>
+                                    </div>
+                                    <header>Routes</header>
+                                    <div>
+                                        This system creates a list with “Points of Interest” which are inter-related.
+                                        In the future, it will be possibility to follow a route and its Points of Interest in real time.
+                                    </div>
+                                </article>
+                                <hr/>
                             </AnimateComponent>
-
-                            <hr/>
                         </section>
 
                         <section className="future-features">
-                            <h5 className="section-header">Coming soon</h5>
-
-                            <AnimateComponent>
-                            <article>
-                                <div className="landing-page-section-icon">
-                                    <img src={pictureImage}/>
-                                </div>
-                                <header>Digital Museum</header>
-                                <div>
-                                    #iwashere gives the user the opportunity to revisit museums.
-                                    By using a QR Code, the visitor can upload the digital data related to the museum they have visited.
-                                </div>
-                            </article>
+                            <AnimateComponent onHideClassName="animation start-left-animation" onShowClassName="animation show-animation">
+                                <h5 className="section-header">Coming soon</h5>
+                                <article>
+                                    <div className="landing-page-section-icon">
+                                        <img src={pictureImage}/>
+                                    </div>
+                                    <header>Digital Museum</header>
+                                    <div>
+                                        #iwashere gives the user the opportunity to revisit museums.
+                                        By using a QR Code, the visitor can upload the digital data related to the museum they have visited.
+                                    </div>
+                                </article>
+                                <hr/>
                             </AnimateComponent>
 
-                            <hr/>
-
-                            <AnimateComponent>
-                            <article>
-                                <div className="landing-page-section-icon">
-                                    <img src={iwashereTag}/>
-                                </div>
-                                <header>Posts</header>
-                                <div>
-                                    Due to the possibility of making posts, it creates the opportunity of collaboration among different users
-                                    within the platform by allowing them to state their opinions, take photos, or files with video or audio.
-                                </div>
-                            </article>
+                            <AnimateComponent onHideClassName="animation start-left-animation" onShowClassName="animation show-animation">
+                                <article>
+                                    <div className="landing-page-section-icon">
+                                        <img src={iwashereTag}/>
+                                    </div>
+                                    <header>Posts</header>
+                                    <div>
+                                        Due to the possibility of making posts, it creates the opportunity of collaboration among different users
+                                        within the platform by allowing them to state their opinions, take photos, or files with video or audio.
+                                    </div>
+                                </article>
+                                <hr/>
                             </AnimateComponent>
 
-                            <hr/>
-
-                            <AnimateComponent>
-                            <article>
-                                <div className="landing-page-section-icon">
-                                    <img src={gamepadImage}/>
-                                </div>
-                                <header>Gamification</header>
-                                <div>
-                                    #iwashere will add fun to culture. We want to make the experience as entertaining as possible,
-                                    and therefore we will be adding a bit of competition among players.
-                                </div>
-                            </article>
+                            <AnimateComponent onHideClassName="animation start-left-animation" onShowClassName="animation show-animation">
+                                <article>
+                                    <div className="landing-page-section-icon">
+                                        <img src={gamepadImage}/>
+                                    </div>
+                                    <header>Gamification</header>
+                                    <div>
+                                        #iwashere will add fun to culture. We want to make the experience as entertaining as possible,
+                                        and therefore we will be adding a bit of competition among players.
+                                    </div>
+                                </article>
+                                <hr/>
                             </AnimateComponent>
 
-                            <hr/>
-
-                            <AnimateComponent>
-                            <article>
-                                <div className="landing-page-section-icon">
-                                    <img src={badgeImage}/>
-                                </div>
-                                <header>Badges</header>
-                                <div>
-                                    All players will be awarded with badges once they have completed tasks, quests and contests.
-                                    These badges can be won in either singleplay or multiplay mode.
-                                </div>
-                            </article>
+                            <AnimateComponent onHideClassName="animation start-left-animation" onShowClassName="animation show-animation">
+                                <article>
+                                    <div className="landing-page-section-icon">
+                                        <img src={badgeImage}/>
+                                    </div>
+                                    <header>Badges</header>
+                                    <div>
+                                        All players will be awarded with badges once they have completed tasks, quests and contests.
+                                        These badges can be won in either singleplay or multiplay mode.
+                                    </div>
+                                </article>
+                                <hr/>
                             </AnimateComponent>
-
-                            <hr/>
 
                         </section>
                     </div>
 
                     <section className="hor-align team-button">
-                        <RaisedButton label="Meet the team" backgroundColor={TEAM_BUTTON_COLOR} labelColor="#FFF" onTouchTap={ this.goToPage.bind(this, '/about') }/>
+                        <AnimateComponent onHideClassName="animation start-top-animation" onShowClassName="animation show-animation">
+                            <RaisedButton label="Meet the team" backgroundColor={TEAM_BUTTON_COLOR} labelColor="#FFF" onTouchTap={ this.goToPage.bind(this, '/about') }/>
+                        </AnimateComponent>
                     </section>
 
                     <section className="platforms">
-                        <h4 className="section-header">Soon available for:</h4>
+                        <AnimateComponent onHideClassName="animation start-left-animation" onShowClassName="animation show-animation">
+                            <h4 className="section-header">Soon available for:</h4>
+                        </AnimateComponent>
 
                         <ul className="platforms-listing">
-                            <li>
-                                <div className="platform-icon">
-                                    <ActionLanguage/>
-                                </div>
-                                <div className="platform-description">
-                                    Web
-                                </div>
-                            </li>
-                            <li>
-                                <div className="platform-icon">
-                                    <ActionAndroid/>
-                                </div>
-                                <div className="platform-description">
-                                    Android
-                                </div>
-                            </li>
-                            <li>
-                                <div className="platform-icon">
-                                    <i className="fa fa-apple" aria-hidden="true"/>
-                                </div>
-                                <div className="platform-description">
-                                    iOS
-                                </div>
-                            </li>
+                            <AnimateComponent onHideClassName="animation start-left-animation" onShowClassName="animation show-animation animation-delay-1ms">
+                                <li>
+                                    <div className="platform-icon">
+                                        <ActionLanguage/>
+                                    </div>
+                                    <div className="platform-description">
+                                        Web
+                                    </div>
+                                </li>
+                            </AnimateComponent>
+                            <AnimateComponent onHideClassName="animation start-left-animation" onShowClassName="animation show-animation animation-delay-2ms">
+                                <li>
+                                    <div className="platform-icon">
+                                        <ActionAndroid/>
+                                    </div>
+                                    <div className="platform-description">
+                                        Android
+                                    </div>
+                                </li>
+                            </AnimateComponent>
+                            <AnimateComponent onHideClassName="animation start-left-animation" onShowClassName="animation show-animation animation-delay-3ms">
+                                <li>
+                                    <div className="platform-icon">
+                                        <i className="fa fa-apple" aria-hidden="true"/>
+                                    </div>
+                                    <div className="platform-description">
+                                        iOS
+                                    </div>
+                                </li>
+                            </AnimateComponent>
                         </ul>
                     </section>
 
                     <section className="partners">
-                        <h4 className="section-header">Partners:</h4>
+                        <AnimateComponent onHideClassName="animation start-right-animation" onShowClassName="animation show-animation">
+                            <h4 className="section-header">Partners:</h4>
+                        </AnimateComponent>
+
                         <ul className="partners-listing">
-                            <li>
-                                <div className="partner-icon">
-                                    <img src={LGPImage}/>
-                                </div>
-                            </li>
-                            <li>
-                                <div className="partner-icon">
-                                    <img src={MDmage}/>
-                                </div>
-                            </li>
-                            <li>
-                                <div className="partner-icon">
-                                    <img src={ODEImage}/>
-                                </div>
-                            </li>
+                            <AnimateComponent onHideClassName="animation start-right-animation" onShowClassName="animation show-animation animation-delay-1ms">
+                                <li>
+                                    <div className="partner-icon">
+                                        <img src={LGPImage}/>
+                                    </div>
+                                </li>
+                            </AnimateComponent>
+                            <AnimateComponent onHideClassName="animation start-right-animation" onShowClassName="animation show-animation animation-delay-2ms">
+                                <li>
+                                    <div className="partner-icon">
+                                        <img src={MDmage}/>
+                                    </div>
+                                </li>
+                            </AnimateComponent>
+                            <AnimateComponent onHideClassName="animation start-right-animation" onShowClassName="animation show-animation animation-delay-3ms">
+                                <li>
+                                    <div className="partner-icon">
+                                        <img src={ODEImage}/>
+                                    </div>
+                                </li>
+                            </AnimateComponent>
                         </ul>
                     </section>
-
                 </div>
             </div>
         );
