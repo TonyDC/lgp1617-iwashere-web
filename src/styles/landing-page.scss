@@ -24,6 +24,10 @@ $header-margin-bottom: 20px;
     section:last-child {
         margin-bottom: 0;
     }
+
+    article {
+        font-size: 1.7rem;
+    }
 }
 
 .landing-page-column {
@@ -298,6 +302,7 @@ section.platforms {
         }
 
         .platform-description {
+            font-size: 1.7rem;
             text-align: center;
         }
     }
