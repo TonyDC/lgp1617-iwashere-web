@@ -1,0 +1,18 @@
+.hide {
+    -webkit-transform: scale(0);
+    -moz-transform: scale(0);
+    -ms-transform: scale(0);
+    transform: scale(0);
+
+    -webkit-transition: -webkit-transform 0.4s cubic-bezier(0.57, 0.07, 0.44, 2);
+    -moz-transition: -moz-transition 0.4s cubic-bezier(0.57, 0.07, 0.44, 2);
+    -ms-transition: -ms-transition 0.4s cubic-bezier(0.57, 0.07, 0.44, 2);
+    transition: transform 0.4s cubic-bezier(0.57, 0.07, 0.44, 2);
+}
+
+.show {
+    -webkit-transform:scale(1);
+    -moz-transform:scale(1);
+    -ms-transform:scale(1);
+    transform: scale(1);
+}

@@ -3,6 +3,8 @@ import Helmet from 'react-helmet';
 import PropTypes from 'prop-types';
 import RaisedButton from 'material-ui/RaisedButton';
 
+import AnimateComponent from '../utils/AnimateComponent';
+
 import ActionAndroid from 'material-ui/svg-icons/action/android';
 import ActionLanguage from 'material-ui/svg-icons/action/language';
 import EditorLinearScale from 'material-ui/svg-icons/editor/linear-scale';
@@ -61,30 +63,37 @@ export default class LandingPage extends Component {
                     </div>
 
                     <div className="landing-page-content-margin">
-                        <section className="product-description">
-                            <article>
-                                <header>What is #iwashere</header>
-                                <div>
-                                    #iwashere is a network that encourages the U.Porto community
-                                    to actively share their knowledge and experiences about certain places of interest,
-                                    about something they did or visited, by posting photos, videos, audios or text.
-                                </div>
-                            </article>
-                        </section>
+                        <AnimateComponent>
+                            <section className="product-description">
+                                <article>
+                                    <header>What is #iwashere</header>
+                                    <div>
+                                        #iwashere is a network that encourages the U.Porto community
+                                        to actively share their knowledge and experiences about certain places of
+                                        interest,
+                                        about something they did or visited, by posting photos, videos, audios or
+                                        text.
+                                    </div>
+                                </article>
+                            </section>
+                        </AnimateComponent>
 
                         <section className="implemented-features">
-                            <article>
-                                <header>What we are aiming for</header>
-                                <div>
-                                    The product to be developed will also act like a 'mobile
-                                    companion' that will suggest itineraries with places,
-                                    pieces/artifacts of the museums to discover, depending on the
-                                    user's current location.
-                                </div>
-                            </article>
+                            <AnimateComponent>
+                                <article>
+                                    <header>What we are aiming for</header>
+                                    <div>
+                                        The product to be developed will also act like a 'mobile
+                                        companion' that will suggest itineraries with places,
+                                        pieces/artifacts of the museums to discover, depending on the
+                                        user's current location.
+                                    </div>
+                                </article>
+                            </AnimateComponent>
 
                             <hr/>
 
+                            <AnimateComponent>
                             <article>
                                 <div className="landing-page-section-icon">
                                     <MapsPlace/>
@@ -98,9 +107,11 @@ export default class LandingPage extends Component {
                                     as other posts and opinions.
                                 </div>
                             </article>
+                            </AnimateComponent>
 
                             <hr/>
 
+                            <AnimateComponent>
                             <article>
                                 <div className="landing-page-section-icon">
                                     <EditorLinearScale/>
@@ -111,6 +122,7 @@ export default class LandingPage extends Component {
                                     In the future, it will be possibility to follow a route and its Points of Interest in real time.
                                 </div>
                             </article>
+                            </AnimateComponent>
 
                             <hr/>
                         </section>
@@ -118,6 +130,7 @@ export default class LandingPage extends Component {
                         <section className="future-features">
                             <h5 className="section-header">Coming soon</h5>
 
+                            <AnimateComponent>
                             <article>
                                 <div className="landing-page-section-icon">
                                     <img src={pictureImage}/>
@@ -128,9 +141,11 @@ export default class LandingPage extends Component {
                                     By using a QR Code, the visitor can upload the digital data related to the museum they have visited.
                                 </div>
                             </article>
+                            </AnimateComponent>
 
                             <hr/>
 
+                            <AnimateComponent>
                             <article>
                                 <div className="landing-page-section-icon">
                                     <img src={iwashereTag}/>
@@ -141,9 +156,11 @@ export default class LandingPage extends Component {
                                     within the platform by allowing them to state their opinions, take photos, or files with video or audio.
                                 </div>
                             </article>
+                            </AnimateComponent>
 
                             <hr/>
 
+                            <AnimateComponent>
                             <article>
                                 <div className="landing-page-section-icon">
                                     <img src={gamepadImage}/>
@@ -154,9 +171,11 @@ export default class LandingPage extends Component {
                                     and therefore we will be adding a bit of competition among players.
                                 </div>
                             </article>
+                            </AnimateComponent>
 
                             <hr/>
 
+                            <AnimateComponent>
                             <article>
                                 <div className="landing-page-section-icon">
                                     <img src={badgeImage}/>
@@ -167,6 +186,7 @@ export default class LandingPage extends Component {
                                     These badges can be won in either singleplay or multiplay mode.
                                 </div>
                             </article>
+                            </AnimateComponent>
 
                             <hr/>
 
