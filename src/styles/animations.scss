@@ -12,9 +12,9 @@
     transform: translate(100px, 0);
 }
 
-.start-top-animation {
+.start-bottom-animation {
     opacity: 0;
-    transform: translate(0px, -100px);
+    transform: translate(0px, 100px);
 }
 
 .show-animation {

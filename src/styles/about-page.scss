@@ -4,10 +4,19 @@ $implemented-features-color: #4b90ff;
 $icon-size: 50px;
 
 $smartphone-size: 450px;
+$max-column-width: 1200px;
 
 .about-page-container {
     background-color: #FFF;
     padding-bottom: 50px;
+}
+
+.about-page-column {
+    @media (min-width: $max-column-width) {
+        max-width: $max-column-width;
+        margin-left: auto;
+        margin-right: auto;
+    }
 }
 
 .about-image-container {
@@ -135,9 +144,17 @@ section.team-members {
 
         .thumbnail {
             position: relative;
-            width: 200px;
-            height: 200px;
             overflow: hidden;
+
+            @media (min-width: $smartphone-size) {
+                width: 200px;
+                height: 200px;
+            }
+
+            @media (max-width: $smartphone-size) {
+                width: 100px;
+                height: 100px;
+            }
         }
         .thumbnail img {
             position: absolute;

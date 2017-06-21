@@ -127,7 +127,7 @@ export default class LandingPage extends Component {
                         </section>
 
                         <section className="future-features">
-                            <AnimateComponent onHideClassName="animation start-left-animation" onShowClassName="animation show-animation">
+                            <AnimateComponent onHideClassName="animation start-right-animation" onShowClassName="animation show-animation">
                                 <h5 className="section-header">Coming soon</h5>
                                 <article>
                                     <div className="landing-page-section-icon">
@@ -142,7 +142,7 @@ export default class LandingPage extends Component {
                                 <hr/>
                             </AnimateComponent>
 
-                            <AnimateComponent onHideClassName="animation start-left-animation" onShowClassName="animation show-animation">
+                            <AnimateComponent onHideClassName="animation start-right-animation" onShowClassName="animation show-animation">
                                 <article>
                                     <div className="landing-page-section-icon">
                                         <img src={iwashereTag}/>
@@ -156,7 +156,7 @@ export default class LandingPage extends Component {
                                 <hr/>
                             </AnimateComponent>
 
-                            <AnimateComponent onHideClassName="animation start-left-animation" onShowClassName="animation show-animation">
+                            <AnimateComponent onHideClassName="animation start-right-animation" onShowClassName="animation show-animation">
                                 <article>
                                     <div className="landing-page-section-icon">
                                         <img src={gamepadImage}/>
@@ -170,7 +170,7 @@ export default class LandingPage extends Component {
                                 <hr/>
                             </AnimateComponent>
 
-                            <AnimateComponent onHideClassName="animation start-left-animation" onShowClassName="animation show-animation">
+                            <AnimateComponent onHideClassName="animation start-right-animation" onShowClassName="animation show-animation">
                                 <article>
                                     <div className="landing-page-section-icon">
                                         <img src={badgeImage}/>
@@ -188,7 +188,7 @@ export default class LandingPage extends Component {
                     </div>
 
                     <section className="hor-align team-button">
-                        <AnimateComponent onHideClassName="animation start-top-animation" onShowClassName="animation show-animation">
+                        <AnimateComponent onHideClassName="animation start-bottom-animation" onShowClassName="animation show-animation">
                             <RaisedButton label="Meet the team" backgroundColor={TEAM_BUTTON_COLOR} labelColor="#FFF" onTouchTap={ this.goToPage.bind(this, '/about') }/>
                         </AnimateComponent>
                     </section>
