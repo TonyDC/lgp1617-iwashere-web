@@ -82,15 +82,19 @@ $max-column-width: 1200px;
     margin: 0 10px;
 }
 
-section.team article {
-    header, div {
-        text-align: center;
-    }
+section.team {
+    margin: 20px;
 
-    header {
-        font-size: 3rem;
-        font-weight: bold;
-        text-transform: uppercase;
+    article {
+        header, div {
+            text-align: center;
+        }
+
+        header {
+            font-size: 3rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
     }
 }
 
@@ -131,10 +135,10 @@ section.ack article {
 section.team-members {
     padding: 20px;
 
-    li {
+    li.member {
         // height: 200px;
-        // width: 400px;
-        // margin: 20px;
+        // width: 120px;
+        margin: 0 40px 20px;
         // text-align: center;
 
         .section-header {
@@ -143,6 +147,7 @@ section.team-members {
         }
 
         .thumbnail {
+            margin: 0;
             position: relative;
             overflow: hidden;
 
@@ -155,20 +160,21 @@ section.team-members {
                 width: 100px;
                 height: 100px;
             }
-        }
-        .thumbnail img {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            height: 100%;
-            width: auto;
-            -webkit-transform: translate(-50%,-50%);
-            -ms-transform: translate(-50%,-50%);
-            transform: translate(-50%,-50%);
-        }
-        .thumbnail img.portrait {
-            width: 100%;
-            height: auto;
+
+            img {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                height: 100%;
+                width: auto;
+                -webkit-transform: translate(-50%,-50%);
+                -ms-transform: translate(-50%,-50%);
+                transform: translate(-50%,-50%);
+            }
+            img.portrait {
+                width: 100%;
+                height: auto;
+            }
         }
 
         header {
