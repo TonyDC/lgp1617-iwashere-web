@@ -1,0 +1,36 @@
+.side-container {
+    z-index: 0 !important;
+    background-color: #012935 !important;
+    padding: 65px 15px 15px 15px;
+
+    @media (max-width: 450px) {
+        width: 100% !important;             // To override the default sidebar style
+    }
+
+    @media (min-width: 450px) {
+        width: 30% !important;              // To override the default sidebar style
+        min-width: 450px;
+        max-width: 600px;
+    }
+}
+
+.poi-detail-button {
+    background-color: #39A8E0 !important;
+    color: white !important;
+    margin: 4px !important;
+}
+
+.poi-rating {
+    margin: 10px;
+    padding-bottom: 20px;
+}
+
+.poi-detail-buttons {
+    text-align: right;
+    margin-top: 15px;
+}
+
+.side-drawer {
+    position: relative;
+    z-index: 1;
+}

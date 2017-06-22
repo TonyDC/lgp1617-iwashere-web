@@ -1,13 +1,26 @@
+// http://javascriptplayground.com/blog/2016/10/moving-to-webpack-2/
 {
+  // Webpack 2 can parse ES2015 modules!
   "presets": [
-    "es2015",
+    ["es2015", { "modules": false }],
     "react",
     "stage-0"
   ],
   "env": {
+    // Hot Module Replacement
     "development": {
       "presets": [
         "react-hmre"
+      ]
+    },
+    // For Webpack 2 Code splitting feature import() to be supported by Jest
+    "test": {
+      // Jest does not support ES2015 modules
+      "presets": [
+        "es2015"
+      ],
+      "plugins": [
+        "babel-plugin-dynamic-import-node"
       ]
     }
   }

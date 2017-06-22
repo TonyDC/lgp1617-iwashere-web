@@ -1,28 +1,34 @@
-h1 {
-  color: blue;
+.colorPrimary {
+    background-color: #012935;
 }
 
-.App {
-  text-align: center;
+.colorAccent, .colorAccent:hover {
+    background-color: #E5402A;
+    border-color: transparent;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+.colorAccentSecondary {
+    background-color: #39A8E0;
+    border-color: transparent;
 }
 
-.App-header {
-  background-color: #222;
-  padding-top: 20px;
-  padding-bottom: 10px;
-  color: white;
+.main {
+    margin: 10px;
 }
 
-.App-intro {
-  font-size: large;
+#main, #main [data-reactroot] {
+    height: 100%;
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.fill-remaining-container {
+    display: flex;
+    flex-flow: column;
+}
+
+.fill-remaining {
+    flex: 1;
+}
+
+.s-alert-wrapper div {
+    z-index: 1501;
 }
