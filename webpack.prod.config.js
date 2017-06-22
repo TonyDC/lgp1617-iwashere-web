@@ -70,7 +70,7 @@ module.exports = {
                         query: {
                             mozjpeg: {
                                 progressive: true,
-                                quality: 50
+                                quality: 75
                             },
                             gifsicle: {
                                 interlaced: false
