@@ -95,33 +95,7 @@
                 </div>
             </div>
         </div>
-        <script type="text/javascript">
-            document.addEventListener('DOMContentLoaded', function() {
-                fetch('/api/fortune').then((response) => {
-                    if (response.status !== 200) {
-                        return Promise.reject(new Error(response.statusText));
-                    }
-
-                    return response.json();
-                }).then((message) => {
-                    if (!message || typeof message !== 'object' || !message.fortune)
-                        return;
-
-                    const placeholder = document.getElementById('fortune-cookie-content');
-                    if (placeholder) {
-                        placeholder.innerHTML = message.fortune;
-                    }
-
-                    const wrapper = document.getElementById('fortune-cookie');
-                    if (wrapper) {
-                        wrapper.style.opacity = 1;
-                    }
-                }).catch((error) => {
-                    // Fail silently
-                    console.error(error);
-                });
-            }, false);
-        </script>
+        <script type="text/javascript" src="/public/fortune.js"></script>
         <script type="text/javascript" src="/public/vendor.bundle.js"></script>
         <script type="text/javascript" src="/public/bundle.js"></script>
     </body>
