@@ -4,7 +4,7 @@ $implemented-features-color: #4b90ff;
 $icon-size: 50px;
 
 $smartphone-size: 450px;
-$max-column-width: 1000px;
+$max-column-width: 1200px;
 
 .about-page-container {
     background-color: #FFF;
@@ -25,6 +25,9 @@ $max-column-width: 1000px;
         margin-left: auto;
         margin-right: auto;
     }
+
+    // For the animations
+    overflow: hidden;
 }
 
 .about-image-container {
@@ -128,6 +131,7 @@ section.ack article {
     margin: 0;
     list-style: none;
 
+    /*
     display: -webkit-box;
     display: -moz-box;
     display: -ms-flexbox;
@@ -136,6 +140,11 @@ section.ack article {
 
     -webkit-flex-flow: row wrap;
     justify-content: space-between;
+    */
+
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
 }
 
 section.team-members {
