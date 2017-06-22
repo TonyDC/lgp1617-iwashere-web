@@ -42,23 +42,60 @@ module.exports = {
     },
 
     module: {
-        loaders: [
-            { test: /\.jsx?$/,
+        rules: [
+            {
+                test: /\.jsx?$/,
                 loader: 'babel-loader',
-                exclude: path.join(__dirname, 'node_modules') },
-            { test: /\.scss?$/,
-                loader: 'style-loader!css-loader!sass-loader',
-                include: path.join(__dirname, 'src', 'styles') },
-            { test: /\.css$/,
-                loader: 'style-loader!css-loader' },
-            { test: /\.less$/,
-                loader: 'style-loader!css-loader!less-loader' },
-            { test: /\.(png|jp(e)?g)$/,
-                loader: 'file-loader' },
+                exclude: path.join(__dirname, 'node_modules')
+            },
+            {
+                test: /\.scss?$/,
+                loader: 'style-loader!css-loader!postcss-loader!sass-loader',
+                include: path.join(__dirname, 'src', 'styles')
+            },
+            {
+                test: /\.css$/,
+                loader: 'style-loader!css-loader!postcss-loader'
+            },
+            {
+                test: /\.less$/,
+                loader: 'style-loader!css-loader!postcss-loader!less-loader'
+            },
+            {
+                test: /\.(gif|png|jp(e)?g)$/,
+                loaders: [
+                    'file-loader',
+                    {
+                        loader: 'image-webpack-loader',
+                        query: {
+                            mozjpeg: {
+                                progressive: true,
+                                quality: 50
+                            },
+                            gifsicle: {
+                                interlaced: false
+                            },
+                            optipng: {
+                                optimizationLevel: 6
+                            },
+                            pngquant: {
+                                quality: '75-90',
+                                speed: 3
+                            }
+                        }
+                    }
+                ]
+            },
             // The url-loader uses DataUrls.
             // The file-loader emits files.
-            { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader?limit=10000&mimetype=application/font-woff" },
-            { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "file-loader" }
+            {
+                test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                loader: "url-loader?limit=10000&mimetype=application/font-woff"
+            },
+            {
+                test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                loader: "file-loader"
+            }
         ]
     }
 };

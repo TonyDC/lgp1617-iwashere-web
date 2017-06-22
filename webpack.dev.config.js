@@ -41,7 +41,7 @@ module.exports = {
     },
 
     module: {
-        loaders: [
+        rules: [
             { test: /\.jsx?$/,
                 loader: 'babel-loader',
                 exclude: path.join(__dirname, 'node_modules') },
@@ -52,7 +52,7 @@ module.exports = {
                 loader: 'style-loader!css-loader!postcss-loader' },
             { test: /\.less$/,
                 loader: 'style-loader!css-loader!postcss-loader!less-loader' },
-            { test: /\.(png|jp(e)?g)$/,
+            { test: /\.(gif|png|jp(e)?g)$/,
                 loader: 'file-loader' },
             // The url-loader uses DataUrls.
             // The file-loader emits files.

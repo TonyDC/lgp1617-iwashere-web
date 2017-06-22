@@ -47,7 +47,7 @@ export default class AnimateComponent extends Component {
             <Waypoint
                 onEnter={this.handleWaypointEnter.bind(this)}
                 onLeave={this.handleWaypointLeave.bind(this)}
-                bottomOffset={50}
+                bottomOffset="25%"
             >
                 { content }
             </Waypoint>
