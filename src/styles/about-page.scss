@@ -4,10 +4,27 @@ $implemented-features-color: #4b90ff;
 $icon-size: 50px;
 
 $smartphone-size: 450px;
+$max-column-width: 1000px;
 
 .about-page-container {
     background-color: #FFF;
     padding-bottom: 50px;
+
+    section {
+        margin: 20px 0;
+    }
+
+    article {
+        font-size: 1.7rem;
+    }
+}
+
+.about-page-column {
+    @media (min-width: $max-column-width) {
+        max-width: $max-column-width;
+        margin-left: auto;
+        margin-right: auto;
+    }
 }
 
 .about-image-container {
@@ -69,23 +86,25 @@ $smartphone-size: 450px;
     margin: 0 10px;
 }
 
-section {
-    margin: 20px 0;
-}
+section.team {
+    margin: 20px;
 
-section.team article {
-    header, div {
-        text-align: center;
-    }
+    article {
+        header, div {
+            text-align: center;
+        }
 
-    header {
-        font-size: 3rem;
-        font-weight: bold;
-        text-transform: uppercase;
+        header {
+            font-size: 3rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
     }
 }
 
 section.ack article {
+    margin: 0 20px;
+
     header, div {
         text-align: center;
     }
@@ -116,17 +135,17 @@ section.ack article {
     display: flex;
 
     -webkit-flex-flow: row wrap;
-    justify-content: space-around;
+    justify-content: space-between;
 }
 
 section.team-members {
     padding: 20px;
 
-    li {
-        height: 200px;
-        width: 400px;
-        margin: 20px;
-        text-align: center;
+    li.member {
+        // height: 200px;
+        // width: 120px;
+        margin: 0 40px 20px;
+        // text-align: center;
 
         .section-header {
             text-transform: uppercase;
@@ -134,24 +153,34 @@ section.team-members {
         }
 
         .thumbnail {
+            margin: 0;
             position: relative;
-            width: 200px;
-            height: 200px;
             overflow: hidden;
-        }
-        .thumbnail img {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            height: 100%;
-            width: auto;
-            -webkit-transform: translate(-50%,-50%);
-            -ms-transform: translate(-50%,-50%);
-            transform: translate(-50%,-50%);
-        }
-        .thumbnail img.portrait {
-            width: 100%;
-            height: auto;
+
+            @media (min-width: $smartphone-size) {
+                width: 200px;
+                height: 200px;
+            }
+
+            @media (max-width: $smartphone-size) {
+                width: 100px;
+                height: 100px;
+            }
+
+            img {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                height: 100%;
+                width: auto;
+                -webkit-transform: translate(-50%,-50%);
+                -ms-transform: translate(-50%,-50%);
+                transform: translate(-50%,-50%);
+            }
+            img.portrait {
+                width: 100%;
+                height: auto;
+            }
         }
 
         header {
@@ -168,9 +197,19 @@ section.team-members {
             font-size: 2rem;
         }
 
-        ul li.contact {
-            display: inline;
-            list-style-type: none;
+        .social-holder > ul {
+            list-style: none outside none;
+            margin: 0;
+            padding: 0;
+
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+
+            li.contact {
+                display: inline;
+                list-style-type: none;
+            }
         }
     }
 

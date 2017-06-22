@@ -3,7 +3,7 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
-    font-family: 'Oxygen', sans-serif;
+    font-family: 'Roboto', sans-serif;
     background: #d3d3d3 no-repeat;
 }
 
@@ -115,6 +115,11 @@ input, input::-webkit-input-placeholder {
 
 /* ********* */
 
+#loader-container {
+    overflow: auto;
+    height: 100%;
+}
+
 #loader {
     height: 60vh;
     display: flex;
@@ -128,7 +133,7 @@ input, input::-webkit-input-placeholder {
     height: auto;
     text-align: center;
     font-family: 'Oxygen', sans-serif;
-    font-size: 2rem;
+    font-size: 1.7rem;
     margin: 0 10vw;
     word-wrap: break-word;
     hyphens: none;
@@ -136,7 +141,6 @@ input, input::-webkit-input-placeholder {
 
     -webkit-transition: opacity 1s ease-in;
     -moz-transition: opacity 1s ease-in;
-    -ms-transition: opacity 1s ease-in;
     -o-transition: opacity 1s ease-in;
     transition: opacity 1s ease-in;
 }
@@ -145,7 +149,12 @@ input, input::-webkit-input-placeholder {
     margin-top: 0;
 }
 
+#fortune-cookie-content {
+    font-size: 1.4rem;
+    margin: 0;
+}
+
 #main {
     background-color: #00272e;
-    height: 100vh;
+    height: 100%;
 }

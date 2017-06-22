@@ -4,26 +4,30 @@ $implemented-features-color: #35A8E0;
 $icon-size: 50px;
 $partner-icon-size: 200px;
 
-$max-column-width: 900px;
+$max-column-width: 1000px;
 $smartphone-size: 450px;
 
 $header-margin-bottom: 20px;
 
-section {
-    margin: 40px 0;
-}
-
-section:first-child {
-    margin-top: 0;
-}
-
-section:last-child {
-    margin-bottom: 0;
-}
-
 .landing-page-container {
     background-color: #FFF;
     padding-bottom: 40px;
+
+    section {
+        margin: 40px 0;
+    }
+
+    section:first-child {
+        margin-top: 0;
+    }
+
+    section:last-child {
+        margin-bottom: 0;
+    }
+
+    article {
+        font-size: 1.7rem;
+    }
 }
 
 .landing-page-column {
@@ -298,6 +302,7 @@ section.platforms {
         }
 
         .platform-description {
+            font-size: 1.7rem;
             text-align: center;
         }
     }

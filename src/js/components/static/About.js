@@ -3,9 +3,12 @@ import Helmet from 'react-helmet';
 import PropTypes from 'prop-types';
 import RaisedButton from 'material-ui/RaisedButton';
 
+import AnimateComponent from '../utils/AnimateComponent';
+
 import logoImage from 'img/logo.png';
 import teamImage from 'img/team/team.jpg';
 import ackImage from 'img/team/ack.jpg';
+
 import casimiroImage from 'img/team/antonio-casimiro.jpg';
 import pontesImage from 'img/team/pedro-pontes.jpg';
 import azevedoImage from 'img/team/ana-azevedo.jpg';
@@ -105,7 +108,17 @@ const TEAM_MEMBERS = [
     }
 ];
 
+const PAGE_TOP_X_COORD = 0;
+const PAGE_TOP_Y_COORD = 0;
+
+const TWO_VALUE = 2;
+const ZERO_REMAINDER = 0;
+
 export default class AboutUs extends Component {
+
+    componentDidMount() {
+        window.scrollTo(PAGE_TOP_X_COORD, PAGE_TOP_Y_COORD);
+    }
 
     goToPage(url) {
         if (typeof url !== 'string' || this.props.router.getCurrentLocation().pathname === url) {
@@ -115,36 +128,39 @@ export default class AboutUs extends Component {
         this.props.router.push(url);
     }
 
-    memberElement(memberInfo) {
+    memberElement(memberInfo, index) {
         const linkedIn = memberInfo.linkedIn
             ? <li className="contact">
                 <a href={memberInfo.linkedIn} target="_blank"><i className="fa fa-linkedin" /></a>
             </li>
             : null;
 
-        return <li className="member vert-align" key={memberInfo.name}>
-            <div className="thumbnail">
-                <img src={memberInfo.img} className="portrait" alt={memberInfo.name} />
-            </div>
-
-            <div className="text-box">
-                <h1 className="member-name">
-                    {memberInfo.name}
-                </h1>
-                <div>
-                    <em>{memberInfo.background}</em>
-                    <br/>
-                    <div className="social-holder">
-                        <ul>
-                            {linkedIn}
-                            <li className="contact">
-                                <a href={`mailto:${memberInfo.email}`} target="_blank"><i className="fa fa-envelope" /></a>
-                            </li>
-                        </ul>
+        return (
+            <AnimateComponent onHideClassName={`animation start-${index % TWO_VALUE === ZERO_REMAINDER ? 'left' : 'right'}-animation`} onShowClassName="animation show-animation" key={memberInfo.name}>
+                <li className="member vert-align" >
+                    <div className="thumbnail">
+                        <img src={memberInfo.img} className="portrait" alt={memberInfo.name} />
                     </div>
-                </div>
-            </div>
-        </li>;
+
+                    <div className="text-box">
+                        <h1 className="member-name">
+                            {memberInfo.name}
+                        </h1>
+                        <div>
+                            <em>{memberInfo.background}</em>
+                            <br/>
+                            <div className="social-holder">
+                                <ul>
+                                    {linkedIn}
+                                    <li className="contact">
+                                        <a href={`mailto:${memberInfo.email}`} target="_blank"><i className="fa fa-envelope" /></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </AnimateComponent>);
     }
 
     render() {
@@ -153,58 +169,64 @@ export default class AboutUs extends Component {
         return (
             <div className="about-page-container">
                 <Helmet>
-                    <title>#iwashere</title>
+                    <title>#iwashere - About</title>
                 </Helmet>
 
-                <div className="about-image-container">
-                    <img src={teamImage} className="about-image"/>
-                    <img src={logoImage} className="about-logo"/>
-                    <div className="about-partners">
-                        <i className="fa fa-picture-o" aria-hidden="true"/>
-                        <i className="fa fa-picture-o" aria-hidden="true"/>
-                        <i className="fa fa-picture-o" aria-hidden="true"/>
-                    </div>
-                    <div className="about-logo-bottom-bar">
-                        <h2 className="tag-line">
-                            We left our mark. Leave yours.
-                        </h2>
-                        <span>
+                <div className="about-page-column">
+                    <div className="about-image-container">
+                        <img src={teamImage} className="about-image"/>
+                        <img src={logoImage} className="about-logo"/>
+                        <div className="about-partners">
+                            <i className="fa fa-picture-o" aria-hidden="true"/>
+                            <i className="fa fa-picture-o" aria-hidden="true"/>
+                            <i className="fa fa-picture-o" aria-hidden="true"/>
+                        </div>
+                        <div className="about-logo-bottom-bar">
+                            <h2 className="tag-line">
+                                We left our mark. Leave yours.
+                            </h2>
+                            <span>
                             <RaisedButton label="Start Now" backgroundColor="#012935" labelColor="#FFF" onTouchTap={ this.goToPage.bind(this, '/map') }/>
                         </span>
+                        </div>
                     </div>
+
+                    <section className="team">
+                        <AnimateComponent onHideClassName="animation start-left-animation" onShowClassName="animation show-animation">
+                            <article>
+                                <header>The team</header>
+                                <div>
+                                    #iwashere was developed by a team of students from different backgrounds: Computer Engineering, Communication and Design, Services Engineering, and Multimedia.
+                                </div>
+                            </article>
+                        </AnimateComponent>
+                    </section>
+
+                    <hr/>
+
+                    <section className="team-members">
+                        <ul className="flex-box">
+                            {teamMembers}
+                        </ul>
+                    </section>
+
+                    <hr/>
+
+                    <section className="ack">
+                        <AnimateComponent onHideClassName="animation start-right-animation" onShowClassName="animation show-animation">
+                            <article>
+                                <header>Acknowledgements</header>
+                                <div>
+                                    As a content oriented project, #iwashere counted with the contribute of several people, responsible for collecting the contents now made available to you.
+                                </div>
+
+                                <div className="hor-align">
+                                    <img src={ackImage} className="ack-img" alt="Acknowledgements" />
+                                </div>
+                            </article>
+                        </AnimateComponent>
+                    </section>
                 </div>
-
-                <section className="team">
-                    <article>
-                        <header>The team</header>
-                        <div>
-                            #iwashere was developed by a team of students from different backgrounds: Computer Engineering, Communication and Design, Services Engineering, and Multimedia.
-                        </div>
-                    </article>
-                </section>
-
-                <hr/>
-
-                <section className="team-members hor-align">
-                    <ul className="flex-box">
-                        {teamMembers}
-                    </ul>
-                </section>
-
-                <hr/>
-
-                <section className="ack">
-                    <article>
-                        <header>Acknowledgements</header>
-                        <div>
-                            As a content oriented project, #iwashere counted with the contribute of several people, responsible for collecting the contents now made available to you.
-                        </div>
-
-                        <div className="hor-align">
-                            <img src={ackImage} className="ack-img" alt="Acknowledgements" />
-                        </div>
-                    </article>
-                </section>
             </div>
         );
     }
