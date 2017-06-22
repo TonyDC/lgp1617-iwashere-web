@@ -27,8 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
             wrapper.style.opacity = 1;
         }
     }).
-    catch((error) => {
+    catch(() => {
         // Fail silently
-        console.error(error);
+        // console.error(error);
     });
 }, false);
