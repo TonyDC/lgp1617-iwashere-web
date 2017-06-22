@@ -4,11 +4,11 @@ $implemented-features-color: #4b90ff;
 $icon-size: 50px;
 
 $smartphone-size: 450px;
-$max-column-width: 1000px;
+$max-column-width: 1200px;
 
 .about-page-container {
     background-color: #FFF;
-    padding-bottom: 50px;
+    padding-bottom: 20px;
 
     section {
         margin: 20px 0;
@@ -25,6 +25,9 @@ $max-column-width: 1000px;
         margin-left: auto;
         margin-right: auto;
     }
+
+    // For the animations
+    overflow: hidden;
 }
 
 .about-image-container {
@@ -128,6 +131,7 @@ section.ack article {
     margin: 0;
     list-style: none;
 
+    /*
     display: -webkit-box;
     display: -moz-box;
     display: -ms-flexbox;
@@ -136,6 +140,11 @@ section.ack article {
 
     -webkit-flex-flow: row wrap;
     justify-content: space-between;
+    */
+
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
 }
 
 section.team-members {
@@ -171,15 +180,16 @@ section.team-members {
                 position: absolute;
                 left: 50%;
                 top: 50%;
-                height: 100%;
-                width: auto;
-                -webkit-transform: translate(-50%,-50%);
-                -ms-transform: translate(-50%,-50%);
+                //height: 100%;
+                //width: auto;
+                //-webkit-transform: translate(-50%,-50%);
+                //-ms-transform: translate(-50%,-50%);
                 transform: translate(-50%,-50%);
             }
             img.portrait {
-                width: 100%;
-                height: auto;
+                object-fit: cover;
+                //width: 100%;
+                //height: auto;
             }
         }
 

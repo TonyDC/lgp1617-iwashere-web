@@ -4,14 +4,14 @@ $implemented-features-color: #35A8E0;
 $icon-size: 50px;
 $partner-icon-size: 200px;
 
-$max-column-width: 1000px;
+$max-column-width: 900px;
 $smartphone-size: 450px;
 
 $header-margin-bottom: 20px;
 
 .landing-page-container {
     background-color: #FFF;
-    padding-bottom: 40px;
+    padding-bottom: 20px;
 
     section {
         margin: 40px 0;
@@ -36,6 +36,9 @@ $header-margin-bottom: 20px;
         margin-left: auto;
         margin-right: auto;
     }
+
+    // For the animations
+    overflow: hidden;
 }
 
 .landing-page-content-margin {
@@ -319,13 +322,14 @@ section.partners {
         margin: 0;
         padding: 0;
 
-        display: -webkit-box;
-        display: -moz-box;
-        display: -ms-flexbox;
-        display: -webkit-flex;
+        //display: -webkit-box;
+        //display: -moz-box;
+        //display: -ms-flexbox;
+        //display: -webkit-flex;
+        //display: flex;
+        //-webkit-flex-flow: ;
         display: flex;
-
-        -webkit-flex-flow: row wrap;
+        flex-flow: row wrap;
         justify-content: space-around;
 
         li {

@@ -41,18 +41,18 @@ module.exports = {
     },
 
     module: {
-        loaders: [
+        rules: [
             { test: /\.jsx?$/,
                 loader: 'babel-loader',
                 exclude: path.join(__dirname, 'node_modules') },
             { test: /\.scss?$/,
-                loader: 'style-loader!css-loader!sass-loader',
+                loader: 'style-loader!css-loader!postcss-loader!sass-loader',
                 include: path.join(__dirname, 'src', 'styles') },
             { test: /\.css$/,
-                loader: 'style-loader!css-loader' },
+                loader: 'style-loader!css-loader!postcss-loader' },
             { test: /\.less$/,
-                loader: 'style-loader!css-loader!less-loader' },
-            { test: /\.(png|jp(e)?g)$/,
+                loader: 'style-loader!css-loader!postcss-loader!less-loader' },
+            { test: /\.(gif|png|jp(e)?g)$/,
                 loader: 'file-loader' },
             // The url-loader uses DataUrls.
             // The file-loader emits files.
