@@ -58,6 +58,17 @@ export default class App extends Component {
                 this.context.store.dispatch(logoutActionCreator());
             }
         });
+
+        browserHistory.listen((location) => {
+            // Google Analytics creates a global variable 'ga' (see index.html file)
+            if (typeof window.ga !== 'function') {
+                return;
+            }
+
+            // For each time the user changes page, fire a tag to Google Analytics
+            const { pathname } = location;
+            window.ga('set', 'page', pathname);
+        });
     }
 
     redirectIfLoggedIn(nextState, replace) {

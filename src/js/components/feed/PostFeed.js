@@ -33,6 +33,7 @@ export default class POISuggestions extends Component {
         super(props);
 
         this.state = {
+            fetchInProgress: true,
             hasMoreSuggestions: true,
             suggestions: [],
             suggestionsOffset: 0
@@ -134,6 +135,14 @@ export default class POISuggestions extends Component {
                 suggestions,
                 suggestionsOffset
             });
+        }).
+        catch(() => {
+            Alerts.createErrorAlert('Error while retrieving feed posts');
+        }).
+        then(() => {
+            if (this.componentIsMounted) {
+                this.setState({ fetchInProgress: false });
+            }
         });
     }
 
@@ -191,29 +200,35 @@ export default class POISuggestions extends Component {
     }
 
     render() {
+        const { fetchInProgress, location, postSelected, hasMoreSuggestions, user } = this.state;
+
         let locationIcon =
             <IconButton className="location-icon" tooltipPosition="top-left" tooltip={USING_LOCATION_TOOLTIP}>
                 <NoLocation/>
             </IconButton>;
-        if (this.state.location) {
+        if (location) {
             locationIcon =
                 <IconButton className="location-icon" tooltipPosition="top-left" tooltip={USING_LOCATION_TOOLTIP}>
                     <MapsMyLocation color={ currentLocationColor }/>
                 </IconButton>;
         }
 
-        const loader =
-            <div className="hor-align">
-                <Loader color="#012935" className="loader"/>
-            </div>;
+        let loader = null;
+        if (fetchInProgress) {
+            loader = (
+                <div className="hor-align">
+                    <Loader color="#012935" className="loader"/>
+                </div>
+            );
+        }
 
         let postView = null;
-        if (this.state.postSelected) {
-            postView = <ViewPost post={this.state.postSelected}
+        if (postSelected) {
+            postView = <ViewPost post={postSelected}
                                  onClose = {this.closePostView.bind(this)}
                                  onToggleLike={ this.handlePostLike.bind(this)}
                                  onDelete={ this.handlePostDelete.bind(this)}
-                                 user={this.state.user}/>;
+                                 user={user}/>;
         }
 
         return (
@@ -224,7 +239,7 @@ export default class POISuggestions extends Component {
                 <InfiniteScroll
                     initialLoad={false}
                     loadMore={this.fetchSuggestions.bind(this)}
-                    hasMore={this.state.hasMoreSuggestions}
+                    hasMore={hasMoreSuggestions}
                     loader={loader}>
                     <GridList style={DEFAULT_STYLE}>
                         { this.getPostMosaics() }
