@@ -109,8 +109,7 @@ export default class POISuggestions extends Component {
             url += `/${this.state.location.lat}/${this.state.location.lng}`;
         }
         url += `/${this.state.suggestionsOffset}/${LIMIT}`;
-
-        console.log(url);
+        
         fetch(url, {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
