@@ -68,6 +68,7 @@ export default class App extends Component {
             // For each time the user changes page, fire a tag to Google Analytics
             const { pathname } = location;
             window.ga('set', 'page', pathname);
+            window.ga('send', 'pageview');
         });
     }
 
