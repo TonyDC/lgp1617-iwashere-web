@@ -46,5 +46,5 @@ ViewPostModal.propTypes = {
     onDelete: PropTypes.func,
     onToggleLike: PropTypes.func.isRequired,
     post: PropTypes.object.isRequired,
-    user: PropTypes.object.isRequired
+    user: PropTypes.object
 };

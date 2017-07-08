@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import * as firebase from 'firebase';
+import firebase from 'firebase';
 import { Card, CardTitle } from "material-ui/Card";
 import { GridLoader as Loader } from 'halogen';
 import InfiniteScroll from 'react-infinite-scroller';
@@ -45,14 +45,11 @@ export default class POISuggestions extends Component {
 
         if (!this.state.location) {
             this.getCurrentLocation().then(() => {
-                const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-                    if (this.componentIsMounted) {
-                        this.setState({ user }, () => {
-                            unsubscribe();
-                            this.fetchSuggestions();
-                        });
-                    }
-                });
+                if (this.componentIsMounted) {
+                    this.setState({ user: firebase.auth().currentUser }, () => {
+                        this.fetchSuggestions();
+                    });
+                }
             });
         }
     }
@@ -113,6 +110,7 @@ export default class POISuggestions extends Component {
         }
         url += `/${this.state.suggestionsOffset}/${LIMIT}`;
 
+        console.log(url);
         fetch(url, {
             headers: { 'Content-Type': 'application/json' },
             method: 'GET'
@@ -251,3 +249,6 @@ export default class POISuggestions extends Component {
 }
 
 POISuggestions.propTypes = { router: PropTypes.object };
+
+// To access Redux store
+POISuggestions.contextTypes = { store: PropTypes.object };
